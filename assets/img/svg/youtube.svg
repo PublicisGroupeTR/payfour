@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="43" height="43" viewBox="0 0 43 43">
+  <g id="Layer_2" data-name="Layer 2" transform="translate(0 0.332)">
+    <g id="Color" transform="translate(0 -0.332)">
+      <g id="_02.YouTube" data-name="02.YouTube">
+        <circle id="Background" cx="21.5" cy="21.5" r="21.5" fill="red"/>
+        <path id="Icon" d="M54.313,47.41H40.271A4.271,4.271,0,0,0,36,51.684v7.594a4.271,4.271,0,0,0,4.271,4.274H54.313a4.271,4.271,0,0,0,4.271-4.274V51.684a4.271,4.271,0,0,0-4.271-4.274Zm-10,11.532V52.02l5.951,3.461Z" transform="translate(-25.837 -33.765)" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>

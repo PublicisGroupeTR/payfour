@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "247596451391",
+    "project_id": "payfour-c6d69",
+    "storage_bucket": "payfour-c6d69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247596451391:android:054ba673de4c8ab61d1a8a",
+        "android_client_info": {
+          "package_name": "com.carrefour.payfour"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXdIuapFaHDxqbObiSZ53lagPapxCErUQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
