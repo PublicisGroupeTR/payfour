@@ -27,13 +27,14 @@ const IdentityForm = ({ route, navigation }) => {
   // });
 
   const [formData, setFormData] = useState({
-    userTCKN: "64317832464",
+    userTCKN: "",
     userName: user.firstName,
     userLastName: user.lastName,
     userEmail: user.email,
     userPhone: user.phone,
-    userBirth: "01/01/1990",
+    userBirth: "",
   });
+  
   const [agreements, setAgreements] = useState();
 
   const handleChange = (key, value) => {
