@@ -48,7 +48,7 @@ const CheckWaitingScreen = ({navigation}) => {
             headers: { Authorization: `Bearer ${value}` }
           };
           console.log("getwaitings");
-          axios.get('http://payfourapp.test.kodegon.com/api/payments/getwaitings', config).then(response => {
+          axios.get('https://payfourapp.test.kodegon.com/api/payments/getwaitings', config).then(response => {
             console.log("getwaitings");
             console.log(response.data);
             console.log(response.data.data.length);

@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Payfour</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nfc_chip_scan_start">NFC okuma başladı.</string>
+    <string name="nfc_chip_scan_tag_detect">NFC etiketi tespit edildi.</string>
+    <string name="nfc_chip_scan_s1">NFC Okuma ilk seviye tamamlandı.</string>
+    <string name="nfc_chip_scan_s2">NFC okuma ikinci seviye tamamlandı.</string>
+    <string name="nfc_chip_scan_s3">NFC okuma üçüncü seviye tamamlandı.</string>
+    <string name="nfc_chip_scan_s4">NFC okuma dördüncü seviye tamamlandı.</string>
+    <string name="nfc_chip_scan_error">Bir hata oluştu, lütfen tekrar deneyin.</string>
 </resources>

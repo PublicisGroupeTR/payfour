@@ -2,4 +2,6 @@
 <resources>
     <color name="primary_dark">#ffffff</color>
     <color name="dark_blue">#234f8f</color>
+    <color name="nfcColorSelected">#004F97</color>
+    <color name="nfcColorDefault">#909EAA</color>
 </resources>

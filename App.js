@@ -3,7 +3,7 @@
 import 'react-native-gesture-handler';
 
 // Import React and Component
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // Import Navigators from React Navigation
 import {NavigationContainer} from '@react-navigation/native';
@@ -19,6 +19,14 @@ import RegisterScreen from './Screen/RegisterScreen';
 import LoginWithPasswordScreen from './Screen/LoginWithPasswordScreen';
 import BiometricsScreen from './Screen/BiometricsScreen';
 import TabNavigationRoutes from './Screen/TabNavigationRoutes';
+
+// Kvc Screens
+import KvcOtp from './Screen/Kvc/Otp';
+import IdentityForm from './Screen/Kvc/IdentityForm';
+import AddressInfo from './Screen/Kvc/AddressInfo';
+import AgreementsView from './Screen/Kvc/AgreementsView';
+import IdentityDetailForm from './Screen/Kvc/IdentityDetailForm';
+import VerifyScreen from './Screen/Kvc/VerifyScreen';
 
 const Stack = createStackNavigator();
 
@@ -70,11 +78,66 @@ const Auth = () => {
   );
 };
 
+const Kvc = () => {
+  // Stack Navigator for Login and Sign up Screen
+  return (
+    <Stack.Navigator initialRouteName="KvcOtp"
+    screenOptions={{
+      contentStyle:{
+        backgroundColor:'#FFFFFF'
+      }
+   }}
+    >
+       <Stack.Screen
+          name="KvcOtp"
+          component={KvcOtp}
+          options={{headerShown: false}}
+        />
+       <Stack.Screen
+          name="IdentityForm"
+          component={IdentityForm}
+          options={{headerShown: false}}
+        />
+       <Stack.Screen
+          name="AgreementsView"
+          component={AgreementsView}
+          options={{headerShown: false}}
+        />
+       <Stack.Screen
+          name="AddressInfo"
+          component={AddressInfo}
+          options={{headerShown: false}}
+        />
+       <Stack.Screen
+          name="IdentityDetailForm"
+          component={IdentityDetailForm}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="VerifyScreen"
+          component={VerifyScreen}
+          options={{headerShown: false}}
+        />
+    </Stack.Navigator>
+  );
+};
+
 /* Switch Navigator for those screens which needs to be switched only once
   and we don't want to switch back once we switch from them to the next one */
-const App = () => {
+const App = (props) => {
+  const navigationRef = React.useRef();
+  
+  useEffect(() => {
+    if (props.kvcResult &&  props.kvcResult.length != 0) {
+      console.log("KvcDone ", props)
+      navigationRef.current?.navigate('TabNavigationRoutes', { 
+        screen: 'discover',
+      })
+    }
+  },[])
+
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator initialRouteName="SplashScreen"
       screenOptions={{
         contentStyle:{
@@ -103,6 +166,11 @@ const App = () => {
           name="TabNavigationRoutes"
           component={TabNavigationRoutes}
           // Hiding header for Navigation Drawer as we will use our custom header
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Kvc"
+          component={Kvc}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

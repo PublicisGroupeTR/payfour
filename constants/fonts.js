@@ -1,6 +1,6 @@
 import {isIOS} from '../utils/platformUtil';
 
-export const fontFamilies = {
+export const FontFamilies = {
   UBUNTU: {
     light: isIOS() ? 'Ubuntu-Light' : 'UbuntuLight',
     normal: isIOS() ? 'Ubuntu-Regular' : 'UbuntuRegular',

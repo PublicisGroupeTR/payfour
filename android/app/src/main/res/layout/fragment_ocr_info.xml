@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#efeff3">
+
+    <include
+        android:id="@+id/lytSubtabHeader"
+        layout="@layout/subtab_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center"
+            android:background="@drawable/rounded_background">
+            
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="513dp"
+                android:layout_weight="0.8"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="64dp">
+
+                <TextView
+                    android:id="@+id/titleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Kamera ile Kimlik Doğrulama"
+                    android:textAlignment="center"
+                    android:textColor="#004F97"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/ocrInfoImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="205dp"
+                    android:layout_marginVertical="8dp"
+                    android:src="@drawable/kyc_ocr_info" />
+
+                <TextView
+                    android:id="@+id/titleCameraTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Kimliğini kameraya okut"
+                    android:textAlignment="center"
+                    android:textColor="#004F97"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    android:id="@+id/continueButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="Devam Et"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#004F97"
+                    android:textSize="14sp"
+                    android:background="@drawable/button_background" />
+
+                <ImageView
+                    android:id="@+id/dgfinLogoImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="77dp"
+                    android:src="@drawable/dgfin_legal"
+                    android:layout_marginTop="12dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

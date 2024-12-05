@@ -124,7 +124,7 @@ const Discover = ({route, navigation}) => {
             headers: { Authorization: `Bearer ${value}` }
           };
           console.log("getbalance");
-          axios.get('http://payfourapp.test.kodegon.com/api/account/getbalance', config).then(response => {
+          axios.get('https://payfourapp.test.kodegon.com/api/account/getbalance', config).then(response => {
             console.log(response.data);
             console.log(response.data.data);
             if(response.data.data.balance != null){
@@ -200,7 +200,7 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("premiumcampaigns");
-      axios.get('http://payfourapp.test.kodegon.com/api/campaigns/premiumcampaigns', config).then(response => {
+      axios.get('https://payfourapp.test.kodegon.com/api/campaigns/premiumcampaigns', config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         console.log(response.data.data.items);
@@ -249,7 +249,7 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("campaigns");
-      axios.get('http://payfourapp.test.kodegon.com/api/campaigns?page=1&pageSize=4', config).then(response => {
+      axios.get('https://payfourapp.test.kodegon.com/api/campaigns?page=1&pageSize=4', config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         console.log(response.data.data.items);
@@ -307,7 +307,7 @@ const Discover = ({route, navigation}) => {
       let endDate =
           date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
           console.log("gettransactions");
-      axios.get('http://payfourapp.test.kodegon.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&pageSize=12', config).then(response => {
+      axios.get('https://payfourapp.test.kodegon.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&pageSize=12', config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         /*if(response.data.data.balance != null){
@@ -390,12 +390,12 @@ const Discover = ({route, navigation}) => {
   const checkMainCampaign = () =>{
 
     console.log("checkMainCampaign");
-    //http://payfourapp.test.kodegon.com/api/campaigns/maincampaign
+    //https://payfourapp.test.kodegon.com/api/campaigns/maincampaign
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-      axios.get('http://payfourapp.test.kodegon.com/api/campaigns/maincampaign', config).then(response => {
+      axios.get('https://payfourapp.test.kodegon.com/api/campaigns/maincampaign', config).then(response => {
         console.log(response);
         console.log(response.data);
         console.log(response.data.data);
@@ -439,7 +439,7 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("setFirebaseToken");
-      axios.post('http://payfourapp.test.kodegon.com/api/devices/setfcmtoken', { "fcmToken": fcmToken },config).then(response => {
+      axios.post('https://payfourapp.test.kodegon.com/api/devices/setfcmtoken', { "fcmToken": fcmToken },config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         checkPayment();
@@ -477,7 +477,7 @@ const Discover = ({route, navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
@@ -517,7 +517,7 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("getwaitings");
-      axios.get('http://payfourapp.test.kodegon.com/api/payments/getwaitings', config).then(response => {
+      axios.get('https://payfourapp.test.kodegon.com/api/payments/getwaitings', config).then(response => {
         console.log("getwaitings");
         console.log(response.data);
         console.log(response.data.data.length);
@@ -589,7 +589,7 @@ const Discover = ({route, navigation}) => {
         }
       }*/
         console.log("completeregistration");
-      axios.post('http://payfourapp.test.kodegon.com/api/account/completeregistration', dataToSend, config).then(response => {
+      axios.post('https://payfourapp.test.kodegon.com/api/account/completeregistration', dataToSend, config).then(response => {
         console.log(response.data);
         setUserData(response.data.data);
         setLoading(false);
