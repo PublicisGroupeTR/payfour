@@ -146,25 +146,32 @@ const KvcOtp = ({ navigation }) => {
                 secureTextEntry: true,
               }}
               theme={{
-                inputsContainerStyle: {
-                  paddingHorizontal: 12,
-                  gap: 8
+                containerStyle:{
+                  alignItems:"center",
+                  justifyContent:"center",
+                  gap:8
                 },
                 pinCodeContainerStyle: {
                   backgroundColor: '#fff',
                   borderColor: otpError ? '#E42932' : '#909EAA',
-                  width: 50
+                  width: 40,
+                  height: 48,
+                  borderRadius:8
                 },
-                pinCodeTextStyle: {},
+                pinCodeTextStyle: {
+                  fontSize:16,
+                  fontWeight:FontFamilies.UBUNTU.bold,
+                  color:"#015096",
+                },
                 focusStickStyle: {},
                 focusedPinCodeContainerStyle: {
                   borderColor: "#015096"
                 },
               }}
             />
-            {otpError && <Text style={[istyles.timer, { color: "#E94B43" }]}>Girilen kod hatalı. Lütfen kontrol edin.</Text>}
+            {otpError && <Text style={[istyles.timer, { color: "#E94B43", marginTop: 8 }]}>Girilen kod hatalı. Lütfen kontrol edin.</Text>}
 
-            {timerText.length != 0 && timerCount != 0 && <Text style={istyles.timer}>{timerText}</Text>}
+            {timerText.length != 0 && timerCount != 0 && <Text style={[istyles.timer, { fontFamily: FontFamilies.UBUNTU.bold }]}>{timerText}</Text>}
             {timerCount == 0 &&
               <TouchableOpacity onPress={againOtp}>
                 <Text style={[istyles.timer]}>Yeniden Gönder</Text>
@@ -179,7 +186,7 @@ const KvcOtp = ({ navigation }) => {
               style={[istyles.buttonStyle, otp.length != 6 && { backgroundColor: "#dadee7" }]}
               activeOpacity={0.5}
             >
-              <Text style={istyles.buttonTextStyle}>Devam Et</Text>
+              <Text style={istyles.buttonTextStyle}>Doğrula</Text>
             </TouchableOpacity>
 
             <Image
@@ -199,11 +206,10 @@ const istyles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    paddingTop: 24,
+    paddingTop: 32,
     justifyContent: "space-between"
   },
   otpContainer: {
-    gap: 12,
     alignItems: "center"
   },
   text: {
@@ -211,7 +217,10 @@ const istyles = StyleSheet.create({
     fontWeight: "400",
     fontFamily: FontFamilies.UBUNTU.normal,
     fontSize: 14,
-    textAlign: "center"
+    textAlign: "center",
+    marginBottom:16,
+    paddingHorizontal:36,
+    lineHeight:20
   },
   phone: {
     color: "#0B1929",
@@ -222,7 +231,8 @@ const istyles = StyleSheet.create({
   otpImage: {
     width: 56,
     height: 56,
-    objectFit: "cover"
+    objectFit: "cover",
+    marginBottom:12
   },
   buttonContainer: {
     flexDirection: "col",
@@ -253,6 +263,7 @@ const istyles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 24,
     textAlign: 'center',
+    marginTop:12
   }
 })
 

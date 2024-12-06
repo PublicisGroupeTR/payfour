@@ -7,47 +7,61 @@ import { ScrollView } from 'react-native-gesture-handler';
 import SubtabHeader from '../Components/SubtabHeader.js';
 import KvcTextInput from './components/input.js';
 import KvcHeader from './components/header.js';
-import { apiRequest, customAlert } from './helper/index.js';
+import { apiRequest, customAlert, validateFormData } from './helper/index.js';
 import { FontFamilies } from '../../constants/fonts.js';
 import { Dropdown } from 'react-native-element-dropdown';
 import KvcCheckbox from './components/checkbox.js';
 
 const IdentityDetailForm = ({ route, navigation }) => {
-  const tempToken = route.params.tempToken
   const user = route.params.user
   const verifyData = route.params.data
+  const selectedaAreements = route.params.selectedaAreements
 
   const [educationlevels, setEducationlevels] = useState();
   const [occupationroles, setOccupationroles] = useState();
   const [occupations, setOccupations] = useState();
   const [incometypes, setIncometypes] = useState([]);
-  const [incometypesSelected, setIncometypesSelected] = useState([]); 
+  const [incometypesSelected, setIncometypesSelected] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    userBirthplace: "",
-    educationlevel: "",
-    occupationrole: "",
-    occupation: "",
-    monthlyAverage: "",
-    transactionVolume: "",
-    transactionsNumbers: "",
+    userBirthplace: { value: "", isValid: true },
+    educationlevel: { value: "", isValid: true },
+    occupationrole: { value: "", isValid: true },
+    occupation: { value: "", isValid: true },
+    monthlyAverage: { value: "", isValid: true },
+    transactionVolume: { value: "", isValid: true },
+    transactionsNumbers: { value: "", isValid: true },
   });
 
   const handleChange = (key, value) => {
     // Eğer belirli alanlardan biri ise yalnızca sayıları kabul et
     if (["monthlyAverage", "transactionVolume", "transactionsNumbers"].includes(key)) {
-      const numericValue = value.replace(/[^0-9]/g, ""); // Sadece sayıları al
-      setFormData((prevData) => ({
-        ...prevData,
-        [key]: numericValue,
-      }));
+      const numericValue = value.replace(/[^0-9]/g, "");
+      if (numericValue.length > 9) {
+        return
+      }
+
+      setFormData((prevData) => {
+        return {
+          ...prevData,
+          [key]: {
+            isValid: false,
+            value: numericValue,
+          },
+        };
+      });
     } else {
       // Diğer alanlar için olduğu gibi kaydet
-      setFormData((prevData) => ({
-        ...prevData,
-        [key]: value,
-      }));
+      setFormData((prevData) => {
+        return {
+          ...prevData,
+          [key]: {
+            isValid: false,
+            value: value,
+          },
+        };
+      });
     }
   };
 
@@ -62,35 +76,17 @@ const IdentityDetailForm = ({ route, navigation }) => {
       }
     });
   };
-  
-  
+
   const sendData = async () => {
 
-    const requiredFields = [
-      { key: "userBirthplace", label: "Doğum Yeri" },
-      { key: "educationlevel", label: "Eğitim Durumu" },
-      { key: "occupationrole", label: "Ünvan" },
-      { key: "occupation", label: "Meslek" },
-      { key: "monthlyAverage", label: "Aylık Ortalama Net Gelir" },
-      { key: "transactionVolume", label: "Aylık Tahmini İşlem Hacmi" },
-      { key: "transactionsNumbers", label: "Aylık Tahmini İşlem Sayısı" },
-    ];
+    const updatedData = validateFormData(formData);
+    setFormData(updatedData);
 
-    const emptyFields = requiredFields.filter(
-      (field) => !formData[field.key] || formData[field.key].trim() === ""
-    );
-
-    if (emptyFields.length > 0) {
-
-      customAlert({
-        title: "Eksik Alanlar",
-        message: `Lütfen tüm alanları doldurun:\n${emptyFields
-          .map((field) => field.label)
-          .join(", ")}`
-      })
-
+    if (Object.values(updatedData).some((field) => field.isValid === false)) {
+      console.log("AAAAA")
       return;
     }
+
 
     if (incometypesSelected.length == 0) {
 
@@ -106,6 +102,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
     navigation.navigate('Kvc', {
       screen: 'VerifyScreen', params: {
         user: user,
+        selectedaAreements: selectedaAreements,
         incometypesSelected: incometypesSelected,
         data: formData,
         referenceId: verifyData.referenceId
@@ -162,7 +159,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={istyles.main}>
-      <SubtabHeader isKvcPage name="Kimlik Bilgilerin" count="0" />
+      <SubtabHeader isKvcPage name="Kimlik Bilgilerim" count="0" />
       <Loader loading={loading} />
 
       <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
@@ -172,13 +169,14 @@ const IdentityDetailForm = ({ route, navigation }) => {
             <View style={istyles.form}>
 
               <KvcTextInput
-                value={formData.userBirthplace}
+                value={formData.userBirthplace.value}
+                isValid={formData.userBirthplace.isValid}
                 onChange={(value) => handleChange("userBirthplace", value)}
                 placeholder="Doğum Yeri"
               />
 
-              { occupations && <Dropdown
-                style={[istyles.inputStyle, { height: 66 }]}
+              {occupations && <Dropdown
+                style={[istyles.inputStyle, formData.occupation.isValid === false  && istyles.borderError, { height: 66 }]}
                 placeholderStyle={{
                   fontSize: 14,
                   color: '#909EAA',
@@ -194,12 +192,12 @@ const IdentityDetailForm = ({ route, navigation }) => {
                 labelField="name"
                 valueField="id"
                 placeholder={'Meslek'}
-                value={formData.occupation}
+                value={formData.occupation.value}
                 onChange={(item) => handleChange("occupation", item.id)}
                 renderItem={renderDropdownItem}
               />}
-              { educationlevels && <Dropdown
-                style={[istyles.inputStyle, { height: 66 }]}
+              {educationlevels && <Dropdown
+                style={[istyles.inputStyle, formData.educationlevel.isValid === false  && istyles.borderError, { height: 66 }]}
                 placeholderStyle={{
                   fontSize: 14,
                   color: '#909EAA',
@@ -215,12 +213,12 @@ const IdentityDetailForm = ({ route, navigation }) => {
                 labelField="name"
                 valueField="id"
                 placeholder={'Eğitim Durumu'}
-                value={formData.educationlevel}
+                value={formData.educationlevel.value}
                 onChange={(item) => handleChange("educationlevel", item.id)}
                 renderItem={renderDropdownItem}
               />}
-              { occupationroles && <Dropdown
-                style={[istyles.inputStyle, { height: 66 }]}
+              {occupationroles && <Dropdown
+                style={[istyles.inputStyle, formData.occupationrole.isValid === false  && istyles.borderError, { height: 66 }]}
                 placeholderStyle={{
                   fontSize: 14,
                   color: '#909EAA',
@@ -236,7 +234,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
                 labelField="name"
                 valueField="id"
                 placeholder={'Unvan'}
-                value={formData.occupationrole}
+                value={formData.occupationrole.value}
                 onChange={(item) => handleChange("occupationrole", item.id)}
                 renderItem={renderDropdownItem}
               />}
@@ -246,29 +244,32 @@ const IdentityDetailForm = ({ route, navigation }) => {
                 <View style={istyles.incometypesBody}>
                   {incometypes.map((item, index) =>
                     <View key={index} style={istyles.incometypesItem}>
-                      <KvcCheckbox isFullClick text={item.text} show={incometypesSelected?.find(x=>x == item.id)} onPress={()=> toggleIncomeType(item.id)}></KvcCheckbox>
+                      <KvcCheckbox isFullClick text={item.text} show={incometypesSelected?.find(x => x == item.id)} onPress={() => toggleIncomeType(item.id)}></KvcCheckbox>
                     </View>
                   )}
                 </View>
-               
+
               </View>}
 
               <KvcTextInput
-                value={formData.monthlyAverage}
+                value={formData.monthlyAverage.value}
+                isValid={formData.monthlyAverage.isValid}
                 onChange={(value) => handleChange("monthlyAverage", value)}
                 placeholder="Aylık ortalama Net gelir"
                 keyboardType='numeric'
               />
 
               <KvcTextInput
-                value={formData.transactionVolume}
+                value={formData.transactionVolume.value}
+                isValid={formData.transactionVolume.isValid}
                 onChange={(value) => handleChange("transactionVolume", value)}
                 placeholder="Tahmini Aylık İşlem Hacmi"
                 keyboardType='numeric'
               />
 
               <KvcTextInput
-                value={formData.transactionsNumbers}
+                value={formData.transactionsNumbers.value}
+                isValid={formData.transactionsNumbers.isValid}
                 onChange={(value) => handleChange("transactionsNumbers", value)}
                 placeholder="Tahmini Aylık İşlem Sayısı"
                 keyboardType='numeric'
@@ -365,25 +366,28 @@ const istyles = StyleSheet.create({
     width: "100%",
     height: 77
   },
-  incometypesContainer:{
-    marginBottom:12
+  incometypesContainer: {
+    marginBottom: 12
   },
-  incometypesTitle:{
-    marginBottom:12,
-    color:"#909EAA",
+  incometypesTitle: {
+    marginBottom: 12,
+    color: "#909EAA",
     fontFamily: FontFamilies.UBUNTU.medium,
     fontWeight: '400',
     fontSize: 12,
   },
-  incometypesBody:{
-    flexDirection:"row",
-    flexWrap:"wrap",
-    gap:12,
-    justifyContent:"space-between",
-    width:Dimensions.get('window').width - 32,
-    position:"relative",
+  incometypesBody: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    justifyContent: "space-between",
+    width: Dimensions.get('window').width - 32,
+    position: "relative",
   },
-  incometypesItem:{
-    width:(Dimensions.get('window').width - 44) / 2,
+  incometypesItem: {
+    width: (Dimensions.get('window').width - 44) / 2,
+  },
+  borderError:{
+    borderColor:"#E94B43"
   }
 })

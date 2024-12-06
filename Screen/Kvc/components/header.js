@@ -13,7 +13,7 @@ const KvcHeader = props => {
             </View>
             <Text style={styles.title}>{title}</Text>
         </View>
-        <Text style={styles.text}>{text}</Text>
+        {text && <Text style={styles.text}>{text}</Text>}
     </View>
   );
 };

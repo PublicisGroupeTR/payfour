@@ -110,7 +110,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="1.Aşama"
+                            android:text="Adım"
                             android:textColor="@color/nfcColorDefault"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -152,7 +152,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="2.Aşama"
+                            android:text="Adım"
                             android:textColor="@color/nfcColorDefault"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -194,7 +194,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="3.Aşama"
+                            android:text="Adım"
                             android:textColor="@color/nfcColorDefault"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -236,7 +236,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="4.Aşama"
+                            android:text="Adım"
                             android:textColor="@color/nfcColorDefault"
                             android:textSize="10sp" />
                     </LinearLayout>

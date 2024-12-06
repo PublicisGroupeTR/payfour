@@ -10,6 +10,7 @@ const KvcTextInput = ({
   keyboardType = 'default',
   returnKeyType = 'next',
   propsStyle = {},
+  isValid = false,
   title
 }) => {
   return (
@@ -21,8 +22,9 @@ const KvcTextInput = ({
         }
 
         <TextInput
-          style={[title ? style.inputStyleTitle : style.inputStyle, {
+          style={[title ? style.inputStyleTitle : style.inputStyle, isValid === false && style.borderError, {
             ...propsStyle,
+            
           }]}
           editable={!disable}
           value={value}
@@ -33,6 +35,7 @@ const KvcTextInput = ({
           onSubmitEditing={Keyboard.dismiss}
           blurOnSubmit={false}
           underlineColorAndroid="#f000"
+          
           returnKeyType={returnKeyType}
         />
     </View>
@@ -75,6 +78,9 @@ const style = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 16,
     },
+    borderError:{
+      borderColor:"#E94B43"
+    }
 })
   
 

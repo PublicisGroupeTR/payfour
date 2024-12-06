@@ -51,9 +51,13 @@ const VerifyScreen = ({ navigation, route }) => {
       if (params.referenceId) {
         data = { ...data, ...{ referenceId: params.referenceId}}
       }
+      if (params.selectedaAreements) {
+        data = { ...data,...{ selectedaAreements : params.selectedaAreements}}
+      }
       if (token) {
         data = { ...data, ...{ token: token}}
       }
+      console.log(data)
       setAllData(data)
     }
   }

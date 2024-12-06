@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Alert, TouchableWithoutFeedback, View, Modal, Image, Pressable,TouchableOpacity, Text, StyleSheet, SafeAreaView,  KeyboardAvoidingView } from 'react-native';
+import { Alert, TouchableWithoutFeedback, View, Modal, Image, Pressable, TouchableOpacity, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { styles } from '../Components/Styles.js';
 import Loader from '../Components/Loader.js';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -9,127 +9,97 @@ import SubtabHeader from '../Components/SubtabHeader.js';
 import KvcTextInput from './components/input.js';
 import KvcCheckbox from './components/checkbox.js';
 import KvcHeader from './components/header.js';
-import { apiRequest, customAlert } from './helper/index.js';
+import { apiRequest, customAlert, validateFormData, formatDate, isValidEmail } from './helper/index.js';
 import { FontFamilies } from '../../constants/fonts.js';
+import DatePicker from "react-native-date-picker";
 
 const IdentityForm = ({ route, navigation }) => {
+
   const tempToken = route.params.tempToken
   const user = route.params.user
+  // const tempToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFwcGx5bG9hbnwwMTkzOWM3ZS02MjQ1LTcyZGQtYWYzMS1hNjk3NjRlY2QwZWQiLCJtZW1iZXJpZCI6IjM1ODMiLCJleHAiOjE3MzM1MDA5NjAsImlzcyI6IlBheWZvdXJBcHBTZXJ2aWNlIiwiYXVkIjoiUGF5Zm91clRlbXBUb2tlbiJ9.HG5AjQnnQRJ2pXpAQ3aEmgjNfyJ4Y4lQd9zFRxbGNO0"
+  // const user = {"birthDate": "2001-10-10T00:00:00", "cityCode": 6, "commercialElectronic": true, "crmCustomerId": "15628932", "defaultBankAccountNumber": "3594488206101", "districtCode": 74, "email": "", "firstName": "Mahmut Bilal", "gender": "Male", "isStudent": false, "lastName": "TEKİROĞLU", "payfourId": 3583, "phone": "+905533600910", "referralCode": "PYF2jzBnEzjQhS7", "registrationCompleted": true, "segment": 1}
 
   const [loading, setLoading] = useState(false);
-  // const [formData, setFormData] = useState({
-  //   userTCKN: "",
-  //   userName: user.firstName,
-  //   userLastName: user.lastName,
-  //   userEmail: user.email,
-  //   userPhone: user.phone,
-  //   userBirth: user.birthDate ? user.birthDate.splice("T")[0].replace("-","/").split("").reverse().join("") : ""
-  // });
-
-  const [formData, setFormData] = useState({
-    userTCKN: "",
-    userName: user.firstName,
-    userLastName: user.lastName,
-    userEmail: user.email,
-    userPhone: user.phone,
-    userBirth: "",
-  });
-  
+  const [openDatePicker, setOpenDatePicker] = useState(false);
   const [agreements, setAgreements] = useState();
 
+  const [formData, setFormData] = useState({
+    userTCKN: { value: "64317832464", isValid: true },
+    userName: { value: user.firstName, isValid: true },
+    userLastName: { value: user.lastName, isValid: true },
+    userEmail: { value: user.email, isValid: true },
+    userPhone: { value: user.phone, isValid: true },
+    userBirth: { value: user.birthDate, isValid: true },
+  });
+
   const handleChange = (key, value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [key]: value,
-    }));
-  };
+    setFormData((prevData) => {
+      let formattedValue = value;
 
-  const dateControl = (birthDate) => {
-    try {
-      // Tarih formatından "/" karakterlerini kaldır
-      let fb = birthDate.replace(/\//g, "");
-      // Tarih verilerini ayrıştır
-      if (fb.length !== 8) {
-        throw new Error("Invalid date format. Expected DD/MM/YYYY.");
+      if (key === "userName" || key === "userLastName") {
+        formattedValue = value.replace(/[^a-zA-ZğüşöçıİĞÜŞÖÇ ]/g, "");
       }
 
-      let day = fb.substring(0, 2);
-      let month = fb.substring(2, 4);
-      let year = fb.substring(4, 8);
-
-
-      // Tarihi ISO formatına dönüştür
-      const dt = `${year}-${month}-${day}`;
-
-      // Geçerli bir tarih oluştur ve ISO formatına çevir
-      const d = new Date(dt);
-      if (isNaN(d.getTime())) {
-        throw new Error("Invalid date. Unable to parse.");
+      if (key == "userBirth") {
+        formattedValue = value.split("T")[0]
       }
 
-      const fd = d.toISOString();
-
-      return fd
-    } catch (error) {
-      console.error("Error processing date:", error.message);
-    }
-
+      return {
+        ...prevData,
+        [key]: {
+          isValid: true,
+          value: formattedValue,
+        },
+      };
+    });
   };
 
   const sendData = async () => {
 
-    const requiredFields = [
-      { key: "userTCKN", label: "T.C. Kimlik Numarası" },
-      { key: "userName", label: "Ad" },
-      { key: "userLastName", label: "Soyad" },
-      { key: "userEmail", label: "E-Posta" },
-      { key: "userPhone", label: "Telefon Numarası" },
-      { key: "userBirth", label: "Doğum Tarihi" },
-    ];
+    const updatedData = validateFormData(formData);
+    
+    console.log(updatedData)
 
-    const emptyFields = requiredFields.filter(
-      (field) => !formData[field.key] || formData[field.key].trim() === ""
-    );
+    setFormData(updatedData);
 
-    if (emptyFields.length > 0) {
-
-      customAlert({
-          title: "Eksik Alanlar", 
-          message: `Lütfen tüm alanları doldurun:\n${emptyFields
-          .map((field) => field.label)
-          .join(", ")}`
-        })
-      
+    if (Object.values(updatedData).some((field) => field.isValid === false)) {
       return;
     }
-    
+
     const mandatoryAgreements = agreements.filter((agreement) =>
       [1].includes(agreement.necessity)
     );
-  
+    
     const unselectedMandatoryAgreements = mandatoryAgreements.filter(
       (agreement) => !agreement.selected
     );
-  
-    if (unselectedMandatoryAgreements.length > 0) {
-      customAlert({
-        title: "Sözleşmeler",
-        message: `Lütfen aşağıdaki gerekli sözleşmeleri kabul ediniz: ${unselectedMandatoryAgreements
-          .map((agreement) => agreement.name)
-          .join(", ")}`,
-      });
-      return false;
+    
+    const updatedAgreements = agreements.map((agreement) => {
+      if (unselectedMandatoryAgreements.some((unselected) => unselected.id === agreement.id)) {
+        return {
+          ...agreement,
+          isValid: true, 
+        };
+      }
+      return agreement;
+    });
+
+    setAgreements([...updatedAgreements])
+
+    if (unselectedMandatoryAgreements.length != 0 ) {
+      return
     }
-
-    const formattedDate = dateControl(formData.userBirth)
-
+  
     const data = {
       tempToken: tempToken,
-      tckn: formData.userTCKN,
-      birthDate: formattedDate ?? "",
-      email: formData.userEmail
+      tckn: formData.userTCKN.value,
+      birthDate: new Date(formData.userBirth.value),
+      email: formData.userEmail.value
     }
-    
+
+    const selectedaAreements = agreements.filter((item) => item.selected === true) .map((item) => item.code);
+
     setLoading(true)
     const response = await apiRequest({
       url: '/loans/verifycustomer',
@@ -140,12 +110,12 @@ const IdentityForm = ({ route, navigation }) => {
       navigation.navigate('Kvc', {
         screen: 'AddressInfo', params: {
           user: user,
-          tempToken: tempToken,
-          data: response.data
+          data: response.data,
+          selectedaAreements: selectedaAreements
         }
       })
     } else {
-      customAlert({title:"Hata", message:response.errors.message})
+      customAlert({ title: "Hata", message: response.errors.message })
     }
     setLoading(false)
   };
@@ -155,17 +125,18 @@ const IdentityForm = ({ route, navigation }) => {
     const response = await apiRequest({ url: '/loans/consentlist' });
     if (response.data) {
       const data = []
-      await response.data.filter(x=> x.isActive).forEach(element => {
+      await response.data.filter(x => x.isActive).forEach(element => {
         data.push({
           ...element,
-          selected: false
+          selected: false,
+          isValid: true
         })
       });
       if (data && data.length != 0) {
         setAgreements(data)
       }
     }
-   
+
     setLoading(false)
   };
 
@@ -173,15 +144,11 @@ const IdentityForm = ({ route, navigation }) => {
     setAgreements((prevAgreements) =>
       prevAgreements.map((agreement) =>
         agreement.id === id
-          ? { ...agreement, selected: !agreement.selected }
+          ? { ...agreement, selected: !agreement.selected, isValid: true}
           : agreement
       )
     );
   };
-  
-  useEffect(() => {
-    getAgrements()
-  }, [])
 
   const selectedAgreement = async (value) => {
     if (!value.templateDesignId) {
@@ -191,7 +158,7 @@ const IdentityForm = ({ route, navigation }) => {
     const response = await apiRequest({
       url: '/loans/consentdata/' + value.templateDesignId,
     });
-    
+
     if (response.data) {
       navigation.navigate('Kvc', {
         screen: 'AgreementsView', params: {
@@ -203,28 +170,33 @@ const IdentityForm = ({ route, navigation }) => {
     setLoading(false)
   };
 
+  useEffect(() => {
+    getAgrements()
+  }, [])
+
   return (
     <SafeAreaView style={istyles.main}>
-      <SubtabHeader isKvcPage name="Kimlik Bilgilerin" count="0" />
+      <SubtabHeader isKvcPage name="Kimlik Bilgilerim" count="0" />
       <Loader loading={loading} />
       <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
         <KeyboardAvoidingView enabled>
           <View style={istyles.container}>
             <KvcHeader number="1" title="Bilgilerini Tamamla" text="Kimlik kartındaki bilgiler alındı, şimdi kalanları tamamla"></KvcHeader>
             <View style={istyles.form}>
-
               <MaskInput
-                style={istyles.inputStyle}
-                value={formData.userTCKN}
+                style={[istyles.inputStyle, formData.userTCKN.isValid === false && istyles.borderError]}
+                value={formData.userTCKN.value}
                 onChangeText={(masked, unmasked) => handleChange("userTCKN", unmasked)}
                 placeholder="T.C Kimlik Numarası"
+                placeholderTextColor="#909EAA"
                 keyboardType="numeric"
                 mask={[/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]}
               />
 
               {/* Ad */}
               <KvcTextInput
-                value={formData.userName}
+                isValid={formData.userName.isValid}
+                value={formData.userName.value}
                 onChange={(value) => handleChange("userName", value)}
                 placeholder="Ad"
                 keyboardType="default"
@@ -232,7 +204,8 @@ const IdentityForm = ({ route, navigation }) => {
 
               {/* Soyad */}
               <KvcTextInput
-                value={formData.userLastName}
+                isValid={formData.userLastName.isValid}
+                value={formData.userLastName.value}
                 onChange={(value) => handleChange("userLastName", value)}
                 placeholder="Soyad"
                 keyboardType="default"
@@ -240,33 +213,54 @@ const IdentityForm = ({ route, navigation }) => {
 
               {/* Telefon Numarası */}
               <MaskInput
-                style={istyles.inputStyle}
-                value={formData.userPhone}
+                style={[istyles.inputStyle, formData.userPhone.isValid === false  && istyles.borderError]}
+                value={formData.userPhone.value}
                 onChangeText={(masked, unmasked) => handleChange("userPhone", unmasked)}
                 placeholder="Telefon No"
                 keyboardType="numeric"
+                placeholderTextColor="#909EAA"
                 mask={['+', '9', '0', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
               />
 
-              {/* Doğum Tarihi */}
-
-              <View style={[istyles.inputStyle, { paddingBottom: 0 }]}>
-                <Text style={istyles.bhirtDateText}>
+              <TouchableOpacity onPress={() => setOpenDatePicker(true)} style={[istyles.inputStyle, formData.userBirth.isValid === false && istyles.borderError, { paddingBottom: 0 }]}>
+                <Text style={istyles.bhirtDateTitle}>
                   Doğum Tarihi (GG/AA/YYYY)
                 </Text>
-                <MaskInput
-                  value={formData.userBirth}
-                  placeholder='GG/AA/YYYY'
-                  onChangeText={(masked, unmasked) => handleChange("userBirth", masked)}
-                  keyboardType="numeric"
-                  mask={[/\d/, /\d/, "/", /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/]}
-                />
-              </View>
+                {formData.userBirth.value ?
+                  <Text style={istyles.bhirtDateText}>
+                    {formatDate(formData.userBirth.value)}
+                  </Text>
+                  :
+                  <Text style={[istyles.bhirtDateText, {color:"#909EAA"}]}>
+                    {"GG/AA/YYYY"}
+                  </Text>
+                }
 
-              {/* E-Posta */}
+                <DatePicker
+                  modal
+                  open={openDatePicker}
+                  date={formData.userBirth.value ? new Date(formData.userBirth.value.split("T")[0]) : new Date()}
+                  is24hourSource="locale"
+                  locale="tr"
+                  title={"Doğum Tarihi "}
+                  confirmText={"Tamam"}
+                  cancelText={"Kapat"}
+                  mode={'date'}
+                  onConfirm={(date) => {
+                    handleChange("userBirth", date.toISOString())
+                    setOpenDatePicker(false)
+                  }}
+                  onCancel={() => {
+                    setOpenDatePicker(false)
+                  }}
+                />
+
+              </TouchableOpacity>
+
               <KvcTextInput
+                isValid={formData.userEmail.isValid || !isValidEmail(formData.userEmail.value)}
                 style={istyles.inputStyle}
-                value={formData.userEmail}
+                value={formData.userEmail.value}
                 onChange={(value) => handleChange("userEmail", value)}
                 placeholder="E-Posta"
                 keyboardType="email-address"
@@ -276,14 +270,22 @@ const IdentityForm = ({ route, navigation }) => {
                 <View style={istyles.agreementsContainer}>
                   {agreements.map((item, index) =>
                     item.necessity == 3 ?
-                    <View key={index} style={istyles.agreementsInfo}>
-                       <Image
-                        source={require("../../assets/img/export/information.png")}
-                        style={istyles.agreementsImage} />
-                      <Text style={istyles.agreementsInfoText}>{item.name}</Text>
-                    </View>
-                    :
-                    <KvcCheckbox key={index} show={item.selected} isFullClick={!item.templateDesignId} onPress={()=>changeAgreement(item.id)} textOpen={ item.templateDesignId ? ()=> selectedAgreement(item): undefined} text={item.name} ></KvcCheckbox>
+                      <View key={index} style={istyles.agreementsInfo}>
+                        <Image
+                          source={require("../../assets/img/export/information.png")}
+                          style={istyles.agreementsImage} />
+                        <Text style={istyles.agreementsInfoText}>{item.name}</Text>
+                      </View>
+                      :
+                      <KvcCheckbox 
+                        key={index} 
+                        show={item.selected} 
+                        isValid={item.isValid}
+                        isFullClick={!item.templateDesignId} 
+                        onPress={() => changeAgreement(item.id)} 
+                        textOpen={item.templateDesignId ? () => selectedAgreement(item) : undefined} 
+                        text={item.name} 
+                      ></KvcCheckbox>
                   )}
                 </View>
               )}
@@ -312,8 +314,8 @@ const IdentityForm = ({ route, navigation }) => {
 export default IdentityForm;
 
 const istyles = StyleSheet.create({
-  main:{
-    flex: 1, 
+  main: {
+    flex: 1,
     backgroundColor: '#efeff3'
   },
   container: {
@@ -334,7 +336,7 @@ const istyles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 16,
   },
-  bhirtDateText: {
+  bhirtDateTitle: {
     fontSize: 12,
     lineHeight: 12,
     padding: 0,
@@ -342,6 +344,11 @@ const istyles = StyleSheet.create({
     color: '#909EAA',
     top: 14,
     left: 16
+  },
+  bhirtDateText: {
+    fontSize: 14,
+    marginVertical: 12,
+    color:"black"
   },
   buttonStyle: {
     backgroundColor: '#004F97',
@@ -364,7 +371,7 @@ const istyles = StyleSheet.create({
     height: 52,
     alignItems: 'center',
     borderRadius: 10,
-    justifyContent:"center"
+    justifyContent: "center"
   },
   buttonTextStyle: {
     color: '#FFFFFF',
@@ -377,22 +384,22 @@ const istyles = StyleSheet.create({
     width: "100%",
     height: 77
   },
-  agreementsContainer:{
-    gap:16,
-    width:"100%",
-    paddingRight:16,
-    marginBottom:24
+  agreementsContainer: {
+    gap: 16,
+    width: "100%",
+    paddingRight: 16,
+    marginBottom: 24
   },
-  agreementsInfo:{
-    flexDirection:"row",
-    gap:8
+  agreementsInfo: {
+    flexDirection: "row",
+    gap: 8
   },
-  agreementsInfoText:{
+  agreementsInfoText: {
     fontWeight: '300',
     color: '#1E242F',
     fontSize: 12,
   },
-  agreementsImage:{
+  agreementsImage: {
     width: 20,
     height: 20,
   },
@@ -400,17 +407,7 @@ const istyles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
+  borderError: {
+    borderColor: "#E94B43"
+  }
 })
-
-const htmlStyles = StyleSheet.create({
-  marginBottom:0,
-  paddingBottom:0,
-  textAlign:'justify',
-  p: {
-    margin:0,padding:0,
-  },
-  div:{
-    marginBottom:8,
-  },
-
-});

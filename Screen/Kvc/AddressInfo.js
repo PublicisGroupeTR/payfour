@@ -1,27 +1,23 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Alert, TouchableWithoutFeedback, View, Modal, Image, Pressable,TouchableOpacity, Text, StyleSheet, SafeAreaView,  KeyboardAvoidingView } from 'react-native';
+import React from 'react';
+import { View, Image, TouchableOpacity, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { styles } from '../Components/Styles.js';
-import Loader from '../Components/Loader.js';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import MaskInput from 'react-native-mask-input';
 import SubtabHeader from '../Components/SubtabHeader.js';
 import KvcTextInput from './components/input.js';
 import KvcHeader from './components/header.js';
-import { apiRequest, customAlert } from './helper/index.js';
 import { FontFamilies } from '../../constants/fonts.js';
-import HTMLView from 'react-native-htmlview';
 
 const AddressInfo = ({ route, navigation }) => {
-  const tempToken = route.params?.tempToken
   const user = route.params?.user
   const data = route.params?.data
+  const selectedaAreements = route.params?.selectedaAreements
 
   const next = async () => {
     navigation.navigate('Kvc', {
       screen: 'IdentityDetailForm', params: {
         user: user,
-        tempToken: tempToken,
+        selectedaAreements: selectedaAreements,
         data: data
       }
     })
@@ -33,7 +29,7 @@ const AddressInfo = ({ route, navigation }) => {
       <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
         <KeyboardAvoidingView enabled>
           <View style={istyles.container}>
-            <KvcHeader number="2" title="Adres Tanımla" text="Lütfen adres bilgilerinizi giriniz. Girmiş olduğunuz adresin, kayıtlı yerleşim yeriniz/ikametgah adresiniz ile aynı olmaldır"></KvcHeader>
+            <KvcHeader number="2" title="Adres Bilgileri"></KvcHeader>
             <View style={istyles.form}>
             <KvcTextInput
               disable
