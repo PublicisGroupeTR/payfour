@@ -1,8 +1,5 @@
-//
-//  EnQualifyModuleIOS.m
-//  Payfour
-//
-//  Created by Mahmut Bilal Tekiroğlu on 5.12.2024.
-//
+#import <React/RCTBridgeModule.h>
 
-#import <Foundation/Foundation.h>
+@interface RCT_EXTERN_MODULE(EnQualifyModuleIOS, NSObject)
+RCT_EXTERN_METHOD(showOCR)
+@end

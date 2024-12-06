@@ -33,6 +33,16 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
+	<key>NFCReaderUsageDescription</key>
+	<string>NFC Read</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera usage</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string> $(PRODUCT_NAME) wants to use Local Network</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone usage</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string> $(PRODUCT_NAME) wants to use photo library</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

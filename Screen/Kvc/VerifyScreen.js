@@ -11,7 +11,8 @@ import {
   Text,
   NativeModules,
   TouchableOpacity,
-  Image
+  Image,
+  Platform
 } from 'react-native';
 import SubtabHeader from '../Components/SubtabHeader.js';
 import {FontFamilies} from '../../constants/fonts.js';
@@ -24,14 +25,15 @@ const VerifyScreen = ({ navigation, route }) => {
 
   const openEnQualifyActivity = async () => {
 
-    // NativeModules.EnQualifyModuleIOS.showSwiftUIView()
-    // return
-
-    if (!allData) {
-      return
-    }
+    // if (!allData) {
+    //   return
+    // }
     
-    NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
+    if (Platform.OS == "ios") {
+      NativeModules.EnQualifyModuleIOS.showOCR()
+    } else {
+      NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
+    }
   }
 
   const getData = async () => {
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     height: 52,
     alignItems: 'center',
     borderRadius: 10,
-
+    justifyContent:"center"
   },
   buttonTextStyle: {
     color: '#FFFFFF',
