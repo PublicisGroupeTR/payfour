@@ -183,7 +183,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
     }
 
     fun retryNFC() {
-        Log.i("Custom", "TEST-KVC retryNFC")
+        Log.i("Custom", "TEST-KYC retryNFC")
 
         enVerifyApi.confirmVerification(IDVerifyState.NFC_RETRY)
     }
@@ -203,9 +203,9 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
 
     fun completeLoanaAplication() {
         val customDataObject: JSONObject = JSONObject(customData)
-        Log.i("Custom", "TEST-KVC completeLoanaAplication start")
+        Log.i("Custom", "TEST-KYC completeLoanaAplication start")
         val token = customDataObject.getString("token")
-        // Log.i("Custom", "TEST-KVC token " + token)
+        // Log.i("Custom", "TEST-KYC token " + token)
     
         val emptyRequestBody = "".toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
@@ -230,7 +230,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
                         val responseBody = response.body?.string()
                     
                         if (responseBody != null) {
-                            Log.i("Custom", "TEST-KVC completeloanapplication Response: $responseBody")
+                            Log.i("Custom", "TEST-KYC completeloanapplication Response: $responseBody")
                     
                             try {
                                 // Yanıtı JSON olarak parse et
@@ -238,30 +238,30 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
                                 val success = jsonResponse.optBoolean("success", false)
                     
                                 if (success) {
-                                    Log.i("Custom", "TEST-KVC completeloanapplication Success: true")
+                                    Log.i("Custom", "TEST-KYC completeloanapplication Success: true")
                                     enVerifyApi.replaceFragment(FragmentFaceSuccess())
                                     
                                 } else {
                                     enVerifyApi.replaceFragment(FragmentKYCError())
-                                    Log.i("Custom", "TEST-KVC completeloanapplication Success: false")
+                                    Log.i("Custom", "TEST-KYC completeloanapplication Success: false")
                                 }
                             } catch (e: Exception) {
-                                Log.e("Custom", "TEST-KVC JSON parse error: ${e.message}")
+                                Log.e("Custom", "TEST-KYC JSON parse error: ${e.message}")
                                 enVerifyApi.replaceFragment(FragmentKYCError())
                             }
                         } else {
-                            Log.e("Custom", "TEST-KVC Response body is null")
+                            Log.e("Custom", "TEST-KYC Response body is null")
                             enVerifyApi.replaceFragment(FragmentKYCError())
                         }
                     } else {
                         // Başarısız yanıt durumunda
-                        Log.i("Custom", "TEST-KVC Request failed with code: ${response.code}")
+                        Log.i("Custom", "TEST-KYC Request failed with code: ${response.code}")
                         enVerifyApi.replaceFragment(FragmentKYCError())
                     }
                 }
             })
         } else {
-            Log.i("Custom", "TEST-KVC  Token not found")
+            Log.i("Custom", "TEST-KYC  Token not found")
             enVerifyApi.replaceFragment(FragmentKYCError())
         }
     }
@@ -273,7 +273,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
             }
             enVerifyApi.replaceFragment(FragmentKYCError())
         } catch (e: Exception) {
-            Log.e("Custom", "TEST-KVC kycError: $e")
+            Log.e("Custom", "TEST-KYC kycError: $e")
             if (isSdkInitialized) {
                 enVerifyApi.replaceFragment(FragmentKYCError())
             }
@@ -293,12 +293,12 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
 
     private fun getLaunchOptions(message: String): Bundle {
         val options = Bundle()
-        options.putString("kvcResult", message)
+        options.putString("kycResult", message)
         return options
     }
 
     public fun exitSdk() {
-        Log.i("Custom", "TEST-KVC exitSdk")
+        Log.i("Custom", "TEST-KYC exitSdk")
 
         enVerifyApi.closeSession(false)
         enVerifyApi.exitSelfService()
@@ -307,7 +307,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
     }
 
     public fun backButton() {
-        Log.i("Custom", "TEST-KVC backButton")
+        Log.i("Custom", "TEST-KYC backButton")
 
         // Mevcut fragment'i al
         val currentFragment = supportFragmentManager.findFragmentById(R.id.enQualifyFragmentContainer)
@@ -315,7 +315,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
         if (currentFragment != null) {
             val currentFragmentName = currentFragment::class.java.simpleName
 
-        Log.i("Custom", "TEST-KVC currentFragmentName " + currentFragmentName)
+        Log.i("Custom", "TEST-KYC currentFragmentName " + currentFragmentName)
             
             // Eğer mevcut fragment belirli bir türdeyse, exitSdk() çağır
             if (currentFragmentName == "FragmentOCRInfo" || currentFragmentName == "FragmentKYCError" || currentFragmentName == "FragmentNFCRequired") {
@@ -347,7 +347,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
 
     override fun onFailure(p0: IDVerifyState?, p1: IDVerifyFailureCode?, p2: String?) {
         //Tüm fail ekranlara buradan custom view açılabilir
-        Log.i("Custom", "TEST-KVC \nonFailure: " +
+        Log.i("Custom", "TEST-KYC \nonFailure: " +
             "\nidVerifyState:\t\t${p0}" +
             "\nidVerifyFailureCode:\t${p1}" +
             "\ns:\t\t\t\t\t$p2"
@@ -356,105 +356,105 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
         // Tüm fail ekranlara buradan custom view açılabilir
         when (p1) {
             IDVerifyFailureCode.AuthFailureError -> {
-                Log.d("IDVerify", "TEST-KVC AuthFailureError")
+                Log.d("IDVerify", "TEST-KYC AuthFailureError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.AuthFailureError)
                 kycError()
             }
             IDVerifyFailureCode.ServerError -> {
-                Log.d("IDVerify", "TEST-KVC ServerError")
+                Log.d("IDVerify", "TEST-KYC ServerError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.ServerError)
                 kycError()
             }
             IDVerifyFailureCode.NetworkError -> {
-                Log.d("IDVerify", "TEST-KVC NetworkError")
+                Log.d("IDVerify", "TEST-KYC NetworkError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.NetworkError)
                 kycError()
             }
             IDVerifyFailureCode.ParseError -> {
-                Log.d("IDVerify", "TEST-KVC ParseError")
+                Log.d("IDVerify", "TEST-KYC ParseError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.ParseError)
                 kycError()
             }
             IDVerifyFailureCode.CustomerStateNotFound -> {
-                Log.d("IDVerify", "TEST-KVC CustomerStateNotFound")
+                Log.d("IDVerify", "TEST-KYC CustomerStateNotFound")
                 enVerifyApi.handleFail(IDVerifyFailureCode.CustomerStateNotFound)
                 kycError()
             }
             IDVerifyFailureCode.NFCUndefined -> {
-                Log.d("IDVerify", "TEST-KVC NFCUndefined")
+                Log.d("IDVerify", "TEST-KYC NFCUndefined")
                 enVerifyApi.handleFail(IDVerifyFailureCode.NFCUndefined)
                 enVerifyApi.addFragment(FragmentNFCError())
             }
             IDVerifyFailureCode.NFCKeysFailure -> {
-                Log.d("IDVerify", "TEST-KVC NFCKeysFailure")
+                Log.d("IDVerify", "TEST-KYC NFCKeysFailure")
                 enVerifyApi.handleFail(IDVerifyFailureCode.NFCKeysFailure)
                 enVerifyApi.addFragment(FragmentNFCError())
             }
             IDVerifyFailureCode.NFCTimeout -> {
-                Log.d("IDVerify", "TEST-KVC NFCTimeout")
+                Log.d("IDVerify", "TEST-KYC NFCTimeout")
                 enVerifyApi.handleFail(IDVerifyFailureCode.NFCTimeout)
                 enVerifyApi.addFragment(FragmentNFCError())
             }
             IDVerifyFailureCode.EyeCloseCheckFailure, IDVerifyFailureCode.RightEyeCloseCheckFailure, IDVerifyFailureCode.LeftEyeCloseCheckFailure, IDVerifyFailureCode.SmilingCheckFailure, IDVerifyFailureCode.faceNotFound -> {
-                Log.d("IDVerify", "TEST-KVC FaceErrorOccurred")
+                Log.d("IDVerify", "TEST-KYC FaceErrorOccurred")
                 enVerifyApi.handleFail(IDVerifyFailureCode.faceNotFound)
                 enVerifyApi.addFragment(FragmentFaceError())
             }
             IDVerifyFailureCode.IDTextRecognitionTimeout -> {
-                Log.d("IDVerify", "TEST-KVC IDTextRecognitionTimeout")
+                Log.d("IDVerify", "TEST-KYC IDTextRecognitionTimeout")
                 enVerifyApi.handleFail(IDVerifyFailureCode.IDTextRecognitionTimeout)
                 enVerifyApi.addFragment(FragmentOCRError())
             }
             IDVerifyFailureCode.FakeIDCheckFailure -> {
-                Log.d("IDVerify", "TEST-KVC FakeIDCheckFailure")
+                Log.d("IDVerify", "TEST-KYC FakeIDCheckFailure")
                 enVerifyApi.handleFail(IDVerifyFailureCode.FakeIDCheckFailure)
                 enVerifyApi.addFragment(FragmentOCRError())
             }
             IDVerifyFailureCode.NoConnectionError -> {
-                Log.d("IDVerify", "TEST-KVC NoConnectionError")
+                Log.d("IDVerify", "TEST-KYC NoConnectionError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.NoConnectionError)
                 kycError()
             }
             IDVerifyFailureCode.TimeoutError -> {
-                Log.d("IDVerify", "TEST-KVC TimeoutError")
+                Log.d("IDVerify", "TEST-KYC TimeoutError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.TimeoutError)
                 kycError()
             }
             IDVerifyFailureCode.TxtBackFail -> {
-                Log.d("IDVerify", "TEST-KVC TxtBackFail")
+                Log.d("IDVerify", "TEST-KYC TxtBackFail")
                 enVerifyApi.handleFail(IDVerifyFailureCode.TxtBackFail)
                 kycError()
             }
             IDVerifyFailureCode.IDConnectionError -> {
-                Log.d("IDVerify", "TEST-KVC IDConnectionError")
+                Log.d("IDVerify", "TEST-KYC IDConnectionError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.IDConnectionError)
                 enVerifyApi.addFragment(FragmentOCRError())
             }
             IDVerifyFailureCode.NFCConnectionError -> {
-                Log.d("IDVerify", "TEST-KVC NFCConnectionError")
+                Log.d("IDVerify", "TEST-KYC NFCConnectionError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.NFCConnectionError)
                 kycError()
             }
             IDVerifyFailureCode.FaceAngleFailure -> {
-                Log.d("IDVerify", "TEST-KVC FaceAngleFailure")
+                Log.d("IDVerify", "TEST-KYC FaceAngleFailure")
                 enVerifyApi.handleFail(IDVerifyFailureCode.FaceAngleFailure)
                 enVerifyApi.addFragment(FragmentFaceError())
             }
             IDVerifyFailureCode.FaceConnectionError -> {
-                Log.d("IDVerify", "TEST-KVC FaceConnectionError")
+                Log.d("IDVerify", "TEST-KYC FaceConnectionError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.FaceConnectionError)
                 kycError()
             }
             IDVerifyFailureCode.CertificationError -> {
-                Log.d("IDVerify", "TEST-KVC CertificationError")
+                Log.d("IDVerify", "TEST-KYC CertificationError")
                 enVerifyApi.handleFail(IDVerifyFailureCode.CertificationError)
             }
             IDVerifyFailureCode.DeviceNotSupported -> {
-                Log.d("IDVerify", "TEST-KVC DeviceNotSupported")
+                Log.d("IDVerify", "TEST-KYC DeviceNotSupported")
                 kycError()
             }
             else -> {
-                Log.d("IDVerify", "TEST-KVC UnknownError: $p1")
+                Log.d("IDVerify", "TEST-KYC UnknownError: $p1")
                 kycError()
                 enVerifyApi.handleFail(p1)
             }
@@ -462,27 +462,26 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
     }
 
     override fun onCertificateSucceed() {
-        Log.i("Custom", "TEST-KVC onCertificateSucceed")
+        Log.i("Custom", "TEST-KYC onCertificateSucceed")
     }
 
     override fun onCertificateFailed() {
-        Log.i("Custom", "TEST-KVC onCertificateFailed")
+        Log.i("Custom", "TEST-KYC onCertificateFailed")
     }
 
     override fun onSessionStartSucceed(p0: Boolean, p1: String?) {
-        Log.i("Custom", "TEST-KVC onSessionStartSucceed " + p1)
+        Log.i("Custom", "TEST-KYC onSessionStartSucceed " + p1)
         isSdkInitialized = true
     }
 
     override fun onSessionStartFailed() {
-        Log.i("Custom", "TEST-KVC onSessionStartFailed")
+        Log.i("Custom", "TEST-KYC onSessionStartFailed")
         isSdkInitialized = false
         kycError()
     }
 
     private fun addIntegration() {
         val customDataObject: JSONObject = JSONObject(customData)
-        // Log.i("Custom", "TEST-KVC addIntegration " + customData)
 
         val jsonData = JSONObject().apply {
             put("occupations", JSONArray().apply {
@@ -494,23 +493,43 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
                     put("occupationTypeId", "5d1aa7d4-46a6-f804-395e-2575c967ca97")
                     put("occupationTypeFieldId", customDataObject.getString("occupationrole"))
                 })
+                put(JSONObject().apply {
+                    put("occupationTypeId", "5d17c8ce-efc2-4cd2-55f4-c6998700dcfa")
+                    put("occupationTypeFieldId", customDataObject.getString("educationlevel"))
+                })
             })
     
             put("incomes", JSONArray().apply {
                 put(JSONObject().apply {
                     put("currencyNumber", "949")
-                    put("sourceOfIncome", customDataObject.getString("incometypesSelected"))
-                    put("EstimatedTransactionVolume", customDataObject.getString("incometypesSelected"))
-                    put("monthlyAmount",  customDataObject.getString("transactionVolume"))
-                    put("TransactionCount", customDataObject.getString("transactionsNumbers"))
+                    put("sourceOfIncome", JSONArray().apply {
+                        customDataObject.getJSONArray("incometypesSelected").let { jsonArray ->
+                            for (i in 0 until jsonArray.length()) {
+                                val intValue = jsonArray.getString(i).toIntOrNull() ?: 0
+                                put(intValue)
+                            }
+                        }
+                    })
+                    put("EstimatedTransactionVolume", customDataObject.getString("transactionVolume").toInt())
+                    put("monthlyAmount", customDataObject.getString("monthlyAverage").toInt())
+                    put("TransactionCount", customDataObject.getString("transactionsNumbers").toInt())
                 })
             })
     
-            put("consents", JSONArray(listOf("KVKK", "GKS")))
+            put("consents", JSONArray().apply {
+                customDataObject.getJSONArray("selectedaAreements").let { jsonArray ->
+                    for (i in 0 until jsonArray.length()) {
+                        put(jsonArray.getString(i))
+                    }
+                }
+            })
+            put("PartnerCode", "csa")
         }
     
         val jsonString = jsonData.toString()
-    
+
+        Log.i("Custom", "TEST-KYC addIntegrationData " +  jsonString)
+
         val adressRegistrationModel = VerifyCallAddressRegistrationModel()
         enVerifyApi.postIntegrationAddRequest(
             "Session",
@@ -522,334 +541,334 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
     }
 
     override fun onIntegrationSucceed() {
-        Log.i("Custom", "TEST-KVC onIntegrationSucceed")
+        Log.i("Custom", "TEST-KYC onIntegrationSucceed")
         enVerifyApi.closeSession(true)
     }
 
     override fun onIntegrationFailed() {
-        Log.i("Custom", "TEST-KVC onIntegrationFailed")
+        Log.i("Custom", "TEST-KYC onIntegrationFailed")
         kycError()
     }
 
     override fun selfServiceReady() {
-        Log.i("Custom", "TEST-KVC selfServiceReady")
+        Log.i("Custom", "TEST-KYC selfServiceReady")
         enVerifyApi.replaceFragment(FragmentOCRInfo())
     }
 
     override fun idVerifyReady() {
-        Log.i("Custom", "TEST-KVC idVerifyReady")
+        Log.i("Custom", "TEST-KYC idVerifyReady")
     }
 
     override fun idSelfVerifyReady() {
-        Log.i("Custom", "TEST-KVC idSelfVerifyReady")
+        Log.i("Custom", "TEST-KYC idSelfVerifyReady")
     }
 
     override fun idRetry() {
         enVerifyApi.startIDTypeCheckFront()
-        Log.i("Custom", "TEST-KVC idRetry")
+        Log.i("Custom", "TEST-KYC idRetry")
     }
 
     override fun idFrontCompleted() {
-        Log.i("Custom", "TEST-KVC idFrontCompleted")
+        Log.i("Custom", "TEST-KYC idFrontCompleted")
     }
 
     override fun idTypeVerified() {
-        Log.i("Custom", "TEST-KVC idTypeVerified")
+        Log.i("Custom", "TEST-KYC idTypeVerified")
         enVerifyApi.startIDDoc();
     }
 
     override fun idDocCompleted() {
-        Log.i("Custom", "TEST-KVC idDocCompleted")
+        Log.i("Custom", "TEST-KYC idDocCompleted")
     }
 
     override fun idDocStored() {
-        Log.i("Custom", "TEST-KVC idDocStored")
+        Log.i("Custom", "TEST-KYC idDocStored")
         enVerifyApi.confirmVerification(IDVerifyState.IDDOC_VERIFIED)
     }
 
     override fun idDocStoreFailed() {
-        Log.i("Custom", "TEST-KVC idDocStoreFailed")
+        Log.i("Custom", "TEST-KYC idDocStoreFailed")
         enVerifyApi.replaceFragment(FragmentOCRError())
     }
 
     override fun idDocVerified() {
-        Log.i("Custom", "TEST-KVC idDocVerified")
+        Log.i("Custom", "TEST-KYC idDocVerified")
         enVerifyApi.replaceFragment(FragmentOCRSuccess())
     }
 
     override fun nfcReady() {
-        Log.i("Custom", "TEST-KVC nfcReady")
+        Log.i("Custom", "TEST-KYC nfcReady")
     }
 
     override fun nfcCompleted() {
-        Log.i("Custom", "TEST-KVC nfcCompleted")
+        Log.i("Custom", "TEST-KYC nfcCompleted")
     }
 
     override fun nfcStored() {
-        Log.i("Custom", "TEST-KVC nfcStored")
+        Log.i("Custom", "TEST-KYC nfcStored")
         enVerifyApi.confirmVerification(IDVerifyState.NFC_VERIFIED)
     }
 
     override fun nfcStoreFailed() {
-        Log.i("Custom", "TEST-KVC nfcStoreFailed")
+        Log.i("Custom", "TEST-KYC nfcStoreFailed")
         enVerifyApi.replaceFragment(FragmentNFCError())
     }
 
     override fun nfcBACDataFailure() {
-        Log.i("Custom", "TEST-KVC nfcBACDataFailure")
+        Log.i("Custom", "TEST-KYC nfcBACDataFailure")
     }
 
     override fun nfcVerified() {
-        Log.i("Custom", "TEST-KVC nfcVerified")
+        Log.i("Custom", "TEST-KYC nfcVerified")
         enVerifyApi.replaceFragment(FragmentNFCSuccess())
     }
 
     override fun nfcRetry() {
         checkNFCState()
         startNFC()
-        Log.i("Custom", "TEST-KVC nfcRetry")
+        Log.i("Custom", "TEST-KYC nfcRetry")
     }
 
     override fun faceReady() {
-        Log.i("Custom", "TEST-KVC faceReady")
+        Log.i("Custom", "TEST-KYC faceReady")
     }
 
     override fun fakeChecked() {
-        Log.i("Custom", "TEST-KVC fakeChecked")
+        Log.i("Custom", "TEST-KYC fakeChecked")
     }
 
     override fun faceDetected() {
-        Log.i("Custom", "TEST-KVC faceDetected")
+        Log.i("Custom", "TEST-KYC faceDetected")
         enVerifyApi.eyeCloseIntervalDetect()
     }
 
     
     override fun eyeCloseDetected() {
-        Log.i("Custom", "TEST-KVC eyeCloseDetected")
+        Log.i("Custom", "TEST-KYC eyeCloseDetected")
     }
     
     override fun rightEyeCloseDetected() {
-        Log.i("Custom", "TEST-KVC rightEyeCloseDetected")
+        Log.i("Custom", "TEST-KYC rightEyeCloseDetected")
     }
     
     override fun leftEyeCloseDetected() {
-        Log.i("Custom", "TEST-KVC leftEyeCloseDetected")
+        Log.i("Custom", "TEST-KYC leftEyeCloseDetected")
     }
     
     override fun retryFaceVerification() {
-        Log.i("Custom", "TEST-KVC retryFaceVerification")
+        Log.i("Custom", "TEST-KYC retryFaceVerification")
     }
     
     override fun eyeCloseIntervalDetected() {
-        Log.i("Custom", "TEST-KVC eyeCloseIntervalDetected")
+        Log.i("Custom", "TEST-KYC eyeCloseIntervalDetected")
         enVerifyApi.smileDetect()
     }
 
     override fun smileDetected() {
-        Log.i("Custom", "TEST-KVC smileDetected")
+        Log.i("Custom", "TEST-KYC smileDetected")
         enVerifyApi.setFaceCompleted()
     }
 
     override fun faceCompleted() {
-        Log.i("Custom", "TEST-KVC faceCompleted")
+        Log.i("Custom", "TEST-KYC faceCompleted")
     }
     
     override fun faceStoreCompleted() {
-        Log.i("Custom", "TEST-KVC faceStoreCompleted")
+        Log.i("Custom", "TEST-KYC faceStoreCompleted")
     }
 
     override fun faceStored() {
-        Log.i("Custom", "TEST-KVC faceStored")
+        Log.i("Custom", "TEST-KYC faceStored")
         enVerifyApi.confirmVerification(IDVerifyState.FACE_VERIFIED)
     }
 
     override fun faceStoreFailed() {
-        Log.i("Custom", "TEST-KVC faceStoreFailed")
+        Log.i("Custom", "TEST-KYC faceStoreFailed")
         enVerifyApi.replaceFragment(FragmentFaceError())
     }
 
     override fun faceRetry() {
-        Log.i("Custom", "TEST-KVC faceRetry")
+        Log.i("Custom", "TEST-KYC faceRetry")
         enVerifyApi.startFaceDetect()
     }
 
     override fun faceVerified() {
-        Log.i("Custom", "TEST-KVC faceVerified")
+        Log.i("Custom", "TEST-KYC faceVerified")
         addIntegration();
     }
     
     override fun onNewIntent(intent: Intent) {
-        Log.i("Custom", "TEST-KVC onNewIntent")
+        Log.i("Custom", "TEST-KYC onNewIntent")
         super.onNewIntent(intent)
         setIntent(intent)
     }
 
     override fun callSessionCloseResult(p0: CloseSessionStatus?) {
-        Log.i("Custom", "TEST-KVC callSessionCloseResult")
+        Log.i("Custom", "TEST-KYC callSessionCloseResult")
         if(p0 == CloseSessionStatus.CLOSED) {
-            Log.i("Custom", "TEST-KVC callSessionCloseResult CLOSED")
+            Log.i("Custom", "TEST-KYC callSessionCloseResult CLOSED")
             completeLoanaAplication()
         } else {
-            Log.i("Custom", "TEST-KVC callSessionCloseResult else")
+            Log.i("Custom", "TEST-KYC callSessionCloseResult else")
             isSdkInitialized = false
             kycError()
         }
     }
 
     override fun restartVerification() {
-        Log.i("Custom", "TEST-KVC restartVerification")
+        Log.i("Custom", "TEST-KYC restartVerification")
     }
 
     //NOT USING
 
     override fun faceRightDetected() {
-        Log.i("Custom", "TEST-KVC faceRightDetected")
+        Log.i("Custom", "TEST-KYC faceRightDetected")
         //enVerifyApi.faceLeftDetect()
     }
     
     override fun faceLeftDetected() {
-        Log.i("Custom", "TEST-KVC faceLeftDetected")
+        Log.i("Custom", "TEST-KYC faceLeftDetected")
         //enVerifyApi.faceUpDetect()
     }
 
     override fun faceUpDetected() {
-        Log.i("Custom", "TEST-KVC faceUpDetected")
+        Log.i("Custom", "TEST-KYC faceUpDetected")
     }
 
     override fun videoCallReady() {
-        Log.i("Custom", "TEST-KVC videoCallReady")
+        Log.i("Custom", "TEST-KYC videoCallReady")
     }
 
     override fun retryNFCVerification() {
-        Log.i("Custom", "TEST-KVC retryNFCVerification")
+        Log.i("Custom", "TEST-KYC retryNFCVerification")
     }
 
     override fun retryTextVerification() {
-        Log.i("Custom", "TEST-KVC retryTextVerification")
+        Log.i("Custom", "TEST-KYC retryTextVerification")
     }
 
     override fun localHangedUp() {
-        Log.i("Custom", "TEST-KVC localHangedUp")
+        Log.i("Custom", "TEST-KYC localHangedUp")
     }
 
     override fun callWait() {
-        Log.i("Custom", "TEST-KVC callWait")
+        Log.i("Custom", "TEST-KYC callWait")
     }
 
     override fun callStarted() {
-        Log.i("Custom", "TEST-KVC callStarted")
+        Log.i("Custom", "TEST-KYC callStarted")
     }
 
     override fun remoteHangedUp() {
-        Log.i("Custom", "TEST-KVC remoteHangedUp")
+        Log.i("Custom", "TEST-KYC remoteHangedUp")
     }
 
     override fun resolutionChanged() {
-        Log.i("Custom", "TEST-KVC resolutionChanged")
+        Log.i("Custom", "TEST-KYC resolutionChanged")
     }
 
     override fun forceHangup() {
-        Log.i("Custom", "TEST-KVC forceHangup")
+        Log.i("Custom", "TEST-KYC forceHangup")
     }
 
     override fun agentRequest(p0: String?) {
-        Log.i("Custom", "TEST-KVC agentRequest " + p0)
+        Log.i("Custom", "TEST-KYC agentRequest " + p0)
     }
 
     override fun cardFrontDetected() {
-        Log.i("Custom", "TEST-KVC cardFrontDetected")
+        Log.i("Custom", "TEST-KYC cardFrontDetected")
     }
 
     override fun cardBackDetected() {
-        Log.i("Custom", "TEST-KVC cardBackDetected")
+        Log.i("Custom", "TEST-KYC cardBackDetected")
     }
 
     override fun cardHoloDetected() {
-        Log.i("Custom", "TEST-KVC cardHoloDetected")
+        Log.i("Custom", "TEST-KYC cardHoloDetected")
     }
 
     override fun screenRecorderOnStart() {
-        Log.i("Custom", "TEST-KVC screenRecorderOnStart")
+        Log.i("Custom", "TEST-KYC screenRecorderOnStart")
     }
 
     override fun screenRecorderOnComplete() {
-        Log.i("Custom", "TEST-KVC screenRecorderOnComplete")
+        Log.i("Custom", "TEST-KYC screenRecorderOnComplete")
     }
 
     override fun screenRecorderOnError(p0: Int, p1: String?) {
-        Log.i("Custom", "TEST-KVC screenRecorderOnError " + p1)
+        Log.i("Custom", "TEST-KYC screenRecorderOnError " + p1)
     }
 
     override fun screenRecorderOnAppend() {
-        Log.i("Custom", "TEST-KVC screenRecorderOnAppend")
+        Log.i("Custom", "TEST-KYC screenRecorderOnAppend")
     }
 
     override fun onResultGetSucceed(p0: VerifyCallResultModel?) {
-        Log.i("Custom", "TEST-KVC onResultGetSucceed")
+        Log.i("Custom", "TEST-KYC onResultGetSucceed")
     }
 
     override fun onResultGetFailed() {
-        Log.i("Custom", "TEST-KVC onResultGetFailed")
+        Log.i("Custom", "TEST-KYC onResultGetFailed")
     }
 
     override fun onRoomIDSendSucceed() {
-        Log.i("Custom", "TEST-KVC onRoomIDSendSucceed")
+        Log.i("Custom", "TEST-KYC onRoomIDSendSucceed")
     }
 
     override fun onRoomIDSendFailed() {
-        Log.i("Custom", "TEST-KVC onRoomIDSendFailed")
+        Log.i("Custom", "TEST-KYC onRoomIDSendFailed")
     }
 
     override fun agentCameraDisabled() {
-        Log.i("Custom", "TEST-KVC agentCameraDisabled")
+        Log.i("Custom", "TEST-KYC agentCameraDisabled")
     }
 
     override fun agentCameraEnabled() {
-        Log.i("Custom", "TEST-KVC agentCameraEnabled")
+        Log.i("Custom", "TEST-KYC agentCameraEnabled")
     }
 
     override fun maximumCallTimeExpired() {
-        Log.i("Custom", "TEST-KVC maximumCallTimeExpired")
+        Log.i("Custom", "TEST-KYC maximumCallTimeExpired")
     }
 
     override fun onVideoAddSucceed() {
-        Log.i("Custom", "TEST-KVC onVideoAddSucceed")
+        Log.i("Custom", "TEST-KYC onVideoAddSucceed")
     }
 
     override fun onVideoAddFailure(p0: String?) {
-        Log.i("Custom", "TEST-KVC onVideoAddFailure " + p0)
+        Log.i("Custom", "TEST-KYC onVideoAddFailure " + p0)
     }
 
     override fun signingSucceed() {
-        Log.i("Custom", "TEST-KVC signingSucceed")
+        Log.i("Custom", "TEST-KYC signingSucceed")
     }
 
     override fun signingFailed() {
-        Log.i("Custom", "TEST-KVC signingFailed")
+        Log.i("Custom", "TEST-KYC signingFailed")
     }
 
     override fun sessionUpdateSucceed() {
-        Log.i("Custom", "TEST-KVC sessionUpdateSucceed")
+        Log.i("Custom", "TEST-KYC sessionUpdateSucceed")
     }
 
     override fun sessionUpdateFailed() {
-        Log.i("Custom", "TEST-KVC sessionUpdateFailed")
+        Log.i("Custom", "TEST-KYC sessionUpdateFailed")
     }
 
     override fun onNonIcaoStarted() {
-        Log.i("Custom", "TEST-KVC onNonIcaoStarted")
+        Log.i("Custom", "TEST-KYC onNonIcaoStarted")
     }
 
     override fun onNonIcaoCompleted() {
-        Log.i("Custom", "TEST-KVC onNonIcaoCompleted")
+        Log.i("Custom", "TEST-KYC onNonIcaoCompleted")
     }
 
     override fun onNonIcaoStored() {
-        Log.i("Custom", "TEST-KVC onNonIcaoStored")
+        Log.i("Custom", "TEST-KYC onNonIcaoStored")
     }
 
     override fun onNonIcaoStoreFailed() {
-        Log.i("Custom", "TEST-KVC onNonIcaoStoreFailed")
+        Log.i("Custom", "TEST-KYC onNonIcaoStoreFailed")
     }
 
     override fun onBackPressed() {

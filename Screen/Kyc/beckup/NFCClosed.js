@@ -17,46 +17,44 @@ import {
 import SubtabHeader from '../Components/SubtabHeader.js';
 import {FontFamilies} from '../../constants/fonts.js';
 
-const NFCSuccess = () => {
+const NFCClosed = ({ navigation, route }) => {
 
-  const startFace = () => {
+  const openEnQualifyActivity = () => {
+    NativeModules.EnQualifyModuleAndroid.openNativeActivity()
   }
 
   return (
     <View style={styles.wrapper}>
-      <SubtabHeader routetarget="VerifyScreen" name="Yüzünü Tanıt" count="0" />
+      {/* <SubtabHeader routetarget="VerifyScreen" name="Kimliğini Doğrula" count="0" /> */}
       <View style={styles.main}>
         <View style={styles.container}>
           <View style={styles.content}>
             <Image
-              source={require('../../assets/img/kvc_face.png')}
+              source={require('../../assets/img/kyc_nfc_error.png')}
               style={styles.image}
             />
-            <Text style={styles.title}>Yüz tanıma ve canlılık testini yap</Text>
-            <Text style={[styles.text, { marginBottom:8}]}>Yüz tanıma ve canlılık testi için hazır mısın?</Text>
-            <Text style={styles.text}>Ekrandaki yönlendirmeleri uygulayarak testi tamamlayabilirsin. Test boyunca yeterince aydınlık bir ortamda olman önemli.</Text>
+            <Text style={styles.title}>NFC Özelliğiniz Kapalı</Text>
+            <Text style={styles.text}>Lütfen NFC özelleğinizi açıp tekrar deneyiniz</Text>
           </View>
           <View style={styles.buttonContainer}>
-            <Text style={styles.text}>Devam Et seçiminden sonra kameran açılacaktır.</Text>
             <TouchableOpacity
-              onPress={startFace}
+              onPress={openEnQualifyActivity}
               style={[styles.buttonStyle, {}]}
               activeOpacity={0.5}
             >
-              <Text style={styles.buttonTextStyle}>Devam Et</Text> 
+              <Text style={styles.buttonTextStyle}>Tekrar Dene</Text>
             </TouchableOpacity>
             <Image
               source={require('../../assets/img/dgfin_legal.png')}
               style={styles.dgfin} />
           </View>
-
         </View>
       </View>
     </View>
   );
 };
 
-export default NFCSuccess;
+export default NFCClosed;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -82,6 +80,10 @@ const styles = StyleSheet.create({
     width:120,
     height:120
   },
+  icon:{
+    width:24,
+    height:24
+  },
   title:{
     color: '#004F97',
     fontFamily: FontFamilies.UBUNTU.medium,
@@ -90,7 +92,6 @@ const styles = StyleSheet.create({
     marginTop:24,
     marginBottom:8
   },
-  
   text:{
     color: "#909EAA",
     fontFamily: FontFamilies.UBUNTU.normal,
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   buttonTextStyle: {
     color: '#FFFFFF',
     paddingVertical: 15,
-    fontFamily:  FontFamilies.UBUNTU.medium,
+    fontFamily: FontFamilies.UBUNTU.medium,
     fontWeight: '500',
     fontSize: 14,
   },

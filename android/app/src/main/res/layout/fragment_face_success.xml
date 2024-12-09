@@ -38,7 +38,7 @@
                     android:id="@+id/successImageView"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:src="@drawable/kvc_success" />
+                    android:src="@drawable/kyc_success" />
 
                 <TextView
                     android:id="@+id/titleTextView"

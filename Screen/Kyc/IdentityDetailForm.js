@@ -5,12 +5,12 @@ import Loader from '../Components/Loader.js';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import SubtabHeader from '../Components/SubtabHeader.js';
-import KvcTextInput from './components/input.js';
-import KvcHeader from './components/header.js';
+import KycTextInput from './components/input.js';
+import KycHeader from './components/header.js';
 import { apiRequest, customAlert, validateFormData } from './helper/index.js';
 import { FontFamilies } from '../../constants/fonts.js';
 import { Dropdown } from 'react-native-element-dropdown';
-import KvcCheckbox from './components/checkbox.js';
+import KycCheckbox from './components/checkbox.js';
 
 const IdentityDetailForm = ({ route, navigation }) => {
   const user = route.params.user
@@ -22,6 +22,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
   const [occupations, setOccupations] = useState();
   const [incometypes, setIncometypes] = useState([]);
   const [incometypesSelected, setIncometypesSelected] = useState([]);
+  const [incometypesSelectedValid, setIncometypesSelectedValid] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -46,7 +47,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
         return {
           ...prevData,
           [key]: {
-            isValid: false,
+            isValid: true,
             value: numericValue,
           },
         };
@@ -57,7 +58,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
         return {
           ...prevData,
           [key]: {
-            isValid: false,
+            isValid: true,
             value: value,
           },
         };
@@ -72,6 +73,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
         return prevSelected.filter((itemId) => itemId !== id);
       } else {
         // ID listede yoksa, ekle
+        setIncometypesSelectedValid(true)
         return [...prevSelected, id];
       }
     });
@@ -83,28 +85,31 @@ const IdentityDetailForm = ({ route, navigation }) => {
     setFormData(updatedData);
 
     if (Object.values(updatedData).some((field) => field.isValid === false)) {
-      console.log("AAAAA")
       return;
     }
 
-
     if (incometypesSelected.length == 0) {
-
-      customAlert({
-        title: "Eksik Alanlar",
-        message: `Lütfen en az 1 gelir kaynağı seçiniz`
-      })
-
+      setIncometypesSelectedValid(false)
       return;
+    }
+
+    const data = {
+      userBirthplace:formData.userBirthplace.value,
+      monthlyAverage:formData.monthlyAverage.value,
+      transactionVolume:formData.transactionVolume.value,
+      transactionsNumbers:formData.transactionsNumbers.value,
+      occupation:formData.occupation.value,
+      occupationrole:formData.occupationrole.value,
+      educationlevel:formData.educationlevel.value,
     }
 
     setLoading(true)
-    navigation.navigate('Kvc', {
+    navigation.navigate('Kyc', {
       screen: 'VerifyScreen', params: {
         user: user,
         selectedaAreements: selectedaAreements,
         incometypesSelected: incometypesSelected,
-        data: formData,
+        data: data,
         referenceId: verifyData.referenceId
       }
     })
@@ -159,16 +164,16 @@ const IdentityDetailForm = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={istyles.main}>
-      <SubtabHeader isKvcPage name="Kimlik Bilgilerim" count="0" />
+      <SubtabHeader isKycPage name="Kimlik Bilgilerim" count="0" />
       <Loader loading={loading} />
 
       <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
         <KeyboardAvoidingView enabled>
           <View style={istyles.container}>
-            <KvcHeader number="3" title="Bilgilerini Tamamla"></KvcHeader>
+            <KycHeader number="3" title="Bilgilerini Tamamla"></KycHeader>
             <View style={istyles.form}>
 
-              <KvcTextInput
+              <KycTextInput
                 value={formData.userBirthplace.value}
                 isValid={formData.userBirthplace.isValid}
                 onChange={(value) => handleChange("userBirthplace", value)}
@@ -244,14 +249,14 @@ const IdentityDetailForm = ({ route, navigation }) => {
                 <View style={istyles.incometypesBody}>
                   {incometypes.map((item, index) =>
                     <View key={index} style={istyles.incometypesItem}>
-                      <KvcCheckbox isFullClick text={item.text} show={incometypesSelected?.find(x => x == item.id)} onPress={() => toggleIncomeType(item.id)}></KvcCheckbox>
+                      <KycCheckbox isFullClick text={item.text} isValid={incometypesSelectedValid} show={incometypesSelected?.find(x => x == item.id)} onPress={() => toggleIncomeType(item.id)}></KycCheckbox>
                     </View>
                   )}
                 </View>
 
               </View>}
 
-              <KvcTextInput
+              <KycTextInput
                 value={formData.monthlyAverage.value}
                 isValid={formData.monthlyAverage.isValid}
                 onChange={(value) => handleChange("monthlyAverage", value)}
@@ -259,7 +264,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
                 keyboardType='numeric'
               />
 
-              <KvcTextInput
+              <KycTextInput
                 value={formData.transactionVolume.value}
                 isValid={formData.transactionVolume.isValid}
                 onChange={(value) => handleChange("transactionVolume", value)}
@@ -267,7 +272,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
                 keyboardType='numeric'
               />
 
-              <KvcTextInput
+              <KycTextInput
                 value={formData.transactionsNumbers.value}
                 isValid={formData.transactionsNumbers.isValid}
                 onChange={(value) => handleChange("transactionsNumbers", value)}

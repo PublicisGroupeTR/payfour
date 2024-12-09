@@ -30,7 +30,7 @@ const NFCRequired = ({ navigation, route }) => {
         <View style={styles.container}>
           <View style={styles.content}>
             <Image
-              source={require('../../assets/img/kvc_nfc_error.png')}
+              source={require('../../assets/img/kyc_nfc_error.png')}
               style={styles.image}
             />
             <Text style={styles.title}>Cihazınız NFC'yi desteklemiyor, devam edemezsiniz.</Text>

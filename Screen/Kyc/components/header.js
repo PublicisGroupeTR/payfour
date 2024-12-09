@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View, TouchableOpacity, Image, Text} from 'react-native';
 import {FontFamilies} from '../../../constants/fonts.js';
 
-const KvcHeader = props => {
+const KycHeader = props => {
   const {number, title, text, ...attributes} = props;
 
   return (
@@ -18,7 +18,7 @@ const KvcHeader = props => {
   );
 };
 
-export default KvcHeader;
+export default KycHeader;
 
 const styles = StyleSheet.create({
     header:{

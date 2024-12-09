@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextInput, Keyboard, View, StyleSheet, Text } from 'react-native';
 
-const KvcTextInput = ({
+const KycTextInput = ({
   value,
   onChange,
   placeholder,
@@ -10,7 +10,7 @@ const KvcTextInput = ({
   keyboardType = 'default',
   returnKeyType = 'next',
   propsStyle = {},
-  isValid = false,
+  isValid = true,
   title
 }) => {
   return (
@@ -84,4 +84,4 @@ const style = StyleSheet.create({
 })
   
 
-export default KvcTextInput;
+export default KycTextInput;

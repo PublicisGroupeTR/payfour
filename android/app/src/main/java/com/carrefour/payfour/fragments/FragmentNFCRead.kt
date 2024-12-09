@@ -64,37 +64,37 @@ class FragmentNFCRead : EnverifyNFCBaseFragment() {
     }
 
     override fun nfcReadStarted(p0: Int) {
-        Log.i("Custom", "TEST-KVC nfcReadStarted")
+        Log.i("Custom", "TEST-KYC nfcReadStarted")
         updateStep(-2, R.string.nfc_chip_scan_start)
     }
 
     override fun nfcTagDetected(p0: Int) {
-        Log.i("Custom", "TEST-KVC nfcTagDetected")
+        Log.i("Custom", "TEST-KYC nfcTagDetected")
         updateStep(-2, R.string.nfc_chip_scan_tag_detect)
     }
 
     override fun nfcFirstLevel(p0: Int) {
-        Log.i("Custom", "TEST-KVC nfcFirstLevel")
+        Log.i("Custom", "TEST-KYC nfcFirstLevel")
         updateStep(0, R.string.nfc_chip_scan_s1)
     }
 
     override fun nfcSecondLevel(p0: Int) {
-        Log.i("Custom", "TEST-KVC nfcSecondLevel")
+        Log.i("Custom", "TEST-KYC nfcSecondLevel")
         updateStep(1, R.string.nfc_chip_scan_s2)
     }
 
     override fun nfcThirdLevel(p0: Int) {
-        Log.i("Custom", "TEST-KVC nfcThirdLevel")
+        Log.i("Custom", "TEST-KYC nfcThirdLevel")
         updateStep(2, R.string.nfc_chip_scan_s3)
     }
 
     override fun nfcFourthLevel(p0: Int) {
-        Log.i("Custom", "TEST-KVC nfcFourthLevel")
+        Log.i("Custom", "TEST-KYC nfcFourthLevel")
         updateStep(3, R.string.nfc_chip_scan_s4)
     }
 
     override fun nfcReadError(p0: Int, p1: String?) {
-        Log.i("Custom", "TEST-KVC nfcReadError")
+        Log.i("Custom", "TEST-KYC nfcReadError")
         if (activity != null)
         updateStep(-1, R.string.nfc_chip_scan_error)
     }

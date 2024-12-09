@@ -40,7 +40,7 @@
                     android:id="@+id/nfcErrorImageView"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:src="@drawable/kvc_nfc_error" />
+                    android:src="@drawable/kyc_nfc_error" />
 
                 <TextView
                     android:id="@+id/titleTextView"

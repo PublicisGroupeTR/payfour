@@ -6,9 +6,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import MaskInput from 'react-native-mask-input';
 import SubtabHeader from '../Components/SubtabHeader.js';
-import KvcTextInput from './components/input.js';
-import KvcCheckbox from './components/checkbox.js';
-import KvcHeader from './components/header.js';
+import KycTextInput from './components/input.js';
+import KycCheckbox from './components/checkbox.js';
+import KycHeader from './components/header.js';
 import { apiRequest, customAlert, validateFormData, formatDate, isValidEmail } from './helper/index.js';
 import { FontFamilies } from '../../constants/fonts.js';
 import DatePicker from "react-native-date-picker";
@@ -59,13 +59,7 @@ const IdentityForm = ({ route, navigation }) => {
 
     const updatedData = validateFormData(formData);
     
-    console.log(updatedData)
-
     setFormData(updatedData);
-
-    if (Object.values(updatedData).some((field) => field.isValid === false)) {
-      return;
-    }
 
     const mandatoryAgreements = agreements.filter((agreement) =>
       [1].includes(agreement.necessity)
@@ -79,13 +73,17 @@ const IdentityForm = ({ route, navigation }) => {
       if (unselectedMandatoryAgreements.some((unselected) => unselected.id === agreement.id)) {
         return {
           ...agreement,
-          isValid: true, 
+          isValid: false, 
         };
       }
       return agreement;
     });
 
     setAgreements([...updatedAgreements])
+
+    if (Object.values(updatedData).some((field) => field.isValid === false)) {
+      return;
+    }
 
     if (unselectedMandatoryAgreements.length != 0 ) {
       return
@@ -107,7 +105,7 @@ const IdentityForm = ({ route, navigation }) => {
       data: data
     });
     if (response.success) {
-      navigation.navigate('Kvc', {
+      navigation.navigate('Kyc', {
         screen: 'AddressInfo', params: {
           user: user,
           data: response.data,
@@ -160,7 +158,7 @@ const IdentityForm = ({ route, navigation }) => {
     });
 
     if (response.data) {
-      navigation.navigate('Kvc', {
+      navigation.navigate('Kyc', {
         screen: 'AgreementsView', params: {
           data: value,
           base64: response.data.documentContext,
@@ -176,12 +174,12 @@ const IdentityForm = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={istyles.main}>
-      <SubtabHeader isKvcPage name="Kimlik Bilgilerim" count="0" />
+      <SubtabHeader isKycPage name="Kimlik Bilgilerim" count="0" />
       <Loader loading={loading} />
       <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
         <KeyboardAvoidingView enabled>
           <View style={istyles.container}>
-            <KvcHeader number="1" title="Bilgilerini Tamamla" text="Kimlik kartındaki bilgiler alındı, şimdi kalanları tamamla"></KvcHeader>
+            <KycHeader number="1" title="Bilgilerini Tamamla" text="Kimlik kartındaki bilgiler alındı, şimdi kalanları tamamla"></KycHeader>
             <View style={istyles.form}>
               <MaskInput
                 style={[istyles.inputStyle, formData.userTCKN.isValid === false && istyles.borderError]}
@@ -194,7 +192,7 @@ const IdentityForm = ({ route, navigation }) => {
               />
 
               {/* Ad */}
-              <KvcTextInput
+              <KycTextInput
                 isValid={formData.userName.isValid}
                 value={formData.userName.value}
                 onChange={(value) => handleChange("userName", value)}
@@ -203,7 +201,7 @@ const IdentityForm = ({ route, navigation }) => {
               />
 
               {/* Soyad */}
-              <KvcTextInput
+              <KycTextInput
                 isValid={formData.userLastName.isValid}
                 value={formData.userLastName.value}
                 onChange={(value) => handleChange("userLastName", value)}
@@ -257,8 +255,8 @@ const IdentityForm = ({ route, navigation }) => {
 
               </TouchableOpacity>
 
-              <KvcTextInput
-                isValid={formData.userEmail.isValid || !isValidEmail(formData.userEmail.value)}
+              <KycTextInput
+                isValid={formData.userEmail.isValid && isValidEmail(formData.userEmail.value)}
                 style={istyles.inputStyle}
                 value={formData.userEmail.value}
                 onChange={(value) => handleChange("userEmail", value)}
@@ -277,7 +275,7 @@ const IdentityForm = ({ route, navigation }) => {
                         <Text style={istyles.agreementsInfoText}>{item.name}</Text>
                       </View>
                       :
-                      <KvcCheckbox 
+                      <KycCheckbox 
                         key={index} 
                         show={item.selected} 
                         isValid={item.isValid}
@@ -285,7 +283,7 @@ const IdentityForm = ({ route, navigation }) => {
                         onPress={() => changeAgreement(item.id)} 
                         textOpen={item.templateDesignId ? () => selectedAgreement(item) : undefined} 
                         text={item.name} 
-                      ></KvcCheckbox>
+                      ></KycCheckbox>
                   )}
                 </View>
               )}

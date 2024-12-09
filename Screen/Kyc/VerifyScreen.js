@@ -74,12 +74,12 @@ const VerifyScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.wrapper}>
-      <SubtabHeader isKvcPage name="Kullanıcı Onayı" count="0" />
+      <SubtabHeader isKycPage name="Kullanıcı Onayı" count="0" />
       <View style={styles.main}>
         <View style={styles.container}>
           <View style={styles.content}>
             <Image
-              source={require('../../assets/img/kvc_onay.png')}
+              source={require('../../assets/img/kyc_onay.png')}
               style={styles.image}
             />
             <Text style={styles.title}>Onayın Gerekiyor</Text>

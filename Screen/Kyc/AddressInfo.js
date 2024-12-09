@@ -4,8 +4,8 @@ import { styles } from '../Components/Styles.js';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import SubtabHeader from '../Components/SubtabHeader.js';
-import KvcTextInput from './components/input.js';
-import KvcHeader from './components/header.js';
+import KycTextInput from './components/input.js';
+import KycHeader from './components/header.js';
 import { FontFamilies } from '../../constants/fonts.js';
 
 const AddressInfo = ({ route, navigation }) => {
@@ -14,7 +14,7 @@ const AddressInfo = ({ route, navigation }) => {
   const selectedaAreements = route.params?.selectedaAreements
 
   const next = async () => {
-    navigation.navigate('Kvc', {
+    navigation.navigate('Kyc', {
       screen: 'IdentityDetailForm', params: {
         user: user,
         selectedaAreements: selectedaAreements,
@@ -25,43 +25,43 @@ const AddressInfo = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={istyles.main}>
-      <SubtabHeader isKvcPage name="Kimlik Bilgilerin" count="0" />
+      <SubtabHeader isKycPage name="Kimlik Bilgilerin" count="0" />
       <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
         <KeyboardAvoidingView enabled>
           <View style={istyles.container}>
-            <KvcHeader number="2" title="Adres Bilgileri"></KvcHeader>
+            <KycHeader number="2" title="Adres Bilgileri"></KycHeader>
             <View style={istyles.form}>
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"İl"}
               value={data.city || ""}
               placeholder="İl"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"İlçe"}
               value={data.district || ""}
               placeholder="İlçe"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"Mahalle"}
               value={data.neihgbourhood || ""}
               placeholder="Mahalle"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"Cadde"}
               value={data.street || ""}
               placeholder="Cadde"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"Bina No"}
               value={data.building || ""}
               placeholder="Bina No"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"Daire No"}
               value={data.section || ""}

@@ -17,36 +17,55 @@ import {
 import SubtabHeader from '../Components/SubtabHeader.js';
 import { FontFamilies } from '../../constants/fonts.js';
 
-const FaceSuccess = ({ navigation, route }) => {
+const FaceError = ({ navigation, route }) => {
 
   const openEnQualifyActivity = () => {
-    
+    NativeModules.EnQualifyModuleAndroid.startNFC()
   }
 
   return (
     <View style={styles.wrapper}>
-      {/* <SubtabHeader routetarget="VerifyScreen" name="İşlem Başarılı" count="0" /> */}
+      <SubtabHeader routetarget="VerifyScreen" name="Yüzünü Tanıt" count="0" />
       <View style={styles.main}>
         <View style={styles.container}>
           <View style={styles.content}>
             <Image
-              source={require('../../assets/img/kvc_success.png')}
+              source={require('../../assets/img/kyc_face_error.png')}
               style={styles.image}
             />
-            <Text style={styles.title}>Hazırsınız</Text>
-            <Text style={styles.subTitle}>Kimlik doğrulama işleminiz başarıyla tamamlandı.</Text>
-            <Text style={styles.text}>En avantajlı kredi fırsatları için Dgfin’e başvurabilirsiniz.</Text>
+            <Text style={styles.title}>Yüz Algılanamadı</Text>
+            <Text style={styles.text}>Lütfen işlem onaylanana kadar karanlık bir yerde olmadığından emin ol ve yönergeleri tamamla.</Text>
           </View>
-          <Image
+          <View style={{ gap: 12 }}>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                onPress={() => { }}
+                style={[styles.buttonStyle, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#004F97' }]}
+                activeOpacity={0.5}
+              >
+                <Text style={[styles.buttonTextStyle, { color: '#004F97' }]}>Vazgeç</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={openEnQualifyActivity}
+                style={[styles.buttonStyle, {}]}
+                activeOpacity={0.5}
+              >
+                <Text style={styles.buttonTextStyle}>Tekrar Dene</Text>
+              </TouchableOpacity>
+            </View>
+            <Image
               source={require('../../assets/img/dgfin_legal.png')}
               style={styles.dgfin} />
+          </View>
+
+
         </View>
       </View>
     </View>
   );
 };
 
-export default FaceSuccess;
+export default FaceError;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -72,10 +91,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120
   },
-  icon: {
-    width: 24,
-    height: 24
-  },
   title: {
     color: '#004F97',
     fontFamily: FontFamilies.UBUNTU.medium,
@@ -84,13 +99,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 8
   },
-  subTitle: {
-    color: '#0B1929',
-    fontFamily: FontFamilies.UBUNTU.medium,
-    fontWeight: '500',
-    fontSize: 12,
-    marginBottom: 4
-  },
+
   text: {
     color: "#909EAA",
     fontFamily: FontFamilies.UBUNTU.normal,
@@ -99,8 +108,7 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   buttonContainer: {
-    flexDirection: "col",
-    height: 120,
+    flexDirection: "row",
     gap: 12
   },
   buttonStyle: {

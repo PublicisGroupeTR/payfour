@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextInput, Keyboard, View, StyleSheet, Text, Pressable, Image, TouchableOpacity } from 'react-native';
 
-const KvcCheckbox = ({
+const KycCheckbox = ({
     show,
     onPress,
     text,
@@ -80,4 +80,4 @@ const style = StyleSheet.create({
       }
 });
 
-export default KvcCheckbox;
+export default KycCheckbox;

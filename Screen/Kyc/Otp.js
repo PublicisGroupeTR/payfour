@@ -6,7 +6,7 @@ import SubtabHeader from '../Components/SubtabHeader.js';
 import { OtpInput } from "react-native-otp-entry";
 import { FontFamilies } from '../../constants/fonts.js';
 
-const KvcOtp = ({ navigation }) => {
+const KycOtp = ({ navigation }) => {
 
   const [otpError, setOtpError] = useState(false);
   const [otp, setOtp] = useState(false);
@@ -67,7 +67,7 @@ const KvcOtp = ({ navigation }) => {
       }
     });
     if (response.success) {
-      navigation.navigate('Kvc', {
+      navigation.navigate('Kyc', {
         screen: 'IdentityForm', params: {
           user: user,
           tempToken: response.data.tempToken
@@ -118,13 +118,13 @@ const KvcOtp = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#efeff3' }}>
-      <SubtabHeader isKvcPage name="Doğrulama Kodu" count="0" />
+      <SubtabHeader isKycPage name="Doğrulama Kodu" count="0" />
       <Loader loading={loading} />
       <KeyboardAvoidingView style={{ flex: 1 }}>
         <View style={istyles.container}>
           <View style={istyles.otpContainer}>
             <Image
-              source={require('../../assets/img/kvc_otp.png')}
+              source={require('../../assets/img/kyc_otp.png')}
               style={istyles.otpImage}
             />
             <Text style={istyles.text}>
@@ -170,8 +170,7 @@ const KvcOtp = ({ navigation }) => {
               }}
             />
             {otpError && <Text style={[istyles.timer, { color: "#E94B43", marginTop: 8 }]}>Girilen kod hatalı. Lütfen kontrol edin.</Text>}
-
-            {timerText.length != 0 && timerCount != 0 && <Text style={[istyles.timer, { fontFamily: FontFamilies.UBUNTU.bold }]}>{timerText}</Text>}
+            {timerText.length != 0 && timerCount != 0 && <Text style={[istyles.timer, { marginTop:16, fontFamily: FontFamilies.UBUNTU.bold }]}>{timerText}</Text>}
             {timerCount == 0 &&
               <TouchableOpacity onPress={againOtp}>
                 <Text style={[istyles.timer]}>Yeniden Gönder</Text>
@@ -200,7 +199,7 @@ const KvcOtp = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-export default KvcOtp;
+export default KycOtp;
 
 const istyles = StyleSheet.create({
   container: {
@@ -218,7 +217,7 @@ const istyles = StyleSheet.create({
     fontFamily: FontFamilies.UBUNTU.normal,
     fontSize: 14,
     textAlign: "center",
-    marginBottom:16,
+    marginBottom:24,
     paddingHorizontal:36,
     lineHeight:20
   },
@@ -232,7 +231,7 @@ const istyles = StyleSheet.create({
     width: 56,
     height: 56,
     objectFit: "cover",
-    marginBottom:12
+    marginBottom:16
   },
   buttonContainer: {
     flexDirection: "col",

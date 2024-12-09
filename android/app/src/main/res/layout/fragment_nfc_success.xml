@@ -39,7 +39,7 @@
                     android:id="@+id/nfcImageView"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:src="@drawable/kvc_face" />
+                    android:src="@drawable/kyc_face" />
 
                 <TextView
                     android:id="@+id/titleTextView"

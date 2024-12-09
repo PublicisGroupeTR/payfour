@@ -77,11 +77,11 @@ class FragmentNFCError : Fragment() {
                 context.startActivity(callIntent)
             } else {
                 // Numara boşsa bir mesaj göster
-            Log.i("Custom", "TEST-KVC call center error")
+            Log.i("Custom", "TEST-KYC call center error")
 
             }
         } catch (e: Exception) {
-            Log.i("Custom", "TEST-KVC call center error 2")
+            Log.i("Custom", "TEST-KYC call center error 2")
         }
     }
 }
