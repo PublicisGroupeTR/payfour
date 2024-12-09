@@ -10,7 +10,7 @@ struct SubtabHeaderView: View {
             // Başlık
           
           Button(action: {
-            print("Devam Et butonuna basıldı!")
+           
             presentationMode.wrappedValue.dismiss()
           }) {
             Image("arrow_back")

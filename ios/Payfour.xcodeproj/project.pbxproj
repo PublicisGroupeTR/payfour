@@ -15,6 +15,15 @@
 		2A916E9B2C184CA9B10314C7 /* Ubuntu-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD0DA9752674690B4B276F5 /* Ubuntu-MediumItalic.ttf */; };
 		37C118CE59974063A599762E /* UbuntuBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAB429B51C44B6B97C7BD5A /* UbuntuBold.ttf */; };
 		62D140B32CD4C58700714EBA /* enqura.der in Resources */ = {isa = PBXBuildFile; fileRef = 62D140B22CD4C58700714EBA /* enqura.der */; };
+		62EC4C2B2D0700BB00F210C6 /* OCRErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C2A2D0700BB00F210C6 /* OCRErrorView.swift */; };
+		62EC4C2D2D0700C800F210C6 /* NFCSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C2C2D0700C800F210C6 /* NFCSuccessView.swift */; };
+		62EC4C2F2D0700D400F210C6 /* NFCRequiredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C2E2D0700D400F210C6 /* NFCRequiredView.swift */; };
+		62EC4C312D0700E200F210C6 /* NFCReadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C302D0700E200F210C6 /* NFCReadView.swift */; };
+		62EC4C332D0700F300F210C6 /* NFCErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C322D0700F300F210C6 /* NFCErrorView.swift */; };
+		62EC4C352D07010500F210C6 /* NFCClosedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C342D07010500F210C6 /* NFCClosedView.swift */; };
+		62EC4C372D07011100F210C6 /* KYCErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C362D07011100F210C6 /* KYCErrorView.swift */; };
+		62EC4C392D07011D00F210C6 /* FaceSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C382D07011D00F210C6 /* FaceSuccessView.swift */; };
+		62EC4C3B2D07013300F210C6 /* FaceErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C3A2D07013300F210C6 /* FaceErrorView.swift */; };
 		62FF7AA52D01EC400091C1C1 /* EnQualifyModuleIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FF7AA42D01EC400091C1C1 /* EnQualifyModuleIOS.swift */; };
 		62FF7AB92D01EEEC0091C1C1 /* EnQualifyModuleIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FF7AB82D01EEEC0091C1C1 /* EnQualifyModuleIOS.m */; };
 		62FF7ABB2D01EF3F0091C1C1 /* OCRInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FF7ABA2D01EF3F0091C1C1 /* OCRInfoView.swift */; };
@@ -70,6 +79,15 @@
 		5B7EB9410499542E8C5724F5 /* Pods-Payfour-PayfourTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour-PayfourTests.debug.xcconfig"; path = "Target Support Files/Pods-Payfour-PayfourTests/Pods-Payfour-PayfourTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-Payfour.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Payfour.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		62D140B22CD4C58700714EBA /* enqura.der */ = {isa = PBXFileReference; lastKnownFileType = file; name = enqura.der; path = ../../../enqura.der; sourceTree = "<group>"; };
+		62EC4C2A2D0700BB00F210C6 /* OCRErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRErrorView.swift; sourceTree = "<group>"; };
+		62EC4C2C2D0700C800F210C6 /* NFCSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCSuccessView.swift; sourceTree = "<group>"; };
+		62EC4C2E2D0700D400F210C6 /* NFCRequiredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCRequiredView.swift; sourceTree = "<group>"; };
+		62EC4C302D0700E200F210C6 /* NFCReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReadView.swift; sourceTree = "<group>"; };
+		62EC4C322D0700F300F210C6 /* NFCErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCErrorView.swift; sourceTree = "<group>"; };
+		62EC4C342D07010500F210C6 /* NFCClosedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCClosedView.swift; sourceTree = "<group>"; };
+		62EC4C362D07011100F210C6 /* KYCErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KYCErrorView.swift; sourceTree = "<group>"; };
+		62EC4C382D07011D00F210C6 /* FaceSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceSuccessView.swift; sourceTree = "<group>"; };
+		62EC4C3A2D07013300F210C6 /* FaceErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceErrorView.swift; sourceTree = "<group>"; };
 		62FAA8852D01DAD700BA5ED7 /* Payfour.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Payfour.entitlements; path = Payfour/Payfour.entitlements; sourceTree = "<group>"; };
 		62FF7AA32D01EC400091C1C1 /* Payfour-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Payfour-Bridging-Header.h"; sourceTree = "<group>"; };
 		62FF7AA42D01EC400091C1C1 /* EnQualifyModuleIOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnQualifyModuleIOS.swift; sourceTree = "<group>"; };
@@ -178,6 +196,15 @@
 			children = (
 				62FF7ABA2D01EF3F0091C1C1 /* OCRInfoView.swift */,
 				62FF7AC42D02DD5E0091C1C1 /* OCRSuccessView.swift */,
+				62EC4C2A2D0700BB00F210C6 /* OCRErrorView.swift */,
+				62EC4C2C2D0700C800F210C6 /* NFCSuccessView.swift */,
+				62EC4C2E2D0700D400F210C6 /* NFCRequiredView.swift */,
+				62EC4C302D0700E200F210C6 /* NFCReadView.swift */,
+				62EC4C322D0700F300F210C6 /* NFCErrorView.swift */,
+				62EC4C342D07010500F210C6 /* NFCClosedView.swift */,
+				62EC4C362D07011100F210C6 /* KYCErrorView.swift */,
+				62EC4C382D07011D00F210C6 /* FaceSuccessView.swift */,
+				62EC4C3A2D07013300F210C6 /* FaceErrorView.swift */,
 			);
 			name = pages;
 			sourceTree = "<group>";
@@ -523,11 +550,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				62FF7ABB2D01EF3F0091C1C1 /* OCRInfoView.swift in Sources */,
+				62EC4C2F2D0700D400F210C6 /* NFCRequiredView.swift in Sources */,
+				62EC4C312D0700E200F210C6 /* NFCReadView.swift in Sources */,
+				62EC4C392D07011D00F210C6 /* FaceSuccessView.swift in Sources */,
 				62FF7AA52D01EC400091C1C1 /* EnQualifyModuleIOS.swift in Sources */,
 				62FF7AC32D02D7DB0091C1C1 /* helper.swift in Sources */,
+				62EC4C3B2D07013300F210C6 /* FaceErrorView.swift in Sources */,
+				62EC4C332D0700F300F210C6 /* NFCErrorView.swift in Sources */,
+				62EC4C352D07010500F210C6 /* NFCClosedView.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				62EC4C2D2D0700C800F210C6 /* NFCSuccessView.swift in Sources */,
+				62EC4C372D07011100F210C6 /* KYCErrorView.swift in Sources */,
 				62FF7AB92D01EEEC0091C1C1 /* EnQualifyModuleIOS.m in Sources */,
 				62FF7ABD2D01F4C90091C1C1 /* SubtabHeaderView.swift in Sources */,
+				62EC4C2B2D0700BB00F210C6 /* OCRErrorView.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				62FF7AC52D02DD5E0091C1C1 /* OCRSuccessView.swift in Sources */,
 			);
