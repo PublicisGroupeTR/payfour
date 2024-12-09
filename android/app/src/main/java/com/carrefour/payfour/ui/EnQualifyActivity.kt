@@ -93,11 +93,12 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
 
     private fun initEnQualifyApi() {
         val customDataObject: JSONObject = JSONObject(customData)
-        // customDataObject.getString("referenceId"),
 
         Log.i(tag, "${object {}.javaClass.enclosingMethod?.name}")
         enVerifyApi = EnVerifyApi.getInstance()
         vSession = VSession.getInstance()
+
+        Log.i("Custom", "TEST-KYC referenceId" + customDataObject.getString("referenceId"))
 
         with(enVerifyApi){
             with(Constants.getEnQualifyConfigurationData()){
@@ -299,7 +300,8 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
 
     public fun exitSdk() {
         Log.i("Custom", "TEST-KYC exitSdk")
-
+        // TODO
+        // Hata alıp tekrar baştan deneyince burda crash veriyor
         enVerifyApi.closeSession(false)
         enVerifyApi.exitSelfService()
         enVerifyApi.destroy()
@@ -710,7 +712,6 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
             completeLoanaAplication()
         } else {
             Log.i("Custom", "TEST-KYC callSessionCloseResult else")
-            isSdkInitialized = false
             kycError()
         }
     }

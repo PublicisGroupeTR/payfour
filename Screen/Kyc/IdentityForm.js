@@ -93,7 +93,8 @@ const IdentityForm = ({ route, navigation }) => {
       tempToken: tempToken,
       tckn: formData.userTCKN.value,
       birthDate: new Date(formData.userBirth.value),
-      email: formData.userEmail.value
+      email: formData.userEmail.value,
+      isPotential: false
     }
 
     const selectedaAreements = agreements.filter((item) => item.selected === true) .map((item) => item.code);
@@ -105,6 +106,7 @@ const IdentityForm = ({ route, navigation }) => {
       data: data
     });
     if (response.success) {
+      console.log("data", data)
       navigation.navigate('Kyc', {
         screen: 'AddressInfo', params: {
           user: user,
