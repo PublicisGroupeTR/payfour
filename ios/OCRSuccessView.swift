@@ -17,7 +17,7 @@ struct OCRSuccessView: View {
                             // Kamera Başlığı
                           
                             // NFC Görseli
-                            Image("kvc_nfc")
+                            Image("kyc_nfc")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 120)
