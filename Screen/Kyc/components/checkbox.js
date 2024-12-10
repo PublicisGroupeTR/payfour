@@ -31,7 +31,7 @@ const KycCheckbox = ({
 
                 {textOpen ?
                     <TouchableOpacity onPress={textOpen}>
-                        <Text style={[style.text, isValid === false && style.textError, { textDecorationLine: 'underline' }]}>
+                        <Text style={[style.text, isValid === false && style.textError, { textDecorationLine: 'underline', color:"#004F97" }]}>
                             {text}
                         </Text>
                     </TouchableOpacity>

@@ -310,7 +310,7 @@ const IdentityForm = ({ route, navigation }) => {
                         <Image
                           source={require("../../assets/img/export/information.png")}
                           style={istyles.agreementsImage} />
-                        <Text onPress={item.templateDesignId ? () => selectedAgreement(item) : undefined} style={[istyles.agreementsInfoText, item.templateDesignId && { textDecorationLine: 'underline' }]}>{item.name}</Text>
+                        <Text onPress={item.templateDesignId ? () => selectedAgreement(item) : undefined} style={[istyles.agreementsInfoText, item.templateDesignId && { textDecorationLine: 'underline', color: "#004F97" }]}>{item.name}</Text>
                       </View>
                       :
                       <KycCheckbox 
