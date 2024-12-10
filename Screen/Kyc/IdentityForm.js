@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Alert, TouchableWithoutFeedback, View, Modal, Image, Pressable, TouchableOpacity, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {View, Image, TouchableOpacity, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { styles } from '../Components/Styles.js';
 import Loader from '../Components/Loader.js';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -9,19 +9,19 @@ import SubtabHeader from '../Components/SubtabHeader.js';
 import KycTextInput from './components/input.js';
 import KycCheckbox from './components/checkbox.js';
 import KycHeader from './components/header.js';
-import { apiRequest, customAlert, validateFormData, formatDate, isValidEmail } from './helper/index.js';
+import { apiRequest, customAlert, validateFormData, isValidEmail, formatDate } from './helper/index.js';
 import { FontFamilies } from '../../constants/fonts.js';
-import DatePicker from "react-native-date-picker";
 
 const IdentityForm = ({ route, navigation }) => {
 
   const tempToken = route.params.tempToken
   const user = route.params.user
-  // const tempToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFwcGx5bG9hbnwwMTkzOWM3ZS02MjQ1LTcyZGQtYWYzMS1hNjk3NjRlY2QwZWQiLCJtZW1iZXJpZCI6IjM1ODMiLCJleHAiOjE3MzM1MDA5NjAsImlzcyI6IlBheWZvdXJBcHBTZXJ2aWNlIiwiYXVkIjoiUGF5Zm91clRlbXBUb2tlbiJ9.HG5AjQnnQRJ2pXpAQ3aEmgjNfyJ4Y4lQd9zFRxbGNO0"
+  // console.log(tempToken)
+  // console.log(user)
+  // const tempToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFwcGx5bG9hbnwwMTkzYWY5Ny1mMTU0LTczZTYtOGI1ZC02YjIyYjlhOWI2M2IiLCJtZW1iZXJpZCI6IjM1ODMiLCJleHAiOjE3MzM4MjE0MDIsImlzcyI6IlBheWZvdXJBcHBTZXJ2aWNlIiwiYXVkIjoiUGF5Zm91clRlbXBUb2tlbiJ9.yortaIurPVV3Efu7bpRoQPmZbx-l0dhxpUd538ceYiY"
   // const user = {"birthDate": "2001-10-10T00:00:00", "cityCode": 6, "commercialElectronic": true, "crmCustomerId": "15628932", "defaultBankAccountNumber": "3594488206101", "districtCode": 74, "email": "", "firstName": "Mahmut Bilal", "gender": "Male", "isStudent": false, "lastName": "TEKİROĞLU", "payfourId": 3583, "phone": "+905533600910", "referralCode": "PYF2jzBnEzjQhS7", "registrationCompleted": true, "segment": 1}
 
   const [loading, setLoading] = useState(false);
-  const [openDatePicker, setOpenDatePicker] = useState(false);
   const [agreements, setAgreements] = useState();
 
   const [formData, setFormData] = useState({
@@ -30,12 +30,13 @@ const IdentityForm = ({ route, navigation }) => {
     userLastName: { value: user.lastName, isValid: true },
     userEmail: { value: user.email, isValid: true },
     userPhone: { value: user.phone, isValid: true },
-    userBirth: { value: user.birthDate, isValid: true },
+    userBirth: { value: user.birthDate ? formatDate(user.birthDate) : "", isValid: true },
   });
 
   const handleChange = (key, value) => {
     setFormData((prevData) => {
       let formattedValue = value;
+      const isValidDate = validateDate(value);
 
       if (key === "userName" || key === "userLastName") {
         formattedValue = value.replace(/[^a-zA-ZğüşöçıİĞÜŞÖÇ ]/g, "");
@@ -48,7 +49,7 @@ const IdentityForm = ({ route, navigation }) => {
       return {
         ...prevData,
         [key]: {
-          isValid: true,
+          isValid: key == "userBirth" ? isValidDate : true,
           value: formattedValue,
         },
       };
@@ -88,11 +89,13 @@ const IdentityForm = ({ route, navigation }) => {
     if (unselectedMandatoryAgreements.length != 0 ) {
       return
     }
-  
+
+    const formattedDate = dateControl(formData.userBirth.value)
+
     const data = {
       tempToken: tempToken,
       tckn: formData.userTCKN.value,
-      birthDate: new Date(formData.userBirth.value),
+      birthDate: formattedDate,
       email: formData.userEmail.value,
       isPotential: false
     }
@@ -170,6 +173,61 @@ const IdentityForm = ({ route, navigation }) => {
     setLoading(false)
   };
 
+  const dateControl = (birthDate) => {
+    try {
+      // Tarih formatından "/" karakterlerini kaldır
+      let fb = birthDate.replace(/\//g, "");
+      // Tarih verilerini ayrıştır
+      if (fb.length !== 8) {
+        throw new Error("Invalid date format. Expected DD/MM/YYYY.");
+      }
+
+      let day = fb.substring(0, 2);
+      let month = fb.substring(2, 4);
+      let year = fb.substring(4, 8);
+
+
+      // Tarihi ISO formatına dönüştür
+      const dt = `${year}-${month}-${day}`;
+
+      // Geçerli bir tarih oluştur ve ISO formatına çevir
+      const d = new Date(dt);
+      if (isNaN(d.getTime())) {
+        throw new Error("Invalid date. Unable to parse.");
+      }
+
+      const fd = d.toISOString();
+
+      return fd
+    } catch (error) {
+      console.error("Error processing date:", error.message);
+    }
+
+  };
+
+  const validateDate = (date) => {
+    const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    if (!regex.test(date)) return false;
+
+    const [, day, month, year] = date.match(regex);
+    const dayNum = parseInt(day, 10);
+    const monthNum = parseInt(month, 10);
+    const yearNum = parseInt(year, 10);
+
+    // Gün, ay ve yıl kontrolleri
+    if (dayNum < 1 || dayNum > 31) return false;
+    if (monthNum < 1 || monthNum > 12) return false;
+    if (yearNum < 1900) return false;
+
+    // Geçerli bir tarih kontrolü
+    const isValidFullDate = new Date(`${yearNum}-${monthNum}-${dayNum}`);
+    return (
+      isValidFullDate.getFullYear() === yearNum &&
+      isValidFullDate.getMonth() + 1 === monthNum &&
+      isValidFullDate.getDate() === dayNum
+    );
+  };
+
   useEffect(() => {
     getAgrements()
   }, [])
@@ -222,40 +280,18 @@ const IdentityForm = ({ route, navigation }) => {
                 mask={['+', '9', '0', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
               />
 
-              <TouchableOpacity onPress={() => setOpenDatePicker(true)} style={[istyles.inputStyle, formData.userBirth.isValid === false && istyles.borderError, { paddingBottom: 0 }]}>
-                <Text style={istyles.bhirtDateTitle}>
+              <View style={[istyles.inputStyle, formData.userBirth.isValid === false && istyles.borderError, { paddingBottom: 0 }]}>
+                <Text style={istyles.bhirtDateText}>
                   Doğum Tarihi (GG/AA/YYYY)
                 </Text>
-                {formData.userBirth.value ?
-                  <Text style={istyles.bhirtDateText}>
-                    {formatDate(formData.userBirth.value)}
-                  </Text>
-                  :
-                  <Text style={[istyles.bhirtDateText, {color:"#909EAA"}]}>
-                    {"GG/AA/YYYY"}
-                  </Text>
-                }
-
-                <DatePicker
-                  modal
-                  open={openDatePicker}
-                  date={formData.userBirth.value ? new Date(formData.userBirth.value.split("T")[0]) : new Date()}
-                  is24hourSource="locale"
-                  locale="tr"
-                  title={"Doğum Tarihi "}
-                  confirmText={"Tamam"}
-                  cancelText={"Kapat"}
-                  mode={'date'}
-                  onConfirm={(date) => {
-                    handleChange("userBirth", date.toISOString())
-                    setOpenDatePicker(false)
-                  }}
-                  onCancel={() => {
-                    setOpenDatePicker(false)
-                  }}
+                <MaskInput
+                  value={formData.userBirth.value}
+                  placeholder='GG/AA/YYYY'
+                  onChangeText={(masked, unmasked) => handleChange("userBirth", masked)}
+                  keyboardType="numeric"
+                  mask={[/\d/, /\d/, "/", /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/]}
                 />
-
-              </TouchableOpacity>
+              </View>
 
               <KycTextInput
                 isValid={formData.userEmail.isValid && isValidEmail(formData.userEmail.value)}
@@ -274,7 +310,7 @@ const IdentityForm = ({ route, navigation }) => {
                         <Image
                           source={require("../../assets/img/export/information.png")}
                           style={istyles.agreementsImage} />
-                        <Text style={istyles.agreementsInfoText}>{item.name}</Text>
+                        <Text onPress={item.templateDesignId ? () => selectedAgreement(item) : undefined} style={[istyles.agreementsInfoText, item.templateDesignId && { textDecorationLine: 'underline' }]}>{item.name}</Text>
                       </View>
                       :
                       <KycCheckbox 
@@ -346,9 +382,13 @@ const istyles = StyleSheet.create({
     left: 16
   },
   bhirtDateText: {
-    fontSize: 14,
-    marginVertical: 12,
-    color:"black"
+    fontSize: 12,
+    lineHeight: 12,
+    padding: 0,
+    position: "absolute",
+    color: '#909EAA',
+    top: 14,
+    left: 16
   },
   buttonStyle: {
     backgroundColor: '#004F97',

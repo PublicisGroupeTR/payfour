@@ -549,7 +549,8 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
 
     override fun onIntegrationFailed() {
         Log.i("Custom", "TEST-KYC onIntegrationFailed")
-        kycError()
+        enVerifyApi.exitSelfService()
+        enVerifyApi.replaceFragment(FragmentKYCError())
     }
 
     override fun selfServiceReady() {
@@ -712,7 +713,8 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
             completeLoanaAplication()
         } else {
             Log.i("Custom", "TEST-KYC callSessionCloseResult else")
-            kycError()
+            enVerifyApi.exitSelfService()
+            enVerifyApi.replaceFragment(FragmentKYCError())
         }
     }
 
