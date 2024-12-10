@@ -645,6 +645,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Payfour/Payfour.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KJ8F3K5Z2K;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Payfour/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -674,6 +675,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Payfour/Payfour.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KJ8F3K5Z2K;
 				INFOPLIST_FILE = Payfour/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
