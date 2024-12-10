@@ -1,12 +1,13 @@
 import React from 'react';
 import { TextInput, Keyboard, View, StyleSheet, Text, Pressable, Image, TouchableOpacity } from 'react-native';
 
-const KvcCheckbox = ({
+const KycCheckbox = ({
     show,
     onPress,
     text,
     textOpen,
-    isFullClick
+    isFullClick,
+    isValid
 }) => {
 
     const Content = () => {
@@ -30,12 +31,12 @@ const KvcCheckbox = ({
 
                 {textOpen ?
                     <TouchableOpacity onPress={textOpen}>
-                        <Text style={style.text}>
+                        <Text style={[style.text, isValid === false && style.textError, { textDecorationLine: 'underline', color:"#004F97" }]}>
                             {text}
                         </Text>
                     </TouchableOpacity>
                     :
-                    <Text style={style.text}>
+                    <Text style={[style.text, isValid === false && style.textError]}>
                         {text}
                     </Text>
                 }
@@ -74,6 +75,9 @@ const style = StyleSheet.create({
         color: '#1E242F',
         fontSize: 12,
     },
+    textError: {
+        color: "#E94B43"
+      }
 });
 
-export default KvcCheckbox;
+export default KycCheckbox;

@@ -1,27 +1,23 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Alert, TouchableWithoutFeedback, View, Modal, Image, Pressable,TouchableOpacity, Text, StyleSheet, SafeAreaView,  KeyboardAvoidingView } from 'react-native';
+import React from 'react';
+import { View, Image, TouchableOpacity, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { styles } from '../Components/Styles.js';
-import Loader from '../Components/Loader.js';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import MaskInput from 'react-native-mask-input';
 import SubtabHeader from '../Components/SubtabHeader.js';
-import KvcTextInput from './components/input.js';
-import KvcHeader from './components/header.js';
-import { apiRequest, customAlert } from './helper/index.js';
+import KycTextInput from './components/input.js';
+import KycHeader from './components/header.js';
 import { FontFamilies } from '../../constants/fonts.js';
-import HTMLView from 'react-native-htmlview';
 
 const AddressInfo = ({ route, navigation }) => {
-  const tempToken = route.params?.tempToken
   const user = route.params?.user
   const data = route.params?.data
+  const selectedaAreements = route.params?.selectedaAreements
 
   const next = async () => {
-    navigation.navigate('Kvc', {
+    navigation.navigate('Kyc', {
       screen: 'IdentityDetailForm', params: {
         user: user,
-        tempToken: tempToken,
+        selectedaAreements: selectedaAreements,
         data: data
       }
     })
@@ -29,43 +25,43 @@ const AddressInfo = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={istyles.main}>
-      <SubtabHeader isKvcPage name="Kimlik Bilgilerin" count="0" />
+      <SubtabHeader isKycPage name="Kimlik Bilgilerin" count="0" />
       <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
         <KeyboardAvoidingView enabled>
           <View style={istyles.container}>
-            <KvcHeader number="2" title="Adres Tanımla" text="Lütfen adres bilgilerinizi giriniz. Girmiş olduğunuz adresin, kayıtlı yerleşim yeriniz/ikametgah adresiniz ile aynı olmaldır"></KvcHeader>
+            <KycHeader number="2" title="Adres Bilgileri"></KycHeader>
             <View style={istyles.form}>
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"İl"}
               value={data.city || ""}
               placeholder="İl"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"İlçe"}
               value={data.district || ""}
               placeholder="İlçe"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"Mahalle"}
               value={data.neihgbourhood || ""}
               placeholder="Mahalle"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"Cadde"}
               value={data.street || ""}
               placeholder="Cadde"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"Bina No"}
               value={data.building || ""}
               placeholder="Bina No"
             />
-            <KvcTextInput
+            <KycTextInput
               disable
               title={"Daire No"}
               value={data.section || ""}

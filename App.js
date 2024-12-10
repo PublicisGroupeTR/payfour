@@ -20,13 +20,13 @@ import LoginWithPasswordScreen from './Screen/LoginWithPasswordScreen';
 import BiometricsScreen from './Screen/BiometricsScreen';
 import TabNavigationRoutes from './Screen/TabNavigationRoutes';
 
-// Kvc Screens
-import KvcOtp from './Screen/Kvc/Otp';
-import IdentityForm from './Screen/Kvc/IdentityForm';
-import AddressInfo from './Screen/Kvc/AddressInfo';
-import AgreementsView from './Screen/Kvc/AgreementsView';
-import IdentityDetailForm from './Screen/Kvc/IdentityDetailForm';
-import VerifyScreen from './Screen/Kvc/VerifyScreen';
+// Kyc Screens
+import KycOtp from './Screen/Kyc/Otp';
+import IdentityForm from './Screen/Kyc/IdentityForm';
+import AddressInfo from './Screen/Kyc/AddressInfo';
+import AgreementsView from './Screen/Kyc/AgreementsView';
+import IdentityDetailForm from './Screen/Kyc/IdentityDetailForm';
+import VerifyScreen from './Screen/Kyc/VerifyScreen';
 
 const Stack = createStackNavigator();
 
@@ -78,10 +78,10 @@ const Auth = () => {
   );
 };
 
-const Kvc = () => {
+const Kyc = () => {
   // Stack Navigator for Login and Sign up Screen
   return (
-    <Stack.Navigator initialRouteName="KvcOtp"
+    <Stack.Navigator initialRouteName="IdentityForm"
     screenOptions={{
       contentStyle:{
         backgroundColor:'#FFFFFF'
@@ -89,8 +89,8 @@ const Kvc = () => {
    }}
     >
        <Stack.Screen
-          name="KvcOtp"
-          component={KvcOtp}
+          name="KycOtp"
+          component={KycOtp}
           options={{headerShown: false}}
         />
        <Stack.Screen
@@ -128,8 +128,7 @@ const App = (props) => {
   const navigationRef = React.useRef();
   
   useEffect(() => {
-    if (props.kvcResult &&  props.kvcResult.length != 0) {
-      console.log("KvcDone ", props)
+    if (props.kycResult &&  props.kycResult.length != 0) {
       navigationRef.current?.navigate('TabNavigationRoutes', { 
         screen: 'discover',
       })
@@ -138,7 +137,7 @@ const App = (props) => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator initialRouteName="SplashScreen"
+      <Stack.Navigator initialRouteName="Kyc"
       screenOptions={{
         contentStyle:{
           backgroundColor:'#FFFFFF'
@@ -169,8 +168,8 @@ const App = (props) => {
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="Kvc"
-          component={Kvc}
+          name="Kyc"
+          component={Kyc}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

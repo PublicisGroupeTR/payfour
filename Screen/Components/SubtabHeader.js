@@ -9,7 +9,7 @@ import {useNavigation} from '@react-navigation/native';
 import Bildirim from '../../assets/img/svg/bildirim.svg';
 
 const SubtabHeader = props => {
-  const {routetarget, name, count, isKvcPage, mode, ...attributes} = props;
+  const {routetarget, name, count, isKycPage, mode, ...attributes} = props;
 
   const navigation = useNavigation();
 
@@ -22,7 +22,7 @@ const SubtabHeader = props => {
           styles.buttonClose,
           {display: routetarget === '' ? 'none' : 'flex', flexDirection:'row'},
         ]}
-        onPress={() => isKvcPage ? navigation.goBack() : navigation.navigate(routetarget)}>        
+        onPress={() => isKycPage ? navigation.goBack() : navigation.navigate(routetarget)}>        
           <Image
             source={require('../../assets/img/export/arrow_back.png')}
             style={{

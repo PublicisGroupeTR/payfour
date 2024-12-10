@@ -25,15 +25,22 @@ const VerifyScreen = ({ navigation, route }) => {
 
   const openEnQualifyActivity = async () => {
 
-    // if (!allData) {
-    //   return
-    // }
-    
+    // NativeModules.EnQualifyModuleIOS.showSwiftUIView()
+    // return
+
+    NativeModules.EnQualifyModuleIOS.showOCR()
+
+
+    if (!allData) {
+      return
+    }
+
     if (Platform.OS == "ios") {
       NativeModules.EnQualifyModuleIOS.showOCR()
     } else {
       NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
     }
+    
   }
 
   const getData = async () => {
@@ -53,9 +60,13 @@ const VerifyScreen = ({ navigation, route }) => {
       if (params.referenceId) {
         data = { ...data, ...{ referenceId: params.referenceId}}
       }
+      if (params.selectedaAreements) {
+        data = { ...data,...{ selectedaAreements : params.selectedaAreements}}
+      }
       if (token) {
         data = { ...data, ...{ token: token}}
       }
+      console.log(data)
       setAllData(data)
     }
   }
@@ -72,12 +83,12 @@ const VerifyScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.wrapper}>
-      <SubtabHeader isKvcPage name="Kullanıcı Onayı" count="0" />
+      <SubtabHeader isKycPage name="Kullanıcı Onayı" count="0" />
       <View style={styles.main}>
         <View style={styles.container}>
           <View style={styles.content}>
             <Image
-              source={require('../../assets/img/kvc_onay.png')}
+              source={require('../../assets/img/kyc_onay.png')}
               style={styles.image}
             />
             <Text style={styles.title}>Onayın Gerekiyor</Text>
@@ -158,8 +169,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     height: 52,
     alignItems: 'center',
+    justifyContent:"center",
     borderRadius: 10,
-    justifyContent:"center"
+
   },
   buttonTextStyle: {
     color: '#FFFFFF',

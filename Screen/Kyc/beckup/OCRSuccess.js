@@ -17,24 +17,24 @@ import {
 import SubtabHeader from '../Components/SubtabHeader.js';
 import {FontFamilies} from '../../constants/fonts.js';
 
-const NFCClosed = ({ navigation, route }) => {
+const OCRSuccess = ({ }) => {
 
   const openEnQualifyActivity = () => {
-    NativeModules.EnQualifyModuleAndroid.openNativeActivity()
+    NativeModules.EnQualifyModuleAndroid.startNFC()
   }
 
   return (
     <View style={styles.wrapper}>
-      {/* <SubtabHeader routetarget="VerifyScreen" name="Kimliğini Doğrula" count="0" /> */}
+      <SubtabHeader routetarget="VerifyScreen" name="Kimliğini Doğrula" count="0" />
       <View style={styles.main}>
         <View style={styles.container}>
           <View style={styles.content}>
             <Image
-              source={require('../../assets/img/kvc_nfc_error.png')}
+              source={require('../../assets/img/kyc_nfc.png')}
               style={styles.image}
             />
-            <Text style={styles.title}>NFC Özelliğiniz Kapalı</Text>
-            <Text style={styles.text}>Lütfen NFC özelleğinizi açıp tekrar deneyiniz</Text>
+            <Text style={styles.title}>Kimliğini NFC ile okut</Text>
+            <Text style={styles.text}>Kimlik kartının çiğinden bilgilerin okunabilmesi için, kartını telefonun arka yüzünde bulunan Yakın Alan İletişimi (NFC) alanına örnekteki gibi bir süre temas ettirerek bekle.</Text>
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -42,7 +42,7 @@ const NFCClosed = ({ navigation, route }) => {
               style={[styles.buttonStyle, {}]}
               activeOpacity={0.5}
             >
-              <Text style={styles.buttonTextStyle}>Tekrar Dene</Text>
+              <Text style={styles.buttonTextStyle}>Devam Et</Text>
             </TouchableOpacity>
             <Image
               source={require('../../assets/img/dgfin_legal.png')}
@@ -54,7 +54,7 @@ const NFCClosed = ({ navigation, route }) => {
   );
 };
 
-export default NFCClosed;
+export default OCRSuccess;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -79,10 +79,6 @@ const styles = StyleSheet.create({
   image:{
     width:120,
     height:120
-  },
-  icon:{
-    width:24,
-    height:24
   },
   title:{
     color: '#004F97',
@@ -110,12 +106,11 @@ const styles = StyleSheet.create({
     height: 52,
     alignItems: 'center',
     borderRadius: 10,
-
   },
   buttonTextStyle: {
     color: '#FFFFFF',
     paddingVertical: 15,
-    fontFamily: FontFamilies.UBUNTU.medium,
+    fontFamily:  FontFamilies.UBUNTU.medium,
     fontWeight: '500',
     fontSize: 14,
   },

@@ -7,7 +7,7 @@ export const apiRequest = async ({ url, method = 'GET', params = {}, data = {}, 
   
   const token = await AsyncStorage.getItem('token');
   
-  // console.log("TOKEN", token);
+  console.log("TOKEN", token);
   
   const defaultHeaders = {
     Authorization: `Bearer ${token}`,
@@ -50,3 +50,36 @@ export const customAlert = ({ title = "Mesaj", message, button = "Tamam"}) => {
   );
 
 }
+
+export const validateFormData = (formData) => {
+  const updatedFormData = { ...formData };
+
+  Object.keys(updatedFormData).forEach((key) => {
+    const fieldValue = updatedFormData[key]?.value || "";
+    updatedFormData[key] = {
+      ...updatedFormData[key],
+      isValid: fieldValue.trim() === "" ? false : true,
+    };
+  });
+
+  return updatedFormData;
+};
+
+export const formatDate = (dateString) => {
+  const date = new Date(dateString);
+
+  const day = String(date.getDate()).padStart(2, '0'); // Gün
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Ay
+  const year = date.getFullYear(); // Yıl
+
+  return `${day}/${month}/${year}`;
+};
+
+export const isValidEmail = (email) => {
+  if (!email) {
+   return 
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+

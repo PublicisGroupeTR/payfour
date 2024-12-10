@@ -15,12 +15,11 @@ import {
   Image
 } from 'react-native';
 import SubtabHeader from '../Components/SubtabHeader.js';
-import { FontFamilies } from '../../constants/fonts.js';
+import {FontFamilies} from '../../constants/fonts.js';
 
-const FaceError = ({ navigation, route }) => {
+const NFCSuccess = () => {
 
-  const openEnQualifyActivity = () => {
-    NativeModules.EnQualifyModuleAndroid.startNFC()
+  const startFace = () => {
   }
 
   return (
@@ -30,34 +29,26 @@ const FaceError = ({ navigation, route }) => {
         <View style={styles.container}>
           <View style={styles.content}>
             <Image
-              source={require('../../assets/img/kvc_face_error.png')}
+              source={require('../../assets/img/kyc_face.png')}
               style={styles.image}
             />
-            <Text style={styles.title}>Yüz Algılanamadı</Text>
-            <Text style={styles.text}>Lütfen işlem onaylanana kadar karanlık bir yerde olmadığından emin ol ve yönergeleri tamamla.</Text>
+            <Text style={styles.title}>Yüz tanıma ve canlılık testini yap</Text>
+            <Text style={[styles.text, { marginBottom:8}]}>Yüz tanıma ve canlılık testi için hazır mısın?</Text>
+            <Text style={styles.text}>Ekrandaki yönlendirmeleri uygulayarak testi tamamlayabilirsin. Test boyunca yeterince aydınlık bir ortamda olman önemli.</Text>
           </View>
-          <View style={{ gap: 12 }}>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                onPress={() => { }}
-                style={[styles.buttonStyle, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#004F97' }]}
-                activeOpacity={0.5}
-              >
-                <Text style={[styles.buttonTextStyle, { color: '#004F97' }]}>Vazgeç</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={openEnQualifyActivity}
-                style={[styles.buttonStyle, {}]}
-                activeOpacity={0.5}
-              >
-                <Text style={styles.buttonTextStyle}>Tekrar Dene</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={styles.buttonContainer}>
+            <Text style={styles.text}>Devam Et seçiminden sonra kameran açılacaktır.</Text>
+            <TouchableOpacity
+              onPress={startFace}
+              style={[styles.buttonStyle, {}]}
+              activeOpacity={0.5}
+            >
+              <Text style={styles.buttonTextStyle}>Devam Et</Text> 
+            </TouchableOpacity>
             <Image
               source={require('../../assets/img/dgfin_legal.png')}
               style={styles.dgfin} />
           </View>
-
 
         </View>
       </View>
@@ -65,7 +56,7 @@ const FaceError = ({ navigation, route }) => {
   );
 };
 
-export default FaceError;
+export default NFCSuccess;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -74,45 +65,44 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#efeff3"
+    backgroundColor:"#efeff3"
   },
   container: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 24,
     flex: 1,
-    justifyContent: "space-between"
+    justifyContent:"space-between"
   },
-  content: {
-    paddingTop: 50,
-    alignItems: "center"
+  content:{
+    paddingTop:50,
+    alignItems:"center"
   },
-  image: {
-    width: 120,
-    height: 120
+  image:{
+    width:120,
+    height:120
   },
-  title: {
+  title:{
     color: '#004F97',
     fontFamily: FontFamilies.UBUNTU.medium,
     fontWeight: '500',
     fontSize: 16,
-    marginTop: 24,
-    marginBottom: 8
+    marginTop:24,
+    marginBottom:8
   },
-
-  text: {
+  
+  text:{
     color: "#909EAA",
     fontFamily: FontFamilies.UBUNTU.normal,
     fontWeight: '400',
     fontSize: 12,
-    textAlign: "center"
+    textAlign:"center"
   },
   buttonContainer: {
-    flexDirection: "row",
+    flexDirection: "col",
     gap: 12
   },
   buttonStyle: {
-    flex: 1,
     backgroundColor: '#004F97',
     borderWidth: 0,
     color: '#FFFFFF',
@@ -124,12 +114,12 @@ const styles = StyleSheet.create({
   buttonTextStyle: {
     color: '#FFFFFF',
     paddingVertical: 15,
-    fontFamily: FontFamilies.UBUNTU.medium,
+    fontFamily:  FontFamilies.UBUNTU.medium,
     fontWeight: '500',
     fontSize: 14,
   },
-  dgfin: {
-    width: "100%",
-    height: 77
+  dgfin:{
+    width:"100%",
+    height:77
   }
 });

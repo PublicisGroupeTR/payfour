@@ -391,7 +391,7 @@ const Intro2 = ({navigation}) => {
                 //disabled={!toggleSubmit}
                 activeOpacity={0.5}
                 onPress={()=>{
-                  navigation.navigate('Kvc')
+                  navigation.navigate('Kyc')
                 }
                   }>
                 <Text style={styles.buttonTextStyle}>Şimdi Kredi Kullan</Text>

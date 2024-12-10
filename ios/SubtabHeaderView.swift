@@ -1,19 +1,19 @@
 import SwiftUI
 
 struct SubtabHeaderView: View {
-    @Environment(\.presentationMode) var presentationMode
     var name: String
+    var onBackButtonTapped: () -> Void // Geri butonu için closure
 
     var body: some View {
         HStack(spacing: 12) {
             Button(action: {
-              EnQualifyHelper.closePage(nil)
+              onBackButtonTapped()
             }) {
                 Image("arrow_back")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 24)
-
+                    .frame(height: 32)
+                    .frame(width: 32)
                 Text(name)
                     .font(.headline)
                     .foregroundColor(.black)
@@ -21,7 +21,8 @@ struct SubtabHeaderView: View {
 
             Spacer()
         }
-        .padding()
+        .padding(.vertical, 10)
+        .padding(.horizontal, 16)
         .background(Color.white)
     }
 }
