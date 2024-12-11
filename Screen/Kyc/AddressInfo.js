@@ -1,12 +1,9 @@
 import React from 'react';
 import { View, Image, TouchableOpacity, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
-import { styles } from '../Components/Styles.js';
-import { ScrollView } from 'react-native-gesture-handler';
-
-import SubtabHeader from '../Components/SubtabHeader.js';
 import KycTextInput from './components/input.js';
 import KycHeader from './components/header.js';
 import { FontFamilies } from '../../constants/fonts.js';
+import KvcLayout from './KvcLayout.js';
 
 const AddressInfo = ({ route, navigation }) => {
   const user = route.params?.user
@@ -24,11 +21,8 @@ const AddressInfo = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={istyles.main}>
-      <SubtabHeader isKycPage name="Kimlik Bilgilerin" count="0" />
-      <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
-        <KeyboardAvoidingView enabled>
-          <View style={istyles.container}>
+    <KvcLayout title={"Kimlik Bilgilerin"} loading={false}>
+      <View style={istyles.container}>
             <KycHeader number="2" title="Adres Bilgileri"></KycHeader>
             <View style={istyles.form}>
             <KycTextInput
@@ -84,10 +78,7 @@ const AddressInfo = ({ route, navigation }) => {
               </View>
             </View>
           </View>
-        </KeyboardAvoidingView>
-      </ScrollView>
-
-    </SafeAreaView>
+    </KvcLayout>
   );
 };
 export default AddressInfo;

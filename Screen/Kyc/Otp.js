@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Image, TouchableOpacity, Text, StyleSheet, SafeAreaView, Keyboard, KeyboardAvoidingView } from 'react-native';
-import Loader from '../Components/Loader.js';
+import { View, Image, TouchableOpacity, Text, StyleSheet, Keyboard } from 'react-native';
 import { apiRequest, customAlert } from './helper/index.js';
-import SubtabHeader from '../Components/SubtabHeader.js';
 import { OtpInput } from "react-native-otp-entry";
 import { FontFamilies } from '../../constants/fonts.js';
+import KvcLayout from './KvcLayout.js';
 
 const KycOtp = ({ navigation }) => {
 
@@ -117,11 +116,8 @@ const KycOtp = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#efeff3' }}>
-      <SubtabHeader isKycPage name="Doğrulama Kodu" count="0" />
-      <Loader loading={loading} />
-      <KeyboardAvoidingView style={{ flex: 1 }}>
-        <View style={istyles.container}>
+    <KvcLayout disableScroll title="Doğrulama Kodu" loading={loading}>
+       <View style={istyles.container}>
           <View style={istyles.otpContainer}>
             <Image
               source={require('../../assets/img/kyc_otp.png')}
@@ -195,8 +191,7 @@ const KycOtp = ({ navigation }) => {
           </View>
 
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    </KvcLayout>
   );
 };
 export default KycOtp;

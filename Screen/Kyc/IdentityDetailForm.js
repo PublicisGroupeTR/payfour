@@ -1,16 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Image, Pressable, TouchableOpacity, Text, Dimensions, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Image, TouchableOpacity, Text, Dimensions, StyleSheet } from 'react-native';
 import { styles } from '../Components/Styles.js';
-import Loader from '../Components/Loader.js';
-import { ScrollView } from 'react-native-gesture-handler';
-
-import SubtabHeader from '../Components/SubtabHeader.js';
 import KycTextInput from './components/input.js';
 import KycHeader from './components/header.js';
-import { apiRequest, customAlert, validateFormData } from './helper/index.js';
+import { apiRequest, validateFormData } from './helper/index.js';
 import { FontFamilies } from '../../constants/fonts.js';
 import { Dropdown } from 'react-native-element-dropdown';
 import KycCheckbox from './components/checkbox.js';
+import KvcLayout from './KvcLayout.js';
 
 const IdentityDetailForm = ({ route, navigation }) => {
   const user = route.params.user
@@ -162,17 +159,12 @@ const IdentityDetailForm = ({ route, navigation }) => {
   }, [])
 
 
+  // <SubtabHeader isKycPage name="Kimlik Bilgilerim" count="0" />
   return (
-    <SafeAreaView style={istyles.main}>
-      <SubtabHeader isKycPage name="Kimlik Bilgilerim" count="0" />
-      <Loader loading={loading} />
-
-      <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
-        <KeyboardAvoidingView enabled>
-          <View style={istyles.container}>
+   <KvcLayout title="Kimlik Bilgilerim" loading={loading}>
+     <View style={istyles.container}>
             <KycHeader number="3" title="Bilgilerini Tamamla"></KycHeader>
             <View style={istyles.form}>
-
               <KycTextInput
                 value={formData.userBirthplace.value}
                 isValid={formData.userBirthplace.isValid}
@@ -296,10 +288,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
               </View>
             </View>
           </View>
-        </KeyboardAvoidingView>
-      </ScrollView>
-
-    </SafeAreaView>
+   </KvcLayout>
   );
 };
 

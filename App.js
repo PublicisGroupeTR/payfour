@@ -81,7 +81,7 @@ const Auth = () => {
 const Kyc = () => {
   // Stack Navigator for Login and Sign up Screen
   return (
-    <Stack.Navigator initialRouteName="IdentityForm"
+    <Stack.Navigator initialRouteName="VerifyScreen"
     screenOptions={{
       contentStyle:{
         backgroundColor:'#FFFFFF'

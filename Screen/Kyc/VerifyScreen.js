@@ -17,6 +17,7 @@ import {
 import SubtabHeader from '../Components/SubtabHeader.js';
 import {FontFamilies} from '../../constants/fonts.js';
 import { useIsFocused } from '@react-navigation/native';
+import KvcLayout from './KvcLayout.js';
 
 const VerifyScreen = ({ navigation, route }) => {
 
@@ -28,7 +29,7 @@ const VerifyScreen = ({ navigation, route }) => {
     // NativeModules.EnQualifyModuleIOS.showSwiftUIView()
     // return
 
-    NativeModules.EnQualifyModuleIOS.showOCR()
+    NativeModules.EnQualifyModuleIOS.startKycIos()
 
 
     if (!allData) {
@@ -36,7 +37,7 @@ const VerifyScreen = ({ navigation, route }) => {
     }
 
     if (Platform.OS == "ios") {
-      NativeModules.EnQualifyModuleIOS.showOCR()
+      NativeModules.EnQualifyModuleIOS.startKycIos()
     } else {
       NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
     }
@@ -82,8 +83,7 @@ const VerifyScreen = ({ navigation, route }) => {
   },[isFocused])
 
   return (
-    <View style={styles.wrapper}>
-      <SubtabHeader isKycPage name="Kullanıcı Onayı" count="0" />
+    <KvcLayout disableScroll title={"Kullanıcı Onayı"}>
       <View style={styles.main}>
         <View style={styles.container}>
           <View style={styles.content}>
@@ -113,7 +113,7 @@ const VerifyScreen = ({ navigation, route }) => {
 
         </View>
       </View>
-    </View>
+    </KvcLayout>
   );
 };
 
@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     padding: 16,
+    paddingBottom:0,
     backgroundColor:"#efeff3"
   },
   container: {

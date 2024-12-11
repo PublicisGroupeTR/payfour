@@ -3,7 +3,7 @@ import SwiftUI
 
 @objc(EnQualifyModuleIOS)
 class EnQualifyModuleIOS: NSObject {
-    @objc func showOCR() {
+    @objc func startKycIos() {
         DispatchQueue.main.async {
             if let rootVC = UIApplication.shared.keyWindow?.rootViewController {
                 // SwiftUI görünümünü oluştur

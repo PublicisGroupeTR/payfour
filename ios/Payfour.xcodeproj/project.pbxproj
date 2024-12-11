@@ -14,7 +14,6 @@
 		26CAB05D5AD448DB883F43EA /* UbuntuMedium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01BFFEC55BBE455FBC1666C8 /* UbuntuMedium.ttf */; };
 		2A916E9B2C184CA9B10314C7 /* Ubuntu-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD0DA9752674690B4B276F5 /* Ubuntu-MediumItalic.ttf */; };
 		37C118CE59974063A599762E /* UbuntuBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAB429B51C44B6B97C7BD5A /* UbuntuBold.ttf */; };
-		62D140B32CD4C58700714EBA /* enqura.der in Resources */ = {isa = PBXBuildFile; fileRef = 62D140B22CD4C58700714EBA /* enqura.der */; };
 		62DE01112D088AE300F6EC8B /* BaseLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62DE01102D088AE300F6EC8B /* BaseLayout.swift */; };
 		62EC4C2B2D0700BB00F210C6 /* OCRErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C2A2D0700BB00F210C6 /* OCRErrorView.swift */; };
 		62EC4C2D2D0700C800F210C6 /* NFCSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C2C2D0700C800F210C6 /* NFCSuccessView.swift */; };
@@ -79,8 +78,8 @@
 		5709B34CF0A7D63546082F79 /* Pods-Payfour.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour.release.xcconfig"; path = "Target Support Files/Pods-Payfour/Pods-Payfour.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Payfour-PayfourTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour-PayfourTests.debug.xcconfig"; path = "Target Support Files/Pods-Payfour-PayfourTests/Pods-Payfour-PayfourTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-Payfour.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Payfour.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		62D140B22CD4C58700714EBA /* enqura.der */ = {isa = PBXFileReference; lastKnownFileType = file; name = enqura.der; path = ../../../enqura.der; sourceTree = "<group>"; };
 		62DE01102D088AE300F6EC8B /* BaseLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLayout.swift; sourceTree = "<group>"; };
+		62E2E5A42D09D07D007F51C9 /* enqura.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = enqura.der; sourceTree = "<group>"; };
 		62EC4C2A2D0700BB00F210C6 /* OCRErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRErrorView.swift; sourceTree = "<group>"; };
 		62EC4C2C2D0700C800F210C6 /* NFCSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCSuccessView.swift; sourceTree = "<group>"; };
 		62EC4C2E2D0700D400F210C6 /* NFCRequiredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCRequiredView.swift; sourceTree = "<group>"; };
@@ -149,11 +148,11 @@
 			children = (
 				62FF7AA22D01EC130091C1C1 /* EnQualify */,
 				62FAA8852D01DAD700BA5ED7 /* Payfour.entitlements */,
-				62D140B22CD4C58700714EBA /* enqura.der */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				62E2E5A42D09D07D007F51C9 /* enqura.der */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				62FF7AA32D01EC400091C1C1 /* Payfour-Bridging-Header.h */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -375,7 +374,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				62D140B32CD4C58700714EBA /* enqura.der in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				AF55E0AAA1734516A946CBF1 /* Helvetica-Bold.ttf in Resources */,
 				6DF947297EF04563A3EB03E5 /* Helvetica-Light.ttf in Resources */,
