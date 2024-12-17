@@ -59,6 +59,9 @@ const IdentityForm = ({ route, navigation }) => {
   const sendData = async () => {
 
     const updatedData = validateFormData(formData);
+
+    updatedData.userBirth.isValid = validateDate(updatedData.userBirth.value)
+    updatedData.userEmail.isValid = isValidEmail(updatedData.userEmail.value)
     
     setFormData(updatedData);
 
