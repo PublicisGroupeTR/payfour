@@ -57,7 +57,7 @@ const VerifyScreen = ({ navigation, route }) => {
       if (token) {
         data = { ...data, ...{ token: token } }
       }
-      console.log(data)
+      // console.log(data)
       setAllData(data)
     }
   }

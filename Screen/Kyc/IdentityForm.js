@@ -134,7 +134,6 @@ const IdentityForm = ({ route, navigation }) => {
           selected: false,
           isValid: true
         })
-        console.log(response.data)
       });
       if (data && data.length != 0) {
         setAgreements(data)
