@@ -20,12 +20,13 @@ const IdentityForm = ({ route, navigation }) => {
   // console.log(user)
   // const tempToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFwcGx5bG9hbnwwMTkzYWY5Ny1mMTU0LTczZTYtOGI1ZC02YjIyYjlhOWI2M2IiLCJtZW1iZXJpZCI6IjM1ODMiLCJleHAiOjE3MzM4MjE0MDIsImlzcyI6IlBheWZvdXJBcHBTZXJ2aWNlIiwiYXVkIjoiUGF5Zm91clRlbXBUb2tlbiJ9.yortaIurPVV3Efu7bpRoQPmZbx-l0dhxpUd538ceYiY"
   // const user = {"birthDate": "2001-10-10T00:00:00", "cityCode": 6, "commercialElectronic": true, "crmCustomerId": "15628932", "defaultBankAccountNumber": "3594488206101", "districtCode": 74, "email": "", "firstName": "Mahmut Bilal", "gender": "Male", "isStudent": false, "lastName": "TEKİROĞLU", "payfourId": 3583, "phone": "+905533600910", "referralCode": "PYF2jzBnEzjQhS7", "registrationCompleted": true, "segment": 1}
+  // 64317832464
 
   const [loading, setLoading] = useState(false);
   const [agreements, setAgreements] = useState();
 
   const [formData, setFormData] = useState({
-    userTCKN: { value: "64317832464", isValid: true },
+    userTCKN: { value: "", isValid: true },
     userName: { value: user.firstName, isValid: true },
     userLastName: { value: user.lastName, isValid: true },
     userEmail: { value: user.email, isValid: true },
@@ -283,7 +284,7 @@ const IdentityForm = ({ route, navigation }) => {
                 mask={['+', '9', '0', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
               />
 
-              <View style={[istyles.inputStyle, formData.userBirth.isValid === false && istyles.borderError, { paddingBottom: 0 }]}>
+              <View style={[istyles.inputStyle, formData.userBirth.isValid === false && istyles.borderError, { paddingBottom: 0, paddingLeft: 12 }]}>
                 <Text style={istyles.bhirtDateText}>
                   Doğum Tarihi (GG/AA/YYYY)
                 </Text>
@@ -297,7 +298,7 @@ const IdentityForm = ({ route, navigation }) => {
               </View>
 
               <KycTextInput
-                isValid={formData.userEmail.isValid && isValidEmail(formData.userEmail.value)}
+                isValid={formData.userEmail.isValid}
                 style={istyles.inputStyle}
                 value={formData.userEmail.value}
                 onChange={(value) => handleChange("userEmail", value)}
