@@ -1,10 +1,9 @@
 import React from 'react';
-import {StyleSheet, View, Platform, KeyboardAvoidingView} from 'react-native';
+import {StyleSheet, Platform, KeyboardAvoidingView} from 'react-native';
 import Loader from '../Components/Loader.js';
 import SubtabHeader from '../Components/SubtabHeader.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const KvcLayout = ({title, children, disableScroll, loading}) => {
   const insets = useSafeAreaInsets();

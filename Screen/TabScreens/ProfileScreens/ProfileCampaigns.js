@@ -98,7 +98,7 @@ const ProfileCampaigns = ({navigation}) => {
         
         <View>
         <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
-        Paracard Bonus kartınızı Masterpass altyapısından silmek istediğinize emin misiniz?
+        {deleteData.cardAlias} kartınızı Masterpass altyapısından silmek istediğinize emin misiniz?
         </Text>        
         </View>
         <View style={{flexDirection:'row'}}>
@@ -179,7 +179,7 @@ const ProfileCampaigns = ({navigation}) => {
               </View> */}
         <View style={{borderRadius:16}}>
             
-        <View style={{
+        {/* <View style={{
             padding:8,
             borderRadius:8,
             backgroundColor:'#fff',
@@ -242,7 +242,7 @@ const ProfileCampaigns = ({navigation}) => {
               </Text>
             </TouchableOpacity>            
 
-          </View>
+          </View> */}
           <View
             style={{
               padding: 18,
@@ -261,6 +261,27 @@ const ProfileCampaigns = ({navigation}) => {
           </View>
           
         </View>
+        <TouchableOpacity style={{
+          
+          backgroundColor:'#004F97',
+          alignItems:'center',
+          justifyContent:'center',
+          borderRadius:8,
+          width:'100%',
+          height:52, 
+          position:'absolute',
+          bottom:90,
+          left: 16
+        }}
+        //onPress={()=>{navigation.navigate('ProfileHome', { filter:'platinum' })}}
+        onPress={() => navigation.navigate('campaign', { 
+          screen: 'CampaignList',          
+        })}
+        >
+          <Text style={{color:'#fff', fontSize:14}}>
+          Keşfetmeye Başla
+          </Text>
+        </TouchableOpacity>
       </View>
       
       

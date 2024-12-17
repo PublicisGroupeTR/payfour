@@ -23,68 +23,68 @@ const AddressInfo = ({ route, navigation }) => {
   return (
     <KvcLayout title={"Kimlik Bilgilerin"} loading={false}>
       <View style={istyles.container}>
-            <KycHeader number="2" title="Adres Bilgileri"></KycHeader>
-            <View style={istyles.form}>
-            <KycTextInput
-              disable
-              title={"İl"}
-              value={data.city || ""}
-              placeholder="İl"
-            />
-            <KycTextInput
-              disable
-              title={"İlçe"}
-              value={data.district || ""}
-              placeholder="İlçe"
-            />
-            <KycTextInput
-              disable
-              title={"Mahalle"}
-              value={data.neihgbourhood || ""}
-              placeholder="Mahalle"
-            />
-            <KycTextInput
-              disable
-              title={"Cadde"}
-              value={data.street || ""}
-              placeholder="Cadde"
-            />
-            <KycTextInput
-              disable
-              title={"Bina No"}
-              value={data.building || ""}
-              placeholder="Bina No"
-            />
-            <KycTextInput
-              disable
-              title={"Daire No"}
-              value={data.section || ""}
-              placeholder="Daire No"
-            />
+        <KycHeader number="2" title="Adres Bilgileri"></KycHeader>
+        <View style={istyles.form}>
+          <KycTextInput
+            disable
+            title={"İl"}
+            value={data.city || ""}
+            placeholder="İl"
+          />
+          <KycTextInput
+            disable
+            title={"İlçe"}
+            value={data.district || ""}
+            placeholder="İlçe"
+          />
+          <KycTextInput
+            disable
+            title={"Mahalle"}
+            value={data.neihgbourhood || ""}
+            placeholder="Mahalle"
+          />
+          <KycTextInput
+            disable
+            title={"Cadde"}
+            value={data.street || ""}
+            placeholder="Cadde"
+          />
+          <KycTextInput
+            disable
+            title={"Bina No"}
+            value={data.building || ""}
+            placeholder="Bina No"
+          />
+          <KycTextInput
+            disable
+            title={"Daire No"}
+            value={data.section || ""}
+            placeholder="Daire No"
+          />
 
-              <View style={istyles.buttonContainer}>
-                <TouchableOpacity
-                  onPress={next}
-                  style={[istyles.buttonStyle]}
-                  activeOpacity={0.5}
-                >
-                  <Text style={istyles.buttonTextStyle}>Devam Et</Text>
-                </TouchableOpacity>
+          <View style={istyles.buttonContainer}>
+            <TouchableOpacity
+              onPress={next}
+              style={[istyles.buttonStyle]}
+              activeOpacity={0.5}
+            >
+              <Text style={istyles.buttonTextStyle}>Devam Et</Text>
+            </TouchableOpacity>
 
-                <Image
-                  source={require('../../assets/img/dgfin_legal.png')}
-                  style={istyles.dgfin}
-                />
-              </View>
-            </View>
+            <Image
+              source={require('../../assets/img/dgfin_legal.png')}
+              style={istyles.dgfin}
+            />
           </View>
+        </View>
+      </View>
     </KvcLayout>
   );
 };
 export default AddressInfo;
 
 const istyles = StyleSheet.create({
-  main:{
+  main: {
     flex: 1,
     backgroundColor: '#efeff3'
   },
@@ -136,7 +136,7 @@ const istyles = StyleSheet.create({
     height: 52,
     alignItems: 'center',
     borderRadius: 10,
-    justifyContent:"center"
+    justifyContent: "center"
   },
   buttonTextStyle: {
     color: '#FFFFFF',
@@ -149,13 +149,13 @@ const istyles = StyleSheet.create({
     width: "100%",
     height: 77
   },
-  modal:{
+  modal: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     backgroundColor: 'rgba(92, 92, 92, 0.56)',
   },
-  modalBody:{
+  modalBody: {
     backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -169,14 +169,14 @@ const istyles = StyleSheet.create({
 })
 
 const htmlStyles = StyleSheet.create({
-  marginBottom:0,
-  paddingBottom:0,
-  textAlign:'justify',
+  marginBottom: 0,
+  paddingBottom: 0,
+  textAlign: 'justify',
   p: {
-    margin:0,padding:0,
+    margin: 0, padding: 0,
   },
-  div:{
-    marginBottom:8,
+  div: {
+    marginBottom: 8,
   },
 
 });

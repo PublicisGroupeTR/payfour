@@ -3,7 +3,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, {useState, useEffect, createRef} from 'react';
+import React, {useState, useEffect, useRef, createRef} from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -32,6 +32,9 @@ import SubtabHeader from '../../Components/SubtabHeader.js';
 import PayScreen from '../PayScreens/PayScreen.js';
 import PayOptionsScreen from '../PayScreens/PayOptionsScreen.js';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { Modalize } from 'react-native-modalize';
+
+import PayfourPlatinUyelikSozlesmesi from '../../Legals/PayfourPlatinUyelikSozlesmesi.js';
 
 import axios from 'react-native-axios';
 const Stack = createStackNavigator();
@@ -54,6 +57,8 @@ const ProfilePlatinumScreen = ({navigation}) => {
   const [showTooltip2, setShowTooltip2] = useState(false);
   const [showTooltip3, setShowTooltip3] = useState(false);
 
+  const rulesModalizeRef = useRef(null);
+
   useEffect(() => {
     AsyncStorage.getItem('payfourId').then(value =>{
       setPayfourId(value);
@@ -62,7 +67,7 @@ const ProfilePlatinumScreen = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           
@@ -186,7 +191,7 @@ const ProfilePlatinumScreen = ({navigation}) => {
                           textAlign:'center',
                           marginBottom:26,
                         }}>
-                          Mağazalarımızdan veya CarrefourSa'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
+                          Mağazalarımızdan veya CarrefourSA'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
                       </Text>
                       <View style={{
                         padding:16,
@@ -200,7 +205,7 @@ const ProfilePlatinumScreen = ({navigation}) => {
                           fontSize:16,
                           color:'#0B1929',
                         }}>
-                          Payfour ID:
+                          Payfour No:
                         </Text>
                         <Text style={{
                           fontSize:16,
@@ -538,6 +543,161 @@ const ProfilePlatinumScreen = ({navigation}) => {
               </View>
             </View>
       </Modal>
+      <Modalize ref={rulesModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CarrefourSA PAYFOUR PLATİN ÜYELİK SÖZLEŞMESİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        rulesModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      {/* <View style={{marginBottom:24}}>
+                        <Text style={{
+                          fontSize:12,
+                          color:'#909EAA',
+                          marginBottom:8,
+                        }}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
+
+Enim ut tellus elementum sagittis vitae. 
+In massa tempor nec feugiat nisl pretium fusce id velit. 
+Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
+Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
+Fermentum posuere urna nec tincidunt praesent semper feugiat.
+
+Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
+                        </Text>
+                        <Text style={{
+                          fontSize:12,
+                          color:'#909EAA',
+                          marginBottom:8,
+                        }}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
+
+Enim ut tellus elementum sagittis vitae. 
+In massa tempor nec feugiat nisl pretium fusce id velit. 
+Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
+Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
+Fermentum posuere urna nec tincidunt praesent semper feugiat.
+
+Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
+                        </Text>
+                        <Text style={{
+                          fontSize:12,
+                          color:'#909EAA',
+                          marginBottom:8,
+                        }}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
+
+Enim ut tellus elementum sagittis vitae. 
+In massa tempor nec feugiat nisl pretium fusce id velit. 
+Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
+Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
+Fermentum posuere urna nec tincidunt praesent semper feugiat.
+
+Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
+                        </Text>
+                       
+               
+                      </View>*/}
+                      
+                      <PayfourPlatinUyelikSozlesmesi />
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:16,
+                  paddingRight:16,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => {
+                    setUserPlatinumAgreement(true);
+                    rulesModalizeRef.current?.close();
+                  }}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Okudum, onaylıyorum
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+      </Modalize>
         <Loader loading={loading} />
         {/* <SubtabHeader routetarget="ProfileHome" name="Şifre Değiştir" count="0" />        */}
 
@@ -600,7 +760,7 @@ const ProfilePlatinumScreen = ({navigation}) => {
                   <View style={{flexDirection:'row', alignItems:'center', marginBottom:10}}>
                     <View style={{width:'75%', paddingRight:20}}>
                       <Text style={{color:'#0B1929', fontSize:12}}>
-                      CarrefourSA Online Market uygulaması ve carrefoursa.com alışverişlerinde ücretsiz kargo
+                      CarrefourSA Online Market uygulaması ve CarrefourSA.com alışverişlerinde ücretsiz kargo
                       </Text>
                       </View>
                     {/* <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
@@ -637,130 +797,7 @@ const ProfilePlatinumScreen = ({navigation}) => {
                         />
                     </View>
                   </View>
-                  {/* <View style={{flexDirection:'row', alignItems:'center', marginBottom:10}}>
-                    <View style={{width:'50%', paddingRight:20}}>
-                      <Text style={{color:'#0B1929', fontSize:12}}>
-                      Her ay İspark’ın 2 defa ücretsiz kullanımı
-                      </Text>
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <View style={{width:12, height:2, borderRadius:3, backgroundColor:'#004F97'}}></View>
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <Image
-                          source={require('../../../assets/img/export/platin_check.png')}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                    </View>
-                  </View>
-                  <View style={{flexDirection:'row', alignItems:'center', marginBottom:10}}>
-                    <View style={{width:'50%', paddingRight:20}}>
-                      <Text style={{color:'#0B1929', fontSize:12}}>
-                      TAB Gıda markalarında Platinli menülerden faydalanabilirsin
-                      </Text>
-                      <Text style={{color:'#909EAA', fontSize:10}}>
-                      Burger King, Popeyes, Arby’s, Usta Dönerci, Usta Pideci, Sbarro, Subway
-                      </Text>
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <View style={{width:12, height:2, borderRadius:3, backgroundColor:'#004F97'}}></View>
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <Image
-                          source={require('../../../assets/img/export/platin_check.png')}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                    </View>
-                  </View>
-                  <View style={{flexDirection:'row', alignItems:'center', marginBottom:10}}>
-                    <View style={{width:'50%', paddingRight:20}}>
-                      <Text style={{color:'#0B1929', fontSize:12}}>
-                      İstediğin zaman üyelik iptali
-                      </Text>
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <Image
-                          source={require('../../../assets/img/export/platin_check.png')}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <Image
-                          source={require('../../../assets/img/export/platin_check.png')}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                    </View>
-                  </View>
-                  <View style={{flexDirection:'row', alignItems:'center', marginBottom:10}}>
-                    <View style={{width:'50%', paddingRight:20}}>
-                      <Text style={{color:'#0B1929', fontSize:12}}>
-                      Avantajlı alışveriş
-                      </Text>
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <Image
-                          source={require('../../../assets/img/export/platin_check.png')}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <Image
-                          source={require('../../../assets/img/export/platin_check.png')}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                    </View>
-                  </View>
-                  <View style={{flexDirection:'row', alignItems:'center', marginBottom:10}}>
-                    <View style={{width:'50%', paddingRight:20}}>
-                      <Text style={{color:'#0B1929', fontSize:12}}>
-                      Kolay ödeme imkanı
-                      </Text>
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <Image
-                          source={require('../../../assets/img/export/platin_check.png')}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                    </View>
-                    <View style={{width:'25%', alignItems:'center', justifyContent:'center'}}>
-                      <Image
-                          source={require('../../../assets/img/export/platin_check.png')}
-                          style={{
-                            width: 32,
-                            height: 32,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                    </View>
-                  </View> */}
+                  
                 </View>
                 <View style={{width:'100%', borderRadius:6}}>
                   <ImageBackground
@@ -768,7 +805,7 @@ const ProfilePlatinumScreen = ({navigation}) => {
                     resizeMode="cover"
                     source={require('../../../assets/img/export/platin_bg.png')}>
                       <Text style={{color:'#fff', fontSize:14, fontWeight:700, marginBottom:4}}>İlk 1 ay Platin Üyeliğin sadece 5 TL</Text>
-                      <Text style={{color:'#fff', fontSize:10}}>Hesabınızı hemen yükseltin, avantajları kaçırmayın!</Text>
+                      <Text style={{color:'#fff', fontSize:10}}>Hesabını hemen yükselt, avantajları kaçırma!</Text>
                   </ImageBackground>
                 </View>
               </View>
@@ -777,7 +814,7 @@ const ProfilePlatinumScreen = ({navigation}) => {
                 Platinli Nasıl Olunur?
                 </Text>
                 <Text style={{color:'#0B1929', fontSize:12, marginBottom:16}}>
-                Payfour Premium üyesi olmak için Platin’li Ol seçeneğini seçerek üyelik sürecini başlatabilirsiniz.
+                Payfour Premium üyesi olmak için Platin’li Ol seçeneğini seçerek üyelik sürecini başlatabilirsin.
                 </Text>
                 {/* <Text style={{color:'#0B1929', fontSize:12, marginBottom:16}}>
                 Dilersen CarrefourSA’larda her ay toplam 2.500 TL harcayarak Platinli olma hakkı kazanabilirsin, dilersen abonelik satın aldıktan sonra hemen Platin avantajlarından faydalanlanmaya başlayabilirsin.
@@ -799,11 +836,11 @@ const ProfilePlatinumScreen = ({navigation}) => {
                 />
                 </View>
                 <Text style={{color:'#0B1929', fontSize:12, marginBottom:10, paddingRight:16}}>
-                Abonelik satın almadan önce cüzdanınıza bakiye yüklemeniz gerekiyor.
+                Abonelik satın almadan önce cüzdanıa bakiye yüklemen gerekiyor.
                 </Text>
               </View>
               <Text style={{color:'#0B1929', fontSize:12, marginBottom:24}}>
-              Cüzdanınıza aşağıdaki yöntemlerden birini seçerek bakiye yükleyebilirsiniz.
+              Cüzdanıa aşağıdaki yöntemlerden birini seçerek bakiye yükleyebilirsin.
                 </Text>
                 
                 <View style={{
@@ -823,6 +860,7 @@ const ProfilePlatinumScreen = ({navigation}) => {
                           screen: 'ListCards',
                           params: {
                             card: 'true',
+                            prev: 'true'
                           }, },
                       })                          
                     }}>
@@ -849,7 +887,7 @@ const ProfilePlatinumScreen = ({navigation}) => {
                         fontSize:14,
                         color:'#004F97',
                       }}>
-                        Kredi Kartı ile Öde
+                        Banka / Kredi Kartı ile Yükle
                       </Text>
                     </View>
                     
@@ -1022,6 +1060,41 @@ const ProfilePlatinumScreen = ({navigation}) => {
                   paddingRight:16,
                   paddingLeft:0,
                   }}>
+                 
+                      <View style={{
+                        width:20,
+                    height:20,
+                    marginRight:8,
+                    borderRadius:5,
+                    alignItems:'center',
+                    justifyContent:'center'}}>
+                      <Image
+                      source={require('../../../assets/img/export/information.png')}
+                      style={{
+                      width: 20,
+                      height: 20,
+                      resizeMode: 'contain',
+                      }}
+                      />
+                  </View>
+                 
+                  <TouchableOpacity onPress={()=>console.log("ön bilgilendirme")}>
+                  <Text style={{
+                  fontWeight:'300',
+                  color:'#1E242F',
+                  fontSize:12,
+                  }}>
+                  <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Ön bilgilendirme formunu</Text> onaylıyorum.
+                  </Text>
+                  </TouchableOpacity>
+                  </View>
+                <View style={{
+                  marginBottom:22,
+                  alignItems:'center',
+                  flexDirection:'row',
+                  paddingRight:16,
+                  paddingLeft:0,
+                  }}>
                   <Pressable
                     style={{
                       flexDirection:'row',
@@ -1044,22 +1117,32 @@ const ProfilePlatinumScreen = ({navigation}) => {
                       }}
                       />
                   </View>
+                  </Pressable>  
+                  <TouchableOpacity onPress={()=>rulesModalizeRef.current?.open()}>
                   <Text style={{
+                  fontWeight:'300',
+                  color:'#1E242F',
+                  fontSize:12,
+                  }}>
+                  <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Platin üyelik sözleşmesini</Text> okudum, anladım.
+                  </Text>
+                  </TouchableOpacity>
+                  {/* <Text style={{
                   fontWeight:'300',
                   color:'#1E242F',
                   fontSize:12,
                   
                   }}>
-                  Platin üyelik sözleşmesini okudum, onaylıyorum.
-                  </Text></Pressable>  
+                  Platin üyelik sözleşmesini okudum, anladım.
+                  </Text> */}
                   </View>
-                <TouchableOpacity
-                    style={[styles.buttonStyle, {marginBottom: 60, backgroundColor: '#004F97'}]}
-                    
-                    activeOpacity={0.5}
-                    onPress={handleSubmitPress}>
-                      <Text style={styles.buttonTextStyle}>Platinli Ol</Text>
-                    </TouchableOpacity>
+                  <TouchableOpacity
+                  style={[styles.buttonStyle, {marginBottom: 60, backgroundColor: userPlatinumAgreement ? '#004F97': '#909EAA'}]}
+                  activeOpacity={0.5}
+                  disabled={!userPlatinumAgreement}
+                  onPress={handleSubmitPress}>
+                  <Text style={styles.buttonTextStyle}>Platinli Ol</Text>
+                  </TouchableOpacity>
             </View>
 
         </ScrollView>

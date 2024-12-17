@@ -4,7 +4,8 @@
 
 // Import React and Component
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, Image, Modal, FlatList, StyleSheet, Dimensions, TextInput, Keyboard, TouchableOpacity} from 'react-native';
+import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, Image, Modal, 
+  FlatList, StyleSheet, Dimensions, TextInput, Keyboard, TouchableOpacity, Linking, Pressable} from 'react-native';
 import {styles} from '../../Components/Styles.js';
 import TabHeader from '../../Components/TabHeader.js';
 import Loader from '../../Components/Loader.js';
@@ -14,14 +15,14 @@ import { registerStyles } from '../../Components/RegisterStyles.js';
 //import {TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'react-native-axios';
-import {MasterPassSDK} from '@macellan/masterpass-sdk';
+//import {MasterPassSDK} from '@macellan/masterpass-sdk';
 import {RSAKey} from 'react-native-rsa'
 import { sha256, sha256Bytes } from 'react-native-sha256';
 import { WebView } from 'react-native-webview';
 import MaskInput, { createNumberMask } from 'react-native-mask-input';
 //https://test-client.bubbleads.co/Scripts/masterpass-javascript-sdk-web.min.js
 import {createStackNavigator} from '@react-navigation/stack';
-
+import { Modalize } from 'react-native-modalize';
 const Stack = createStackNavigator();
 
 const ListCards = ({navigation}) => {
@@ -374,7 +375,7 @@ axios.post('https://payfourapp.test.kodegon.com/api/payments/addcard',dataToSend
 }
 const checkMasterpass = async () => {
   // check registration
-  console.log(MasterPassSDK);
+  //console.log(MasterPassSDK);
   console.log(phone);
   console.log(mpToken);
   let tk = mpToken.replace('Bearer ', '');
@@ -973,7 +974,7 @@ const renderCards = () => {
         
         <View>
         <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
-        Paracard Bonus kartınızı Masterpass altyapısından silmek istediğinize emin misiniz?
+        {deleteData.cardAlias} kartınızı Masterpass altyapısından silmek istediğinize emin misiniz?
         </Text>        
         </View>
         <View style={{flexDirection:'row'}}>
@@ -1036,7 +1037,7 @@ const renderCards = () => {
                   color: cardType==='carrefour'? '#004F97':'#909EAA',
                 }}
                 >
-                  CarrefourSa Kartlarım
+                  CarrefourSA Kartlarım
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity 
@@ -1112,9 +1113,9 @@ const renderCards = () => {
         {renderCarrefourCards()} 
         </View>
         <View style={{display:cardListType == 'bank'? 'flex' : 'none'}}>
-          <Text style={{color:'#004F97', fontSize:14, marginBottom:8, fontWeight:'500'}}>
+          {/* <Text style={{color:'#004F97', fontSize:14, marginBottom:8, fontWeight:'500'}}>
             Kredi Kartlarım
-          </Text>
+          </Text> */}
           {renderCards()} 
           <View style={{
             alignItems:'center'
@@ -1130,7 +1131,8 @@ const renderCards = () => {
             />
           <Text style={{color:'#0B1929', fontSize:12, textAlign:'center'}}>
           Kart bilgileriniz Mastercard’ın dijital ödeme altyapısı olan <Text style={{color:'#004F97'}}> </Text>
-          <Text style={{color:'#004F97', fontWeight:500, textDecorationLine:'underline'}}>Masterpass</Text>’te güvenle saklanmaktadır.
+          <Text style={{color:'#004F97', fontWeight:500, textDecorationLine:'underline'}}
+          onPress={()=>Linking.openURL('https://www.mastercard.com.tr/tr-tr.html')}>Masterpass</Text>’te güvenle saklanmaktadır.
           </Text>
           <View style={{paddingTop:40, paddingBottom:40,width:'100%'}}>
           <TouchableOpacity style={{width:'100%', height:64, padding:16, borderRadius:12, backgroundColor:'#fff',
@@ -1181,11 +1183,15 @@ const AddCards = ({navigation}) => {
   const [user, setUser] = useState({token:'', phone:'', payfourId:''});
   const scrollRef = useRef();
 
+  const [mpSave, setMpSave] = useState(false);
   const [otp, setOtp] = useState(false);
   const [stopOtpTimer, setStopOtpTimer] = useState(false);
   const [timerCount, setTimerCount] = useState(180);
   const [timerText, setTimerText] = useState('03:00');
   const [resetTimer, setResetTimer] = useState(false);
+  const [resetMasterPassModalVisible, setResetMasterPassModalVisible] = useState(false);
+
+  const rulesModalizeRef = useRef(null);
 
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => { 
@@ -1194,7 +1200,7 @@ const AddCards = ({navigation}) => {
 
       //MasterPassSDK.setAddress('https://mp-test-sdk.masterpassturkiye.com/');
       //MasterPassSDK.setClientId('347102188');
-      //getCarrefourCards();
+      getCarrefourCards();
       console.log('Masterpass token get'); 
       AsyncStorage.getAllKeys((err, keys) => {
         AsyncStorage.multiGet(keys, (err, stores) => {
@@ -1304,6 +1310,46 @@ const AddCards = ({navigation}) => {
       //cleanup the interval on complete
       return () => clearInterval(interval);
     }
+  }
+  const getCarrefourCards = () =>{
+    setLoading(true);
+    AsyncStorage.getItem('token').then(value =>{
+      setLoading(true)
+  
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+      axios.get('https://payfourapp.test.kodegon.com/api/account/getloyaltycards', config)
+            .then(response => {
+            setLoading(false);
+  
+              console.log("getLoyaltyCards");
+              console.log(response);
+              console.log(response.data);
+              
+              let arr = response.data.data;
+              for(var i=0; i < arr.length;i++){
+                arr[i].logo = require('../../../assets/img/export/carrefour_bireysel.png');
+              }
+              console.log(arr);
+              setCarrefourCardData(arr);
+  
+              getMasterpassToken();
+              
+            }).catch(error => {
+              setLoading(false);
+              console.error("Error sending data: ", error);
+              console.error("Error sending data: ", error.response);
+              console.error("Error sending data: ", error.response.data.errors.message);
+              //console.log(JSON.parse(error.response));
+              let msg="";
+              (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        
+              
+              //Alert.alert("Error sending data: ", error);
+            });
+          
+          });
   }
   const addCard = ()=>{
     console.log("addCard");
@@ -1420,6 +1466,9 @@ const AddCards = ({navigation}) => {
       resetOtpTimer();
       //navigation.navigate('ListCards');
       setCardSuccessModalVisible(true);
+    }else if(message.nativeEvent.data == "404") {
+      //Alert.alert("Hata:", "404")
+      setResetMasterPassModalVisible(true);
     }
   }
   
@@ -1495,7 +1544,7 @@ const checkValidCVC = (cvc) =>{
     if(addwebview.current) addwebview.current.postMessage("otp;123456");
   }
   return(
-    <SafeAreaView style={{flex: 1, backgroundColor: '#efeff3'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <Modal
             animationType="slide"
             transparent={true}
@@ -1692,11 +1741,227 @@ const checkValidCVC = (cvc) =>{
       </View>
       </View>
       </Modal>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={resetMasterPassModalVisible}
+          onRequestClose={() => {
+            setResetMasterPassModalVisible(!resetMasterPassModalVisible);
+          }}>                     
+            
+          <View
+            style={{
+              flex: 1,                
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              backgroundColor: 'rgba(0, 79, 151, 0.6)',
+            }}>
+            <View
+              style={{
+                backgroundColor:'#fff',
+                borderTopLeftRadius: 24,
+                borderTopRightRadius: 24,
+                paddingTop: 32,
+                paddingBottom: 16,
+                paddingLeft: 16,
+                paddingRight: 16,
+                width: '100%',
+              }}>
+                
+                <View style={{
+                    marginBottom:24,
+                    }}>
+                      <Text style={{
+                        fontSize:16,
+                        fontWeight:'700',
+                        color:'#004F97',
+                        marginBottom:16,
+                        textAlign:'center',
+                      }}>
+                        Masterpass hesabınızı <Text style={{textDecorationLine:'underline'}}>linkten</Text> sıfırlayabilirsiniz.
+                      </Text>
+                                    
+                </View>
+                
+              <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                    },
+                  ]}
+                  onPress={() => setResetMasterPassModalVisible(false)}>
+                  <Text
+                    style={{fontSize: 14, color: '#fff'}}>
+                    Tamam
+                  </Text>
+                </TouchableOpacity>                  
+              
+            </View>
+          </View>
+    </Modal>
+      <Modalize ref={rulesModalizeRef}
+      snapPoint={0}
+      modalStyle={{backgroundColor:(0,0,0,0)}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          Kullanım Koşulları
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        rulesModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      <View style={{marginBottom:24}}>
+                        <Text style={{
+                          fontSize:12,
+                          color:'#909EAA',
+                          marginBottom:8,
+                        }}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
+
+Enim ut tellus elementum sagittis vitae. 
+In massa tempor nec feugiat nisl pretium fusce id velit. 
+Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
+Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
+Fermentum posuere urna nec tincidunt praesent semper feugiat.
+
+Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
+                        </Text>
+                        <Text style={{
+                          fontSize:12,
+                          color:'#909EAA',
+                          marginBottom:8,
+                        }}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
+
+Enim ut tellus elementum sagittis vitae. 
+In massa tempor nec feugiat nisl pretium fusce id velit. 
+Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
+Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
+Fermentum posuere urna nec tincidunt praesent semper feugiat.
+
+Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
+                        </Text>
+                        <Text style={{
+                          fontSize:12,
+                          color:'#909EAA',
+                          marginBottom:8,
+                        }}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
+
+Enim ut tellus elementum sagittis vitae. 
+In massa tempor nec feugiat nisl pretium fusce id velit. 
+Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
+Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
+Fermentum posuere urna nec tincidunt praesent semper feugiat.
+
+Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
+                        </Text>
+                       
+               
+                      </View>
+                  </View>
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:16,
+                  paddingRight:16,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => rulesModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+      </Modalize>
     <Loader loading={loading} />
     <SubtabHeader routetarget="ListCards" name="Kredi / Banka Kartı Ekle" count="0" />
     <ScrollView
 keyboardShouldPersistTaps="handled"
-style={registerStyles.scrollView}>
+style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
 <KeyboardAvoidingView enabled>
     <View style={{paddingTop: 16,
       paddingBottom: 16,
@@ -1732,32 +1997,7 @@ style={registerStyles.scrollView}>
                         </Text>
                         
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0}]}>                     
-                    <Text style={{                                           
-                        fontSize: 12,
-                        lineHeight:12, 
-                        padding:0,
-                        color: '#909EAA', 
-                        position:'absolute',
-                        top:14,                     
-                        left:16,
-                        pointerEvents:"none",
-                    }}>
-                      Kart Üzerindeki İsim
-                    </Text>
-                    <TextInput
-                        value={cardName}
-                        onChangeText={UserName => setCardName(UserName)}
-                        placeholder="Ad Soyad" //12345
-                        placeholderTextColor="#909EAA"
-                        keyboardType="default"
-                        onSubmitEditing={Keyboard.dismiss}
-                        blurOnSubmit={false}
-                        underlineColorAndroid="#f000"
-                        returnKeyType="next"
-                      />
-                  </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: validNumber ? '#EBEBEB': '#ff0000',paddingBottom:0,}]}>  
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, height:60, paddingTop:30}]}>  
                     <Text style={{                                           
                           fontSize: 12,
                           lineHeight:12, 
@@ -1765,51 +2005,82 @@ style={registerStyles.scrollView}>
                           color: '#909EAA', 
                           position:'absolute',
                           top:14,                     
-                          left:16,
+                          left:12,
+                          pointerEvents:"none",
+                      }}>
+                      Kart Üzerindeki İsim
+                    </Text>
+                    <TextInput
+                        value={cardName}
+                        //onChangeText={UserName => setCardName(UserName)}
+                        onChangeText={UserName => {
+                          let isValid = /^[A-Za-z]+[A-Za-z ]*$/.test(UserName);
+                          console.log(UserName);
+                          console.log(isValid);
+                          if(isValid)setCardName(UserName)}}
+                        placeholder="Ad Soyad" //12345
+                        placeholderTextColor="#909EAA"
+                        keyboardType="default"
+                        onSubmitEditing={Keyboard.dismiss}
+                        blurOnSubmit={false}
+                        underlineColorAndroid="#f000"
+                        returnKeyType="next"
+                        autoCapitalize='none'
+                        autoComplete='off'
+                        autoCorrect='false'
+                      />
+                  </View>
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, height:60, paddingTop:30}]}>  
+                    <Text style={{                                           
+                          fontSize: 12,
+                          lineHeight:12, 
+                          padding:0,
+                          color: '#909EAA', 
+                          position:'absolute',
+                          top:14,                     
+                          left:12,
                           pointerEvents:"none",
                       }}>
                         Kart Numarası
                       </Text>          
-                    <TextInput                      
-                      onChangeText={CardNumber => {
-                        setCardNumber(CardNumber);
-                        checkValidCard(CardNumber);
+                    <TextInput  
+                      value={cardNumber}                    
+                      onChangeText={CardNumber =>{
+                        let cn = CardNumber.replace(/[^0-9]/g, '');
+                        setCardNumber(cn);
+                        checkValidCard(cn);
                       }}
                       placeholder="Kart No." //12345
                       placeholderTextColor="#909EAA"
-                      keyboardType="numeric"
-                      onSubmitEditing={Keyboard.dismiss}
-                      blurOnSubmit={false}
-                      underlineColorAndroid="#f000"
-                      returnKeyType="next"
+                        keyboardType="default"
+                        onSubmitEditing={Keyboard.dismiss}
+                        blurOnSubmit={false}
+                        underlineColorAndroid="#f000"
+                        returnKeyType="next"
+                        autoCapitalize='none'
+                        autoComplete='off'
+                        autoCorrect='false'
                     />
                   </View>
                   <View style={{
                     flexDirection:'row',
                     justifyContent:'space-between'
                   }}>
-                    <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',width:'48%'}]}> 
+                    <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',width:'48%', height:54}]}> 
                     <MaskInput
                         style={{                      
                           fontSize: 14,
-                        lineHeight:14, 
+                        lineHeight:20, 
                           padding:0,
                           color: '#909EAA',
                         }}
                         value={cardDate}
                         keyboardType="numeric"
                         placeholder="AA/YY"
-                        onChangeText={(masked, unmasked) => {
-                          //setUserPhone(masked); // you can use the unmasked value as well
-                          setCardDate(masked)
-                          // assuming you typed "9" all the way:
-                          console.log(masked); // (99) 99999-9999
-                          console.log(unmasked); // 99999999999
-                          //checkPhone();
-                        }}
+                        onChangeText={(masked, unmasked) =>  setCardDate(masked)}
                         mask={[/\d/, /\d/,'/', /\d/, /\d/]}
                       />           
-                      {/* <TextInput
+                       <TextInput
                         style={{                      
                           fontSize: 14,
                           lineHeight:8, 
@@ -1819,24 +2090,25 @@ style={registerStyles.scrollView}>
                         onChangeText={CardDate => {
                           setCardDate(CardDate);
                         }}
-                        placeholder="AA/YY" //12345
+                        //placeholder="AA/YY" //12345
                         placeholderTextColor="#909EAA"
                         keyboardType="default"
                         onSubmitEditing={Keyboard.dismiss}
                         blurOnSubmit={false}
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
-                      /> */}
+                      /> 
                     </View>
                     
-                    <View style={[regstyles.registerInputStyle, {borderColor: validCvc ? '#EBEBEB': '#ff0000',width:'48%'}]}>            
+                    <View style={[regstyles.registerInputStyle, {borderColor: validCvc ? '#EBEBEB': '#ff0000',width:'48%', height:54}]}>            
                       <TextInput
                         style={{                      
                           fontSize: 14,
-                          lineHeight:8, 
+                          lineHeight:20, 
                           padding:0,
                           color: '#909EAA',
                         }}
+                        value={cardCVC}
                         maxLength={3}
                         onChangeText={CardCVC => {
                           setCardCVC(CardCVC)
@@ -1852,14 +2124,49 @@ style={registerStyles.scrollView}>
                       />
                     </View>
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
+                  <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 15 }}>
+                  <View>
+                    
+                    <Pressable
+                    style={{
+                    width:20,
+                    height:20,
+                    marginRight:8,
+                    backgroundColor:mpSave ? '#015096':'#dadee7',
+                    borderRadius:5,
+                    alignItems:'center',
+                    justifyContent:'center'
+                    }}
+                    onPress={()=>setMpSave(!mpSave)}>
+                      <Image
+                      source={require('../../../assets/img/export/check.png')}
+                      style={{
+                      width: mpSave ? 14 : 0,
+                      height: mpSave ? 10 : 0,
+                      resizeMode: 'contain',
+                      }}
+                      />
+                  </Pressable>
+                  </View>
+                  <View style={{ flex: 1, flexDirection: "row", alignItems: "center", marginLeft: 8 }}>
+                    <Text style={{fontSize:12}}>
+                      <Text style={{ color:'#004F97', fontWeight:'700', textDecorationLine: "underline" }}
+                            onPress={() => rulesModalizeRef.current?.open()}>
+                        Kullanım Koşulları'nı
+                      </Text> okudum, kartımı Masterpass’e kaydetmek istiyorum.
+                    </Text>
+                  </View>
+
+                  </View>
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB', height:54}]}>            
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:8, 
+                        lineHeight:16, 
                         padding:0,
                         color: '#909EAA',
                       }}
+                      value={cardNick}
                       onChangeText={CardNick => setCardNick(CardNick)}
                       placeholder="Karta İsim Verin ( kişisel, iş vb.)" //12345
                       placeholderTextColor="#909EAA"
@@ -1868,9 +2175,32 @@ style={registerStyles.scrollView}>
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
+                      autoCapitalize='none'
+                      autoComplete='off'
+                      autoCorrect='false'
                     />
-                  </View>
-                
+                  </View> 
+                  <View style={{
+            alignItems:'center',
+            marginBottom:36,
+        }}>
+          <Image 
+            source={require('../../../assets/img/export/masterpass_logo.png')}
+            style={{
+              width: 102,
+              height: 24,
+              resizeMode: 'contain',
+              marginBottom:8,
+            }}
+            />
+          <Text style={{color:'#0B1929', fontSize:12, textAlign:'center'}}>
+          Kart bilgileriniz Mastercard’ın dijital ödeme altyapısı olan <Text style={{color:'#004F97'}}> </Text>
+          <Text style={{color:'#004F97', fontWeight:500, textDecorationLine:'underline'}}
+          onPress={()=>Linking.openURL('https://www.mastercard.com.tr/tr-tr.html')}>Masterpass</Text>’te güvenle saklanmaktadır.
+          </Text>
+          
+          
+          </View>
                 <TouchableOpacity
                   style={[
                     styles.buttonStyle,

@@ -56,7 +56,7 @@ const ProfilePlatinumSuccess = ({navigation}) => {
               <Text style={styles.text2}>Artık siz de Platin üyesisiniz</Text>
             </View>
             <Image
-          source={require('../../../assets/img/export/platinum_img.png')}
+          source={require('../../../assets/img/export/tut2.png')}
           style={{
             width: Dimensions.get('window').height*0.461, 
             height:Dimensions.get('window').height * 0.418, 
@@ -84,7 +84,13 @@ const ProfilePlatinumSuccess = ({navigation}) => {
           width:'100%',
           height:52
         }}
-        onPress={()=>{navigation.navigate('CampaignList', { filter:'platinum' })}}>
+        //onPress={()=>{navigation.navigate('ProfileHome', { filter:'platinum' })}}
+          onPress={() => navigation.navigate('campaign', { 
+          screen: 'CampaignList',
+          params: {
+            filters:{isAw:true, isSp:false}
+          }
+        })}>
           <Text style={{color:'#fff', fontSize:14}}>
           Keşfetmeye Başla
           </Text>

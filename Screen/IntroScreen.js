@@ -23,6 +23,7 @@ const IntroScreen = ({navigation}) => {
   }, [navigation]);
 
   const skipIntro = ()=>{
+    AsyncStorage.setItem('tutorial', "true").then(() =>{
     AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (err, stores) => {
         let obj = {};
@@ -46,13 +47,14 @@ const IntroScreen = ({navigation}) => {
         }else{
           navigation.navigate('Auth', { screen: 'LoginScreen' });
         }
-      })
-    })
+      });
+    });
+    });
   }
   return (
     <View style={styles.container}>
       <ImageBackground
-       style={[styles.bgimg, {flex:1, width:'100%'}]}
+       style={[styles.bgimg, {flex:1, width:'100%', paddingTop:30, paddingBottom:30}]}
        resizeMode="cover"
        source={require('../assets/img/export/tutorial_bg.png')}>
         <View style={{
@@ -65,7 +67,7 @@ const IntroScreen = ({navigation}) => {
           source={require('../assets/img/export/payfour_logo.png')}
           style={{width: 113, height:40, resizeMode: 'contain', margin: 30}}
         />
-        <TouchableOpacity style={{
+        {/* <TouchableOpacity style={{
           width:57,
           height:28,
           backgroundColor:'#dce9f3',
@@ -75,7 +77,7 @@ const IntroScreen = ({navigation}) => {
         }}
         onPress={skipIntro}>
           <Text style={{fontSize:14, color:'#004F97'}}>Atla</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         </View>
         <Swiper 
         style={styles.wrapper}

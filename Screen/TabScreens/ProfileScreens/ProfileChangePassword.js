@@ -28,7 +28,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 import Loader from '../../Components/Loader.js';
 import SubtabHeader from '../../Components/SubtabHeader.js';
-
+import { registerStyles } from '../../Components/RegisterStyles';
 
 import axios from 'react-native-axios';
 
@@ -43,6 +43,8 @@ const ProfileChangePassword = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
   const [secureText, setSecureText] = useState(true);
+  const [secureText2, setSecureText2] = useState(true);
+  const [secureText3, setSecureText3] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [userAgreement, setUserAgreement] = useState(false);
@@ -52,7 +54,13 @@ const ProfileChangePassword = ({navigation}) => {
 
   const handleSubmitPress = () => {
     setErrortext(''); 
-    sendData();   
+    if(userCurrentPassword == "" || userPassword == "" || userPasswordAgain == ""){
+      setUserPasswordError(true);
+    }else if(userPassword != userPasswordAgain){
+      setUserPasswordError(true);
+    }else{
+      sendData();   
+    }
   };
   const sendData = () =>{
     /*{
@@ -93,16 +101,16 @@ const ProfileChangePassword = ({navigation}) => {
   
   return (
 
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}> 
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>  
         
         <Loader loading={loading} />
         <SubtabHeader routetarget="ProfileHome" name="Şifre Değiştir" count="0" />       
 
         <ScrollView
           keyboardShouldPersistTaps="handled"
-          style={styles.scrollView}>
+          style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
           <KeyboardAvoidingView enabled style={{flex:1}}>
-            <View style={{padding:16, backgroundColor: '#efeff3', flex:1}}>
+            <View style={{padding:16, flex:1}}>
               <View>
                 <Text style={{color:'#004F97', fontSize:16, fontWeight:'700', marginBottom:16, paddingTop:12}}>
                 Uygulama giriş şifreni güncelleyebilirsin
@@ -125,168 +133,176 @@ const ProfileChangePassword = ({navigation}) => {
                 <View>
                   
                   <View style={styles.sectionStyle}>
-                  <View style={[styles.registerInputStyle, {marginBottom:12, borderColor: userPasswordError ? '#ff0000' : '#E4E4E8',}]}>                  
-                    <Text
-                      style={[
-                        styles.inputTitleStyle,
-                        {
-                          fontSize: 12,
-                          //marginBottom: 14,
-                          marginBottom: 0,
-                          color: '#909EAA',
-                        },
-                      ]}>
-                      Mevcut Şifre
-                    </Text>
-                    <TouchableOpacity
+                  <View style={[styles.registerInputStyle, , {marginBottom:12, borderColor: userPasswordError ? '#ff0000' : '#E4E4E8',}]}>                  
+                  <Text
+                    style={[
+                      styles.inputTitleStyle,
+                      {
+                        fontSize: 12,
+                        //marginBottom: 14,
+                        marginBottom: 0,
+                        color: '#909EAA',
+                      },
+                    ]}>
+                    Mevcut Şifre
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      position: 'absolute',
+                      top: 20,
+                      right: 20,
+                      zIndex: 10,
+                    }}
+                    onPress={() => setSecureText(!secureText)}>
+                    {secureText? <Image 
+                      source={require('../../../assets/img/export/eye_off.png')}
                       style={{
-                        position: 'absolute',
-                        top: 20,
-                        right: 20,
-                        zIndex: 10,
-                      }}
-                      onPress={() => setSecureText(!secureText)}>
-                      <Image
-                        source={require('../../../assets/img/export/eye.png')}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: 'contain',
-                        }}
-                      />
-                    </TouchableOpacity>
-                    <TextInput
-                      style={{                      
-                        fontSize: 16,
-                        lineHeight:8, 
-                        padding:0,
-                        color: '#015096',
-                      }}
-                      onFocus={() => setUserPasswordError(false)}
-                      onChangeText={UserCurrentPassword => setUserCurrentPassword(UserCurrentPassword)}
-                      placeholder="" //12345
-                      placeholderTextColor="#7E797F"
-                      keyboardType="numeric"
-                      ref={passwordInputRef}
-                      onSubmitEditing={Keyboard.dismiss}
-                      blurOnSubmit={false}
-                      secureTextEntry={secureText}
-                      underlineColorAndroid="#f000"
-                      returnKeyType="next"
-                    />
-                    {errortext !== '' ? (
-                      <Text style={styles.errorTextStyle}> {errortext} </Text>
-                    ) : null}
-                    </View>
-                    <View style={[styles.registerInputStyle, {marginBottom:12, borderColor: userPasswordError ? '#ff0000' : '#E4E4E8',}]}>                  
-                    <Text
-                      style={[
-                        styles.inputTitleStyle,
-                        {
-                          fontSize: 12,
-                          //marginBottom: 14,
-                          marginBottom: 0,
-                          color: '#909EAA',
-                        },
-                      ]}>
-                      Yeni Şifre
-                    </Text>
-                    <TouchableOpacity
+                        width:16,
+                        height:16
+                      }}>
+                      </Image> : 
+                      <Image 
+                      source={require('../../../assets/img/export/eye.png')}
                       style={{
-                        position: 'absolute',
-                        top: 20,
-                        right: 20,
-                        zIndex: 10,
-                      }}
-                      onPress={() => setSecureText(!secureText)}>
-                      <Image
-                        source={require('../../../assets/img/export/eye.png')}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: 'contain',
-                        }}
-                      />
-                    </TouchableOpacity>
-                    <TextInput
-                      style={{                      
-                        fontSize: 16,
-                        lineHeight:8, 
-                        padding:0,
-                        color: '#015096',
-                      }}
-                      onFocus={() => setUserPasswordError(false)}
-                      onChangeText={UserPassword => setUserPassword(UserPassword)}
-                      placeholder="" //12345
-                      placeholderTextColor="#7E797F"
-                      keyboardType="numeric"
-                      ref={passwordInputRef}
-                      onSubmitEditing={Keyboard.dismiss}
-                      blurOnSubmit={false}
-                      secureTextEntry={secureText}
-                      underlineColorAndroid="#f000"
-                      returnKeyType="next"
-                    />
-                    {errortext !== '' ? (
-                      <Text style={styles.errorTextStyle}> {errortext} </Text>
-                    ) : null}
-                    </View>
-                    
-                    
-                    <View style={[styles.registerInputStyle, {borderColor: userPasswordError ? '#ff0000' : '#E4E4E8', marginBottom:36}]}>                  
-                    <Text
-                      style={[
-                        styles.inputTitleStyle,
-                        {
-                          fontSize: 12,
-                          //marginBottom: 14,
-                          marginBottom: 0,
-                          color: '#909EAA',
-                        },
-                      ]}>
-                      Yeni Şifre Tekrar
-                    </Text>
-                    <TouchableOpacity
+                        width:16,
+                        height:16
+                      }}>
+                      </Image>}
+                  </TouchableOpacity>
+                  <TextInput
+                    style={Platform.OS == 'ios' ? registerStyles.inputIos
+                    : registerStyles.inputAndroid }
+                    maxLength={6}
+                    onFocus={() => setUserPasswordError(false)}
+                    onChangeText={UserCurrentPassword => setUserCurrentPassword(UserCurrentPassword)}
+                    placeholder="" //12345
+                    placeholderTextColor="#7E797F"
+                    keyboardType="numeric"
+                    ref={passwordInputRef}
+                    onSubmitEditing={Keyboard.dismiss}
+                    blurOnSubmit={false}
+                    secureTextEntry={secureText}
+                    underlineColorAndroid="#f000"
+                    returnKeyType="next"
+                  />
+                  {errortext !== '' ? (
+                    <Text style={styles.errorTextStyle}> {errortext} </Text>
+                  ) : null}
+                  </View>
+                  <View style={[styles.registerInputStyle, , {marginBottom:12, borderColor: userPasswordError ? '#ff0000' : '#E4E4E8',}]}>                  
+                  <Text
+                    style={[
+                      styles.inputTitleStyle,
+                      {
+                        fontSize: 12,
+                        //marginBottom: 14,
+                        marginBottom: 0,
+                        color: '#909EAA',
+                      },
+                    ]}>
+                    Yeni Şifre
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      position: 'absolute',
+                      top: 20,
+                      right: 20,
+                      zIndex: 10,
+                    }}
+                    onPress={() => setSecureText2(!secureText2)}>
+                    {secureText2? <Image 
+                      source={require('../../../assets/img/export/eye_off.png')}
                       style={{
-                        position: 'absolute',
-                        top: 20,
-                        right: 20,
-                        zIndex: 10,
-                      }}
-                      onPress={() => setSecureText(!secureText)}>
-                      {/* <Eye width={22} height={12} /> */}
-                      <Image
-                        source={require('../../../assets/img/export/eye.png')}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: 'contain',
-                        }}
-                      />
-                    </TouchableOpacity>
-                    <TextInput
-                      style={{                      
-                        fontSize: 16,
-                        lineHeight:8, 
-                        padding:0,
-                        color: '#015096',
-                      }}
-                      onFocus={() => setUserPasswordError(false)}
-                      onChangeText={UserPasswordAgain => setUserPassword(UserPasswordAgain)}
-                      placeholder="" //12345
-                      placeholderTextColor="#7E797F"
-                      keyboardType="numeric"
-                      ref={passwordInputRef}
-                      onSubmitEditing={Keyboard.dismiss}
-                      blurOnSubmit={false}
-                      secureTextEntry={secureText}
-                      underlineColorAndroid="#f000"
-                      returnKeyType="next"
-                    />
-                    {errortext !== '' ? (
-                      <Text style={styles.errorTextStyle}> {errortext} </Text>
-                    ) : null}
-                    </View>
+                        width:16,
+                        height:16
+                      }}>
+                      </Image> : 
+                      <Image 
+                      source={require('../../../assets/img/export/eye.png')}
+                      style={{
+                        width:16,
+                        height:16
+                      }}>
+                      </Image>}
+                  </TouchableOpacity>
+                  <TextInput
+                    style={Platform.OS == 'ios' ? registerStyles.inputIos
+                    : registerStyles.inputAndroid }
+                    maxLength={6}
+                    onFocus={() => setUserPasswordError(false)}
+                    onChangeText={UserPasswordAgain => setUserPassword(UserPasswordAgain)}
+                    placeholder="" //12345
+                    placeholderTextColor="#7E797F"
+                    keyboardType="numeric"
+                    ref={passwordInputRef}
+                    onSubmitEditing={Keyboard.dismiss}
+                    blurOnSubmit={false}
+                    secureTextEntry={secureText2}
+                    underlineColorAndroid="#f000"
+                    returnKeyType="next"
+                  />
+                  {errortext !== '' ? (
+                    <Text style={styles.errorTextStyle}> {errortext} </Text>
+                  ) : null}
+                  </View>
+                  <View style={[styles.registerInputStyle, , {marginBottom:12, borderColor: userPasswordError ? '#ff0000' : '#E4E4E8',}]}>                  
+                  <Text
+                    style={[
+                      styles.inputTitleStyle,
+                      {
+                        fontSize: 12,
+                        //marginBottom: 14,
+                        marginBottom: 0,
+                        color: '#909EAA',
+                      },
+                    ]}>
+                    Yeni Şifre Tekrar
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      position: 'absolute',
+                      top: 20,
+                      right: 20,
+                      zIndex: 10,
+                    }}
+                    onPress={() => setSecureText3(!secureText3)}>
+                    {secureText3? <Image 
+                      source={require('../../../assets/img/export/eye_off.png')}
+                      style={{
+                        width:16,
+                        height:16
+                      }}>
+                      </Image> : 
+                      <Image 
+                      source={require('../../../assets/img/export/eye.png')}
+                      style={{
+                        width:16,
+                        height:16
+                      }}>
+                      </Image>}
+                  </TouchableOpacity>
+                  <TextInput
+                    style={Platform.OS == 'ios' ? registerStyles.inputIos
+                    : registerStyles.inputAndroid }
+                    maxLength={6}
+                    onFocus={() => setUserPasswordError(false)}
+                    onChangeText={UserPassword => setUserPasswordAgain(UserPassword)}
+                    placeholder="" //12345
+                    placeholderTextColor="#7E797F"
+                    keyboardType="numeric"
+                    ref={passwordInputRef}
+                    onSubmitEditing={Keyboard.dismiss}
+                    blurOnSubmit={false}
+                    secureTextEntry={secureText3}
+                    underlineColorAndroid="#f000"
+                    returnKeyType="next"
+                  />
+                  {errortext !== '' ? (
+                    <Text style={styles.errorTextStyle}> {errortext} </Text>
+                  ) : null}
+                  </View>
+
+          
                     
                     
                     <TouchableOpacity
@@ -345,6 +361,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     height: 65,
     alignItems: 'center',
+    justifyContent:'center',
     borderRadius: 10,
     marginLeft: 0,
     marginRight: 0,
@@ -352,7 +369,7 @@ const styles = StyleSheet.create({
   },
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 20,
+    paddingVertical: 0,
     fontFamily: 'Helvetica-Bold',
     fontWeight: 'bold',
     fontSize: 16,

@@ -19,7 +19,8 @@ import {
   Pressable,
   ImageBackground,
   Alert,
-  Dimensions
+  Dimensions,
+  Platform,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -30,18 +31,20 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Eye from '../assets/img/svg/eye.svg';
 import Toplogo from '../assets/img/svg/toplogo.svg';
 
+import { registerStyles } from './Components/RegisterStyles';
 import axios from 'react-native-axios';
 
 const ForgotScreen = ({navigation}) => {
   const [userEmail, setUserEmail] = useState('');
   const [userEmailError, setUserEmailError] = useState(false);
   const [userPassword, setUserPassword] = useState('');
-  const [userPasswordAgain, setUserPasswordagain] = useState('');
+  const [userPasswordAgain, setUserPasswordAgain] = useState('');
   const [UserRefcode, setUserUserRefcode] = useState('');
   const [userPasswordError, setUserPasswordError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
   const [secureText, setSecureText] = useState(true);
+  const [secureText2, setSecureText2] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [userAgreement, setUserAgreement] = useState(false);
@@ -51,7 +54,7 @@ const ForgotScreen = ({navigation}) => {
 
   const handleSubmitPress = () => {
     setErrortext('');
-    /*if (!userPasswordAgain || !userPasswordAgain) {
+    if (!userPassword || !userPasswordAgain) {
       if (!userPasswordAgain) {
         //alert('Please fill Email');
         setUserPasswordError(true);
@@ -61,8 +64,11 @@ const ForgotScreen = ({navigation}) => {
         setUserPasswordError(true);
       }
       return;
+    }else if(userPassword != userPasswordAgain){
+      setUserPasswordError(true);
+      return;
     }
-    setLoading(true);*/
+    /*setLoading(true);*/
 
     AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (err, stores) => {
@@ -113,8 +119,8 @@ setLoading(true);
 
     console.log("forgot data");
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/resetpassword', dataToSend)
+    //http://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/resetpassword', dataToSend)
       .then(response => {
         console.log(response.data);
         console.log(response.data.data);
@@ -303,22 +309,24 @@ setLoading(true);
                       zIndex: 10,
                     }}
                     onPress={() => setSecureText(!secureText)}>
-                    <Image
+                    {secureText? <Image 
+                      source={require('../assets/img/export/eye_off.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image> : 
+                      <Image 
                       source={require('../assets/img/export/eye.png')}
                       style={{
-                        width: 24,
-                        height: 24,
-                        resizeMode: 'contain',
-                      }}
-                    />
+                        width:24,
+                        height:24
+                      }}>
+                      </Image>}
                   </TouchableOpacity>
                   <TextInput
-                    style={{                      
-                      fontSize: 16,
-                      lineHeight:8, 
-                      padding:0,
-                      color: '#015096',
-                    }}
+                    style={Platform.OS == 'ios' ? registerStyles.inputIos
+                    : registerStyles.inputAndroid }
                     onFocus={() => setUserPasswordError(false)}
                     onChangeText={UserPassword => setUserPassword(UserPassword)}
                     placeholder="" //12345
@@ -342,7 +350,7 @@ setLoading(true);
                     <Text style = {{fontSize:12, color:'#909EAA'}}>{`\u2022`} Şifre aynı rakamlardan oluşmamalıdır.</Text>
                     <Text style = {{fontSize:12, color:'#909EAA', marginBottom: 14,}}>{`\u2022`} Şifrenizin geçerlilik süresi 3 aydır.</Text>
                   </View>
-                  <View style={[styles.registerInputStyle, {borderColor: userPasswordError ? '#ff0000' : '#015096', marginBottom:36}]}>                  
+                  <View style={[styles.registerInputStyle, {borderColor: userPasswordError ? '#ff0000' : '#015096',}]}>                  
                   <Text
                     style={[
                       styles.inputTitleStyle,
@@ -362,33 +370,35 @@ setLoading(true);
                       right: 20,
                       zIndex: 10,
                     }}
-                    onPress={() => setSecureText(!secureText)}>
+                    onPress={() => setSecureText2(!secureText2)}>
                     {/* <Eye width={22} height={12} /> */}
-                    <Image
+                    {secureText2? <Image 
+                      source={require('../assets/img/export/eye_off.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image> : 
+                      <Image 
                       source={require('../assets/img/export/eye.png')}
                       style={{
-                        width: 24,
-                        height: 24,
-                        resizeMode: 'contain',
-                      }}
-                    />
+                        width:24,
+                        height:24
+                      }}>
+                      </Image>}
                   </TouchableOpacity>
                   <TextInput
-                    style={{                      
-                      fontSize: 16,
-                      lineHeight:8, 
-                      padding:0,
-                      color: '#015096',
-                    }}
+                    style={Platform.OS == 'ios' ? registerStyles.inputIos
+                    : registerStyles.inputAndroid }
                     onFocus={() => setUserPasswordError(false)}
-                    onChangeText={UserPasswordAgain => setUserPassword(UserPasswordAgain)}
+                    onChangeText={UserPasswordAgain => setUserPasswordAgain(UserPasswordAgain)}
                     placeholder="" //12345
                     placeholderTextColor="#7E797F"
                     keyboardType="numeric"
                     ref={passwordInputRef}
                     onSubmitEditing={Keyboard.dismiss}
                     blurOnSubmit={false}
-                    secureTextEntry={secureText}
+                    secureTextEntry={secureText2}
                     underlineColorAndroid="#f000"
                     returnKeyType="next"
                   />
@@ -397,12 +407,6 @@ setLoading(true);
                   ) : null}
                   </View>
                   
-                  {/* <TouchableOpacity
-                    style={[styles.buttonStyle, {marginBottom: 40}]}
-                    activeOpacity={0.5}
-                    onPress={handleSubmitPress}>
-                    <Text style={styles.buttonTextStyle}>Şifre Değiştir</Text>
-                  </TouchableOpacity> */}
                   <TouchableOpacity
                   style={[styles.buttonStyle, {marginBottom: 60, backgroundColor: '#004F97'}]}
                   
@@ -410,6 +414,7 @@ setLoading(true);
                   onPress={handleSubmitPress}>
                     <Text style={styles.buttonTextStyle}>Şifre Değiştir</Text>
                   </TouchableOpacity>
+                  
                 </View>
               </View>
             </View>

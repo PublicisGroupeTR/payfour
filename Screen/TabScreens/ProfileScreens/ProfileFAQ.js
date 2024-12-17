@@ -93,8 +93,9 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         fontSize:14,
                         fontWeight:700,
                         color:'#0B1929',
+                        width:'85%',
                       }}>
-                        Sed auctor eget augue sed iaculis
+                        Payfour nedir?
                       </Text>
                       <Image
                         source={require('../../../assets/img/export/arrow_down_blue.png')}
@@ -114,9 +115,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       <Text style={{
                         fontSize:12,
                       color:'#909EAA',}}>
-                        Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
-                        <Text style={{fontWeight:'700'}}>At urna condimentum mattis pellentesque id nibh tortor.</Text> Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. 
-                      </Text>
+                        Payfour, CarrefourSA müşterilerinin bakiye yükleyerek veya kişiye özel çalışılan alışveriş kredisi ile hazır limit özelliklerini kullanarak CarrefourSA alışverişlerini gerçekleştirmelerini sağlayan, mevcut CarrefourSA Kart kampanyalarına ek olarak Payfour’a özel kampanyalar ile nakit iade ve puan kazandıran Dijital Cüzdan uygulamasıdır.
+                        </Text>
                     </View>
                           
                     
@@ -136,8 +136,9 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         fontSize:14,
                         fontWeight:700,
                         color:'#0B1929',
+                        width:'85%',
                       }}>
-                        Sed auctor eget augue sed iaculis
+                        Payfour ile nerelerde ödeme yapabilirim?
                       </Text>
                       <Image
                         source={require('../../../assets/img/export/arrow_down_blue.png')}
@@ -157,9 +158,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       <Text style={{
                         fontSize:12,
                       color:'#909EAA',}}>
-                        Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
-                        <Text style={{fontWeight:'700'}}>At urna condimentum mattis pellentesque id nibh tortor.</Text> Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. 
-                      </Text>
+                        Payfour ile CarrefourSA Online Market uygulaması ve CarrefourSA.com’da ödeme yapabilirsiniz. Çok yakında CarrefourSA mağazalarında da ödeme yapılabilecektir. CarrefourSA’lar haricinde Payfour ile ödeme yapılamamaktadır.
+                        </Text>
                     </View>
                           
                     
@@ -179,8 +179,9 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         fontSize:14,
                         fontWeight:700,
                         color:'#0B1929',
+                        width:'85%',
                       }}>
-                        Sed auctor eget augue sed iaculis
+                        Payfour ile ödeme yapmanın avantajları nelerdir?
                       </Text>
                       <Image
                         source={require('../../../assets/img/export/arrow_down_blue.png')}
@@ -200,9 +201,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       <Text style={{
                         fontSize:12,
                       color:'#909EAA',}}>
-                        Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
-                        <Text style={{fontWeight:'700'}}>At urna condimentum mattis pellentesque id nibh tortor.</Text> Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. 
-                      </Text>
+                        Payfour’a özel kampanyalar ile bakiye yüklerken ek bakiye, ödeme sonrasında nakit iade ve puanlar kazanabilirsiniz. Ayrıca Platin üye olan müşterilerimize özel alışverişlerde nakit iade, ücretsiz kargo, çağrı merkezinde öncelik gibi ek avantajlardan da yararlanabilirsiniz.
+                        </Text>
                     </View>
                           
                     
@@ -222,8 +222,9 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         fontSize:14,
                         fontWeight:700,
                         color:'#0B1929',
+                        width:'85%',
                       }}>
-                        Sed auctor eget augue sed iaculis
+                        Payfour bakiye yükleme limiti ne kadardır?
                       </Text>
                       <Image
                         source={require('../../../assets/img/export/arrow_down_blue.png')}
@@ -243,9 +244,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       <Text style={{
                         fontSize:12,
                       color:'#909EAA',}}>
-                        Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
-                        <Text style={{fontWeight:'700'}}>At urna condimentum mattis pellentesque id nibh tortor.</Text> Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. 
-                      </Text>
+                        Payfour’a bir takvim ayı içerisinde, en fazla 150.000 TL yüklenebilmektedir.
+                        </Text>
                     </View>
                           
                     
@@ -265,8 +265,9 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         fontSize:14,
                         fontWeight:700,
                         color:'#0B1929',
+                        width:'85%',
                       }}>
-                        Sed auctor eget augue sed iaculis
+                        Payfour bakiye harcama limiti ne kadardır?
                       </Text>
                       <Image
                         source={require('../../../assets/img/export/arrow_down_blue.png')}
@@ -286,9 +287,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       <Text style={{
                         fontSize:12,
                       color:'#909EAA',}}>
-                        Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
-                        <Text style={{fontWeight:'700'}}>At urna condimentum mattis pellentesque id nibh tortor.</Text> Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. 
-                      </Text>
+                        Payfour’da bir harcama limiti bulunmamaktadır.
+                        </Text>
                     </View>
                           
                     
@@ -300,16 +300,17 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       flexDirection:'row',
                       alignItems:'center',
                       justifyContent:'space-between',
-                      // borderBottomWidth:1,
-                      // borderBottomColor:'#F2F4F6',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
                     }}
                     onPress={()=>setFaqItem(6)}>
                       <Text style={{
                         fontSize:14,
                         fontWeight:700,
                         color:'#0B1929',
+                        width:'85%',
                       }}>
-                        Sed auctor eget augue sed iaculis
+                        Payfour ile nasıl ödeme yapabilirim?
                       </Text>
                       <Image
                         source={require('../../../assets/img/export/arrow_down_blue.png')}
@@ -328,11 +329,22 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                     }}>
                       <Text style={{
                         fontSize:12,
+                      color:'#909EAA',
+                      marginBottom:12}}>
+                        Öncelikle Payfour uygulamasını indirmeniz ve Payfour hesabınıza bakiye yüklemeniz gerekmektedir.</Text>
+                        <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',
+                      marginBottom:12}}>
+ 
+ CarrefourSA Online Market veya CarrefourSA.com’da, Payfour hesabınıza ait telefon numaranız ile kullanıcı girişini yaparak sepetinizi doldurduktan sonra ödeme sayfasına gelindiğinde “Payfour ile öde” seçeneğini seçerek “Siparişi Tamamla” butonuna tıklayıp, ardından Payfour içerisinden gelecek bildirime veya Ödeme Yap butonuna tıklayarak, ödemenizi tamamlayabilirsiniz.
+ </Text>
+ <Text style={{
+                        fontSize:12,
                       color:'#909EAA',}}>
-                        Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
-                        <Text style={{fontWeight:'700'}}>At urna condimentum mattis pellentesque id nibh tortor.</Text> Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. 
-                      </Text>
-                    </View>
+ Mağazalardan yapılacak alışverişlerde, kasalarda Payfour hesabınıza ait telefon numaranızı söylemeniz ve en son ödemeyi Payfour ile yapacağınızı söyledikten sonra Payfour içerisinden gelecek bildirime veya Ödeme Yap butonuna tıklayarak, ödemenizi tamamlayabilirsiniz.</Text>
+                 
+                     </View>
                           
                     
                   </View>
@@ -343,16 +355,17 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       flexDirection:'row',
                       alignItems:'center',
                       justifyContent:'space-between',
-                      // borderBottomWidth:1,
-                      // borderBottomColor:'#F2F4F6',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
                     }}
                     onPress={()=>setFaqItem(7)}>
                       <Text style={{
                         fontSize:14,
                         fontWeight:700,
                         color:'#0B1929',
+                        width:'85%',
                       }}>
-                        Sed auctor eget augue sed iaculis
+                        Cep telefonuma doğrulama mesajı / kodu gelmiyor, ne yapabilirim?
                       </Text>
                       <Image
                         source={require('../../../assets/img/export/arrow_down_blue.png')}
@@ -372,9 +385,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       <Text style={{
                         fontSize:12,
                       color:'#909EAA',}}>
-                        Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
-                        <Text style={{fontWeight:'700'}}>At urna condimentum mattis pellentesque id nibh tortor.</Text> Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. 
-                      </Text>
+                        Yakın zamanda operatör değişikliği yapıldığı durumlarda bu sorun yaşanabilmektedir. 444 10 00 numaralı çağrı merkezimizi arayarak, sorununuzu en kısa sürede giderebilirsiniz.
+                        </Text>
                     </View>
                           
                     
@@ -386,16 +398,17 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       flexDirection:'row',
                       alignItems:'center',
                       justifyContent:'space-between',
-                      // borderBottomWidth:1,
-                      // borderBottomColor:'#F2F4F6',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
                     }}
                     onPress={()=>setFaqItem(8)}>
                       <Text style={{
                         fontSize:14,
                         fontWeight:700,
                         color:'#0B1929',
+                        width:'85%',
                       }}>
-                        Sed auctor eget augue sed iaculis
+                        Şifremi unuttum. Ne yapabilirim?
                       </Text>
                       <Image
                         source={require('../../../assets/img/export/arrow_down_blue.png')}
@@ -414,10 +427,482 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                     }}>
                       <Text style={{
                         fontSize:12,
-                      color:'#909EAA',}}>
-                        Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
-                        <Text style={{fontWeight:'700'}}>At urna condimentum mattis pellentesque id nibh tortor.</Text> Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. 
+                      color:'#909EAA',}}>                       
+                       Giriş ekranındaki “Şifremi Unuttum” butonuna tıklayarak, şifrenizi sıfırlayabilirsiniz veya 444 10 00 numaralı çağrı merkezimizi arayarak destek alabilirsiniz.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(9)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Şifremi nasıl değiştirebilirim?
                       </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 9? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 9? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       Uygulamanın sağ üst bölümünden, profilinizi açtıktan sonra “Güvenlik ve Tercihler” bölümünden “Şifremi Değiştir” alanına tıklayarak, şifrenizi değiştirebilirsiniz.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(10)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Şifremi yanlış girdim, hesabım kilitlendi. Ne yapmalıyım?
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 10? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 10? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       444 10 00 numaralı çağrı merkezimizi arayarak destek alabilirsiniz.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(11)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Payfour şifremin geçerlilik süresi ne kadardır?
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 11? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 11? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       Şifrenizin bir geçerlilik süresi bulunmamaktadır. Dilediğiniz zaman şifre değiştirme işlemi yapabilirsiniz. Şifre değiştirmediğiniz takdirde, mevcut şifrenizi süresiz bir şekilde kullanmaya devam edebilirsiniz.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(12)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Kredi / Debit Kart bilgilerim nerede ve nasıl saklanıyor?
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 12? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 12? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       Kart bilgileriniz Payfour’da tutulmamaktadır. Sadece Masterpass’e kayıtlı kartlar ile işlem yapılabilmektedir ve kart bilgileri Masterpass tarafından saklanmaktadır.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(13)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Kayıtlı Kredi / Debit Kart bilgilerimi nasıl silebilirim?
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 13? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 13? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       Masterpass’e giriş yaparak, kart bilgileriniz ile ilgili işlemleri yapabilirsiniz.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(14)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Çağrı merkezi ile bilgi paylaşımı
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 14? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 14? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       Çağrı merkezi ile yapacağınız görüşmelerde, şifreniz sizlere sorulmayacaktır. Payfour şifrenizi kimse ile paylaşmamanızı rica ederiz.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(15)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Payfour No nedir?
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 15? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 15? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       Payfour No size özel tanımlanan, Payfour dünyası içerisindeki kimlik numaranızdır.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(16)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Telefonum çalındı, ne yapabilirim?
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 16? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 16? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       444 10 00 numaralı çağrı merkezimizi arayarak destek alabilirsiniz.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(17)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Telefon numaramı değiştirdim, ne yapmalıyım?
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 17? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 17? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       444 10 00 numaralı çağrı merkezimizi arayarak destek alabilirsiniz.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      borderBottomWidth:1,
+                      borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(18)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Payfour’a nasıl bakiye yükleyebilirim?
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 18? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 18? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       Payfour’a kredi / debit kartlarınızla, havale / eft yaparak veya CarrefourSA mağazalarından nakit ödeme yaparak, 3 farklı seçenek ile bakiye yükleyebilirsiniz.
+                       </Text>
+                    </View>
+                          
+                    
+                  </View>
+                  <View style={{marginBottom:8}}>
+                    <TouchableOpacity style={{
+                      height:50,
+                      
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                      //borderBottomWidth:1,
+                      //borderBottomColor:'#F2F4F6',
+                    }}
+                    onPress={()=>setFaqItem(19)}>
+                      <Text style={{
+                        fontSize:14,
+                        fontWeight:700,
+                        color:'#0B1929',
+                        width:'85%',
+                      }}>
+                        Kredi / Debit kartımı Masterpass’e kayıt etmeden, bakiye yükleyebilir miyim?
+                      </Text>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_down_blue.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          transform: faqItem == 19? [{scaleY:1}] : [{scaleY:-1}]
+                        }}
+                      />
+                    </TouchableOpacity>
+                      
+                    <View style={{
+                      padding:16,
+                      display:faqItem == 19? 'flex' : 'none',
+                    }}>
+                      <Text style={{
+                        fontSize:12,
+                      color:'#909EAA',}}>                       
+                       Kredi / Debit kartlar ile bakiye yükleme işlemleri sadece Masterpass üzerinden yapılmaktadır ancak kart bilgilerinizi kaydetme zorunluluğu bulunmamaktadır.
+                       </Text>
                     </View>
                           
                     

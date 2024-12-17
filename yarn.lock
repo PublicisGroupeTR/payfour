@@ -2169,6 +2169,11 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
+"@timotismjntk/react-native-carousel@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/@timotismjntk/react-native-carousel/-/react-native-carousel-0.2.1.tgz"
+  integrity sha512-snn+gmRHrbhpqz2B730w1BUr7KcCqFiuLAJUn67Wy2COKrVE9868+YejZ3Se57mzXjpJHbuHkODh8P/5w1q73g==
+
 "@tootallnate/once@2":
   version "2.0.0"
   resolved "https://registry.npmjs.org/@tootallnate/once/-/once-2.0.0.tgz"

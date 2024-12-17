@@ -8,40 +8,31 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* PayfourTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PayfourTests.m */; };
+		0BB714C52CF4C2A3007F413F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0BB714C42CF4C2A3007F413F /* GoogleService-Info.plist */; };
 		0C80B921A6F3F58F76C31292 /* libPods-Payfour.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-Payfour.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
+		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		26CAB05D5AD448DB883F43EA /* UbuntuMedium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01BFFEC55BBE455FBC1666C8 /* UbuntuMedium.ttf */; };
-		2A916E9B2C184CA9B10314C7 /* Ubuntu-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD0DA9752674690B4B276F5 /* Ubuntu-MediumItalic.ttf */; };
-		37C118CE59974063A599762E /* UbuntuBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EAB429B51C44B6B97C7BD5A /* UbuntuBold.ttf */; };
-		62DE01112D088AE300F6EC8B /* BaseLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62DE01102D088AE300F6EC8B /* BaseLayout.swift */; };
-		62EC4C2B2D0700BB00F210C6 /* OCRErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C2A2D0700BB00F210C6 /* OCRErrorView.swift */; };
-		62EC4C2D2D0700C800F210C6 /* NFCSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C2C2D0700C800F210C6 /* NFCSuccessView.swift */; };
-		62EC4C2F2D0700D400F210C6 /* NFCRequiredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C2E2D0700D400F210C6 /* NFCRequiredView.swift */; };
-		62EC4C312D0700E200F210C6 /* NFCReadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C302D0700E200F210C6 /* NFCReadView.swift */; };
-		62EC4C332D0700F300F210C6 /* NFCErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C322D0700F300F210C6 /* NFCErrorView.swift */; };
-		62EC4C352D07010500F210C6 /* NFCClosedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C342D07010500F210C6 /* NFCClosedView.swift */; };
-		62EC4C372D07011100F210C6 /* KYCErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C362D07011100F210C6 /* KYCErrorView.swift */; };
-		62EC4C392D07011D00F210C6 /* FaceSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C382D07011D00F210C6 /* FaceSuccessView.swift */; };
-		62EC4C3B2D07013300F210C6 /* FaceErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62EC4C3A2D07013300F210C6 /* FaceErrorView.swift */; };
-		62FF7AA52D01EC400091C1C1 /* EnQualifyModuleIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FF7AA42D01EC400091C1C1 /* EnQualifyModuleIOS.swift */; };
-		62FF7AB92D01EEEC0091C1C1 /* EnQualifyModuleIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 62FF7AB82D01EEEC0091C1C1 /* EnQualifyModuleIOS.m */; };
-		62FF7ABB2D01EF3F0091C1C1 /* OCRInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FF7ABA2D01EF3F0091C1C1 /* OCRInfoView.swift */; };
-		62FF7ABD2D01F4C90091C1C1 /* SubtabHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FF7ABC2D01F4C90091C1C1 /* SubtabHeaderView.swift */; };
-		62FF7AC02D01F7AD0091C1C1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		62FF7AC32D02D7DB0091C1C1 /* helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FF7AC22D02D7DB0091C1C1 /* helper.swift */; };
-		62FF7AC52D02DD5E0091C1C1 /* OCRSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FF7AC42D02DD5E0091C1C1 /* OCRSuccessView.swift */; };
-		6DF4026A64A845DD95E94774 /* UbuntuRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C2845DD480F4953947D7349 /* UbuntuRegular.ttf */; };
-		6DF947297EF04563A3EB03E5 /* Helvetica-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE303256185246708901DE8F /* Helvetica-Light.ttf */; };
+		624EB14F2D11C831008B7AE9 /* enqura.der in Resources */ = {isa = PBXBuildFile; fileRef = 624EB14E2D11C831008B7AE9 /* enqura.der */; };
+		624EB1602D11C9AC008B7AE9 /* EnQualifyModuleIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB15F2D11C9AC008B7AE9 /* EnQualifyModuleIOS.swift */; };
+		624EB1652D11CA16008B7AE9 /* EnQualifyModuleIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 624EB1642D11CA16008B7AE9 /* EnQualifyModuleIOS.m */; };
+		624EB1672D11CA37008B7AE9 /* helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB1662D11CA37008B7AE9 /* helper.swift */; };
+		624EB1692D11CA85008B7AE9 /* BaseLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB1682D11CA85008B7AE9 /* BaseLayout.swift */; };
+		624EB16B2D11CA9A008B7AE9 /* SubtabHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB16A2D11CA9A008B7AE9 /* SubtabHeaderView.swift */; };
+		624EB16D2D11CB3E008B7AE9 /* OCRInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB16C2D11CB3E008B7AE9 /* OCRInfoView.swift */; };
+		624EB16F2D11CB53008B7AE9 /* OCRSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB16E2D11CB53008B7AE9 /* OCRSuccessView.swift */; };
+		624EB1712D11CB62008B7AE9 /* OCRErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB1702D11CB62008B7AE9 /* OCRErrorView.swift */; };
+		624EB1732D11CB6D008B7AE9 /* NFCSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB1722D11CB6D008B7AE9 /* NFCSuccessView.swift */; };
+		624EB1752D11CB79008B7AE9 /* NFCRequiredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB1742D11CB79008B7AE9 /* NFCRequiredView.swift */; };
+		624EB1772D11CB84008B7AE9 /* NFCReadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB1762D11CB84008B7AE9 /* NFCReadView.swift */; };
+		624EB1792D11CB98008B7AE9 /* NFCErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB1782D11CB98008B7AE9 /* NFCErrorView.swift */; };
+		624EB17B2D11CBAA008B7AE9 /* NFCClosedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB17A2D11CBAA008B7AE9 /* NFCClosedView.swift */; };
+		624EB17D2D11CBBE008B7AE9 /* KYCErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB17C2D11CBBE008B7AE9 /* KYCErrorView.swift */; };
+		624EB17F2D11CBCB008B7AE9 /* FaceSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB17E2D11CBCB008B7AE9 /* FaceSuccessView.swift */; };
+		624EB1812D11CBDB008B7AE9 /* FaceErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624EB1802D11CBDB008B7AE9 /* FaceErrorView.swift */; };
+		6A4A82C9ACD8B0B6F93EF557 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 967ACDD0970900FAC7AB5AF4 /* PrivacyInfo.xcprivacy */; };
 		7699B88040F8A987B510C191 /* libPods-Payfour-PayfourTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Payfour-PayfourTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		A83F4245621F4CE1B8D43408 /* Ubuntu-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 04752A885F0F4D71BAAB50E6 /* Ubuntu-Italic.ttf */; };
-		AF55E0AAA1734516A946CBF1 /* Helvetica-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8176423FBCD64F9382B514A8 /* Helvetica-Bold.ttf */; };
-		B436A537B52A4B7F973F1C3B /* Ubuntu-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5E2657BA1214B83B1FBB570 /* Ubuntu-BoldItalic.ttf */; };
-		B9C986F4A4CA1B23AAC4C72A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 29DECFC52B80DDF52FDD25C5 /* PrivacyInfo.xcprivacy */; };
-		C44BA09D037E42BBAE399E3B /* Ubuntu-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01E2ECE0B6BF460A8F9ECC4E /* Ubuntu-LightItalic.ttf */; };
-		C9C13F9B43A54D6088B092C9 /* UbuntuLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FDBA90805014B8BAEC941FC /* UbuntuLight.ttf */; };
-		CF31ED6ACCE145FD995ECFA8 /* Helvetica.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 16F8713818FE4D709C3FC3CE /* Helvetica.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,9 +49,9 @@
 		00E356EE1AD99517003FC87E /* PayfourTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PayfourTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* PayfourTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PayfourTests.m; sourceTree = "<group>"; };
-		01BFFEC55BBE455FBC1666C8 /* UbuntuMedium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = UbuntuMedium.ttf; path = ../assets/fonts/UbuntuMedium.ttf; sourceTree = "<group>"; };
-		01E2ECE0B6BF460A8F9ECC4E /* Ubuntu-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-LightItalic.ttf"; path = "../assets/fonts/Ubuntu-LightItalic.ttf"; sourceTree = "<group>"; };
-		04752A885F0F4D71BAAB50E6 /* Ubuntu-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Italic.ttf"; path = "../assets/fonts/Ubuntu-Italic.ttf"; sourceTree = "<group>"; };
+		0B79BB072C885CD100FA4CD6 /* Payfour.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Payfour.entitlements; path = Payfour/Payfour.entitlements; sourceTree = "<group>"; };
+		0BB714C42CF4C2A3007F413F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0BFAFAEB2CE60E6600EB7864 /* PayfourRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PayfourRelease.entitlements; path = Payfour/PayfourRelease.entitlements; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Payfour.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Payfour.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Payfour/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Payfour/AppDelegate.mm; sourceTree = "<group>"; };
@@ -68,41 +59,32 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Payfour/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Payfour/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Payfour/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		16F8713818FE4D709C3FC3CE /* Helvetica.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Helvetica.ttf; path = ../assets/fonts/Helvetica.ttf; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-Payfour-PayfourTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Payfour-PayfourTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1C2845DD480F4953947D7349 /* UbuntuRegular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = UbuntuRegular.ttf; path = ../assets/fonts/UbuntuRegular.ttf; sourceTree = "<group>"; };
-		29DECFC52B80DDF52FDD25C5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Payfour/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Payfour.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour.debug.xcconfig"; path = "Target Support Files/Pods-Payfour/Pods-Payfour.debug.xcconfig"; sourceTree = "<group>"; };
-		4BD0DA9752674690B4B276F5 /* Ubuntu-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-MediumItalic.ttf"; path = "../assets/fonts/Ubuntu-MediumItalic.ttf"; sourceTree = "<group>"; };
-		4FDBA90805014B8BAEC941FC /* UbuntuLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = UbuntuLight.ttf; path = ../assets/fonts/UbuntuLight.ttf; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Payfour.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour.release.xcconfig"; path = "Target Support Files/Pods-Payfour/Pods-Payfour.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Payfour-PayfourTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour-PayfourTests.debug.xcconfig"; path = "Target Support Files/Pods-Payfour-PayfourTests/Pods-Payfour-PayfourTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-Payfour.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Payfour.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		62DE01102D088AE300F6EC8B /* BaseLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLayout.swift; sourceTree = "<group>"; };
-		62E2E5A42D09D07D007F51C9 /* enqura.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = enqura.der; sourceTree = "<group>"; };
-		62EC4C2A2D0700BB00F210C6 /* OCRErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRErrorView.swift; sourceTree = "<group>"; };
-		62EC4C2C2D0700C800F210C6 /* NFCSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCSuccessView.swift; sourceTree = "<group>"; };
-		62EC4C2E2D0700D400F210C6 /* NFCRequiredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCRequiredView.swift; sourceTree = "<group>"; };
-		62EC4C302D0700E200F210C6 /* NFCReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReadView.swift; sourceTree = "<group>"; };
-		62EC4C322D0700F300F210C6 /* NFCErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCErrorView.swift; sourceTree = "<group>"; };
-		62EC4C342D07010500F210C6 /* NFCClosedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCClosedView.swift; sourceTree = "<group>"; };
-		62EC4C362D07011100F210C6 /* KYCErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KYCErrorView.swift; sourceTree = "<group>"; };
-		62EC4C382D07011D00F210C6 /* FaceSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceSuccessView.swift; sourceTree = "<group>"; };
-		62EC4C3A2D07013300F210C6 /* FaceErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceErrorView.swift; sourceTree = "<group>"; };
-		62FAA8852D01DAD700BA5ED7 /* Payfour.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Payfour.entitlements; path = Payfour/Payfour.entitlements; sourceTree = "<group>"; };
-		62FF7AA32D01EC400091C1C1 /* Payfour-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Payfour-Bridging-Header.h"; sourceTree = "<group>"; };
-		62FF7AA42D01EC400091C1C1 /* EnQualifyModuleIOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnQualifyModuleIOS.swift; sourceTree = "<group>"; };
-		62FF7AB82D01EEEC0091C1C1 /* EnQualifyModuleIOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EnQualifyModuleIOS.m; sourceTree = "<group>"; };
-		62FF7ABA2D01EF3F0091C1C1 /* OCRInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRInfoView.swift; sourceTree = "<group>"; };
-		62FF7ABC2D01F4C90091C1C1 /* SubtabHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtabHeaderView.swift; sourceTree = "<group>"; };
-		62FF7AC22D02D7DB0091C1C1 /* helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helper.swift; sourceTree = "<group>"; };
-		62FF7AC42D02DD5E0091C1C1 /* OCRSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRSuccessView.swift; sourceTree = "<group>"; };
-		7EAB429B51C44B6B97C7BD5A /* UbuntuBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = UbuntuBold.ttf; path = ../assets/fonts/UbuntuBold.ttf; sourceTree = "<group>"; };
-		8176423FBCD64F9382B514A8 /* Helvetica-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Helvetica-Bold.ttf"; path = "../assets/fonts/Helvetica-Bold.ttf"; sourceTree = "<group>"; };
+		624EAE112D11C6BA008B7AE9 /* Payfour-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Payfour-Bridging-Header.h"; sourceTree = "<group>"; };
+		624EB14E2D11C831008B7AE9 /* enqura.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = enqura.der; sourceTree = "<group>"; };
+		624EB15F2D11C9AC008B7AE9 /* EnQualifyModuleIOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnQualifyModuleIOS.swift; sourceTree = "<group>"; };
+		624EB1642D11CA16008B7AE9 /* EnQualifyModuleIOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = EnQualifyModuleIOS.m; path = Payfour/EnQualifyModuleIOS.m; sourceTree = "<group>"; };
+		624EB1662D11CA37008B7AE9 /* helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helper.swift; sourceTree = "<group>"; };
+		624EB1682D11CA85008B7AE9 /* BaseLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLayout.swift; sourceTree = "<group>"; };
+		624EB16A2D11CA9A008B7AE9 /* SubtabHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtabHeaderView.swift; sourceTree = "<group>"; };
+		624EB16C2D11CB3E008B7AE9 /* OCRInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRInfoView.swift; sourceTree = "<group>"; };
+		624EB16E2D11CB53008B7AE9 /* OCRSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRSuccessView.swift; sourceTree = "<group>"; };
+		624EB1702D11CB62008B7AE9 /* OCRErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRErrorView.swift; sourceTree = "<group>"; };
+		624EB1722D11CB6D008B7AE9 /* NFCSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCSuccessView.swift; sourceTree = "<group>"; };
+		624EB1742D11CB79008B7AE9 /* NFCRequiredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCRequiredView.swift; sourceTree = "<group>"; };
+		624EB1762D11CB84008B7AE9 /* NFCReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReadView.swift; sourceTree = "<group>"; };
+		624EB1782D11CB98008B7AE9 /* NFCErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCErrorView.swift; sourceTree = "<group>"; };
+		624EB17A2D11CBAA008B7AE9 /* NFCClosedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCClosedView.swift; sourceTree = "<group>"; };
+		624EB17C2D11CBBE008B7AE9 /* KYCErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KYCErrorView.swift; sourceTree = "<group>"; };
+		624EB17E2D11CBCB008B7AE9 /* FaceSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceSuccessView.swift; sourceTree = "<group>"; };
+		624EB1802D11CBDB008B7AE9 /* FaceErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceErrorView.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Payfour/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Payfour-PayfourTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour-PayfourTests.release.xcconfig"; path = "Target Support Files/Pods-Payfour-PayfourTests/Pods-Payfour-PayfourTests.release.xcconfig"; sourceTree = "<group>"; };
-		A5E2657BA1214B83B1FBB570 /* Ubuntu-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-BoldItalic.ttf"; path = "../assets/fonts/Ubuntu-BoldItalic.ttf"; sourceTree = "<group>"; };
-		BE303256185246708901DE8F /* Helvetica-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Helvetica-Light.ttf"; path = "../assets/fonts/Helvetica-Light.ttf"; sourceTree = "<group>"; };
+		967ACDD0970900FAC7AB5AF4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Payfour/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -146,19 +128,21 @@
 		13B07FAE1A68108700A75B9A /* Payfour */ = {
 			isa = PBXGroup;
 			children = (
-				62FF7AA22D01EC130091C1C1 /* EnQualify */,
-				62FAA8852D01DAD700BA5ED7 /* Payfour.entitlements */,
+				624EB15B2D11C975008B7AE9 /* EnQualify */,
+				0BB714C42CF4C2A3007F413F /* GoogleService-Info.plist */,
+				0BFAFAEB2CE60E6600EB7864 /* PayfourRelease.entitlements */,
+				0B79BB072C885CD100FA4CD6 /* Payfour.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				62E2E5A42D09D07D007F51C9 /* enqura.der */,
+				624EB14E2D11C831008B7AE9 /* enqura.der */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
-				62FF7AA32D01EC400091C1C1 /* Payfour-Bridging-Header.h */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
-				29DECFC52B80DDF52FDD25C5 /* PrivacyInfo.xcprivacy */,
-				62FF7AB82D01EEEC0091C1C1 /* EnQualifyModuleIOS.m */,
+				967ACDD0970900FAC7AB5AF4 /* PrivacyInfo.xcprivacy */,
+				624EAE112D11C6BA008B7AE9 /* Payfour-Bridging-Header.h */,
+				624EB1642D11CA16008B7AE9 /* EnQualifyModuleIOS.m */,
 			);
 			name = Payfour;
 			sourceTree = "<group>";
@@ -173,50 +157,50 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		62FF7AA22D01EC130091C1C1 /* EnQualify */ = {
+		624EB15B2D11C975008B7AE9 /* EnQualify */ = {
 			isa = PBXGroup;
 			children = (
-				62FF7AC12D02D7C00091C1C1 /* helper */,
-				62FF7ABF2D01F6AD0091C1C1 /* pages */,
-				62FF7ABE2D01F4E10091C1C1 /* ccomponents */,
-				62FF7AA42D01EC400091C1C1 /* EnQualifyModuleIOS.swift */,
+				624EB15C2D11C979008B7AE9 /* pages */,
+				624EB15D2D11C97E008B7AE9 /* helper */,
+				624EB15E2D11C988008B7AE9 /* components */,
+				624EB15F2D11C9AC008B7AE9 /* EnQualifyModuleIOS.swift */,
 			);
 			name = EnQualify;
 			sourceTree = "<group>";
 		};
-		62FF7ABE2D01F4E10091C1C1 /* ccomponents */ = {
+		624EB15C2D11C979008B7AE9 /* pages */ = {
 			isa = PBXGroup;
 			children = (
-				62FF7ABC2D01F4C90091C1C1 /* SubtabHeaderView.swift */,
-				62DE01102D088AE300F6EC8B /* BaseLayout.swift */,
-			);
-			name = ccomponents;
-			sourceTree = "<group>";
-		};
-		62FF7ABF2D01F6AD0091C1C1 /* pages */ = {
-			isa = PBXGroup;
-			children = (
-				62FF7ABA2D01EF3F0091C1C1 /* OCRInfoView.swift */,
-				62FF7AC42D02DD5E0091C1C1 /* OCRSuccessView.swift */,
-				62EC4C2A2D0700BB00F210C6 /* OCRErrorView.swift */,
-				62EC4C2C2D0700C800F210C6 /* NFCSuccessView.swift */,
-				62EC4C2E2D0700D400F210C6 /* NFCRequiredView.swift */,
-				62EC4C302D0700E200F210C6 /* NFCReadView.swift */,
-				62EC4C322D0700F300F210C6 /* NFCErrorView.swift */,
-				62EC4C342D07010500F210C6 /* NFCClosedView.swift */,
-				62EC4C362D07011100F210C6 /* KYCErrorView.swift */,
-				62EC4C382D07011D00F210C6 /* FaceSuccessView.swift */,
-				62EC4C3A2D07013300F210C6 /* FaceErrorView.swift */,
+				624EB16C2D11CB3E008B7AE9 /* OCRInfoView.swift */,
+				624EB16E2D11CB53008B7AE9 /* OCRSuccessView.swift */,
+				624EB1702D11CB62008B7AE9 /* OCRErrorView.swift */,
+				624EB1722D11CB6D008B7AE9 /* NFCSuccessView.swift */,
+				624EB1742D11CB79008B7AE9 /* NFCRequiredView.swift */,
+				624EB1762D11CB84008B7AE9 /* NFCReadView.swift */,
+				624EB1782D11CB98008B7AE9 /* NFCErrorView.swift */,
+				624EB17A2D11CBAA008B7AE9 /* NFCClosedView.swift */,
+				624EB17C2D11CBBE008B7AE9 /* KYCErrorView.swift */,
+				624EB17E2D11CBCB008B7AE9 /* FaceSuccessView.swift */,
+				624EB1802D11CBDB008B7AE9 /* FaceErrorView.swift */,
 			);
 			name = pages;
 			sourceTree = "<group>";
 		};
-		62FF7AC12D02D7C00091C1C1 /* helper */ = {
+		624EB15D2D11C97E008B7AE9 /* helper */ = {
 			isa = PBXGroup;
 			children = (
-				62FF7AC22D02D7DB0091C1C1 /* helper.swift */,
+				624EB1662D11CA37008B7AE9 /* helper.swift */,
 			);
 			name = helper;
+			sourceTree = "<group>";
+		};
+		624EB15E2D11C988008B7AE9 /* components */ = {
+			isa = PBXGroup;
+			children = (
+				624EB1682D11CA85008B7AE9 /* BaseLayout.swift */,
+				624EB16A2D11CA9A008B7AE9 /* SubtabHeaderView.swift */,
+			);
+			name = components;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -235,7 +219,6 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
-				B8DD93119ADD414CBB6760AF /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -249,24 +232,6 @@
 				00E356EE1AD99517003FC87E /* PayfourTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		B8DD93119ADD414CBB6760AF /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				8176423FBCD64F9382B514A8 /* Helvetica-Bold.ttf */,
-				BE303256185246708901DE8F /* Helvetica-Light.ttf */,
-				16F8713818FE4D709C3FC3CE /* Helvetica.ttf */,
-				A5E2657BA1214B83B1FBB570 /* Ubuntu-BoldItalic.ttf */,
-				04752A885F0F4D71BAAB50E6 /* Ubuntu-Italic.ttf */,
-				01E2ECE0B6BF460A8F9ECC4E /* Ubuntu-LightItalic.ttf */,
-				4BD0DA9752674690B4B276F5 /* Ubuntu-MediumItalic.ttf */,
-				7EAB429B51C44B6B97C7BD5A /* UbuntuBold.ttf */,
-				4FDBA90805014B8BAEC941FC /* UbuntuLight.ttf */,
-				01BFFEC55BBE455FBC1666C8 /* UbuntuMedium.ttf */,
-				1C2845DD480F4953947D7349 /* UbuntuRegular.ttf */,
-			);
-			name = Resources;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -315,7 +280,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
 				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
-				EC0428602B2A8AF2D19B2608 /* [CP-User] [RNFB] Core Configuration */,
+				19E2BDCC3AC5D3819D530BCE /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -332,7 +297,8 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1210;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
@@ -374,20 +340,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				624EB14F2D11C831008B7AE9 /* enqura.der in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
-				AF55E0AAA1734516A946CBF1 /* Helvetica-Bold.ttf in Resources */,
-				6DF947297EF04563A3EB03E5 /* Helvetica-Light.ttf in Resources */,
-				CF31ED6ACCE145FD995ECFA8 /* Helvetica.ttf in Resources */,
-				B436A537B52A4B7F973F1C3B /* Ubuntu-BoldItalic.ttf in Resources */,
-				62FF7AC02D01F7AD0091C1C1 /* Images.xcassets in Resources */,
-				A83F4245621F4CE1B8D43408 /* Ubuntu-Italic.ttf in Resources */,
-				C44BA09D037E42BBAE399E3B /* Ubuntu-LightItalic.ttf in Resources */,
-				2A916E9B2C184CA9B10314C7 /* Ubuntu-MediumItalic.ttf in Resources */,
-				37C118CE59974063A599762E /* UbuntuBold.ttf in Resources */,
-				C9C13F9B43A54D6088B092C9 /* UbuntuLight.ttf in Resources */,
-				26CAB05D5AD448DB883F43EA /* UbuntuMedium.ttf in Resources */,
-				6DF4026A64A845DD95E94774 /* UbuntuRegular.ttf in Resources */,
-				B9C986F4A4CA1B23AAC4C72A /* PrivacyInfo.xcprivacy in Resources */,
+				0BB714C52CF4C2A3007F413F /* GoogleService-Info.plist in Resources */,
+				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				6A4A82C9ACD8B0B6F93EF557 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,6 +383,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Payfour/Pods-Payfour-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		19E2BDCC3AC5D3819D530BCE /* [CP-User] [RNFB] Core Configuration */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "[CP-User] [RNFB] Core Configuration";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT=\"'react-native'\"\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"info:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"info:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -Ku -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"info: -> RNFB build script started\"\necho \"info: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"info:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | /usr/bin/head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"info:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -Ku -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    if ! python3 --version >/dev/null 2>&1; then echo \"python3 not found, firebase.json file processing error.\" && exit 1; fi\n    _JSON_OUTPUT_BASE64=$(python3 -c 'import json,sys,base64;print(base64.b64encode(bytes(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"', '\"'rb'\"').read())['${_JSON_ROOT}']), '\"'utf-8'\"')).decode())' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.app_data_collection_default_enabled\n  _APP_DATA_COLLECTION_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"app_data_collection_default_enabled\")\n  if [[ $_APP_DATA_COLLECTION_ENABLED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseDataCollectionDefaultEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_APP_DATA_COLLECTION_ENABLED\")\")\n  fi\n\n  # config.analytics_auto_collection_enabled\n  _ANALYTICS_AUTO_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_auto_collection_enabled\")\n  if [[ $_ANALYTICS_AUTO_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FIREBASE_ANALYTICS_COLLECTION_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AUTO_COLLECTION\")\")\n  fi\n\n  # config.analytics_collection_deactivated\n  _ANALYTICS_DEACTIVATED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_collection_deactivated\")\n  if [[ $_ANALYTICS_DEACTIVATED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_DEACTIVATED\")\")\n  fi\n\n  # config.analytics_idfv_collection_enabled\n  _ANALYTICS_IDFV_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_idfv_collection_enabled\")\n  if [[ $_ANALYTICS_IDFV_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_IDFV_COLLECTION\")\")\n  fi\n\n  # config.analytics_default_allow_ad_personalization_signals\n  _ANALYTICS_PERSONALIZATION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_default_allow_ad_personalization_signals\")\n  if [[ $_ANALYTICS_PERSONALIZATION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_PERSONALIZATION\")\")\n  fi\n\n  # config.analytics_registration_with_ad_network_enabled\n  _ANALYTICS_REGISTRATION_WITH_AD_NETWORK=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"google_analytics_registration_with_ad_network_enabled\")\n  if [[ $_ANALYTICS_REGISTRATION_WITH_AD_NETWORK ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_REGISTRATION_WITH_AD_NETWORK_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_REGISTRATION_WITH_AD_NETWORK\")\")\n  fi\n\n  # config.google_analytics_automatic_screen_reporting_enabled\n  _ANALYTICS_AUTO_SCREEN_REPORTING=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"google_analytics_automatic_screen_reporting_enabled\")\n  if [[ $_ANALYTICS_AUTO_SCREEN_REPORTING ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseAutomaticScreenReportingEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AUTO_SCREEN_REPORTING\")\")\n  fi\n\n  # config.perf_auto_collection_enabled\n  _PERF_AUTO_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"perf_auto_collection_enabled\")\n  if [[ $_PERF_AUTO_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"firebase_performance_collection_enabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_PERF_AUTO_COLLECTION\")\")\n  fi\n\n  # config.perf_collection_deactivated\n  _PERF_DEACTIVATED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"perf_collection_deactivated\")\n  if [[ $_PERF_DEACTIVATED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"firebase_performance_collection_deactivated\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_PERF_DEACTIVATED\")\")\n  fi\n\n  # config.messaging_auto_init_enabled\n  _MESSAGING_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"messaging_auto_init_enabled\")\n  if [[ $_MESSAGING_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseMessagingAutoInitEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_MESSAGING_AUTO_INIT\")\")\n  fi\n\n  # config.in_app_messaging_auto_colllection_enabled\n  _FIAM_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"in_app_messaging_auto_collection_enabled\")\n  if [[ $_FIAM_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseInAppMessagingAutomaticDataCollectionEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_FIAM_AUTO_INIT\")\")\n  fi\n\n  # config.app_check_token_auto_refresh\n  _APP_CHECK_TOKEN_AUTO_REFRESH=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"app_check_token_auto_refresh\")\n  if [[ $_APP_CHECK_TOKEN_AUTO_REFRESH ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseAppCheckTokenAutoRefreshEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_APP_CHECK_TOKEN_AUTO_REFRESH\")\")\n  fi\n\n  # config.crashlytics_disable_auto_disabler - undocumented for now - mainly for debugging, document if becomes useful\n  _CRASHLYTICS_AUTO_DISABLE_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"crashlytics_disable_auto_disabler\")\n  if [[ $_CRASHLYTICS_AUTO_DISABLE_ENABLED == \"true\" ]]; then\n    echo \"Disabled Crashlytics auto disabler.\" # do nothing\n  else\n    _PLIST_ENTRY_KEYS+=(\"FirebaseCrashlyticsCollectionEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"NO\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"warning:   A firebase.json file was not found, whilst this file is optional it is recommended to include it to configure firebase services in React Native Firebase.\"\nfi;\n\necho \"info: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally\n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"info: <- RNFB build script finished\"\n";
 		};
 		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -505,19 +475,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Payfour/Pods-Payfour-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		EC0428602B2A8AF2D19B2608 /* [CP-User] [RNFB] Core Configuration */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
-			);
-			name = "[CP-User] [RNFB] Core Configuration";
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT=\"'react-native'\"\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"info:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"info:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -Ku -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"info: -> RNFB build script started\"\necho \"info: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"info:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | /usr/bin/head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"info:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -Ku -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    if ! python3 --version >/dev/null 2>&1; then echo \"python3 not found, firebase.json file processing error.\" && exit 1; fi\n    _JSON_OUTPUT_BASE64=$(python3 -c 'import json,sys,base64;print(base64.b64encode(bytes(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"', '\"'rb'\"').read())['${_JSON_ROOT}']), '\"'utf-8'\"')).decode())' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.app_data_collection_default_enabled\n  _APP_DATA_COLLECTION_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"app_data_collection_default_enabled\")\n  if [[ $_APP_DATA_COLLECTION_ENABLED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseDataCollectionDefaultEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_APP_DATA_COLLECTION_ENABLED\")\")\n  fi\n\n  # config.analytics_auto_collection_enabled\n  _ANALYTICS_AUTO_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_auto_collection_enabled\")\n  if [[ $_ANALYTICS_AUTO_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FIREBASE_ANALYTICS_COLLECTION_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AUTO_COLLECTION\")\")\n  fi\n\n  # config.analytics_collection_deactivated\n  _ANALYTICS_DEACTIVATED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_collection_deactivated\")\n  if [[ $_ANALYTICS_DEACTIVATED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_DEACTIVATED\")\")\n  fi\n\n  # config.analytics_idfv_collection_enabled\n  _ANALYTICS_IDFV_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_idfv_collection_enabled\")\n  if [[ $_ANALYTICS_IDFV_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_IDFV_COLLECTION\")\")\n  fi\n\n  # config.analytics_default_allow_ad_personalization_signals\n  _ANALYTICS_PERSONALIZATION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_default_allow_ad_personalization_signals\")\n  if [[ $_ANALYTICS_PERSONALIZATION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_PERSONALIZATION\")\")\n  fi\n\n  # config.analytics_registration_with_ad_network_enabled\n  _ANALYTICS_REGISTRATION_WITH_AD_NETWORK=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"google_analytics_registration_with_ad_network_enabled\")\n  if [[ $_ANALYTICS_REGISTRATION_WITH_AD_NETWORK ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_REGISTRATION_WITH_AD_NETWORK_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_REGISTRATION_WITH_AD_NETWORK\")\")\n  fi\n\n  # config.google_analytics_automatic_screen_reporting_enabled\n  _ANALYTICS_AUTO_SCREEN_REPORTING=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"google_analytics_automatic_screen_reporting_enabled\")\n  if [[ $_ANALYTICS_AUTO_SCREEN_REPORTING ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseAutomaticScreenReportingEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AUTO_SCREEN_REPORTING\")\")\n  fi\n\n  # config.perf_auto_collection_enabled\n  _PERF_AUTO_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"perf_auto_collection_enabled\")\n  if [[ $_PERF_AUTO_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"firebase_performance_collection_enabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_PERF_AUTO_COLLECTION\")\")\n  fi\n\n  # config.perf_collection_deactivated\n  _PERF_DEACTIVATED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"perf_collection_deactivated\")\n  if [[ $_PERF_DEACTIVATED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"firebase_performance_collection_deactivated\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_PERF_DEACTIVATED\")\")\n  fi\n\n  # config.messaging_auto_init_enabled\n  _MESSAGING_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"messaging_auto_init_enabled\")\n  if [[ $_MESSAGING_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseMessagingAutoInitEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_MESSAGING_AUTO_INIT\")\")\n  fi\n\n  # config.in_app_messaging_auto_colllection_enabled\n  _FIAM_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"in_app_messaging_auto_collection_enabled\")\n  if [[ $_FIAM_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseInAppMessagingAutomaticDataCollectionEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_FIAM_AUTO_INIT\")\")\n  fi\n\n  # config.app_check_token_auto_refresh\n  _APP_CHECK_TOKEN_AUTO_REFRESH=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"app_check_token_auto_refresh\")\n  if [[ $_APP_CHECK_TOKEN_AUTO_REFRESH ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseAppCheckTokenAutoRefreshEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_APP_CHECK_TOKEN_AUTO_REFRESH\")\")\n  fi\n\n  # config.crashlytics_disable_auto_disabler - undocumented for now - mainly for debugging, document if becomes useful\n  _CRASHLYTICS_AUTO_DISABLE_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"crashlytics_disable_auto_disabler\")\n  if [[ $_CRASHLYTICS_AUTO_DISABLE_ENABLED == \"true\" ]]; then\n    echo \"Disabled Crashlytics auto disabler.\" # do nothing\n  else\n    _PLIST_ENTRY_KEYS+=(\"FirebaseCrashlyticsCollectionEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"NO\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"warning:   A firebase.json file was not found, whilst this file is optional it is recommended to include it to configure firebase services in React Native Firebase.\"\nfi;\n\necho \"info: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally\n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"info: <- RNFB build script finished\"\n";
-		};
 		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -550,24 +507,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				62FF7ABB2D01EF3F0091C1C1 /* OCRInfoView.swift in Sources */,
-				62EC4C2F2D0700D400F210C6 /* NFCRequiredView.swift in Sources */,
-				62EC4C312D0700E200F210C6 /* NFCReadView.swift in Sources */,
-				62EC4C392D07011D00F210C6 /* FaceSuccessView.swift in Sources */,
-				62FF7AA52D01EC400091C1C1 /* EnQualifyModuleIOS.swift in Sources */,
-				62FF7AC32D02D7DB0091C1C1 /* helper.swift in Sources */,
-				62EC4C3B2D07013300F210C6 /* FaceErrorView.swift in Sources */,
-				62EC4C332D0700F300F210C6 /* NFCErrorView.swift in Sources */,
-				62EC4C352D07010500F210C6 /* NFCClosedView.swift in Sources */,
+				624EB1812D11CBDB008B7AE9 /* FaceErrorView.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				62EC4C2D2D0700C800F210C6 /* NFCSuccessView.swift in Sources */,
-				62EC4C372D07011100F210C6 /* KYCErrorView.swift in Sources */,
-				62FF7AB92D01EEEC0091C1C1 /* EnQualifyModuleIOS.m in Sources */,
-				62FF7ABD2D01F4C90091C1C1 /* SubtabHeaderView.swift in Sources */,
-				62DE01112D088AE300F6EC8B /* BaseLayout.swift in Sources */,
-				62EC4C2B2D0700BB00F210C6 /* OCRErrorView.swift in Sources */,
+				624EB1732D11CB6D008B7AE9 /* NFCSuccessView.swift in Sources */,
+				624EB16D2D11CB3E008B7AE9 /* OCRInfoView.swift in Sources */,
+				624EB1792D11CB98008B7AE9 /* NFCErrorView.swift in Sources */,
+				624EB1712D11CB62008B7AE9 /* OCRErrorView.swift in Sources */,
+				624EB1692D11CA85008B7AE9 /* BaseLayout.swift in Sources */,
+				624EB1652D11CA16008B7AE9 /* EnQualifyModuleIOS.m in Sources */,
+				624EB1672D11CA37008B7AE9 /* helper.swift in Sources */,
+				624EB1772D11CB84008B7AE9 /* NFCReadView.swift in Sources */,
+				624EB17B2D11CBAA008B7AE9 /* NFCClosedView.swift in Sources */,
+				624EB1602D11C9AC008B7AE9 /* EnQualifyModuleIOS.swift in Sources */,
+				624EB16B2D11CA9A008B7AE9 /* SubtabHeaderView.swift in Sources */,
+				624EB1752D11CB79008B7AE9 /* NFCRequiredView.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
-				62FF7AC52D02DD5E0091C1C1 /* OCRSuccessView.swift in Sources */,
+				624EB16F2D11CB53008B7AE9 /* OCRSuccessView.swift in Sources */,
+				624EB17D2D11CBBE008B7AE9 /* KYCErrorView.swift in Sources */,
+				624EB17F2D11CBCB008B7AE9 /* FaceSuccessView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -604,7 +561,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.carrefour.payfour;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Payfour.app/Payfour";
 			};
@@ -629,7 +586,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.carrefour.payfour;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Payfour.app/Payfour";
 			};
@@ -642,22 +599,29 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Payfour/Payfour.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KJ8F3K5Z2K;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 654FSVNUGN;
 				ENABLE_BITCODE = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Payfour/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.9.6;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-ObjC",
 					"-lc++",
-					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.carrefour.payfour;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.carrefour.--PRODUCT-NAME-rfc1034identifier-";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.carrefour.payfour;
 				PRODUCT_NAME = Payfour;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = payfour;
 				SWIFT_OBJC_BRIDGING_HEADER = "Payfour-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -671,22 +635,31 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Payfour/Payfour.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KJ8F3K5Z2K;
+				CODE_SIGN_ENTITLEMENTS = Payfour/PayfourRelease.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 3;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 654FSVNUGN;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Payfour/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.9.6;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-ObjC",
 					"-lc++",
-					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.carrefour.payfour;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.carrefour.--PRODUCT-NAME-rfc1034identifier-";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.carrefour.payfour;
 				PRODUCT_NAME = Payfour;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = payfour;
 				SWIFT_OBJC_BRIDGING_HEADER = "Payfour-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -728,6 +701,7 @@
 				CXX = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -766,7 +740,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -809,6 +783,7 @@
 				CXX = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -839,7 +814,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

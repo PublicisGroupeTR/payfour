@@ -10,7 +10,7 @@ import Bildirim from '../../assets/img/svg/bildirim.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SubtabHeader = props => {
-  const {routetarget, name, count, isKycPage, mode, ...attributes} = props;
+  const {routetarget, name, isKycPage, count, mode, ...attributes} = props;
 
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -18,13 +18,13 @@ const SubtabHeader = props => {
   /*console.log(navigation);
   console.log(routetarget);*/
   return (
-    <View style={[styles.topStyle, isKycPage && { paddingTop: 13 + insets.top }, {backgroundColor: props.mode === 'dark' ? 'transparent' : '#fff'}]}>
+    <View style={[styles.topStyle, isKycPage && { paddingTop: 13 + insets.top },  {backgroundColor: props.mode === 'dark' ? 'transparent' : '#fff',zIndex:1}]}>
       <TouchableOpacity
         style={[
           styles.buttonClose,
           {display: routetarget === '' ? 'none' : 'flex', flexDirection:'row'},
         ]}
-        onPress={() => isKycPage ? navigation.goBack() : navigation.navigate(routetarget)}>        
+        onPress={() => isKycPage ? navigation.goBack() : navigation.navigate(routetarget)}>     
           <Image
             source={require('../../assets/img/export/arrow_back.png')}
             style={{
@@ -33,7 +33,6 @@ const SubtabHeader = props => {
               tintColor: props.mode === 'dark' ? '#fff' : 'none',
             }}
           />
-      
       <View style={{
         alignItems: 'center',
         justifyContent:'center',
@@ -46,7 +45,9 @@ const SubtabHeader = props => {
           {name}
         </Text>
       </View>
+      
       </TouchableOpacity>
+      
     </View>
   );
 };

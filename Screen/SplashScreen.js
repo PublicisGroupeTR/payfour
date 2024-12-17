@@ -37,16 +37,16 @@ const SplashScreen = ({navigation}) => {
           navigation.navigate('IntroScreen');
 
 
-          //if(obj.tutorial === 'null'){
-            
-          /*}else if (obj.phone !== 'null' && obj.uniqueMPANumber !== 'null'){
+          if(!obj.tutorial){
+            navigation.navigate('IntroScreen');
+          }else if (obj.phone !== 'null' && obj.uniqueMPANumber !== 'null'){
             //navigation.replace('LoginWithPasswordScreen')
             navigation.navigate('Auth', { screen: 'LoginWithPasswordScreen' })
             //navigation.navigate('Auth', { screen: 'RegisterScreen' })
             //navigation.navigate('Auth', { screen: 'BiometricsScreen' })
           }else{
             navigation.navigate('Auth', { screen: 'LoginScreen' });
-          }*/
+          }
         });
       });
       //navigation.replace('Auth');

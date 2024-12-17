@@ -20,7 +20,8 @@ import {
   Pressable,
   Platform,
   Keyboard,
-  Alert
+  Alert,
+  Share
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -37,10 +38,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import HTMLView from 'react-native-htmlview';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Modalize } from 'react-native-modalize';
+import { useError } from '../Contexts/ErrorContext.js';
 
 const Stack = createStackNavigator();
 
-const CampaignList = ({navigation}) => {
+const CampaignList = ({navigation, route}) => {
+  const { showError } = useError();
   const [loading, setLoading] = useState(false);
   const [campaignData, setCampaignData] = useState(false);
   const scrollRef = useRef();
@@ -51,6 +54,7 @@ const CampaignList = ({navigation}) => {
   const [popularSearches, setPopularSearches] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   
+  const [isAll, setIsAll] = useState(false);
   const [isSpecial, setIsSpecial] = useState(false);
   const [isCashback, setIsCashback] = useState(false);
   const [isPartnership, setIsPartnership] = useState(false);
@@ -60,21 +64,50 @@ const CampaignList = ({navigation}) => {
 
   const [filterType, setFilterType] = React.useState('');
 
+  const [userSrch,setUserSrch]=useState("");
+
   useEffect(() => {   
-    const unsubscribe = navigation.addListener('focus', () => {
+    //const unsubscribe = navigation.addListener('focus', () => {
       // do something
-        getCampaigns(false)
-    });
-    return unsubscribe;
-  }, [navigation]);
-  const setFilterData = () =>{
+      console.log("route")
+      console.log(route)
+      console.log("params")
+      console.log(route.params);
+      let isSp=false;
+      let isAw = false;
+      let isPr = false;
+      if(route && route.params && route.params.filters){
+        /*(route.params.filters.isSp && route.params.filters.isSp === true)? setIsSpecial(true) : setIsSpecial(false);
+        (route.params.filters.isAw && route.params.filters.isAw === true)? setIsAward(true) : setIsAward(false);*/
+        if(route.params.filters.isSp && route.params.filters.isSp === true) isSp=true;
+        if(route.params.filters.isAw && route.params.filters.isAw === true) isAw=true;
+        if(route.params.filters.isPr && route.params.filters.isPr === true) isPr=true;
+      }
+      console.log(">>>>");
+      console.log(isSpecial);
+      console.log(isAward);
+        //getCampaigns(false);
+        //setIsSpecial(isSp);
+        //setIsAward(isAw);
+        setFilterData(isSp, isAw, isPr);
+        //showError('test')
+    //});
+    //return unsubscribe;
+  }, [route]);
+//});
+
+  const setFilterData = (isSp, isAw, isPr) =>{
+    //setIsSpecial(isSp);
+    //setIsAward(isAw);
     setFilterModalVisible(false);
     setOrderModalVisible(false);
     let filter = "";
-    if(isSpecial) filter+="&isSpecial=true";
+    //if(isSpecial || isSp) filter+="&isSpecial=true";
+    if(isAw) filter+="&isPremium=true";
+    if(isSpecial|| isSp) filter+="&isSpecial=true";
     if(isCashback) filter+="&isCashback=true";
     if(isPartnership) filter+="&isPartnership=true";
-    if(isAward) filter+="&isAward=true";
+    if(isAward ) filter+="&isAward=true";
     if(isPaymentOfEase) filter+="&isPaymentOfEase=true";
     filter+='&sort='+orderType;
     console.log("filter ? ");
@@ -118,7 +151,9 @@ const CampaignList = ({navigation}) => {
       .catch(error => {
         console.error("Error sending data: ", error);
         let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
+        //Alert.alert(msg);
+        showError(msg);
       });
 
     });
@@ -200,7 +235,7 @@ const renderSuggestionItems = () =>{
       <FlatList
       data={suggestions}
       renderItem={(item) => 
-        <SuggestionItem key={item.item} title={item.item}/>
+        <SuggestionItem item={item.item}/>
       }
       keyExtractor={item => item.key}
       style={{ width:'100%'}}
@@ -210,8 +245,9 @@ const renderSuggestionItems = () =>{
 
   )
 }
-  const SuggestionItem = ({key, title}) => (
-    <View key={key} style={{width:'100%',
+  const SuggestionItem = ({item}) => (
+    
+    <View key={item.key} style={{width:'100%',
       height:50,
       borderBottomWidth:1,
       borderBottomColor:'#EFF1F5',
@@ -225,14 +261,24 @@ const renderSuggestionItems = () =>{
       }}
       onPress={() => {   
           console.log("suggestion click"); 
-          onSearch(title);       
+          console.log("SuggestionItem ");
+          console.log(item);
+          onSearchClose(item.title);
+          //onErase();
+          setUserSrch(item.title);
+          navigation.navigate('campaign', { 
+            screen: 'CampaignDetail',
+            params: {id: item.id}
+          });
+        
+          //onSearch(title);       
       }}>    
         <Text style={{
           fontSize:12,
           lineHeight:18,
           color:'#0B1929',
         }}>
-            {title}
+            {item.title}
         </Text>       
       </TouchableOpacity>
     </View>
@@ -320,6 +366,7 @@ const renderSuggestionItems = () =>{
   }
   const onSearch = (data) => {
     console.log("onSearchSubmit", data);
+    setUserSrch(data);
     searchKeyword(data);
   }
   const onSearchClose = (data) => {
@@ -332,6 +379,7 @@ const renderSuggestionItems = () =>{
   }
   const searchKeyword = (data) => {
     console.log("searchKeyword", data);
+    setUserSrch(data);
     setShowSearch(false);
     getCampaigns(null, null, data);
   }
@@ -412,185 +460,201 @@ const renderSuggestionItems = () =>{
                     }}>
                       Payfour'a özel
                     </Text>
+                    <Pressable
+                    onPress={()=> {
+                      let all = isAll;
+                      setIsAll(!all);
+                      setIsSpecial(!all);
+                      setIsCashback(!all);
+                      setIsPartnership(!all);
+                      setIsAward(!all);
+                      setIsPaymentOfEase(!all);
+                      }}>
                     <Text style={{
                       fontSize:14,
                       lineHeight:16,
-                      color:'#909EAA',
+                      color: isAll ? '#004F97' : '#909EAA',
                     }}>
                       Tümü
                     </Text>
+                    </Pressable>
                     
                   </View>
-                  <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
-                    }}>
-                      <Pressable
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsSpecial(!isSpecial)}>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isSpecial ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isSpecial ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isSpecial ? 14 : 0,
+                          height: isSpecial ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsSpecial(!isSpecial)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isSpecial ? 14 : 0,
-                            height: isSpecial ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      Sana Özel
-                      </Text>
+                      />
                     </View>
-                    <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
                     }}>
-                      <Pressable
+                    Sana Özel
+                    </Text>
+                  </Pressable>
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsCashback(!isCashback)}>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isCashback ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isCashback ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isCashback ? 14 : 0,
+                          height: isCashback ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsCashback(!isCashback)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isCashback ? 14 : 0,
-                            height: isCashback ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      Cashback Kampanyaları
-                      </Text>
+                      />
                     </View>
-                    <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
                     }}>
-                      <Pressable
+                    Nakit İade Kampanyaları
+                    </Text>
+                  </Pressable>
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsPartnership(!isPartnership)}>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isPartnership ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isPartnership ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isPartnership ? 14 : 0,
+                          height: isPartnership ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsPartnership(!isPartnership)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isPartnership ? 14 : 0,
-                            height: isPartnership ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      İş Birlikleri
-                      </Text>
+                      />
                     </View>
-                    <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
                     }}>
-                      <Pressable
+                    İş Birlikleri
+                    </Text>
+                  </Pressable>
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsAward(!isAward)}>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isAward ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isAward ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isAward ? 14 : 0,
+                          height: isAward ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsAward(!isAward)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isAward ? 14 : 0,
-                            height: isAward ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      Puan Kampanyaları
-                      </Text>
+                      />
                     </View>
-                    <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
                     }}>
-                      <Pressable
+                    Puan Kampanyaları
+                    </Text>
+                  </Pressable>
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsPaymentOfEase(!isPaymentOfEase)}>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isPaymentOfEase ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isPaymentOfEase ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isPaymentOfEase ? 14 : 0,
+                          height: isPaymentOfEase ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsPaymentOfEase(!isPaymentOfEase)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isPaymentOfEase ? 14 : 0,
-                            height: isPaymentOfEase ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      Ödeme Kolaylığı Kampanyaları
-                      </Text>
+                      />
                     </View>
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
+                    }}>
+                    Ödeme Kolaylığı Kampanyaları
+                    </Text>
+                  </Pressable>
                   
                   <TouchableOpacity
                     style={[
@@ -705,7 +769,7 @@ const renderSuggestionItems = () =>{
                         display: orderType === 'DateDescending' ? 'flex' : 'none'}}></View>
                     </View>
                       <Text style={{
-                        fontSize:16,fontWeight:'700', color:'#004F97', marginBottom:4
+                        fontSize:16,fontWeight:'500', color:'#004F97', marginBottom:4
                       }}>
                       Tarihe göre en yeni
                       </Text>
@@ -742,7 +806,7 @@ const renderSuggestionItems = () =>{
                         display: orderType === 'DateAscending' ? 'flex' : 'none'}}></View>
                     </View>
                       <Text style={{
-                        fontSize:16,fontWeight:'700', color:'#004F97', marginBottom:4
+                        fontSize:16,fontWeight:'500', color:'#004F97', marginBottom:4
                       }}>
                       Tarihe göre en eski
                       </Text>
@@ -774,7 +838,7 @@ const renderSuggestionItems = () =>{
                         display: orderType === 'BrandAscending' ? 'flex' : 'none'}}></View>
                     </View>
                       <Text style={{
-                        fontSize:16,fontWeight:'700', color:'#004F97', marginBottom:4
+                        fontSize:16,fontWeight:'500', color:'#004F97', marginBottom:4
                       }}>
                       Markalara göre A-Z
                       </Text>
@@ -806,7 +870,7 @@ const renderSuggestionItems = () =>{
                         display: orderType === 'BrandDescending' ? 'flex' : 'none'}}></View>
                     </View>
                       <Text style={{
-                        fontSize:16,fontWeight:'700', color:'#004F97', marginBottom:4
+                        fontSize:16,fontWeight:'500', color:'#004F97', marginBottom:4
                       }}>
                       Markalara göre Z-A
                       </Text>
@@ -840,7 +904,19 @@ const renderSuggestionItems = () =>{
             </View>
       </Modal>    
       <Loader loading={loading} />
-      <SubtabHeaderWithSearch routetarget={"Discover"} name="Kampanyalar" count="0" openCallback={onSearchPress} inputCallback={onInput} searchCallback={onSearch} closeCallback={onSearchClose} eraseCallback={onErase}/>
+      <SubtabHeaderWithSearch 
+      routetarget={"Discover"} 
+      name="Kampanyalar" 
+      count="0" 
+      openCallback={onSearchPress} 
+      inputCallback={onInput} 
+      searchCallback={onSearch} 
+      closeCallback={onSearchClose} 
+      eraseCallback={onErase}
+      userSrch={userSrch} 
+      setUserSrch={setUserSrch}
+      />
+      
       <LinearGradient colors={['#fcfcfd', '#fbfbfd']} 
       style={{
         position:'absolute',
@@ -855,11 +931,11 @@ const renderSuggestionItems = () =>{
       </LinearGradient>
       <View style={{
         position:'absolute',
-        top:60,
+        top:Platform.OS == 'ios'? 124 : 60,
         left:0,
         backgroundColor:'#fff',
         padding:16,
-        paddingTop:0,
+        paddingTop:Platform.OS==('ios') ? 12 : 0,
         display:showSearch? 'flex' : 'none',
         width:'100%',
         height:'100%',
@@ -867,7 +943,7 @@ const renderSuggestionItems = () =>{
       }}>
         <View style={{
           width:'100%',
-          height:16,
+          // height:16,
           // backgroundColor:'#ff0000',
           // shadowColor:'#000000',
           // shadowOffset:{
@@ -1075,6 +1151,7 @@ const renderSuggestionItems = () =>{
 
 }
 const CampaignDetail = ({navigation, route}) => {
+  const { showError } = useError();
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [joined, setJoined] = useState(false);
@@ -1132,6 +1209,7 @@ const CampaignDetail = ({navigation, route}) => {
             sl.howTo = sl.howTo.replace(re2, "</div>");
             sl.terms = sl.terms.replace(re, "<div>");
             sl.terms = sl.terms.replace(re2, "</div>");
+            setJoined(sl.hasJoinedCampaign)
             console.log(sl.longDescription);
             console.log(sl.howTo);
             console.log(sl.terms);
@@ -1162,7 +1240,9 @@ const CampaignDetail = ({navigation, route}) => {
           .catch(error => {
             console.error("Error sending data: ", error);
             let msg="";
-            (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+            (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
+            //Alert.alert(msg);
+            showError(msg);
           })        });
       
     });
@@ -1210,7 +1290,9 @@ const CampaignDetail = ({navigation, route}) => {
         console.error("Error sending data: ", error);
         console.log(error.response);
         let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
+        //Alert.alert(msg);
+        showError(msg);
       });
     });
   }
@@ -1246,7 +1328,9 @@ const CampaignDetail = ({navigation, route}) => {
         console.error("Error sending data: ", error);
         console.log(error.response);
         let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
+        //Alert.alert(msg);
+        showError(msg);
       });
     });
   }
@@ -1288,9 +1372,33 @@ const CampaignDetail = ({navigation, route}) => {
         console.error("Error sending data: ", error);
         console.log(error.response);
         let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
+        //Alert.alert(msg);
+        showError(msg);
       });
     });
+  }
+  const onShare = async () => {
+    console.log("onShare");
+    console.log(route.params.id)
+    try {
+      const result = await Share.share({
+        message:
+        "payfour://campaign?Id="+route.params.id,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      //Alert.alert(msg);
+      showError(error.message);
+    }
   }
   const renderBarNums = () =>{
     
@@ -1944,7 +2052,8 @@ const CampaignDetail = ({navigation, route}) => {
               source={{uri: campaignDetailData =={} ? '' : campaignDetailData.imageUrl}}
               style={{
                 width: '100%',
-                height:Dimensions.get('window').width*0.466
+                //height:Dimensions.get('window').width*0.466,
+                height:Dimensions.get('window').width*0.8,
               }}
               resizeMode={'cover'}
             />
@@ -2023,7 +2132,7 @@ const CampaignDetail = ({navigation, route}) => {
                         console.log("key "+key);
                         console.log(campaignDetailData.barLines[key].key);
                       return (
-                        campaignDetailData.barLines.length > 0 && key != 0? 
+                        campaignDetailData.barLines.length > 0 && key != 0 && key !=campaignDetailData.barLines.length-1? 
                         <View key={campaignDetailData.barLines[key].key}
                         style={{
                           position:'absolute',
@@ -2031,10 +2140,10 @@ const CampaignDetail = ({navigation, route}) => {
                           //left:20 * campaignDetailData.barLines[key].point,
                           left: campaignDetailData.barLines.length > 0 ? (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point : 0,
                           height:8,
-                          width:1,
-                          backgroundColor: '#fff'
+                          width:2,
+                          backgroundColor: campaignDetailData.memberCurrentCount > 0 ? '#fff' : '#F2F4F6'
                         }}>
-                          <Text>{campaignDetailData.barLines[key].point}</Text>
+                          {/* <Text>{campaignDetailData.barLines[key].point}</Text> */}
                         </View>
                         : <View></View>
                       )
@@ -2042,46 +2151,7 @@ const CampaignDetail = ({navigation, route}) => {
                     }
                       
                     </View>
-                    <View style={{
-                      width:'100%',
-                      height:8,
-                      position:'absolute',
-                      top:0,
-                      left:0,
-                      borderRadius:12
-                    }}>
-                      {/* barlines */}
-                      {
-                      [...Array(campaignDetailData.barLines.length).keys()].map(key => {
-                        console.log("barLines ");
-                        console.log(campaignDetailData.barLines);
-                        console.log("barLines "+campaignDetailData.barLines.length);
-                        console.log("key "+key);
-                        console.log(campaignDetailData.barLines[key].key);
-                      return (
-                        campaignDetailData.barLines.length > 0 && key != 0? 
-                        <View key={campaignDetailData.barLines[key].key}
-                        style={{
-                          position:'absolute',
-                          top:0,
-                          //left:20 * campaignDetailData.barLines[key].point,
-                          left: (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
-                          height:8,
-                          width:1,
-                          backgroundColor: '#fff'
-                        }}>
-                          <Text style={{
-                            fontSize:10,
-                            color:'#004F97',
-                            
-                          }}>{campaignDetailData.barLines[key].point}</Text>
-                        </View>
-                        : <View></View>
-                      )
-                    })
-                    }
-                      
-                    </View>
+                    
                     <View style={{
                       width:'100%',
                       height:8,
@@ -2098,13 +2168,14 @@ const CampaignDetail = ({navigation, route}) => {
                         console.log("key "+key);
                         console.log(campaignDetailData.barLines[key].key);
                       return (
-                        campaignDetailData.barLines.length > 0? 
+                        campaignDetailData.barLines.length > 0 && campaignDetailData.barLines[key].point != "0"? 
                         <View key={campaignDetailData.barLines[key].key}
                         style={{
                           position:'absolute',
                           top:20,
                           //left:20 * campaignDetailData.barLines[key].point,
-                          left: (Dimensions.get('window').width - 128) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
+                          //left: (Dimensions.get('window').width - 128) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
+                          left: campaignDetailData.barLines.length > 0 ? ((Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length - 1) * campaignDetailData.barLines[key].point)-5 : 0,
                           height:16,
                           width:12,
                         }}>
@@ -2170,8 +2241,10 @@ const CampaignDetail = ({navigation, route}) => {
                 color:'#28303F',
                 paddingRight:16,
                 textAlign:'left',
+                width:Dimensions.get('window').width - 80,
               }}>{campaignDetailData.title}</Text>
-                <TouchableOpacity style={{}}>
+                {/* <TouchableOpacity style={{}}
+                onPress={()=> onShare()}>
                   <Image
                     source={require('../../assets/img/export/campaign_detail_icon2.png')}
                     style={{
@@ -2179,7 +2252,7 @@ const CampaignDetail = ({navigation, route}) => {
                       height:32
                     }}
                 />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
             <View style={{
                 display:'flex',
@@ -2212,12 +2285,20 @@ const CampaignDetail = ({navigation, route}) => {
                   justifyContent:'center',
                   backgroundColor:'#FFF4CD',
                   display :campaignDetailData.diff > 20? 'none' : 'flex'}}>
+                  {parseInt(campaignDetailData.diff)> 0 ?
                   <Text style={{
                     fontSize:12, 
                     fontWeight:500, 
                     color:'#FFA908',
                     
                     }}>Son {parseInt(campaignDetailData.diff)} Gün</Text>
+                    :
+                    <Text style={{
+                      fontSize:12, 
+                      fontWeight:500, 
+                      color:'#FFA908',
+                      
+                      }}>Sona erdi</Text>}
                 </View>
               </View>
             <View style={{marginBottom:12}}>
@@ -2302,7 +2383,8 @@ const CampaignDetail = ({navigation, route}) => {
               backgroundColor: joined? '#004F97' : '#fff',
               display: campaignDetailData.campaignContentType == 2 ? 'flex' : 'none',
             }}
-          onPress={()=> joinCampaign()}>
+          onPress={()=> joinCampaign()}
+          disabled={joined}>
             <Image
               source={require('../../assets/img/export/checkmark.png')}
               style={{
@@ -2460,7 +2542,8 @@ const slstyles = {
   },
   slideImg:{
     width: '100%',
-    height:Dimensions.get('window').width*0.5,
+    //height:Dimensions.get('window').width*0.5,
+    height:Dimensions.get('window').width*0.69,
     borderRadius:4,
     marginBottom:16,
   },

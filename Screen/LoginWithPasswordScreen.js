@@ -30,8 +30,10 @@ import TabHeader from './Components/TabHeader';
 import { OtpInput } from "react-native-otp-entry";
 import axios from 'react-native-axios';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
+import { useError } from './Contexts/ErrorContext';
 
 const LoginWithPasswordScreen = ({navigation}) => {
+  const { showError } = useError();
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [userEmailError, setUserEmailError] = useState(false);
@@ -77,6 +79,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
            } else {
              console.log('Unsuccessful deletion because there were no keys to delete')
            }
+           AsyncStorage.removeItem('biometricsKey');
          })*/
     rnBiometrics.isSensorAvailable()
       .then((resultObject) => {
@@ -93,11 +96,11 @@ const LoginWithPasswordScreen = ({navigation}) => {
             console.log('Biometrics authentication is supported.');
             //Alert.alert('Has ios Biometrics authentication');
             setBiometricData(true);
-            setBiometricType('TouchID'); 
-            checkRecordedBiometrics(true);
-          }{
+            setBiometricType('TouchID');
+            checkRecordedBiometrics(true); 
+          }else{
             console.log('no biometrics supported');
-            Alert.alert('no biometrics supported');
+            //Alert.alert('no biometrics supported');
           }
         }else{
         if (available && biometryType === BiometryTypes.TouchID) {
@@ -105,18 +108,17 @@ const LoginWithPasswordScreen = ({navigation}) => {
           console.log('Has TouchID authentication'); 
           //Alert.alert('Has TouchID authentication'); 
           setBiometricData(true);
-          setBiometricType('TouchID'); 
-          checkRecordedBiometrics(true);        
+          setBiometricType('TouchID');
+          checkRecordedBiometrics(true);         
         } else if (available && biometryType === BiometryTypes.Biometrics) {
           console.log('Biometrics authentication is supported.');
           //Alert.alert('Has android Biometrics authentication');
           setBiometricData(true);
           setBiometricType('TouchID'); 
           checkRecordedBiometrics(true);
-          
         } else{
           console.log('no biometrics');
-          Alert.alert('no biometrics supported');
+          //Alert.alert('no biometrics supported');
         }
       }
         
@@ -138,8 +140,6 @@ const LoginWithPasswordScreen = ({navigation}) => {
         //AsyncStorage.getItem('deviceId').then(value =>{
           //setDeviceId(value); 
           //sendPublicKeyToServer(value);
-          setBiometricInput(true);
-          //checkRecordedBiometrics();
           handleBiometricAuth();
         //});
       }
@@ -155,11 +155,12 @@ const LoginWithPasswordScreen = ({navigation}) => {
         const resultObject = await rnBiometrics.biometricKeysExist()
         const { keysExist } = resultObject
         if (keysExist) {
-        console.log('Keys exist', resultObject)
+        //Alert.alert('Keys exist', resultObject)
         console.log(resultObject);
         /*Alert.alert('Success', 'Biometric authentication successful', [          
           {text: 'OK', onPress: () => loginWithFingerprint()},
         ]);*/
+        
         loginWithFingerprint();
         /*const payload = "react@example.com"
         rnBiometrics.createSignature({
@@ -180,12 +181,12 @@ const LoginWithPasswordScreen = ({navigation}) => {
         rnBiometrics.createKeys()
         .then((resultObject) => {
           const { publicKey } = resultObject
-          console.log("Public Key:", publicKey)
+          //Alert.alert("Public Key:", publicKey)
           //console.log("blabla")
-          // Alert.alert('Success', 'Biometric authentication successful', [          
-          //   {text: 'OK', onPress: () => sendPublicKeyToServer(publicKey)},
-          // ]);
-          sendPublicKeyToServer(publicKey)
+          Alert.alert('Success', 'Biometric authentication successful', [          
+            {text: 'OK', onPress: () => sendPublicKeyToServer(publicKey)},
+          ]);
+          
         })
     }
         //Alert.alert( 'Success', 'Biometric authentication successful');
@@ -202,7 +203,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
         })*/
         return true;
       } else {
-        Alert.alert('Authentication failed', 'Biometric authentication failed');
+        //Alert.alert('Authentication failed', 'Biometric authentication failed');
         return false;
       }
     } catch (error) {
@@ -239,7 +240,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
       let dataToSend ={
         "key": publicKey
       }
-      axios.post('https://payfourapp.test.kodegon.com/api/account/setfingerprint', dataToSend, config)
+      axios.post('http://payfourapp.test.kodegon.com/api/account/setfingerprint', dataToSend, config)
       .then(response => {
         console.log(response);
         console.log(response.data);
@@ -264,13 +265,13 @@ const LoginWithPasswordScreen = ({navigation}) => {
         console.error("Error sending data: ", error.response.data.errors.message);
         //console.log(JSON.parse(error.response));
         let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Giriş hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
 
         
         //Alert.alert("Error sending data: ", error);
       });
     });
-    //'https://payfourapp.test.kodegon.com/api/account/setfingerprint'
+    //'http://payfourapp.test.kodegon.com/api/account/setfingerprint'
     /*{
       "key": "string"
     }*/
@@ -304,18 +305,16 @@ const LoginWithPasswordScreen = ({navigation}) => {
             }
             console.log("fingerprint login data");
             console.log(dataToSend);
-            axios.post('https://payfourapp.test.kodegon.com/api/auth/loginwithfingerprint', dataToSend)
+            axios.post('http://payfourapp.test.kodegon.com/api/auth/loginwithfingerprint', dataToSend)
           .then(response => {
             
             setLoading(false);
               console.log(response.data);        
-            if(response.data.error){              
+            if(response.data.error){
+              Alert.alert(response.data.error.message);
               if(response.data.error.message.search('valid') >-1){
                 console.log("invalid found");
                 resetUser();
-              }else{
-                Alert.alert(response.data.error.message);
-                
               }
             }else{
               passwordInputRef.current.clear();
@@ -343,7 +342,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
         msg,
         '', // <- this part is optional, you can pass an empty string
         [
-          {text: 'OK', onPress: () => {resetUser()}},
+          {text: 'OK', onPress: () => {if(reset) resetUser()}},
         ],
         {cancelable: false},
       );
@@ -357,7 +356,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
     "phone": "string",
     "fingerPrintKey": "string"
 }*/
-    //'https://payfourapp.test.kodegon.com/api/account/setfingerprint'
+    //'http://payfourapp.test.kodegon.com/api/account/setfingerprint'
     /*{
       "key": "string"
       }*/
@@ -395,13 +394,13 @@ const LoginWithPasswordScreen = ({navigation}) => {
   }
   const sendForgot = (dataToSend) => {
     setLoading(true);
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);        
       if(response.data.error){
         Alert.alert(response.data.error.message);
-        Alert.alert(response.data.error.message);
+        //Alert.alert(response.data.error.message);
         if(response.data.error.message.search('valid') >-1){
           console.log("invalid found");
           resetUser();
@@ -426,7 +425,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
         msg,
         '', // <- this part is optional, you can pass an empty string
         [
-          {text: 'OK', onPress: () => {resetUser()}},
+          {text: 'OK', onPress: () => {if(reset) resetUser()}},
         ],
         {cancelable: false},
       );
@@ -459,24 +458,23 @@ const LoginWithPasswordScreen = ({navigation}) => {
     AsyncStorage.removeItem('uniqueMPANumber').then(()=>{
       AsyncStorage.removeItem('phone').then(()=>{
           AsyncStorage.removeItem('deviceId').then(()=>{
-            AsyncStorage.removeItem('biometricsKey').then(()=>{
-          passwordInputRef.current.clear();
-          setLoading(false);
-          const rnBiometrics = new ReactNativeBiometrics();
-          rnBiometrics.deleteKeys()
-          .then((resultObject) => {
-            const { keysDeleted } = resultObject
+            const rnBiometrics = new ReactNativeBiometrics();
+            rnBiometrics.deleteKeys()
+        .then((resultObject) => {
+           const { keysDeleted } = resultObject
 
-            if (keysDeleted) {
-              console.log('Successful deletion')
-            } else {
-              console.log('Unsuccessful deletion because there were no keys to delete')
-            }
-            navigation.navigate('LoginScreen');
-          })
+           if (keysDeleted) {
+             console.log('Successful deletion')
+           } else {
+             console.log('Unsuccessful deletion because there were no keys to delete')
+           }
+           AsyncStorage.removeItem('biometricsKey');
+           passwordInputRef.current.clear();
+          setLoading(false);
+          navigation.navigate('LoginScreen');
+         })
           
         })
-      })
       })
     })
   }
@@ -492,12 +490,13 @@ const LoginWithPasswordScreen = ({navigation}) => {
     console.log("datatosend");
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/loginwithpassword', dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/loginwithpassword', dataToSend)
     .then(response => {
       
       setLoading(false);
         console.log(response.data);        
       if(response.data.error){
+        passwordInputRef.current.clear();
         Alert.alert(response.data.error.message);
         if(response.data.error.message.search('valid') >-1){
           console.log("invalid found");
@@ -524,23 +523,25 @@ const LoginWithPasswordScreen = ({navigation}) => {
     .catch(error => {
       setLoading(false);
       console.error("Error sending data: ", error);
+      passwordInputRef.current.clear();
       let msg="";
-      (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Giriş hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
+      (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
       //Alert.alert(msg);
       let reset=false;
       if(msg.search('valid') >-1){
         console.log("invalid found error");
         reset = true;
-      }
-      Alert.alert(
-        msg,
-        '', // <- this part is optional, you can pass an empty string
-        [
-          {text: 'OK', onPress: () => {resetUser()}},
-        ],
-        {cancelable: false},
-      );
-      
+      }else{
+        showError(msg);
+      //  Alert.alert(
+      //    msg,
+      //    '', // <- this part is optional, you can pass an empty string
+      //    [
+      //      {text: 'OK'},
+      //    ],
+      //    {cancelable: false},
+      //  );
+    }
     });     
     
   };
@@ -558,7 +559,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
+            //Alert.alert('Modal has been closed.');
             setModalVisible(!modalVisible);
           }}>
           <View

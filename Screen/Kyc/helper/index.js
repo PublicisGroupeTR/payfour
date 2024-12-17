@@ -7,7 +7,7 @@ export const apiRequest = async ({ url, method = 'GET', params = {}, data = {}, 
   
   const token = await AsyncStorage.getItem('token');
   
-  console.log("TOKEN", token);
+  // console.log("TOKEN", token);
   
   const defaultHeaders = {
     Authorization: `Bearer ${token}`,
@@ -76,8 +76,8 @@ export const formatDate = (dateString) => {
 };
 
 export const isValidEmail = (email) => {
-  if (!email) {
-   return 
+  if (!email || email.length == 0) {
+   return false
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);

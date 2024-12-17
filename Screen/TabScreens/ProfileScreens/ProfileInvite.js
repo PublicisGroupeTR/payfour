@@ -18,6 +18,8 @@ import {
   Modal,
   Dimensions,
   StyleSheet,
+  Share,
+  Alert,
 } from 'react-native';
 import { registerStyles } from '../../Components/RegisterStyles';
 
@@ -46,7 +48,7 @@ const ProfileInvite = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
@@ -73,8 +75,25 @@ const ProfileInvite = ({navigation}) => {
     Clipboard.setString(referral);
     setSuccessModalVisible(true);
   }
-
-  
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+        referral,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  }
 
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>      
@@ -120,9 +139,10 @@ const ProfileInvite = ({navigation}) => {
           onPress={()=>{
             console.log("close success");
             setSuccessModalVisible(false);
-            navigation.navigate('ProfileHome');
+            //navigation.navigate('ProfileHome');
+            onShare();
             }}>
-          <Text style={regstyles.buttonTextStyle}>Kapat</Text>
+          <Text style={regstyles.buttonTextStyle}>Paylaş</Text>
         </TouchableOpacity>
       </View>
       </View>
@@ -131,7 +151,7 @@ const ProfileInvite = ({navigation}) => {
     <SubtabHeader routetarget="ProfileHome" name="Arkadaşını Davet Et" count="0" />
     <ScrollView
 keyboardShouldPersistTaps="handled"
-style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
+style={[registerStyles.scrollView, {backgroundColor: '#F2F9FF'}]}>
 <KeyboardAvoidingView enabled>
     <View style={{paddingTop: 16,
       paddingBottom: 16,
@@ -193,15 +213,12 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         />
                       </TouchableOpacity>
                   </View>
-                  <TouchableOpacity style={{}}>
-                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700, textDecorationLine:'underline'}}>
-                    Nasıl Davet Edeceğim?
-                    </Text>
-                  </TouchableOpacity>
+                  
+                  
                 
                 
                
-              </View>
+              {/* </View>
               <View
               style={{
                 backgroundColor:'#fff',
@@ -215,23 +232,41 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                 paddingBottom:24,
                 marginBottom:16,
                 width: '100%',
-              }}>
+              }}> */}
                   
 
                   <Text style={{color:'#004F97', fontSize:12, fontWeight:700, marginBottom:8}}>
                   Arkadaşını Davet Et Her Ay 300TL’ye Kadar Kazan!
                   </Text>
                   <Text style={{color:'#909EAA', fontSize:12, marginBottom:16}}>
-                  QR Kodunu davet edeceğin kişi cep telefonu kamerasıyla okutabilir veya kodunu ve linkini onunla paylaşabilirsin.
+                  Davet Kodunu kopyalayarak davet etmek istediğiniz arkadaşınızla paylaşabilirsiniz.
                   </Text>
-                  <TouchableOpacity style={{}}>
-                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700, textDecorationLine:'underline'}}>
-                    Nasıl Kazanacağım ?
+
+                  {/* <TouchableOpacity style={{}}>
+                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700}}>
+                    Nasıl Davet Edeceğim?
                     </Text>
                   </TouchableOpacity>
+                  <TouchableOpacity style={{}}>
+                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700}}>
+                    Nasıl Kazanacağım?
+                    </Text>
+                  </TouchableOpacity> */}
                 
                 
                
+              </View>
+              <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                <TouchableOpacity style={{height:40, alignItems:'center', justifyContent:'center', backgroundColor:'#DFF0FF', borderRadius:6, width:'48%'}}>
+                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700}}>
+                    Nasıl Davet Edeceğim?
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{height:40, alignItems:'center', justifyContent:'center', backgroundColor:'#DFF0FF', borderRadius:6, width:'48%'}}>
+                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700}}>
+                    Nasıl Kazanacağım?
+                    </Text>
+                  </TouchableOpacity>
               </View>
               {/* <TouchableOpacity
                   style={[

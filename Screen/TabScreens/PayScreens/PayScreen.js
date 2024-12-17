@@ -261,7 +261,7 @@ style={{}}
                           borderTopColor:'#E4E4E8',
                           paddingTop:8,
                         }}>
-                          Belirtilen IBAN numarasına EFT\Havale yoluyla para göndererek para yükleyebilirsiniz.
+                          Belirtilen IBAN numarasına Havale / EFT yoluyla para göndererek para yükleyebilirsiniz.
                         </Text>
                       </View>
                       <View style={{

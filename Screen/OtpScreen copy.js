@@ -3,7 +3,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, {useState, createRef, useEffect, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -60,34 +60,32 @@ const OtpScreen = ({navigation, route}) => {
     setResetTimer(false);
     setTimerCount(180);
     startOtpTimer();
-    console.log("resetotp");
-    
   }
   const startOtpTimer = ()=>{
     if(!stopOtpTimer){
-      let interval = setInterval(() => {
-        setTimerCount(lastTimerCount => {
-            //console.log(lastTimerCount);
-            let tt;
-            let m = Math.floor(lastTimerCount / 60);
-            let mt = "0"+m;
-            let r = lastTimerCount - (m*60);
-            let s = r < 10 ? "0"+r : r;
-            tt = mt+":"+s;
-            //console.log(tt);
-            setTimerText(tt);
-            if (lastTimerCount == 0) {
-                //your redirection to Quit screen
-                clearInterval(interval);
-                setTimerText("00:00");
-                setResetTimer(true);
-            } else {
-                return lastTimerCount - 1
-            }
-        })
-      }, 1000) //each count lasts for a second
-      //cleanup the interval on complete
-      return () => clearInterval(interval);
+      // let interval = setInterval(() => {
+      //   setTimerCount(lastTimerCount => {
+      //       //console.log(lastTimerCount);
+      //       let tt;
+      //       let m = Math.floor(lastTimerCount / 60);
+      //       let mt = "0"+m;
+      //       let r = lastTimerCount - (m*60);
+      //       let s = r < 10 ? "0"+r : r;
+      //       tt = mt+":"+s;
+      //       //console.log(tt);
+      //       setTimerText(tt);
+      //       if (lastTimerCount == 0) {
+      //           //your redirection to Quit screen
+      //           clearInterval(interval);
+      //           setTimerText("00:00");
+      //           setResetTimer(true);
+      //       } else {
+      //           return lastTimerCount - 1
+      //       }
+      //   })
+      // }, 1000) //each count lasts for a second
+      // //cleanup the interval on complete
+      // return () => clearInterval(interval);
     }
   }
   const resendOtp = () => {
@@ -124,7 +122,7 @@ const OtpScreen = ({navigation, route}) => {
     };
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -153,7 +151,7 @@ const OtpScreen = ({navigation, route}) => {
     };
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -194,16 +192,16 @@ const OtpScreen = ({navigation, route}) => {
     console.log("datatosend");
     console.log(dataToSend);
     let func = route.params.forgot ? 'verifycustomotp' : 'verifyotp';
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/'+func, dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/'+func, dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data); 
         otpInputRef.current.clear();
-        setOtp('');       
+        setOtp('');              
       if(response.data.error){
         Alert.alert(response.data.error.message);
+        console.log(otpInputRef)
       }else{
-         
         if(route.params.forgot){
           AsyncStorage.setItem('tempToken', response.data.data.tempToken).then(() =>{
             navigation.navigate("ForgotScreen");
@@ -400,9 +398,9 @@ const OtpScreen = ({navigation, route}) => {
                     <OtpInput
                     ref={otpInputRef}
                     numberOfDigits={6}
+                    autoFocus={false}
                     focusColor="#015096"
                     focusStickBlinkingDuration={500}
-                    autoFocus={false}
                     onFocus={()=> {console.log('focus'); }}
                     onTextChange={(text) => {console.log(text);setOtpError(false);}}
                     onFilled={(text) => {
@@ -412,7 +410,7 @@ const OtpScreen = ({navigation, route}) => {
                       Keyboard.dismiss();
                     }}
                     textInputProps={{
-                      accessibilityLabel: "One-Time Password",
+                      //accessibilityLabel: "One-Time Password",
                     }}
                     theme={{
                       containerStyle: styles.container,
@@ -447,7 +445,7 @@ const OtpScreen = ({navigation, route}) => {
               </View>
               <View>
                 <TouchableOpacity
-                  style={[styles.buttonStyle, {marginBottom: 60, backgroundColor: toggleSubmit ? '#004F97' : '#dadee7',}]}
+                  style={[styles.buttonStyle, {marginBottom: 120, backgroundColor: toggleSubmit ? '#004F97' : '#dadee7',}]}
                   
                   activeOpacity={0.5}
                   onPress={handleSubmitOtp}>

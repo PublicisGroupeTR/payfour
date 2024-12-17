@@ -3,7 +3,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, { useState, createRef } from "react";
+import React, { useState, createRef, useRef } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -20,6 +20,7 @@ import {
   ImageBackground,
   Platform,
   Alert,
+  Dimensions
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -30,6 +31,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Eye from "../assets/img/svg/eye.svg";
 import Toplogo from "../assets/img/svg/toplogo.svg";
 import { registerStyles } from "./Components/RegisterStyles";
+import PayfourUyelikVeKullaniciSozlesmesi from './Legals/PayfourUyelikVeKullaniciSozlesmesi.js';
+import PazarlamaAydinlatmaMetni from './Legals/PazarlamaAydinlatmaMetni.js';
+import CarrefoursaIletisimIzni from './Legals/CarrefoursaIletisimIzni.js';
+import CarrefoursaKartUyelikSozlesmesi from './Legals/CarrefoursaKartUyelikSozlesmesi.js';
+import CarrefoursaKartUyelikKVKKAydinlatmaMetni from './Legals/CarrefoursaKartUyelikKVKKAydinlatmaMetni.js';
+import { Modalize } from 'react-native-modalize';
 import axios from "react-native-axios";
 
 const RegisterScreen = ({ navigation }) => {
@@ -46,41 +53,75 @@ const RegisterScreen = ({ navigation }) => {
   const [secureText, setSecureText] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [userAgreement, setUserAgreement] = useState(false);
   const [userKVKKAgreement, setUserKVKKAgreement] = useState(false);
   const [userPaymentAgreement, setUserPaymentAgreement] = useState(false);
+  const [userInfo, setUserInfo] = useState(false);
+  const [marketingInfo, setMarketingInfo] = useState(false); 
+  const [carrefourUserInfo, setCarrefourUserInfo] = useState(false);
+  
   const passwordInputRef = createRef();
 
+  const userAgreementModalizeRef = useRef(null);
+  const userInfoModalizeRef = useRef(null);
+  const marketingInfoModalizeRef = useRef(null);
+  const marketingAgreementModalizeRef = useRef(null);
+  const carrefourUserAgreementModalizeRef = useRef(null);
+  const carrefourUserInfoModalizeRef = useRef(null);
+
+  const [userAgreement, setUserAgreement] = useState(false);
+  const [marketingAgreement, setMarketingAgreement] = useState(false);
+  const [carrefourUserAgreement, setCarrefourUserAgreement] = useState(false);
+
+  const [userAgreementError, setUserAgreementError] = useState(false);
+  const [userMarketingError, setUserMarketingError] = useState(false);
+  const [carrefourUserAgreementError, setCarrefourUserAgreementError] = useState(false);
+  
+
   const handleSubmitPress = () => {
-    setErrortext("");
-    /*if (!userPasswordAgain || !userPasswordAgain) {
-if (!userPasswordAgain) {
-//alert('Please fill Email');
-setUserPasswordError(true);
-}
-if (!userPassword) {
-//alert('Please fill Password');
-setUserPasswordError(true);
-}
-return;
-}
-setLoading(true);*/
-
-    AsyncStorage.getAllKeys((err, keys) => {
-      AsyncStorage.multiGet(keys, (err, stores) => {
-        let obj = {};
-        stores.map((result, i, store) => {
-          // get at each store's key/value so you can work with it
-          let key = store[i][0];
-          let value = store[i][1];
-          obj[key] = value;
+    setErrortext("");  
+    let err = false;  
+    console.log(userPassword);
+    console.log(userPasswordAgain);
+    if(userPassword.length < 6){
+      err = true;
+      setUserPasswordError(true);
+    }
+    if(userPasswordAgain.length < 6){
+      err = true;
+      setUserPasswordError(true);
+    }
+    /*if(userPassword != userPasswordAgain){
+      err = true;
+      setUserPasswordError(true);
+    }*/
+    if(!userAgreement){
+      err = true;
+      setUserAgreementError(true);
+    }
+    /*if(!marketingAgreement){
+      err = true;
+      setUserMarketingError(true);
+    }*/
+    if(!carrefourUserAgreement){
+      err = true;
+      setCarrefourUserAgreementError(true);
+    }
+    if(!err){
+      AsyncStorage.getAllKeys((err, keys) => {
+        AsyncStorage.multiGet(keys, (err, stores) => {
+          let obj = {};
+          stores.map((result, i, store) => {
+            // get at each store's key/value so you can work with it
+            let key = store[i][0];
+            let value = store[i][1];
+            obj[key] = value;
+          });
+          console.log("storage");
+          console.log(obj);
+          sendData(obj);
         });
-        console.log("storage");
-        console.log(obj);
-        sendData(obj);
       });
-    });
-
+    }
     /*{
 "tempToken": "string",
 "deviceId": 0,
@@ -306,6 +347,526 @@ setLoading(true);*/
               </View>
             </View>
           </Modal>
+          <Modalize ref={userAgreementModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CarrefourSA PAYFOUR ÜYELİK VE KULLANICI SÖZLEŞMESİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        userAgreementModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <PayfourUyelikVeKullaniciSozlesmesi /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => userAgreementModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+          <Modalize ref={marketingInfoModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CarrefourSA PAZARLAMA AYDINLATMA METNİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        marketingInfoModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <PazarlamaAydinlatmaMetni /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => marketingInfoModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+          <Modalize ref={marketingAgreementModalizeRef}
+      snapPoint={0}
+      modalStyle={{
+        flex: 1,  
+        flexDirection:'column',           
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',}}>
+        <View
+              style={{
+                flex: 1,     
+                flexDirection:'column',           
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CarrefourSA İLETİŞİM İZNİ METNİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        marketingAgreementModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <CarrefoursaIletisimIzni /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => marketingAgreementModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+          <Modalize ref={carrefourUserAgreementModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CarrefourSA KART ÜYELİK SÖZLEŞMESİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        carrefourUserAgreementModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <CarrefoursaKartUyelikSozlesmesi /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => carrefourUserAgreementModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+          <Modalize ref={carrefourUserInfoModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CarrefourSA KART ÜYELİĞİ KİŞİSEL VERİLERİN KORUNMASI AYDINLATMA METNİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        carrefourUserInfoModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <CarrefoursaKartUyelikKVKKAydinlatmaMetni /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => carrefourUserInfoModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
           <Loader loading={loading} />
 
           <ScrollView
@@ -493,7 +1054,7 @@ setLoading(true);*/
                         ]}
                         onFocus={() => setUserPasswordError(false)}
                         onChangeText={(UserPasswordAgain) =>
-                          setUserPassword(UserPasswordAgain)
+                          setUserPasswordagain(UserPasswordAgain)
                         }
                         placeholder="" //12345
                         placeholderTextColor="#7E797F"
@@ -661,39 +1222,6 @@ setLoading(true);*/
                         flexDirection: "row",
                       }}
                     >
-                      <Image
-                        source={require("../assets/img/export/information.png")}
-                        style={{
-                          width: 20,
-                          height: 20,
-                          marginRight: 8,
-                        }}
-                      />
-                      <Text
-                        style={{
-                          fontWeight: "300",
-                          color: "#1E242F",
-                          fontSize: 12,
-                        }}
-                      >
-                        Kişisel verilerin korunması ve işlenmesi hakkında{" "}
-                        <Text
-                          style={{
-                            color: "#015096",
-                            textDecorationLine: "underline",
-                          }}
-                        >
-                          Aydınlatma Metni.
-                        </Text>
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        marginBottom: 22,
-                        alignItems: "center",
-                        flexDirection: "row",
-                      }}
-                    >
                       <Pressable
                         style={{
                           width: 20,
@@ -705,8 +1233,13 @@ setLoading(true);*/
                           borderRadius: 5,
                           alignItems: "center",
                           justifyContent: "center",
+                          borderWidth:1,
+                          borderColor:userAgreementError ? '#ff0000' : 'transparent',
                         }}
-                        onPress={() => setUAgreement(!userAgreement)}
+                        onPress={() => {
+                          setUserAgreementError(false);
+                          setUAgreement(!userAgreement);}
+                        }
                       >
                         <Image
                           source={require("../assets/img/export/check.png")}
@@ -717,16 +1250,33 @@ setLoading(true);*/
                           }}
                         />
                       </Pressable>
-                      <Text
+                      <TouchableOpacity
                         style={{
                           fontWeight: "300",
                           color: "#1E242F",
                           fontSize: 12,
+                          flexDirection:'row',
                         }}
+                        onPress={()=>{userAgreementModalizeRef.current?.open()}}
                       >
-                        CarrefourSA şirketinin tarafıma ticari elektronik ileti
-                        göndermesini kabul ediyorum.
-                      </Text>
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}>
+                        <Text
+                          style={{
+                            fontWeight: "400",
+                            color: "#015096",
+                            textDecorationLine: "underline",
+                            fontSize: 12,
+                          }}
+                        >
+                          Payfour Üyelik ve Kullanıcı Sözleşmesi
+                        </Text>
+                        'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
                     </View>
                     <View
                       style={{
@@ -740,43 +1290,47 @@ setLoading(true);*/
                           width: 20,
                           height: 20,
                           marginRight: 8,
-                          backgroundColor: userKVKKAgreement
-                            ? "#015096"
-                            : "#dadee7",
                           borderRadius: 5,
                           alignItems: "center",
                           justifyContent: "center",
                         }}
-                        onPress={() => setKAgreement(!userKVKKAgreement)}
                       >
                         <Image
-                          source={require("../assets/img/export/check.png")}
-                          style={{
-                            width: userKVKKAgreement ? 14 : 0,
-                            height: userKVKKAgreement ? 10 : 0,
-                            resizeMode: "contain",
-                          }}
-                        />
+                    source={require('../assets/img/export/information.png')}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      resizeMode:'contain'
+                    }}
+                  />
                       </Pressable>
-                      <Text
+                      <TouchableOpacity
                         style={{
                           fontWeight: "300",
                           color: "#1E242F",
                           fontSize: 12,
+                          flexDirection:'row',
                         }}
+                        onPress={() => marketingInfoModalizeRef.current?.open()}
                       >
-                        Kişisel verilerin korunması, işlenmesi ve aktarılmasına
-                        ilişkin{" "}
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}>
                         <Text
                           style={{
+                            fontWeight: "400",
                             color: "#015096",
                             textDecorationLine: "underline",
+                            fontSize: 12,
                           }}
                         >
-                          Açık Rıza Formu’nu
-                        </Text>{" "}
-                        onaylıyorum.
-                      </Text>
+                          Payfour Üyelik Aydınlatma Metni
+                        </Text>
+                        'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
                     </View>
                     <View
                       style={{
@@ -790,41 +1344,227 @@ setLoading(true);*/
                           width: 20,
                           height: 20,
                           marginRight: 8,
-                          backgroundColor: userPaymentAgreement
+                          borderRadius: 5,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Image
+                    source={require('../assets/img/export/information.png')}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      resizeMode:'contain'
+                    }}
+                  />
+                      </Pressable>
+                      <TouchableOpacity
+                        style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}
+                        onPress={() => marketingInfoModalizeRef.current?.open()}
+                      >
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}>
+                        <Text
+                          style={{
+                            fontWeight: "400",
+                            color: "#015096",
+                            textDecorationLine: "underline",
+                            fontSize: 12,
+                          }}
+                        >
+                          Pazarlama Aydınlatma Metni
+                        </Text>
+                        'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{
+                        marginBottom: 22,
+                        alignItems: "center",
+                        flexDirection: "row",
+                        paddingRight:20
+                      }}
+                    >
+                      <Pressable
+                        style={{
+                          width: 20,
+                          height: 20,
+                          marginRight: 8,
+                          backgroundColor: marketingAgreement
                             ? "#015096"
                             : "#dadee7",
                           borderRadius: 5,
                           alignItems: "center",
                           justifyContent: "center",
+                          borderWidth:1,
+                          borderColor:userMarketingError ? '#ff0000' : 'transparent',
                         }}
-                        onPress={() => setPAgreement(!userPaymentAgreement)}
+                        onPress={() => {
+                          setUserMarketingError(false);
+                          setMarketingAgreement(!marketingAgreement);
+                        }}
                       >
                         <Image
                           source={require("../assets/img/export/check.png")}
                           style={{
-                            width: userPaymentAgreement ? 14 : 0,
-                            height: userPaymentAgreement ? 10 : 0,
+                            width: marketingAgreement ? 14 : 0,
+                            height: marketingAgreement ? 10 : 0,
                             resizeMode: "contain",
                           }}
                         />
                       </Pressable>
-                      <Text
+                      <TouchableOpacity
                         style={{
                           fontWeight: "300",
                           color: "#1E242F",
                           fontSize: 12,
+                          flexDirection:'row',
                         }}
+                        onPress={() => marketingAgreementModalizeRef.current?.open()}
                       >
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                        }}>
                         <Text
                           style={{
+                            fontWeight: "400",
                             color: "#015096",
                             textDecorationLine: "underline",
+                            fontSize: 12,
                           }}
                         >
-                          Çerçeve Ödeme Hizmetleri Sözleşmesi’ni
-                        </Text>{" "}
-                        okudum kabul ediyorum.
-                      </Text>
+                          İletişim İzni
+                        </Text>
+                         {" "}kapsamında CarrefourSA tarafından pazarlama amaçlı ileti almak istiyorum.</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{
+                        marginBottom: 22,
+                        alignItems: "center",
+                        flexDirection: "row",
+                        paddingRight:20
+                      }}
+                    >
+                      <Pressable
+                        style={{
+                          width: 20,
+                          height: 20,
+                          marginRight: 8,
+                          backgroundColor: carrefourUserAgreement
+                            ? "#015096"
+                            : "#dadee7",
+                          borderRadius: 5,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderWidth:1,
+                          borderColor:carrefourUserAgreementError ? '#ff0000' : 'transparent',
+                          
+                        }}
+                        onPress={() => {
+                          setCarrefourUserAgreementError(false);
+                          setCarrefourUserAgreement(!carrefourUserAgreement)}}
+                      >
+                        <Image
+                          source={require("../assets/img/export/check.png")}
+                          style={{
+                            width: carrefourUserAgreement ? 14 : 0,
+                            height: carrefourUserAgreement ? 10 : 0,
+                            resizeMode: "contain",
+                          }}
+                        />
+                      </Pressable>
+                      <TouchableOpacity
+                        style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}
+                        onPress={() => carrefourUserAgreementModalizeRef.current?.open()}
+                      >
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                        }}>
+                        <Text
+                          style={{
+                            fontWeight: "400",
+                            color: "#015096",
+                            textDecorationLine: "underline",
+                            fontSize: 12,
+                          }}
+                        >
+                          CarrefourSA Kart Üyelik Sözleşmesi
+                        </Text>
+                          'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{
+                        marginBottom: 22,
+                        alignItems: "center",
+                        flexDirection: "row",
+                        paddingRight:20
+                      }}
+                    >
+                      <Pressable
+                        style={{
+                          width: 20,
+                          height: 20,
+                          marginRight: 8,
+                          borderRadius: 5,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Image
+                    source={require('../assets/img/export/information.png')}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      resizeMode:'contain'
+                    }}
+                  />
+                      </Pressable>
+                      <TouchableOpacity
+                        style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}
+                        onPress={() => carrefourUserInfoModalizeRef.current?.open()}
+                      >
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                        }}>
+                        <Text
+                          style={{
+                            fontWeight: "400",
+                            color: "#015096",
+                            textDecorationLine: "underline",
+                            fontSize: 12,
+                          }}
+                        >
+                          CarrefourSA Kart Üyelik Aydınlatma Metni
+                        </Text>
+                          'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
                     </View>
                     <TouchableOpacity
                       style={[

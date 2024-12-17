@@ -174,7 +174,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                           lineHeight:20,
                           color:'#0B1929',
                           textAlign:'left',
-                          width:100
+                          width:120
                         }}>
                           Kampanyalar
                         </Text>
@@ -234,7 +234,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                           lineHeight:20,
                           color:'#0B1929',
                           textAlign:'left',
-                          width:100
+                          width:120
                         }}>
                           Ödemeler
                         </Text>

@@ -48,7 +48,8 @@
     "react-native-swiper": "^1.6.0",
     "react-native-webview": "^13.12.2",
     "reactotron-react-native": "^5.1.10",
-    "world-countries": "^5.0.0"
+    "world-countries": "^5.0.0",
+    "@timotismjntk/react-native-carousel": "^0.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

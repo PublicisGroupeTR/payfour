@@ -60,6 +60,7 @@ const ProfileCoupon = ({navigation}) => {
   }
   axios.post('https://payfourapp.test.kodegon.com/api/account/redeemcode',dataToSend, config)
             .then(response => {
+              setLoading(false);
               console.log(response);
               console.log(response.data);
               if(response.data.success){
@@ -67,7 +68,7 @@ const ProfileCoupon = ({navigation}) => {
                 //navigation.navigate('Success');
                 setSuccessModalVisible(true);
               }else{
-                setLoading(false);
+                
                 console.log("coupon error")
               }
             })
@@ -143,7 +144,7 @@ const ProfileCoupon = ({navigation}) => {
       </View>
       </Modal>
     <Loader loading={loading} />
-    <SubtabHeader routetarget="ProfileHome" name="Kupon Kodu / Davet Kodu" count="0" />
+    <SubtabHeader routetarget="ProfileHome" name="Kampanya Kodu" count="0" />
     <ScrollView
 keyboardShouldPersistTaps="handled"
 style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
@@ -177,7 +178,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                           marginBottom:12,
                           textAlign:'left'
                         }}>
-                          Kupon Kodunu Giriniz
+                          Kampanya Kodunu Giriniz
                         </Text>
                         {/* <Text style={{fontSize:12, color:'#909EAA',marginBottom:12,}}>
                         Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
@@ -187,8 +188,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   </View>
 
 
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0}]}>                     
-                    <Text style={{                                           
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB'}]}>                     
+                    {/* <Text style={{                                           
                         fontSize: 12,
                         lineHeight:12, 
                         padding:0,
@@ -199,7 +200,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         pointerEvents:"none",
                     }}>
                       Kupon Kodu / Davet Kodu
-                    </Text>
+                    </Text> */}
                     <TextInput
                         value={code}
                         onChangeText={Code => setCode(Code)}
@@ -216,9 +217,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   
                 
                 
-               
-              </View>
-              <TouchableOpacity
+               <TouchableOpacity
+                  disabled= {code==''}
                   style={[
                     styles.buttonStyle,
                     {
@@ -228,17 +228,19 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       alignItems: 'center',
                       justifyContent: 'center',
                       borderWidth: 2,
-                      borderColor: '#004F97',
-                      backgroundColor: '#004F97',
+                      borderColor: code=='' ? '#ababab' : '#004F97',
+                      backgroundColor: code=='' ? '#ababab' : '#004F97',
                       padding:0,
                     },
                   ]}
                   onPress={() => sendCode(code)}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
-                    Kupon Kodu Ekle
+                    Ekle
                   </Text>
                 </TouchableOpacity>
+              </View>
+              
               </View>
               </KeyboardAvoidingView>
               </ScrollView>
@@ -297,16 +299,16 @@ const profileStyles = StyleSheet.create({
 });
 const regstyles = StyleSheet.create({
   registerInputStyle:{
+    width:'100%',
     backgroundColor:'#fff',
     paddingTop:17,
     paddingBottom:17, 
-    paddingLeft:12, 
+    paddingLeft:16, 
     paddingRight:12,    
     borderWidth: 1,
     borderRadius: 10,
-    marginBottom:16,
-    width:'100%',
-  },
+    marginBottom:16
+    },
   mainBody: {
     flex: 1,
     justifyContent: 'center',

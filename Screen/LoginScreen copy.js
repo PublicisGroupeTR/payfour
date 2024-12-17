@@ -69,7 +69,7 @@ const LoginScreen = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {      
       console.log('Hello World!'); 
       setLoading(true);       
-      axios.get('https://payfourapp.test.kodegon.com/api/campaigns/getcampaignsforanonymusers?pageSize=4').then(response => {
+      axios.get('http://payfourapp.test.kodegon.com/api/campaigns/getcampaignsforanonymusers?pageSize=4').then(response => {
         console.log(response.data);
         console.log(response.data.data);
         //console.log(response.data.data.items);
@@ -207,7 +207,7 @@ const LoginScreen = ({navigation}) => {
         console.log("dataToSend");
         console.log(dataToSend);
 
-            axios.post('https://payfourapp.test.kodegon.com/api/auth/init', dataToSend)
+            axios.post('http://payfourapp.test.kodegon.com/api/auth/init', dataToSend)
             .then(response => {
               console.log(response.data);
               console.log(response.data.data);
@@ -221,7 +221,7 @@ const LoginScreen = ({navigation}) => {
               let msg="";
               (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
             });
-        /*fetch('https://payfourapp.test.kodegon.com/api/auth/init', {
+        /*fetch('http://payfourapp.test.kodegon.com/api/auth/init', {
           method: 'POST',
           body: {
             "fingerPrint": "4e8a1a0d25086770445106345030fbdaf020d9ceac3fe4797df48c81161a55ff",
@@ -278,7 +278,7 @@ const LoginScreen = ({navigation}) => {
     }
     console.log("datatosend");
     console.log(dataToSend)
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -303,7 +303,7 @@ const LoginScreen = ({navigation}) => {
       let msg="";
       (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
     });
-    /*fetch('https://payfourapp.test.kodegon.com/api/auth/begin', {
+    /*fetch('http://payfourapp.test.kodegon.com/api/auth/begin', {
       method: 'POST',
       body: dataToSend,
       headers: {
@@ -677,19 +677,18 @@ const LoginScreen = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
                 {slData.length > 0 ? 
-                <View style={{paddingLeft:24, paddingRight:0, paddingBottom:40}}>
+                <View style={{paddingLeft:24, paddingRight:8, paddingBottom:40}}>
                   <Text style={{color:'#0B1929', fontSize:14, fontWeight:'700', marginBottom:24,}}>
                   Kampanyalar
                   </Text>
-                  <View style={[slstyles.slider, {marginBottom:16, marginTop:24, minheight:300,left:-8, marginRight:-8, paddingRight:-8}]} {...slider.containerProps}>
+                  <View style={[slstyles.slider, {paddingBottom:16, paddingTop:24}]} {...slider.containerProps}>
                   {
                     [...Array(slides).keys()].map(key => {
                       console.log("sldata "+slData.length);
                       console.log("slData[key].id "+slData[key].id);
                     return (
                       slData.length > 0 ? 
-                      <View key={slData[key].id} {...slider.slidesProps[key]} style={{padding:10}}>
-                      <View style={{width:'100%', height:'100%'}}>
+                      <View key={slData[key].id} {...slider.slidesProps[key]}>
                         <View style={{...slstyles.slide}}>
                         
                           <Image 
@@ -734,7 +733,6 @@ const LoginScreen = ({navigation}) => {
                               </Text>
                             </View>
                         </View>
-                      </View>
                       </View>
                       : <View></View>
                     )
@@ -852,19 +850,18 @@ const styles = StyleSheet.create({
 const slstyles = {
   slider: {
     paddingLeft:24,
-    paddingRight:0,
+    paddingRight:8,
     backgroundColor: 'transparent',
     overflow: 'hidden',
     width: '100%',
     //height: Dimensions.get('window').width*0.392,
     minHeight: 185,
-    paddingBottom:10,
     //height:'100%',
     flexGrow:1,
   },
   slide: {
     width: (Dimensions.get('window').width*0.437),
-    minHeight:165,
+    minHeight:205,
     padding:8,
     // alignItems: 'center',
     // justifyContent: 'center',

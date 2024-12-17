@@ -3,7 +3,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, {useState, createRef, useEffect, useRef} from 'react';
+import React, {useState, createRef, useEffect} from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -37,7 +37,6 @@ import MaskInput from 'react-native-mask-input';
 import axios from 'react-native-axios';
 import { useKeenSliderNative } from "keen-slider-extended/react-native"
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
-import Swiper from 'react-native-swiper';
 
 const LoginScreen = ({navigation}) => {
   const [uniqueMPANumber, setUniqueMPANumber] = useState(null);
@@ -50,6 +49,7 @@ const LoginScreen = ({navigation}) => {
   const [errortext, setErrortext] = useState('');
   const [countryCode, setCountryCode] = useState('+90');
   const [modalVisible, setModalVisible] = useState(false);
+  const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [show, setShow] = useState(false);
 
   const passwordInputRef = createRef();
@@ -57,7 +57,7 @@ const LoginScreen = ({navigation}) => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [toggleSubmit, setToggleSubmit] = useState(false);
   const [slData, setSlData] = React.useState([]);
-  const sliderRef = useRef();
+
   const slides=4;
   const slider = useKeenSliderNative({
     slides: {
@@ -70,7 +70,7 @@ const LoginScreen = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {      
       console.log('Hello World!'); 
       setLoading(true);       
-      axios.get('https://payfourapp.test.kodegon.com/api/campaigns/getcampaignsforanonymusers?pageSize=4').then(response => {
+      axios.get('http://payfourapp.test.kodegon.com/api/campaigns/getcampaignsforanonymusers?pageSize=4').then(response => {
         console.log(response.data);
         console.log(response.data.data);
         //console.log(response.data.data.items);
@@ -221,7 +221,7 @@ const LoginScreen = ({navigation}) => {
         console.log("dataToSend");
         console.log(dataToSend);
 
-            axios.post('https://payfourapp.test.kodegon.com/api/auth/init', dataToSend)
+            axios.post('http://payfourapp.test.kodegon.com/api/auth/init', dataToSend)
             .then(response => {
               console.log(response.data);
               console.log(response.data.data);
@@ -232,11 +232,10 @@ const LoginScreen = ({navigation}) => {
             .catch(error => {
               setLoading(false);
               console.error("Error sending data: ", error);
-              console.log("Error sending data: ", error.response.data.errors.message);
               let msg="";
               (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
             });
-        /*fetch('https://payfourapp.test.kodegon.com/api/auth/init', {
+        /*fetch('http://payfourapp.test.kodegon.com/api/auth/init', {
           method: 'POST',
           body: {
             "fingerPrint": "4e8a1a0d25086770445106345030fbdaf020d9ceac3fe4797df48c81161a55ff",
@@ -269,11 +268,14 @@ const LoginScreen = ({navigation}) => {
   function randomIntFromInterval(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
-  const checkPhone = () =>{
+  
+  const checkPhone = (val) =>{
     console.log("checkPhone");
-    console.log(countryCode.length);
-    console.log(userPhone.length);
-    (countryCode.length > 0 && userPhone.length > 13)? setToggleSubmit(true) : setToggleSubmit(false);
+    console.log(val);
+    //const re = "/ /gi";
+    //console.log(userPhone.replace(re,""));
+    console.log(val.length);
+    (countryCode.length > 0 && val.length > 9)? setToggleSubmit(true) : setToggleSubmit(false);
   }
   const setAgreement = (val) =>{
     setUserAgreement(val);
@@ -293,7 +295,7 @@ const LoginScreen = ({navigation}) => {
     }
     console.log("datatosend");
     console.log(dataToSend)
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -318,7 +320,7 @@ const LoginScreen = ({navigation}) => {
       let msg="";
       (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
     });
-    /*fetch('https://payfourapp.test.kodegon.com/api/auth/begin', {
+    /*fetch('http://payfourapp.test.kodegon.com/api/auth/begin', {
       method: 'POST',
       body: dataToSend,
       headers: {
@@ -351,6 +353,73 @@ const LoginScreen = ({navigation}) => {
   return (
   
     <View style={styles.mainBody}>
+      <Modal
+            animationType="slide"
+            transparent={true}
+            visible={loginModalVisible}
+            onRequestClose={() => {
+              setLoginModalVisible(!loginModalVisible);
+            }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 79, 151, 0.6)',
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 32,
+                  paddingBottom: 16,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width: '100%',
+                }}>
+                  
+                  <View style={{
+                      marginBottom:24,
+                      }}>
+                        <Text style={{
+                          fontSize:16,
+                          fontWeight:'700',
+                          color:'#004F97',
+                          marginBottom:16,
+                          textAlign:'center',
+                        }}>
+                          Kampanya detaylarını görüntülemek için lütfen giriş yapın.
+                        </Text>
+                                      
+                  </View>
+                  
+                
+                  <TouchableOpacity
+                    style={[
+                      styles.buttonStyle,
+                      {
+                        
+                        height: 52,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 2,
+                        borderColor: '#004F97',
+                        backgroundColor: '#004F97',
+                        padding:0,
+                      },
+                    ]}
+                    onPress={() => setLoginModalVisible(false)}>
+                    <Text
+                      style={{fontSize: 14, color: '#ffffff'}}>
+                      Giriş Yap / Üye Ol
+                    </Text>
+                  </TouchableOpacity>
+                
+              </View>
+            </View>
+      </Modal>
       <ImageBackground
        style={styles.bgimg}
        resizeMode="cover"
@@ -467,8 +536,7 @@ const LoginScreen = ({navigation}) => {
             keyboardShouldPersistTaps="handled"
             style={{flexGrow:1}}>
               
-            <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
-              <View style={{
+             <View style={{
                   alignItems: 'center',
                   height:52,
                   paddingTop:10,
@@ -563,6 +631,7 @@ const LoginScreen = ({navigation}) => {
                             borderBottomLeftRadius:10,
                             marginRight:10,
                             flexDirection:'row',
+                            alignItems:'center'
                         }}
                       >
                         <Image 
@@ -572,7 +641,6 @@ const LoginScreen = ({navigation}) => {
                           width:24,
                           height:24,
                           marginRight:6,
-
                         }}></Image>
                         <Text style={{
                             color: '#0B1929',
@@ -612,7 +680,7 @@ const LoginScreen = ({navigation}) => {
                           // assuming you typed "9" all the way:
                           console.log(masked); // (99) 99999-9999
                           console.log(unmasked); // 99999999999
-                          checkPhone();
+                          checkPhone(unmasked);
                         }}
                         mask={['(', /\d/, /\d/, /\d/,')', ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/]}
                       />
@@ -703,11 +771,11 @@ const LoginScreen = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
                 {slData.length > 0 ? 
-                <View style={{paddingLeft:24, paddingRight:0, paddingBottom:40}}>
-                  <Text style={{color:'#0B1929', fontSize:14, fontWeight:'700'}}>
+                <View style={{paddingLeft:24, paddingRight:0, paddingBottom:40, pointerEvents:"box-none"}}>
+                  <Text style={{color:'#0B1929', fontSize:14, fontWeight:'700', marginBottom:8,}}>
                   Kampanyalar
                   </Text>
-                 <View style={[slstyles.slider, {marginBottom:16, marginTop:8, minheight:300,left:-8, marginRight:-8, paddingRight:-8}]} {...slider.containerProps}>
+                  <View style={[slstyles.slider, {marginBottom:16, marginTop:8, minheight:300, marginLeft:-10}]} {...slider.containerProps}>
                   {
                     [...Array(slides).keys()].map(key => {
                       console.log("sldata "+slData.length);
@@ -717,7 +785,10 @@ const LoginScreen = ({navigation}) => {
                       <View key={slData[key].id} {...slider.slidesProps[key]} style={{padding:10}}>
                       <View style={{width:'100%', height:'100%'}}>
                         <View style={{...slstyles.slide}}>
-                        
+                        <TouchableOpacity style={{}}
+                          onPress={()=>{
+                            console.log("thumb");
+                            setLoginModalVisible(!loginModalVisible);}}>
                           <Image 
                             // source={slimages[key]}
                             source={{
@@ -727,7 +798,7 @@ const LoginScreen = ({navigation}) => {
                               resizeMode: 'cover',
                             }]}
                           />
-                          
+                          </TouchableOpacity>
                             
                             <Text style={{
                               fontSize:12,
@@ -764,93 +835,11 @@ const LoginScreen = ({navigation}) => {
                       </View>
                       : <View></View>
                     )
-                  })
+                  }) 
                   }
-                  </View> 
+                  </View>
                 </View>
                    : <View></View>}
-                   {/* {slData.length > 0 ? 
-                   <View>
-                    <Swiper 
-        style={[styles.wrapper,{
-          height:180
-        }]}
-        ref={sliderRef}
-        loop={false}
-        showsPagination={false}
-        onMomentumScrollEnd={(e, state, context) =>{
-          console.log('index:', state.index);
-          console.log('total:', state.total);
-          let end = (state.index+1) == state.total;
-          console.log("end? "+end);
-          //console.log(sliderRef.current.);
-        }}
-        onIndexChanged={(index) =>{
-          console.log('index:', index);
-          let end =  index ==3;
-          console.log("end? "+end);
-          //setSlideEnd(end);
-        }}
-        >
-          {
-                    [...Array(slides).keys()].map(key => {
-                      console.log("sldata "+slData.length);
-                      console.log("slData[key].id "+slData[key].id);
-                    return (
-                      slData.length > 0 ? 
-                      <View key={slData[key].id} {...slider.slidesProps[key]} style={{padding:10, paddingLeft:24,paddingTop:0, width:50}}>
-                        <View style={{...slstyles.slide}}>
-                        
-                          <Image 
-                            // source={slimages[key]}
-                            source={{
-                              uri: slData[key].thumbnailUrl,
-                            }}
-                            style={[slstyles.slideImg, {
-                              resizeMode: 'cover',
-                            }]}
-                          />
-                          
-                            
-                            <Text style={{
-                              fontSize:12,
-                              lineHeight:18,
-                              color:'#0B1929',
-                              marginBottom:8,
-                            }}>
-                              {slData[key].title}
-                            </Text>
-                            <View style={{
-                              flexDirection:'row',
-                              alignItems:'center',
-                              justifyContent:'flex-start',
-                            }}>
-                            <Image 
-                            source={require('../assets/img/export/time-oclock.png')}
-                            style={{
-                              resizeMode:'contain',
-                              width:10,
-                              height:10,
-                              marginRight:4,
-                              tintColor: '#28303F',
-                            }}>
-                            </Image>
-                              <Text style={{
-                                fontSize:10,
-                                color:'#909EAA',
-                              }}>
-                              Son gün {slData[key].time}
-                              </Text>
-                            </View>
-                        </View>
-                      </View>
-                      : <View></View>
-                    )
-                  })
-                  }
-                  </Swiper>
-                   </View>
-                   : <View></View>} */}
                 <CountryPicker
                   show={show}
                   // when picker button press you will get the country object with dial code
@@ -865,8 +854,6 @@ const LoginScreen = ({navigation}) => {
                 />
                 
               </View>
-              
-            </KeyboardAvoidingView>
             
           </ScrollView>
           
@@ -959,13 +946,13 @@ const styles = StyleSheet.create({
 });
 const slstyles = {
   slider: {
-    paddingLeft:24,
+    paddingLeft:4,
     paddingRight:0,
     backgroundColor: 'transparent',
     overflow: 'hidden',
     width: '100%',
     //height: Dimensions.get('window').width*0.392,
-    minHeight: 185,
+    minHeight: 255,
     paddingBottom:10,
     //height:'100%',
     flexGrow:1,
@@ -974,6 +961,7 @@ const slstyles = {
     width: (Dimensions.get('window').width*0.437),
     minHeight:165,
     padding:8,
+    flexGrow:1,
     // alignItems: 'center',
     // justifyContent: 'center',
 
@@ -990,7 +978,8 @@ const slstyles = {
   },
   slideImg:{
     width: Dimensions.get('window').width*0.394,
-    height:Dimensions.get('window').width*0.186,
+    //height:Dimensions.get('window').width*0.186,
+    height:Dimensions.get('window').width*0.32,
     borderRadius:4,
     marginBottom:8,
   },

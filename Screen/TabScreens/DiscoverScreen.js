@@ -30,6 +30,7 @@ import ProfileScreen from './ProfileScreen.js';
 import CheckWaitingScreen from './PayScreens/CheckWaitingScreen.js';
 import PayScreen from './PayScreens/PayScreen.js';
 import PayOptionsScreen from './PayScreens/PayOptionsScreen.js';
+import PayOptionsScreen2 from './PayScreens/PayOptionsScreen2.js';
 import IbanScreen from './PayScreens/IbanScreen.js';
 import CashScreen from './PayScreens/CashScreen.js';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -45,14 +46,22 @@ import axios from 'react-native-axios';
 import MaskInput from 'react-native-mask-input';
 import Clipboard from '@react-native-clipboard/clipboard';
 import messaging from '@react-native-firebase/messaging';
+import Carousel, {useOnPressConfig} from '@timotismjntk/react-native-carousel';
+
+import { useFocusEffect } from '@react-navigation/native';
+import { BackHandler } from 'react-native';
+import NotificationScreen from './NotificationScreen.js';
 
 const Stack = createStackNavigator();
 const Discover = ({route, navigation}) => {
   const [selected, setSelected] = React.useState('');
+  const [unreadcount, setUnreadCount] = React.useState(0);
   const [secureBalance, setSecureBalance] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [slData, setSlData] = React.useState([]);
   const [pslData, setPslData] = React.useState([]);
+
+  const [creditStatus, setCreditStatus] = useState(0);
 
   const [offerLink, setOfferLink] = useState('');
   const [campaignDetailData, setCampaignDetailData] = useState({title:'', longDescription:'', imageUrl:'https://reimg-carrefour.mncdn.com/bannerimage/Carre4433_0_MC/8862580539442.jpg', time:'', barLines:[], targetAward:0, memberCurrentCount:0});
@@ -66,12 +75,14 @@ const Discover = ({route, navigation}) => {
   const [payfourId, setPayfourId] = useState('');
   const [isPremium, setIsPremium] = useState(false);
 
-  const [transactions, setTransactions] = useState({ type: "Bulunamadı", amount: "", date:"Bulunamadı" });
+  const [transactions, setTransactions] = useState({ type: "İşlem bulunmamaktadır.", amount: "", date:"İşlem bulunmamaktadır." });
   const [userData, setUserData] = useState({ });
   const [userLinkError, setUserLinkError] = useState(false);
   const [userBrandError, setUserBrandError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState('0,00');
+  const [bonus, setBonus] = useState('0,00');
+  const [available, setAvailable] = useState('0,00');
   const [errortext, setErrortext] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('Marka Seçiniz');
   const appState = useRef(AppState.currentState);
@@ -117,6 +128,19 @@ const Discover = ({route, navigation}) => {
     require('../../assets/img/export/Campaignv3_dummy1.png'),
   ]
   const colors = ['#407CFE', '#FF6540', '#6AFC52', '#3FD2FA', '#FF3E5E', '#8A45FF']
+  const onPressConfig = useOnPressConfig();
+
+  useFocusEffect(
+    React.useCallback(() => {
+        const onBackPress = () => {
+        // Return true to disable the default back button behavior
+        return true;
+        };
+        BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+    );
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => {
       // do something
@@ -131,7 +155,7 @@ const Discover = ({route, navigation}) => {
             headers: { Authorization: `Bearer ${value}` }
           };
           console.log("getbalance");
-          axios.get('https://payfourapp.test.kodegon.com/api/account/getbalance', config).then(response => {
+          axios.get('http://payfourapp.test.kodegon.com/api/account/getbalance', config).then(response => {
             console.log(response.data);
             console.log(response.data.data);
             if(response.data.data.balance != null){
@@ -141,10 +165,12 @@ const Discover = ({route, navigation}) => {
                   b,
                 )
               let fr= f.replace('TRY', '').trim();              
+              //setBalance("100.000.000,00");
               setBalance(fr);
             }
             setLoading(false);
-            checkPremiumCampaigns();
+            //checkPremiumCampaigns();
+            checkNotificationCount();
            //checkCampaigns();
           })
           .catch(error => {
@@ -200,6 +226,28 @@ const Discover = ({route, navigation}) => {
       return f;
     }
   }
+  const checkNotificationCount= () => {
+    setLoading(true);
+    AsyncStorage.getItem('token').then(value =>{
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+      console.log("checkNotificationCount");
+      //axios.get('http://payfourapp.test.kodegon.com/api/campaigns/premiumcampaigns', config).then(response => {
+      axios.get('http://payfourapp.test.kodegon.com/api/notifications/unreadcount', config).then(response => {
+        console.log(response.data);
+        console.log(response.data.data);
+        setUnreadCount(response.data.data);
+        checkPremiumCampaigns();
+      })
+      .catch(error => {
+        console.error("Error sending data: ", error);
+        let msg="";
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+      });
+
+    });
+  }
   const checkPremiumCampaigns= () => {
     setLoading(true);
     AsyncStorage.getItem('token').then(value =>{
@@ -207,11 +255,12 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("premiumcampaigns");
-      axios.get('https://payfourapp.test.kodegon.com/api/campaigns/premiumcampaigns', config).then(response => {
+      //axios.get('http://payfourapp.test.kodegon.com/api/campaigns/premiumcampaigns', config).then(response => {
+        axios.get('http://payfourapp.test.kodegon.com/api/campaigns?page=1&pageSize=4&isPremium=true&sort=DateDescending', config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         console.log(response.data.data.items);
-        let sl = response.data.data;
+        let sl = response.data.data.items;
         for(var i=0; i < sl.length;i++){
           //sl[i].key = sl[i].campaignCode;
           let th = sl[i].thumbnailUrl;
@@ -256,7 +305,7 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("campaigns");
-      axios.get('https://payfourapp.test.kodegon.com/api/campaigns?page=1&pageSize=4', config).then(response => {
+      axios.get('http://payfourapp.test.kodegon.com/api/campaigns?page=1&pageSize=4&isSpecial=true&sort=DateDescending', config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         console.log(response.data.data.items);
@@ -314,7 +363,7 @@ const Discover = ({route, navigation}) => {
       let endDate =
           date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
           console.log("gettransactions");
-      axios.get('https://payfourapp.test.kodegon.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&pageSize=12', config).then(response => {
+      axios.get('http://payfourapp.test.kodegon.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&pageSize=12', config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         /*if(response.data.data.balance != null){
@@ -369,12 +418,21 @@ const Discover = ({route, navigation}) => {
               
               if(response.data){
                 if(response.data.data){
+                  let bonus = 0;
                   let arr = response.data.data;
                   for(var i=0; i < arr.length;i++){
                     arr[i].logo = require('../../assets/img/export/carrefour_bireysel.png');
+                    bonus+=arr[i].netBonus;
                   }
                   console.log(arr);
                   setCarrefourCardData(arr);
+                  if(bonus > 0){
+                    let f = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+                      bonus,
+                    )
+                  let fr= f.replace('TRY', '').trim();
+                  setBonus(fr);
+                  }
                 }
               }
               setLoading(false);
@@ -397,12 +455,12 @@ const Discover = ({route, navigation}) => {
   const checkMainCampaign = () =>{
 
     console.log("checkMainCampaign");
-    //https://payfourapp.test.kodegon.com/api/campaigns/maincampaign
+    //http://payfourapp.test.kodegon.com/api/campaigns/maincampaign
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-      axios.get('https://payfourapp.test.kodegon.com/api/campaigns/maincampaign', config).then(response => {
+      axios.get('http://payfourapp.test.kodegon.com/api/campaigns/maincampaign', config).then(response => {
         console.log(response);
         console.log(response.data);
         console.log(response.data.data);
@@ -415,7 +473,7 @@ const Discover = ({route, navigation}) => {
 
         for(var i=0; i < parseInt(sl.targetCount)+1; i++){
           console.log(i);
-          sl.barLines.push({point: i, key:"barLine"+i});
+          sl.barLines.push({point: i, key:"barLine"+Date.now()+i});
         }
         //sl.barLines = lineArr;
         //setBarLines(lineArr);
@@ -424,9 +482,11 @@ const Discover = ({route, navigation}) => {
         console.log(sl.barLines);
         setCampaignDetailData(sl);
         setLoading(false);
-        //checkPayment();
+        checkPayment();
         //checkFirebaseToken();
-        requestUserPermission();
+        //requestUserPermission();
+        //getWaiting();
+        
       })
       .catch(error => {
         console.error("Error sending data: ", error);
@@ -436,12 +496,14 @@ const Discover = ({route, navigation}) => {
     });
   }
   async function requestUserPermission() {
+    console.log('>>>>>>> permission <<<<<<<<<')
     const authorizationStatus = await messaging().requestPermission();
   
     /*if (authorizationStatus) {
       console.log('Permission status:', authorizationStatus);
       
     }*/
+      console.log('Permission status:', authorizationStatus);
     if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
       console.log('User has notification permissions enabled.');
     } else if (authorizationStatus === messaging.AuthorizationStatus.PROVISIONAL) {
@@ -463,7 +525,7 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("setFirebaseToken");
-      axios.post('https://payfourapp.test.kodegon.com/api/devices/setfcmtoken', { "fcmToken": fcmToken },config).then(response => {
+      axios.post('http://payfourapp.test.kodegon.com/api/devices/setfcmtoken', { "fcmToken": fcmToken },config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         checkPayment();
@@ -501,12 +563,14 @@ const Discover = ({route, navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
           setUserData(response.data.data);
           setIban(response.data.data.defaultBankAccountNumber);
+          console.log('!!!!!!!!!!!');
+          console.log(response.data.data.segment)
           if(response.data.data.segment == 2) setIsPremium(true);
           let u = response.data.data;
           if(u.firstName != null && u.firstName != "" && u.lastName != null && u.lastName != ""){
@@ -520,7 +584,9 @@ const Discover = ({route, navigation}) => {
             setModalVisible(true);
           }else{*/
           setLoading(false);
-            getWaiting();
+          //checkMainCampaign();
+          checkCurrentLimit(u.loanApplication, u.potentialLimit);
+            //getWaiting();
           //}
         })
         .catch(error => {
@@ -534,20 +600,97 @@ const Discover = ({route, navigation}) => {
       
     //}
   }
-  const getWaiting = () =>{
-    setLoading(true);
+  const checkCurrentLimit = (userCreditData, userLimitData) => {
+    console.log("checkCurrentLimit");
+    console.log("-------");
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-      console.log("getwaitings");
-      axios.get('https://payfourapp.test.kodegon.com/api/payments/getwaitings', config).then(response => {
+
+      axios.get('https://payfourapp.test.kodegon.com/api/loans/getavailablecreditlimit', config).then(response => {
+        console.log("getavailablecreditlimit");
+        console.log(response.data);
+        console.log(response.data.data);
+        if(response.data.data.availableAllotmentAmount){
+          setAvailable(new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+            response.data.data.availableAllotmentAmount,
+          ).replace('TRY', '').trim())
+        }
+
+        //checkUserCreditStatus(userCreditData, userLimitData, response.data.data);
+        checkUserCreditStatus(userCreditData, userLimitData, response.data.data);
+        
+      })
+      .catch(error => {
+        console.error("Error sending data: ", error);
+        let msg="";
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        getWaiting();
+      });
+
+    });
+  }
+  const checkUserCreditStatus= (userCreditData, userLimitData) =>{
+    console.log("checkUserCreditStatus");
+    console.log(userCreditData);
+    console.log(userLimitData);
+    console.log("-------");
+    /*userLimitData = 1000;
+    userCreditData = null;
+    availableLimit.availableAllotmentAmount = 5;*/
+    let hasCredit = (userCreditData != null && userCreditData != undefined && userCreditData != "undefined");
+    let hasActiveCredit = hasCredit && userCreditData.status == 2;
+    let hasLimit = (userLimitData != null && userLimitData != undefined && userLimitData != "undefined");
+
+    console.log(hasLimit);
+    console.log(hasCredit);
+    console.log(hasActiveCredit);
+
+    if((!hasLimit && !hasCredit)){
+      console.log("cs1");
+      //setCreditStatus(1);
+      getWaiting(1);    
+    }else if(hasLimit && !hasCredit){
+      console.log("cs3");
+      //setCreditStatus(2);
+      getWaiting(3);
+    }else if(hasCredit){ 
+      console.log("cs2");
+      //setCreditStatus(3);
+      getWaiting(2);
+    }
+    // console.log("CREDITSTATE");
+    // console.log(creditState);
+    //getWaiting();
+
+  }
+  const getWaiting = (cs) =>{
+    console.log("getWaiting "+cs);
+    setLoading(true);
+    setCreditStatus(cs);
+    //setCreditStatus(3);
+    AsyncStorage.getItem('token').then(value =>{
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+      axios.get('http://payfourapp.test.kodegon.com/api/payments/getwaitings', config).then(response => {
         console.log("getwaitings");
         console.log(response.data);
         console.log(response.data.data.length);
         console.log("balance ? ");
         console.log(balance);
         setLoading(false);
+        console.log("cs");
+        console.log(cs);
+        //setCreditStatus(cs);
+        console.log("CREDITSTATE2");
+        console.log(creditStatus);
+        /*response.data.data = [
+          {"amount": 220, "channelTypeId": 6, "dateUTC": "2024-12-06T13:01:58.7072503", "paymentId": 1696, "storeCode": "1014", "storeName": " CarrefourSA İstanbul Merter"}, 
+          {"amount": 22, "channelTypeId": 6, "dateUTC": "2024-12-06T13:02:08.4449536", "paymentId": 1697, "storeCode": "1012", "storeName": " CarrefourSA İstanbul Acıbadem"}, 
+          {"amount": 10, "channelTypeId": 6, "dateUTC": "2024-12-06T13:02:16.8198694", "paymentId": 1698, "storeCode": "1015"}
+          ];*/
         if(response.data.data.length > 0){
           let pObj = response.data.data[0];
           pObj.balance = balance;
@@ -613,7 +756,7 @@ const Discover = ({route, navigation}) => {
         }
       }*/
         console.log("completeregistration");
-      axios.post('https://payfourapp.test.kodegon.com/api/account/completeregistration', dataToSend, config).then(response => {
+      axios.post('http://payfourapp.test.kodegon.com/api/account/completeregistration', dataToSend, config).then(response => {
         console.log(response.data);
         setUserData(response.data.data);
         setLoading(false);
@@ -716,7 +859,7 @@ const Discover = ({route, navigation}) => {
                           textAlign:'center',
                           marginBottom:26,
                         }}>
-                          Mağazalarımızdan veya CarrefourSa'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
+                          Mağazalarımızdan veya CarrefourSA'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
                       </Text>
                       <View style={{
                         padding:16,
@@ -730,7 +873,7 @@ const Discover = ({route, navigation}) => {
                           fontSize:16,
                           color:'#0B1929',
                         }}>
-                          Payfour ID:
+                          Payfour No:
                         </Text>
                         <Text style={{
                           fontSize:16,
@@ -842,7 +985,9 @@ const Discover = ({route, navigation}) => {
                           flexDirection:'row',
                           alignItems:'center',
                           justifyContent:'space-between',
-                          paddingBottom:8,                          
+                          paddingBottom:8,  
+                          borderBottomWidth:1,
+                          borderBottomColor:'#E4E4E8',                        
                         }}>
                           <View style={{
                             flexDirection:'row',
@@ -861,7 +1006,7 @@ const Discover = ({route, navigation}) => {
                               fontSize:14,
                               color:'#004F97',
                             }}>
-                              Kredi Kartı ile Öde
+                              Banka / Kredi Kartı ile Yükle
                             </Text>
                           </View>
                           
@@ -875,7 +1020,7 @@ const Discover = ({route, navigation}) => {
                               />
                           
                       </View>
-                      </TouchableOpacity>
+                      
                         <Text style={{
                           fontSize:14,
                           color:'#909eaa',
@@ -885,6 +1030,7 @@ const Discover = ({route, navigation}) => {
                         }}>
                           Masterpass’e kayıtlı kredi ya da banka kartı bilgilerin ile hızlıca para yükleyebilirsiniz.
                         </Text>
+                        </TouchableOpacity>
                       </View>
                       
                       <View style={{
@@ -904,7 +1050,9 @@ const Discover = ({route, navigation}) => {
                           flexDirection:'row',
                           alignItems:'center',
                           justifyContent:'space-between',
-                          paddingBottom:8,                          
+                          paddingBottom:8,
+                          borderBottomWidth:1,
+                          borderBottomColor:'#E4E4E8',                            
                         }}>
                           
                           <View style={{
@@ -938,7 +1086,7 @@ const Discover = ({route, navigation}) => {
                               />
                           
                       </View>
-                      </TouchableOpacity>
+                      
                         <Text style={{
                           fontSize:14,
                           color:'#909eaa',
@@ -946,8 +1094,9 @@ const Discover = ({route, navigation}) => {
                           borderTopColor:'#E4E4E8',
                           paddingTop:8,
                         }}>
-                          Belirtilen IBAN numarasına EFT\Havale yoluyla para göndererek para yükleyebilirsiniz.
+                          Belirtilen IBAN numarasına Havale / EFT yoluyla para göndererek para yükleyebilirsiniz.
                         </Text>
+                        </TouchableOpacity>
                       </View>
                       <View style={{
                         padding:16,
@@ -963,7 +1112,9 @@ const Discover = ({route, navigation}) => {
                           flexDirection:'row',
                           alignItems:'center',
                           justifyContent:'space-between',
-                          paddingBottom:8,                          
+                          paddingBottom:8, 
+                          borderBottomWidth:1,
+                          borderBottomColor:'#E4E4E8',                           
                         }}>
                           <View style={{
                             flexDirection:'row',
@@ -996,7 +1147,7 @@ const Discover = ({route, navigation}) => {
                               />
                           
                       </View>
-                      </TouchableOpacity>
+                      
                         <Text style={{
                           fontSize:14,
                           color:'#909eaa',
@@ -1006,6 +1157,7 @@ const Discover = ({route, navigation}) => {
                         }}>
                           Kasadan para yüklemek için kasadaki görevliye payfour bilgilerinizi veriniz.
                         </Text>
+                        </TouchableOpacity>
                       </View>
                   </View>
                   
@@ -1099,7 +1251,7 @@ const Discover = ({route, navigation}) => {
                           textAlign:'center',
                           marginBottom:26,
                         }}>
-                          Mağazalarımızdan veya CarrefourSa'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
+                          Mağazalarımızdan veya CarrefourSA'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
                       </Text>
                       <View style={{
                         padding:16,
@@ -1113,7 +1265,7 @@ const Discover = ({route, navigation}) => {
                           fontSize:16,
                           color:'#0B1929',
                         }}>
-                          Payfour ID:
+                          Payfour No:
                         </Text>
                         <Text style={{
                           fontSize:16,
@@ -1688,15 +1840,25 @@ const Discover = ({route, navigation}) => {
                   flexDirection:'row',
                   alignItems:'center'}}>
             <TouchableOpacity style={{width: 24,
-                  height: 24,marginRight:8}}>
+                  height: 24,marginRight:8}}
+                  onPress={()=> navigation.navigate('Notification')}>
+              {unreadcount > 0 ? 
               <Image
                 source={require('../../assets/img/export/notification.png')}
                 style={{
                   width: 24,
                   height: 24,
                   resizeMode: 'contain',
-                }}
-              />
+                }}              
+              />:
+              <Image
+                source={require('../../assets/img/export/notification_none.png')}
+                style={{
+                  width: 24,
+                  height: 24,
+                  resizeMode: 'contain',
+                }}              
+              />}
             </TouchableOpacity>
             <TouchableOpacity 
             onPress={() => {navigation.navigate('Profile')}}
@@ -1718,7 +1880,7 @@ const Discover = ({route, navigation}) => {
       <Loader loading={loading} />
       <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, {paddingBottom:120}]}>
         <View style={ {paddingTop: 20}}>
-          <View style={[styles.sectionStyle,{marginBottom:16,
+        <View style={[styles.sectionStyle,{marginBottom:16,
               shadowColor:'#909EAA',
               shadowOffset:{
                 width:20,
@@ -1728,7 +1890,7 @@ const Discover = ({route, navigation}) => {
               shadowRadius:10,
               elevation:10,
               }]}>
-             {/* <View style={{
+             <View style={{
               backgroundColor:'#004F97',
               borderTopLeftRadius:20,
               borderTopRightRadius:20,
@@ -1739,18 +1901,19 @@ const Discover = ({route, navigation}) => {
               flexDirection:'row',
               justifyContent:'space-between',
               alignItems:'center',
+              display: available=="0,00"? 'none' : 'flex',
               }}>
                 <Text style={{color:'#fff', fontSize:12}}>
                   Ön Onaylı Alışveriş Kredisi 
                 </Text>
                 <Text style={{color:'#fff', fontSize:16, fontWeight:'700'}}>
-                  0,00 TL
+                  {available} TL
                 </Text>
-            </View>  */}
+            </View>
             <View style={{
               backgroundColor:'#fff',
-              borderTopLeftRadius:20,
-              borderTopRightRadius:20,
+              borderTopLeftRadius: available=="0,00"? 20 : 0,
+              borderTopRightRadius:available=="0,00"? 20 : 0,
               borderBottomLeftRadius:20,
               borderBottomRightRadius:20,
               paddingTop:16,
@@ -1761,21 +1924,35 @@ const Discover = ({route, navigation}) => {
               }}>
                 <View style={{flexDirection:'row',
               justifyContent:'space-between',
-              alignItems:'center',}}>
-                  <View style={{flexDirection:'column', alignItems:'flex-start', justifyContent:'space-between'}}>
-                    <View>
+              alignItems:'flex-start',}}>
+                  <View style={{width:Dimensions.get('screen').width-212,flexDirection:'column', alignItems:'flex-start', justifyContent:'space-between'}}>
+                    <View style={{width:Dimensions.get('screen').width-212,}}>
                       <Text style={{color:'#909EAA', fontSize:12}}>
                         Güncel Bakiye
                       </Text>
                       <View style={{flexDirection:'row',alignItems:'flex-end',}}>
-                        <TextInput 
-                        secureTextEntry={secureBalance}                        
-                        style={{color:'#0B1929',fontSize: Dimensions.get('window').width > 375 ?32: ((Dimensions.get('window').width > 360)?28:24), fontWeight:'700'}}>
-                          {balance}
+                        <Text 
+                        //editable={false}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit={true}
+                        //secureTextEntry={secureBalance}                        
+                        style={{color:'#0B1929',
+                          //backgroundColor:'#ff0000',
+                        //fontSize: Dimensions.get('window').width > 375 ?32: ((Dimensions.get('window').width > 360)?28:24), 
+                        fontSize:32,
+                        width:Dimensions.get('screen').width-212,
+                        fontWeight:'700',
+                        }}>
+                          {secureBalance ? '*'.repeat(balance.length) : balance}
+                          {(!secureBalance)?
                           <Text style={{color:'#0B1929', fontSize:16, fontWeight:'700', verticalAlign:'sub'}}>
                             TL
                           </Text>
-                        </TextInput>
+                          :
+                          <Text style={{color:'#0B1929', fontSize:16, fontWeight:'700', verticalAlign:'sub'}}>                            
+                          </Text>
+                          }
+                        </Text>
                         
                       </View>
                     </View>
@@ -1785,13 +1962,33 @@ const Discover = ({route, navigation}) => {
                     <TouchableOpacity 
                       style={{width:32, height:32, backgroundColor:'#F2F4F6', borderRadius:32, alignItems:'center', justifyContent:'center', marginBottom:8}}
                       onPress={()=> setSecureBalance(!secureBalance)}>
+                        {/* {if(secureBalance){
+                          return()
+
+                        }else{
+
+                        }} */}
+                        {secureBalance? <Image 
+                      source={require('../../assets/img/export/eye_off.png')}
+                      style={{
+                        width:16,
+                        height:16
+                      }}>
+                      </Image> : 
                       <Image 
                       source={require('../../assets/img/export/eye.png')}
                       style={{
                         width:16,
                         height:16
                       }}>
-                      </Image>
+                      </Image>}
+                      {/* <Image 
+                      source={require('../../assets/img/export/eye.png')}
+                      style={{
+                        width:16,
+                        height:16
+                      }}> 
+                      </Image>*/}
                     </TouchableOpacity>
                     <TouchableOpacity
                     style={{
@@ -1806,7 +2003,7 @@ const Discover = ({route, navigation}) => {
                     }}
                     onPress={() => setAddModalVisible(true)}
                     >
-                      <View style={{flexDirection:'row', justifyContent:'center'}}>
+                      <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
                         <Image 
                       source={require('../../assets/img/export/account_summary_plus.png')}
                       style={{
@@ -1822,46 +2019,74 @@ const Discover = ({route, navigation}) => {
                     </TouchableOpacity>
                   </View>
                 </View>
-                <View style={{flexDirection:'row',
-              justifyContent:'space-between',
-              alignItems:'center',}}>
-                  <View>
-                      <View style={{flexDirection:'row',}}>
-                        <Image 
-                        source={require('../../assets/img/export/account_summary_chart.png')}
+                <View style={{
+                      borderTopWidth:1,
+                      borderColor:'#E4E4E8',
+                      paddingTop:12,
+                      flexDirection:'row',
+                      alignItems:'center',
+                      justifyContent:'space-between',
+                    }}>
+                      <View style={{
+                        flexDirection:'row',
+                        alignItems:'center',
+                      }}>
+                      <Image 
+                        source={require('../../assets/img/export/icon_card.png')}
                         style={{
                           width:16,
+                          resizeMode:'contain',
                           height:16,
-                          marginRight:6
-                        }}>
-                        </Image>
+                          marginRight:4,
+                        }}></Image>
+                      <Text style={{fontSize:14, color:'#004F97'}}>Bireysel Kart Toplam Puanı:</Text>
+                      </View>
+                      <View style={{
+                        flexDirection:'row',
+                        alignItems:'center',
+                        
+                      }}>
+                      
+                      <Text style={{fontSize:12, color:'#004F97', fontWeight:'700'}}>{bonus} TL</Text>
+                      <Image 
+                        source={require('../../assets/img/export/information.png')}
+                        style={{
+                          width:16,
+                          resizeMode:'contain',
+                          height:16,
+                          marginLeft:2,
+                        }}></Image>
+                      </View>
+                    </View>
+                {/* <View style={{flexDirection:'row',
+              justifyContent:'space-between',
+              alignItems:'flex-start',}}>
+                  <View>
+                      <View style={{flexDirection:'row',}}>                        
                         <Text style={{color:'#909EAA', fontSize:14}}>
-                          Son İşlemler
+                          Son İşlem
                         </Text>
                       </View>
-                      <Text style={{color:'#909EAA', fontSize:12}}>
-                        {transactions.type} {transactions.amount}TL
+                      <Text style={{color:'#909EAA', fontSize:14}}>
+                        {transactions.type} {transactions.amount} {transactions.amount == ""? "" : "TL"}
                       </Text>
                   </View>
                   <View>
                     <TouchableOpacity
                     onPress={() => navigation.navigate('wallet', { screen: 'Balance' })}>
-                      <Text style={{color:'#004F97', fontSize:12, textAlign:'right'}}>
+                      <Text style={{color:'#004F97', fontSize:14, textAlign:'right'}}>
                         Tümünü Gör
                       </Text>
                     </TouchableOpacity>
-                    <Text style={{color:'#909EAA', fontSize:12, textAlign:'right'}}>
-                      {transactions.date}
-                      </Text>
                   </View>
-              </View>
+              </View> */}
             </View>
           </View>
           <View style={
-            [styles.sectionStyle,{marginBottom:24, flexDirection:'row'}]
+            [styles.sectionStyle,{marginBottom:24, flexDirection:'row', justifyContent:'center', display:creditStatus != 1 && creditStatus != 3? 'none' : 'flex'}]
           }>
             <TouchableOpacity 
-            style={{width:'49%', marginRight:'2%'}}
+            style={{width:'49%', marginRight:'2%', display:creditStatus == 1? 'flex' : 'none'}}
             onPress={() => navigation.navigate('wallet', { screen: 'CreditScreen',params: {
               screen: 'IntroHazirLimit', }})}
             >
@@ -1874,7 +2099,7 @@ const Discover = ({route, navigation}) => {
               }}>
               </Image>
             </TouchableOpacity>
-            <TouchableOpacity style={{width:'49%'}}
+            <TouchableOpacity style={{width:'49%', display:creditStatus == 1 || creditStatus == 3? 'flex' : 'none'}}
             onPress={() => navigation.navigate('wallet', { screen: 'CreditScreen',params: {
               screen: 'IntroSonraOde', }})}>
               <Image 
@@ -1956,7 +2181,8 @@ const Discover = ({route, navigation}) => {
                           top:0,
                           left:0,
                           zIndex:5,
-                          borderRadius:12
+                          borderRadius:12,
+                          overflow:'hidden',
                         }}>
                           {/* barfill */}
                           
@@ -1966,6 +2192,7 @@ const Discover = ({route, navigation}) => {
                           colors={['#7EBEF5', '#005BAA', '#ED1C67']} 
                           style={{
                             width:campaignDetailData.barLines.length > 0 ? (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.memberCurrentCount :0,
+                            //width:'100%',
                             height:8,
                             borderTopLeftRadius:12,
                             borderBottomLeftRadius:12,
@@ -1991,64 +2218,27 @@ const Discover = ({route, navigation}) => {
                             console.log("key "+key);
                             console.log(campaignDetailData.barLines[key].key);*/
                           return (
-                            campaignDetailData.barLines.length > 0 && key != 0? 
-                            <View key={Date.now()+campaignDetailData.barLines[key].key}
+                            campaignDetailData.barLines.length > 0 && key != 0 && key !=campaignDetailData.barLines.length-1? 
+                            <View key={campaignDetailData.barLines[key].key}
                             style={{
                               position:'absolute',
                               top:0,
                               //left:20 * campaignDetailData.barLines[key].point,
                               left: campaignDetailData.barLines.length > 0 ? (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point : 0,
+                              //left: campaignDetailData.barLines.length > 0 ? ((Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length - 1) * campaignDetailData.barLines[key].point)-5 : 0,
                               height:8,
-                              width:1,
-                              backgroundColor: '#fff'
+                              width:2,
+                              backgroundColor: campaignDetailData.memberCurrentCount > 0 ? '#fff' : '#e3ecf4'
                             }}>
-                              <Text>{campaignDetailData.barLines[key].point}</Text>
+                              {/* <Text style={{textAlign:'center'}}>{campaignDetailData.barLines[key].point}</Text> */}
                             </View>
-                            : <View></View>
+                            : <View key={campaignDetailData.barLines[key].key}></View>
                           )
                         })
                         }
                           
                         </View>
-                        <View style={{
-                          width:'100%',
-                          height:8,
-                          position:'absolute',
-                          top:0,
-                          left:0,
-                          borderRadius:12
-                        }}>
-                          {/* barlines */}
-                          {
-                          [...Array(campaignDetailData.barLines.length).keys()].map(key => {
-                            /*console.log("barLines ");
-                            console.log(campaignDetailData.barLines);
-                            console.log("barLines "+campaignDetailData.barLines.length);
-                            console.log("key "+key);
-                            console.log(campaignDetailData.barLines[key].key);*/
-                          return (
-                            campaignDetailData.barLines.length > 0 && key != 0? 
-                            <View key={Date.now()+campaignDetailData.barLines[key].key}
-                            style={{
-                              position:'absolute',
-                              top:0,
-                              //left:20 * campaignDetailData.barLines[key].point,
-                              left: (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
-                              height:8,
-                              width:1,
-                              backgroundColor: '#fff'
-                            }}>
-                              <Text style={{
-                                fontSize:10,
-                                color:'#004F97',
-                              }}>{campaignDetailData.barLines[key].point}</Text>
-                            </View>
-                            : <View></View>
-                          )
-                        })
-                        }
-                          
-                        </View>
+                        
                         <View style={{
                           width:'100%',
                           height:8,
@@ -2065,13 +2255,15 @@ const Discover = ({route, navigation}) => {
                             console.log("key "+key);
                             console.log(campaignDetailData.barLines[key].key);*/
                           return (
-                            campaignDetailData.barLines.length > 0? 
-                            <View key={Date.now()+campaignDetailData.barLines[key].key}
+                            campaignDetailData.barLines.length > 0 && campaignDetailData.barLines[key].point != "0"? 
+                            <View key={"b"+campaignDetailData.barLines[key].key}
                             style={{
                               position:'absolute',
                               top:20,
                               //left:20 * campaignDetailData.barLines[key].point,
-                              left: (Dimensions.get('window').width - 132) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
+                              //left: (Dimensions.get('window').width - 132) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
+                              //left: campaignDetailData.barLines.length > 0 ? (Dimensions.get('window').width - 126) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point : 0,
+                              left: campaignDetailData.barLines.length > 0 ? ((Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length - 1) * campaignDetailData.barLines[key].point)-5 : 0,
                               height:16,
                               width:12,
                             }}>
@@ -2081,7 +2273,7 @@ const Discover = ({route, navigation}) => {
                                 textAlign:'center',
                               }}>{campaignDetailData.barLines[key].point}</Text>
                             </View>
-                            : <View></View>
+                            : <View key={"b"+campaignDetailData.barLines[key].key}></View>
                           )
                         })
                         }
@@ -2113,6 +2305,10 @@ const Discover = ({route, navigation}) => {
                 </View>
               </View>
             </TouchableOpacity>
+            
+            
+              
+             
             <LinearGradient colors={['#067FC4', '#431836']} style={styles.linearGradient}>
               <View style={{paddingLeft:16, paddingRight:16, paddingTop:16, paddingBottom:16}}>
                 <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:8}}>
@@ -2122,6 +2318,9 @@ const Discover = ({route, navigation}) => {
                   <TouchableOpacity 
                   onPress={() => navigation.navigate('campaign', { 
                     screen: 'CampaignList',
+                    params: {
+                      filters:{isAw:true, isSp:false}
+                    }
                   })}
                   style={{
                     flexDirection:'row',
@@ -2141,24 +2340,32 @@ const Discover = ({route, navigation}) => {
                   </TouchableOpacity>
                 
                 </View>
-                <View style={[slstyles.slider, {marginBottom:16,paddingBottom:40, overflow:'visible'}]} {...slider.containerProps}>
+                <View style={[slstyles.slider, {marginBottom:20,paddingBottom:40, overflow:'visible'}]} {...slider.containerProps}>
                 {
                   [...Array(slides).keys()].map(key => {
                     /*console.log("psldata "+pslData.length);
                     console.log("key "+key);*/
                   return (
                     pslData.length > 0 ? 
-                    <View key={Date.now()+pslData[key].uid} {...slider.slidesProps[key]}>
-                      <View style={{...slstyles.slide}}>
-                      <TouchableOpacity onPress={() => {
-                        let sid= pslData[key].id;
-                        //console.log("sliderid "+sid);
-                        let navObj = {
-                          screen: 'CampaignDetail',
-                            params: {id: sid, source:'discover'}
-                        }
-                        //console.log(navObj);
-                        navigation.navigate('campaign', navObj)}}>
+                    <View key={pslData[key].uid} {...slider.slidesProps[key]}>
+                      <View style={{...slstyles.slide}} 
+                      {...onPressConfig(() => {
+                        console.log("onPress");
+                        console.log(pslData[key])
+                        try {
+                          //if (item?.img) {
+                            //Linking.openURL(item.img);
+                            let sid= pslData[key].id;
+                            let navObj = {
+                              screen: 'CampaignDetail',
+                                params: {id: sid, source:'discover'}
+                            }
+                            //console.log(navObj);
+                            navigation.navigate('campaign', navObj)
+                          //}
+                        } catch (error) {}
+                      })}>
+                      <View >
                         <Image 
                           // source={slimages[key]}
                           source={{
@@ -2168,36 +2375,7 @@ const Discover = ({route, navigation}) => {
                             resizeMode: 'cover',
                           }]}
                         />
-                        </TouchableOpacity>
-                          {/* <View style={{
-                            flexDirection:'row',
-                            alignItems:'center',
-                            justifyContent:'space-between',
-                            marginBottom:8,
-                          }}>
-                            <View style={{
-                              width:32,
-                              height:32, 
-                              borderRadius:32,
-                              borderWidth:1,
-                              borderColor:'#F2F4F6',
-                            }}></View>
-                            <View style={{
-                              borderRadius:4,
-                              backgroundColor:'rgba(26,167,63,0.2)',
-                              paddingLeft:8,
-                              paddingRight:8,
-                              paddingTop:4,
-                              paddingBottom:4,
-                            }}>
-                              <Text style={{
-                                color:'#1AA73F',
-                                fontSize:10,
-                              }}>
-                                Akaryakıt
-                              </Text>
-                            </View>
-                          </View> */}
+                        </View>                          
                           <Text style={{
                             fontSize:12,
                             lineHeight:18,
@@ -2232,12 +2410,12 @@ const Discover = ({route, navigation}) => {
                       
                       </View>
                     </View>
-                    : <View key={Date.now()+"Premium_empty"+key}></View>
+                    : <View key={"Premium_empty"+key}></View>
                   )
                 })
                 }
               </View>
-                <TouchableOpacity style={{ flex:1, flexDirection:'row', display:isPremium?'none':'flex'}}
+                {/* <TouchableOpacity style={{ flex:1, flexDirection:'row', display:isPremium?'none':'flex'}}
                 onPress={()=>{
                   navigation.navigate('Profile', { 
                     screen: 'ProfilePlatinum',
@@ -2253,18 +2431,42 @@ const Discover = ({route, navigation}) => {
                   height:(Dimensions.get('window').width - 32)*0.139,
                 }}>
                 </Image>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                <TouchableOpacity style={{display:isPremium?'none':'flex'}}
+                onPress={()=> navigation.navigate('Profile', { 
+                  screen: 'ProfilePlatinum',
+                  //screen: 'MasterpassScreen2',
+                  //screen: 'MasterPassExample',
+                })}>
+                <View style={{
+                  width:(Dimensions.get('window').width - 32),
+                  height:(Dimensions.get('window').width - 32)*0.15,
+                }}>
+                <Image
+                        source={require('../../assets/img/export/item.png')}
+                        style={{
+                          resizeMode:'contain',
+                    width:(Dimensions.get('window').width - 32),
+                    height:(Dimensions.get('window').width - 32)*0.15,
+                        }}
+                    />
+              </View>
+              </TouchableOpacity>
                 
               </View>
             </LinearGradient>
+          
             <View style={{paddingLeft:16, paddingRight:16, paddingTop:16, paddingBottom:16}}>
               <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:8}}>
-                <Text style={[styles.titleText, {fontWeight:'700'}]}>
+                <Text style={[styles.titleText, {color:'#0B1929', fontWeight:'700'}]}>
                   Sana Özel Kampanyalar
                 </Text>
                 <TouchableOpacity 
                   onPress={() => navigation.navigate('campaign', { 
                     screen: 'CampaignList',
+                    params: {
+                      filters:{isAw:false, isSp:true}
+                    }
                   })}
                   style={{
                     flexDirection:'row',
@@ -2284,6 +2486,7 @@ const Discover = ({route, navigation}) => {
                 </TouchableOpacity>
               </View>
               <View style={{paddingBottom:20}}>
+                
                 <View style={[slstyles.slider, {paddingBottom:40, overflow:'visible'}]} {...slider2.containerProps}>
                 {
                     [...Array(slides).keys()].map(key => {
@@ -2294,9 +2497,25 @@ const Discover = ({route, navigation}) => {
                       console.log("key "+key);*/
                     return (
                       slData.length > 0 ? 
-                      <View key={Date.now()+slData[key].uid} {...slider2.slidesProps[key]}>
-                        <View style={{...slstyles.slide}}>
-                        <TouchableOpacity onPress={() => {
+                      <View key={slData[key].uid} {...slider2.slidesProps[key]}>
+                        <View style={{...slstyles.slide}} 
+                        {...onPressConfig(() => {
+                          console.log("onPress");
+                          console.log(slData[key])
+                          try {
+                            //if (item?.img) {
+                              //Linking.openURL(item.img);
+                              let sid= slData[key].id;
+                              let navObj = {
+                                screen: 'CampaignDetail',
+                                  params: {id: sid, source:'discover'}
+                              }
+                              //console.log(navObj);
+                              navigation.navigate('campaign', navObj)
+                            //}
+                          } catch (error) {}
+                        })}>
+                          <View onPress={() => {
                         let sid= slData[key].id;
                         //console.log("sliderid "+sid);
                         let navObj = {
@@ -2314,7 +2533,7 @@ const Discover = ({route, navigation}) => {
                               resizeMode: 'cover',
                             }]}
                           />
-                          </TouchableOpacity>
+                          </View>
                             {/* <View style={{
                               flexDirection:'row',
                               alignItems:'center',
@@ -2377,7 +2596,7 @@ const Discover = ({route, navigation}) => {
                         
                         </View>
                       </View>
-                      : <View key={Date.now()+"Foryou_empty"+key}></View>
+                      : <View key={"Foryou_empty"+key}></View>
                     )
                   })
                   }
@@ -2439,6 +2658,17 @@ const DiscoverScreen = ({navigation}) => {
         component={PayOptionsScreen}
         //options={{headerShown: false}}
         options={{ headerShown: false, presentation: 'transparentModal' }}
+      />
+      <Stack.Screen
+        name="PayOptionsScreen2"
+        component={PayOptionsScreen2}
+        //options={{headerShown: false}}
+        options={{ headerShown: false, presentation: 'transparentModal' }}
+      />
+      <Stack.Screen
+        name="Notification"
+        component={NotificationScreen}
+        options={{headerShown: false}}
       />
       {/* <Stack.Screen
         name="IbanScreen"
@@ -2547,11 +2777,9 @@ const slstyles = {
     backgroundColor: 'transparent',
     overflow: 'hidden',
     width: '100%',
-    //height: Dimensions.get('window').width*0.392,
-    minHeight: Dimensions.get('window').width*0.392,
+    height: Dimensions.get('window').width*0.5,
+    //minHeight: Dimensions.get('window').width*0.5,
     //height:'100%',
-    flexGrow:1,
-    paddingBottom:100
   },
   slide: {
     width: (Dimensions.get('window').width*0.437),
@@ -2570,12 +2798,13 @@ const slstyles = {
     backgroundColor:'#fff',
     borderRadius:8,
     marginBottom:20,
-    height:'140%'
+    //height:'140%'
     
   },
   slideImg:{
     width: Dimensions.get('window').width*0.394,
-    height:Dimensions.get('window').width*0.186,
+    //height:Dimensions.get('window').width*0.186,
+    height:Dimensions.get('window').width*0.32,
     borderRadius:4,
     marginBottom:8,
   },

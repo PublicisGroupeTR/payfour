@@ -20,13 +20,13 @@ const SubtabHeaderWithSearch = props => {
   console.log(routetarget);*/
   useEffect(()=> searchInput.current.clear(),[]);
   return (
-    <View style={[styles.topStyle, {backgroundColor: props.mode === 'dark' ? 'transparent' : '#fff', flexDirection:'row',justifyContent:'space-between',
+    <View style={[styles.topStyle, {backgroundColor: props.mode === 'dark' ? 'transparent' : '#fff', height:80, flexDirection:'row',justifyContent:'space-between',
       /*shadowColor:'#000000',
           shadowOffset:{
             width:0,
-            height:20,
+            height:5,
           },
-          shadowOpacity:0.5,
+          shadowOpacity:0.2,
           shadowRadius:5,
           elevation:10,*/
      }]}>
@@ -34,7 +34,8 @@ const SubtabHeaderWithSearch = props => {
         <TouchableOpacity
           style={[
             styles.buttonClose,
-            {display: routetarget === '' ? 'none' : 'flex', flexDirection:'row'},
+            {display: routetarget === '' ? 'none' : 'flex',flexDirection:'row'},
+            
           ]}
           onPress={() => navigation.navigate(routetarget)}>        
             <Image
@@ -44,26 +45,27 @@ const SubtabHeaderWithSearch = props => {
                 height: 32,
                 tintColor: props.mode === 'dark' ? '#fff' : 'none',
               }}
-            />
-            <View style={{
-            alignItems: 'center',
-            justifyContent:'center',
-            }}>
-            <Text style={{
-              color: props.mode === 'dark'? '#fff' : '#0B1929',
-              fontSize:16,
-            }}>
-              {name}
-            </Text>
+            /><View style={{
+          alignItems: 'center',
+          justifyContent:'center',
+          }}>
+          <Text style={{
+            color: props.mode === 'dark'? '#fff' : '#0B1929',
+            fontSize:16,
+            fontWeight:'700'
+          }}>
+            {name}
+          </Text>
           </View>
         </TouchableOpacity>
+        
         
 
       </View>
       <TouchableOpacity
         style={[
           styles.buttonSearch,
-          {display: showInput? 'none' : 'flex',}
+          {display: showInput? 'none' : 'flex', zIndex:5}
         ]}
         onPress={() => {
           console.log("search");
@@ -78,7 +80,7 @@ const SubtabHeaderWithSearch = props => {
             }}
           />
       </TouchableOpacity>
-      <View style={{display: showInput? 'flex' : 'none', flexDirection:'row', flexGrow:1}}>
+      <View style={{display: showInput? 'flex' : 'none', flexDirection:'row', flexGrow:1, height:50}}>
         <TouchableOpacity
           style={[
             styles.buttonClose,
@@ -86,17 +88,20 @@ const SubtabHeaderWithSearch = props => {
               height:20,
               position:'absolute',
               right:10,
-              top:14,zIndex:5
+              top:14,
+              zIndex:3
             }
           ]}
           onPress={() => {
             setUserSearch('');
-            eraseCallback('');            
+            eraseCallback('');  
+            Keyboard.dismiss();        
             searchInput.current.clear();
+            //setUserSearch(UserSearch);
             setShowInput(false);
             searchCallback('');
             //closeCallback();
-          }}>        
+          }}>      
             <Image
               source={require('../../assets/img/export/remove.png')}
               style={{
@@ -157,7 +162,8 @@ const styles = StyleSheet.create({
     alignContent: 'center',    
     borderColor: '#EBEBEB',
     position: 'relative',
-    backgroundColor:'#fff'
+    backgroundColor:'#fff',
+    zIndex:2,
   },
   buttonClose: {
     

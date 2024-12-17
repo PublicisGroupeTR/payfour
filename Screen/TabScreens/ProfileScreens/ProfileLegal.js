@@ -30,6 +30,11 @@ import MaskInput from 'react-native-mask-input';
 import LinearGradient from 'react-native-linear-gradient';
 import {Dropdown} from 'react-native-element-dropdown';
 import { Modalize } from 'react-native-modalize';
+import PayfourUyelikVeKullaniciSozlesmesi from '../../Legals/PayfourUyelikVeKullaniciSozlesmesi.js';
+import PazarlamaAydinlatmaMetni from '../../Legals/PazarlamaAydinlatmaMetni.js';
+import CarrefoursaIletisimIzni from '../../Legals/CarrefoursaIletisimIzni.js';
+import CarrefoursaKartUyelikSozlesmesi from '../../Legals/CarrefoursaKartUyelikSozlesmesi.js';
+import CarrefoursaKartUyelikKVKKAydinlatmaMetni from '../../Legals/CarrefoursaKartUyelikKVKKAydinlatmaMetni.js';
 
 const ProfileLegal = ({navigation}) => { 
 
@@ -50,6 +55,13 @@ const ProfileLegal = ({navigation}) => {
   const carrefourModalizeRef = useRef(null);
   const membershipModalizeRef = useRef(null);
 
+  const userAgreementModalizeRef = useRef(null);
+  const userInfoModalizeRef = useRef(null);
+  const marketingInfoModalizeRef = useRef(null);
+  const marketingAgreementModalizeRef = useRef(null);
+  const carrefourUserAgreementModalizeRef = useRef(null);
+  const carrefourUserInfoModalizeRef = useRef(null);
+
   const handleExit = () => {
     console.log('handleExit');
 
@@ -60,9 +72,9 @@ const ProfileLegal = ({navigation}) => {
 
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>  
-      <Modalize ref={rulesModalizeRef}
+      <Modalize ref={userAgreementModalizeRef}
       snapPoint={0}
-      modalStyle={{backgroundColor:(0,0,0,0)}}>
+      modalStyle={{}}>
         <View
               style={{
                 flex: 1,                
@@ -95,7 +107,7 @@ const ProfileLegal = ({navigation}) => {
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          Aydınlatma Metni
+                          CarrefourSA PAYFOUR ÜYELİK VE KULLANICI SÖZLEŞMESİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -104,7 +116,7 @@ const ProfileLegal = ({navigation}) => {
                       }}
                       onPress={() => {
                         console.log('close');
-                        rulesModalizeRef.current?.close();}}>                  
+                        userAgreementModalizeRef.current?.close();}}>                  
                         <Image 
                         source={require('../../../assets/img/export/close.png')}
                         style={{
@@ -116,56 +128,11 @@ const ProfileLegal = ({navigation}) => {
                       />
                     </TouchableOpacity>
                        </View> 
-                      <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                       
-               
-                      </View>
-                  </View>
+                      
+                      
+                     <PayfourUyelikVeKullaniciSozlesmesi /> 
+                  </View> 
+                  
                   
               <View style={{
                   backgroundColor:'#fff',
@@ -187,7 +154,6 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                   style={[
                     styles.buttonStyle,
                     {
-                      width: '100%',
                       height: 52,
                       display: 'flex',
                       alignItems: 'center',
@@ -199,7 +165,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       elevation:1,
                     },
                   ]}
-                  onPress={() => rulesModalizeRef.current?.close()}>
+                  onPress={() => userAgreementModalizeRef.current?.close()}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
                     Kapat
@@ -208,21 +174,126 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                </View>
                
             </View>
-      </Modalize>   
-      <Modalize ref={electronicModalizeRef}
+          </Modalize>
+          <Modalize ref={marketingInfoModalizeRef}
       snapPoint={0}
-      modalStyle={{backgroundColor:(0,0,0,0)}}>
-      <View
+      modalStyle={{}}>
+        <View
               style={{
                 flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CarrefourSA PAZARLAMA AYDINLATMA METNİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        marketingInfoModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <PazarlamaAydinlatmaMetni /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:16,
+                  paddingRight:16,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => marketingInfoModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+          <Modalize ref={marketingAgreementModalizeRef}
+      snapPoint={0}
+      modalStyle={{
+        flex: 1,  
+        flexDirection:'column',           
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',}}>
+        <View
+              style={{
+                flex: 1,     
+                flexDirection:'column',           
                 justifyContent: 'flex-end',
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(0, 0, 0, 0.6)',
                 width:Dimensions.get('window').width,
-                height:Dimensions.get('window').height,
-              
               }}>
-             
               <View
                 style={{
                   backgroundColor:'#fff',
@@ -231,7 +302,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                   paddingTop: 33,
                   paddingLeft: 16,
                   paddingRight: 16,
-                  width:'100%'
+                  width:'100%',
                   
                 }}>
                   
@@ -247,7 +318,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          Ticari Elektronik İleti
+                          CarrefourSA İLETİŞİM İZNİ METNİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -255,10 +326,8 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                         height:24,
                       }}
                       onPress={() => {
-                        console.log('close'); 
-                        electronicModalizeRef.current?.close();
-                        //setElectronicModalVisible(false);
-                        }}>                  
+                        console.log('close');
+                        marketingAgreementModalizeRef.current?.close();}}>                  
                         <Image 
                         source={require('../../../assets/img/export/close.png')}
                         style={{
@@ -270,27 +339,12 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       />
                     </TouchableOpacity>
                        </View> 
-                      <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                       
-               
-                      </View>
-                  </View>
-
+                      
+                      
+                     <CarrefoursaIletisimIzni /> 
+                  </View> 
+                  
+                  
               <View style={{
                   backgroundColor:'#fff',
                   paddingTop:24,
@@ -311,7 +365,6 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                   style={[
                     styles.buttonStyle,
                     {
-                      width: '100%',
                       height: 52,
                       display: 'flex',
                       alignItems: 'center',
@@ -323,29 +376,27 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       elevation:1,
                     },
                   ]}
-                  onPress={() => electronicModalizeRef.current?.close()}>
+                  onPress={() => marketingAgreementModalizeRef.current?.close()}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
-                    Okudum, Onaylıyorum
+                    Kapat
                   </Text>
                 </TouchableOpacity>
                </View>
                
             </View>
-      </Modalize>
-      <Modalize ref={carrefourModalizeRef}
+          </Modalize>
+          <Modalize ref={carrefourUserAgreementModalizeRef}
       snapPoint={0}
-      modalStyle={{backgroundColor:(0,0,0,0)}}>
-<View
+      modalStyle={{}}>
+        <View
               style={{
                 flex: 1,                
                 justifyContent: 'flex-end',
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                width:Dimensions.get('window').width,
-                height:Dimensions.get('window').height
+                width:Dimensions.get('window').width
               }}>
-              
               <View
                 style={{
                   backgroundColor:'#fff',
@@ -354,7 +405,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                   paddingTop: 33,
                   paddingLeft: 16,
                   paddingRight: 16,
-                  width:'100%'
+                  width:'100%',
                   
                 }}>
                   
@@ -370,7 +421,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          Açık Rıza Formu
+                          CarrefourSA KART ÜYELİK SÖZLEŞMESİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -379,7 +430,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       }}
                       onPress={() => {
                         console.log('close');
-                        carrefourModalizeRef.current?.close()}}>                  
+                        carrefourUserAgreementModalizeRef.current?.close();}}>                  
                         <Image 
                         source={require('../../../assets/img/export/close.png')}
                         style={{
@@ -391,27 +442,12 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       />
                     </TouchableOpacity>
                        </View> 
-                      <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                       
-               
-                      </View>
-                  </View>
-                 
+                      
+                      
+                     <CarrefoursaKartUyelikSozlesmesi /> 
+                  </View> 
+                  
+                  
               <View style={{
                   backgroundColor:'#fff',
                   paddingTop:24,
@@ -432,7 +468,6 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                   style={[
                     styles.buttonStyle,
                     {
-                      width: '100%',
                       height: 52,
                       display: 'flex',
                       alignItems: 'center',
@@ -444,7 +479,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       elevation:1,
                     },
                   ]}
-                  onPress={() => carrefourModalizeRef.current?.close()}>
+                  onPress={() => carrefourUserAgreementModalizeRef.current?.close()}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
                     Kapat
@@ -453,20 +488,18 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                </View>
                
             </View>
-      </Modalize>
-      <Modalize ref={membershipModalizeRef}
+          </Modalize>
+          <Modalize ref={carrefourUserInfoModalizeRef}
       snapPoint={0}
-      modalStyle={{backgroundColor:(0,0,0,0)}}>
-<View
+      modalStyle={{}}>
+        <View
               style={{
                 flex: 1,                
                 justifyContent: 'flex-end',
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                width:Dimensions.get('window').width,
-                height:Dimensions.get('window').height
+                width:Dimensions.get('window').width
               }}>
-             
               <View
                 style={{
                   backgroundColor:'#fff',
@@ -475,7 +508,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                   paddingTop: 33,
                   paddingLeft: 16,
                   paddingRight: 16,
-                  width:'100%'
+                  width:'100%',
                   
                 }}>
                   
@@ -491,7 +524,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          CarrefourSa Aydınlatma Metni
+                          CarrefourSA KART ÜYELİĞİ KİŞİSEL VERİLERİN KORUNMASI AYDINLATMA METNİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -500,7 +533,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       }}
                       onPress={() => {
                         console.log('close');
-                        membershipModalizeRef.current?.close();}}>                  
+                        carrefourUserInfoModalizeRef.current?.close();}}>                  
                         <Image 
                         source={require('../../../assets/img/export/close.png')}
                         style={{
@@ -512,27 +545,12 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       />
                     </TouchableOpacity>
                        </View> 
-                      <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                       
-               
-                      </View>
-                  </View>
-
+                      
+                      
+                     <CarrefoursaKartUyelikKVKKAydinlatmaMetni /> 
+                  </View> 
+                  
+                  
               <View style={{
                   backgroundColor:'#fff',
                   paddingTop:24,
@@ -553,7 +571,6 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                   style={[
                     styles.buttonStyle,
                     {
-                      width: '100%',
                       height: 52,
                       display: 'flex',
                       alignItems: 'center',
@@ -565,7 +582,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       elevation:1,
                     },
                   ]}
-                  onPress={() => membershipModalizeRef.current?.close()}>
+                  onPress={() => carrefourUserInfoModalizeRef.current?.close()}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
                     Kapat
@@ -574,667 +591,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                </View>
                
             </View>
-      </Modalize>
-      {/* <Modal
-            animationType="slide"
-            transparent={true}
-            visible={rulesModalVisible}
-            onRequestClose={() => {
-              setRulesModalVisible(!rulesModalVisible);
-            }}>
-            <View
-              style={{
-                flex: 1,                
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                width:Dimensions.get('window').width
-              }}>
-              <ScrollView contentContainerStyle={{
-                flex: 1,  
-                flexDirection:'column',              
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                width:Dimensions.get('window').width
-                
-              }}>
-              <View
-                style={{
-                  backgroundColor:'#fff',
-                  borderTopLeftRadius: 24,
-                  borderTopRightRadius: 24,
-                  paddingTop: 33,
-                  paddingLeft: 16,
-                  paddingRight: 16,
-                  width:'100%'
-                  
-                }}>
-                  
-                  <View style={{
-                      flexDirection:'row',
-                      justifyContent:'space-between',
-                      }}>
-                        <Text style={{
-                          fontSize:14,
-                          fontWeight:'700',
-                          color:'#0B1929',
-                          lineHeight:20,
-                          textAlign:'left',
-                          marginBottom:24,
-                        }}>
-                          Aydınlatma Metni
-                        </Text>
-                        <TouchableOpacity 
-                      style={{
-                        width:24,
-                        height:24,
-                      }}
-                      onPress={() => {
-                        console.log('close');
-                        setRulesModalVisible(false);}}>                  
-                        <Image 
-                        source={require('../../../assets/img/export/close.png')}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: 'contain',
-                          tintColor:'#0B1929'
-                        }}
-                      />
-                    </TouchableOpacity>
-                       </View> 
-                      <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                       
-               
-                      </View>
-                  </View>
-                  
-               </ScrollView>
-              <View style={{
-                  backgroundColor:'#fff',
-                  paddingTop:24,
-                  paddingBottom:24,
-                  paddingLeft:16,
-                  paddingRight:16,
-                  width:'100%',
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 15,
-                  },
-                  shadowOpacity: 1,
-                  shadowRadius: 30,                  
-                  elevation: 18,
-                }}>
-                <TouchableOpacity
-                  style={[
-                    styles.buttonStyle,
-                    {
-                      width: '100%',
-                      height: 52,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 2,
-                      borderColor: '#004F97',
-                      backgroundColor: '#004F97',
-                      padding:0,
-                      elevation:1,
-                    },
-                  ]}
-                  onPress={() => setRulesModalVisible(false)}>
-                  <Text
-                    style={{fontSize: 14, color: '#ffffff'}}>
-                    Kapat
-                  </Text>
-                </TouchableOpacity>
-               </View>
-               
-            </View>
-      </Modal> */}
-      {/* <Modal
-            animationType="slide"
-            transparent={true}
-            visible={electronicModalVisible}
-            onRequestClose={() => {
-              setElectronicModalVisible(!electronicModalVisible);
-            }}>
-            <View
-              style={{
-                flex: 1,                
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                width:Dimensions.get('window').width
-              }}>
-              <ScrollView contentContainerStyle={{
-                flex: 1,  
-                flexDirection:'column',              
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                width:Dimensions.get('window').width
-                
-              }}>
-              <View
-                style={{
-                  backgroundColor:'#fff',
-                  borderTopLeftRadius: 24,
-                  borderTopRightRadius: 24,
-                  paddingTop: 33,
-                  paddingLeft: 16,
-                  paddingRight: 16,
-                  width:'100%'
-                  
-                }}>
-                  
-                  <View style={{
-                      flexDirection:'row',
-                      justifyContent:'space-between',
-                      }}>
-                        <Text style={{
-                          fontSize:14,
-                          fontWeight:'700',
-                          color:'#0B1929',
-                          lineHeight:20,
-                          textAlign:'left',
-                          marginBottom:24,
-                        }}>
-                          Ticari Elektronik İleti
-                        </Text>
-                        <TouchableOpacity 
-                      style={{
-                        width:24,
-                        height:24,
-                      }}
-                      onPress={() => {
-                        console.log('close');
-                        setElectronicModalVisible(false);}}>                  
-                        <Image 
-                        source={require('../../../assets/img/export/close.png')}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: 'contain',
-                          tintColor:'#0B1929'
-                        }}
-                      />
-                    </TouchableOpacity>
-                       </View> 
-                      <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                       
-               
-                      </View>
-                  </View>
-                  
-               </ScrollView>
-              <View style={{
-                  backgroundColor:'#fff',
-                  paddingTop:24,
-                  paddingBottom:24,
-                  paddingLeft:16,
-                  paddingRight:16,
-                  width:'100%',
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 15,
-                  },
-                  shadowOpacity: 1,
-                  shadowRadius: 30,                  
-                  elevation: 18,
-                }}>
-                <TouchableOpacity
-                  style={[
-                    styles.buttonStyle,
-                    {
-                      width: '100%',
-                      height: 52,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 2,
-                      borderColor: '#004F97',
-                      backgroundColor: '#004F97',
-                      padding:0,
-                      elevation:1,
-                    },
-                  ]}
-                  onPress={() => setElectronicModalVisible(false)}>
-                  <Text
-                    style={{fontSize: 14, color: '#ffffff'}}>
-                    Okudum, Onaylıyorum
-                  </Text>
-                </TouchableOpacity>
-               </View>
-               
-            </View>
-      </Modal> */}
-      {/* <Modal
-            animationType="slide"
-            transparent={true}
-            visible={carrefourModalVisible}
-            onRequestClose={() => {
-              setCarrefourModalVisible(!carrefourModalVisible);
-            }}>
-            <View
-              style={{
-                flex: 1,                
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                width:Dimensions.get('window').width
-              }}>
-              <ScrollView contentContainerStyle={{
-                flex: 1,  
-                flexDirection:'column',              
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                width:Dimensions.get('window').width
-                
-              }}>
-              <View
-                style={{
-                  backgroundColor:'#fff',
-                  borderTopLeftRadius: 24,
-                  borderTopRightRadius: 24,
-                  paddingTop: 33,
-                  paddingLeft: 16,
-                  paddingRight: 16,
-                  width:'100%'
-                  
-                }}>
-                  
-                  <View style={{
-                      flexDirection:'row',
-                      justifyContent:'space-between',
-                      }}>
-                        <Text style={{
-                          fontSize:14,
-                          fontWeight:'700',
-                          color:'#0B1929',
-                          lineHeight:20,
-                          textAlign:'left',
-                          marginBottom:24,
-                        }}>
-                          Açık Rıza Formu
-                        </Text>
-                        <TouchableOpacity 
-                      style={{
-                        width:24,
-                        height:24,
-                      }}
-                      onPress={() => {
-                        console.log('close');
-                        setCarrefourModalVisible(false);}}>                  
-                        <Image 
-                        source={require('../../../assets/img/export/close.png')}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: 'contain',
-                          tintColor:'#0B1929'
-                        }}
-                      />
-                    </TouchableOpacity>
-                       </View> 
-                      <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                       
-               
-                      </View>
-                  </View>
-                  
-               </ScrollView>
-              <View style={{
-                  backgroundColor:'#fff',
-                  paddingTop:24,
-                  paddingBottom:24,
-                  paddingLeft:16,
-                  paddingRight:16,
-                  width:'100%',
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 15,
-                  },
-                  shadowOpacity: 1,
-                  shadowRadius: 30,                  
-                  elevation: 18,
-                }}>
-                <TouchableOpacity
-                  style={[
-                    styles.buttonStyle,
-                    {
-                      width: '100%',
-                      height: 52,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 2,
-                      borderColor: '#004F97',
-                      backgroundColor: '#004F97',
-                      padding:0,
-                      elevation:1,
-                    },
-                  ]}
-                  onPress={() => setCarrefourModalVisible(false)}>
-                  <Text
-                    style={{fontSize: 14, color: '#ffffff'}}>
-                    Kapat
-                  </Text>
-                </TouchableOpacity>
-               </View>
-               
-            </View>
-      </Modal>  */}
-      {/* <Modal
-            animationType="slide"
-            transparent={true}
-            visible={dgpaysModalVisible}
-            onRequestClose={() => {
-              setDgpaysModalVisible(!dgpaysModalVisible);
-            }}>
-            <View
-              style={{
-                flex: 1,                
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                width:Dimensions.get('window').width
-              }}>
-              <ScrollView contentContainerStyle={{
-                flex: 1,  
-                flexDirection:'column',              
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                width:Dimensions.get('window').width
-                
-              }}>
-              <View
-                style={{
-                  backgroundColor:'#fff',
-                  borderTopLeftRadius: 24,
-                  borderTopRightRadius: 24,
-                  paddingTop: 33,
-                  paddingLeft: 16,
-                  paddingRight: 16,
-                  width:'100%'
-                  
-                }}>
-                  
-                  <View style={{
-                      flexDirection:'row',
-                      justifyContent:'space-between',
-                      }}>
-                        <Text style={{
-                          fontSize:14,
-                          fontWeight:'700',
-                          color:'#0B1929',
-                          lineHeight:20,
-                          textAlign:'left',
-                          marginBottom:24,
-                        }}>
-                          Çerceve Ödeme Hizmetleri
-                        </Text>
-                        <TouchableOpacity 
-                      style={{
-                        width:24,
-                        height:24,
-                      }}
-                      onPress={() => {
-                        console.log('close');
-                        setDgpaysModalVisible(false);}}>                  
-                        <Image 
-                        source={require('../../../assets/img/export/close.png')}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: 'contain',
-                          tintColor:'#0B1929'
-                        }}
-                      />
-                    </TouchableOpacity>
-                       </View> 
-                      <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                       
-               
-                      </View>
-                  </View>
-                  
-               </ScrollView>
-              <View style={{
-                  backgroundColor:'#fff',
-                  paddingTop:24,
-                  paddingBottom:24,
-                  paddingLeft:16,
-                  paddingRight:16,
-                  width:'100%',
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 15,
-                  },
-                  shadowOpacity: 1,
-                  shadowRadius: 30,                  
-                  elevation: 18,
-                }}>
-                <TouchableOpacity
-                  style={[
-                    styles.buttonStyle,
-                    {
-                      width: '100%',
-                      height: 52,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 2,
-                      borderColor: '#004F97',
-                      backgroundColor: '#004F97',
-                      padding:0,
-                      elevation:1,
-                    },
-                  ]}
-                  onPress={() => setDgpaysModalVisible(false)}>
-                  <Text
-                    style={{fontSize: 14, color: '#ffffff'}}>
-                    Kapat
-                  </Text>
-                </TouchableOpacity>
-               </View>
-               
-            </View>
-      </Modal> */}
-      {/* <Modal
-            animationType="slide"
-            transparent={true}
-            visible={membershipModalVisible}
-            onRequestClose={() => {
-              setMembershipModalVisible(!membershipModalVisible);
-            }}>
-            <View
-              style={{
-                flex: 1,                
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                width:Dimensions.get('window').width
-              }}>
-              <ScrollView contentContainerStyle={{
-                flex: 1,  
-                flexDirection:'column',              
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                width:Dimensions.get('window').width
-                
-              }}>
-              <View
-                style={{
-                  backgroundColor:'#fff',
-                  borderTopLeftRadius: 24,
-                  borderTopRightRadius: 24,
-                  paddingTop: 33,
-                  paddingLeft: 16,
-                  paddingRight: 16,
-                  width:'100%'
-                  
-                }}>
-                  
-                  <View style={{
-                      flexDirection:'row',
-                      justifyContent:'space-between',
-                      }}>
-                        <Text style={{
-                          fontSize:14,
-                          fontWeight:'700',
-                          color:'#0B1929',
-                          lineHeight:20,
-                          textAlign:'left',
-                          marginBottom:24,
-                        }}>
-                          CarrefourSa Aydınlatma Metni
-                        </Text>
-                        <TouchableOpacity 
-                      style={{
-                        width:24,
-                        height:24,
-                      }}
-                      onPress={() => {
-                        console.log('close');
-                        setMembershipModalVisible(false);}}>                  
-                        <Image 
-                        source={require('../../../assets/img/export/close.png')}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: 'contain',
-                          tintColor:'#0B1929'
-                        }}
-                      />
-                    </TouchableOpacity>
-                       </View> 
-                      <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          color:'#909EAA',
-                          marginBottom:8,
-                        }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
-
-Enim ut tellus elementum sagittis vitae. 
-In massa tempor nec feugiat nisl pretium fusce id velit. 
-Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
-Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
-Fermentum posuere urna nec tincidunt praesent semper feugiat.
-
-Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
-                        </Text>
-                       
-               
-                      </View>
-                  </View>
-                  
-               </ScrollView>
-              <View style={{
-                  backgroundColor:'#fff',
-                  paddingTop:24,
-                  paddingBottom:24,
-                  paddingLeft:16,
-                  paddingRight:16,
-                  width:'100%',
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 15,
-                  },
-                  shadowOpacity: 1,
-                  shadowRadius: 30,                  
-                  elevation: 18,
-                }}>
-                <TouchableOpacity
-                  style={[
-                    styles.buttonStyle,
-                    {
-                      width: '100%',
-                      height: 52,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 2,
-                      borderColor: '#004F97',
-                      backgroundColor: '#004F97',
-                      padding:0,
-                      elevation:1,
-                    },
-                  ]}
-                  onPress={() => setMembershipModalVisible(false)}>
-                  <Text
-                    style={{fontSize: 14, color: '#ffffff'}}>
-                    Kapat
-                  </Text>
-                </TouchableOpacity>
-               </View>
-               
-            </View>
-      </Modal>       */}
+          </Modalize>
     <Loader loading={loading} />
     <SubtabHeader routetarget="ProfileHome" name="Sözleşmelerim" count="0" />
     <ScrollView
@@ -1271,7 +628,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   }}
                   onPress={() => {
                     //setRulesModalVisible(!rulesModalVisible);
-                    rulesModalizeRef.current?.open();
+                    userAgreementModalizeRef.current?.open();
                      }}>
                       <View style={{flexDirection:'row', alignItems:'center'}}>                        
                         <View>
@@ -1283,7 +640,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             textAlign:'left',
                             width:200
                           }}>
-                            Aydınlatma Metni
+                            Payfour Üyelik ve Kullanıcı Sözleşmesi
                           </Text>
                         </View>
                       </View>
@@ -1309,7 +666,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   }}
                   onPress={() => {
                     //setElectronicModalVisible(!electronicModalVisible) 
-                    electronicModalizeRef.current?.open();
+                    marketingInfoModalizeRef.current?.open();
                     }}>
                       <View style={{flexDirection:'row', alignItems:'center'}}>                        
                         <View>
@@ -1321,7 +678,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             textAlign:'left',
                             width:300
                           }}>
-                            Ticari Elektronik İleti
+                            Payfour Üyelik Aydınlatma Metni
                           </Text>
                         </View>
                       </View>
@@ -1347,7 +704,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   }}
                   onPress={() => {
                     //setCarrefourModalVisible(!carrefourModalVisible) 
-                    carrefourModalizeRef.current?.open()}}>
+                    marketingInfoModalizeRef.current?.open()}}>
                       <View style={{flexDirection:'row', alignItems:'center'}}>
                         
                         <View>
@@ -1359,7 +716,83 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             textAlign:'left',
                             width:300
                           }}>
-                            Açık Rıza Formu
+                            Pazarlama Aydınlatma Metni
+                          </Text>
+                        </View>
+                      </View>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_right_dark.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#004F97'
+                        }}
+                      />  
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{
+                    minHeight:52,
+                    
+                    flexDirection:'row',
+                    alignItems:'center',
+                    justifyContent:'space-between',
+                    marginBottom:8,
+                    borderBottomWidth:1,
+                    borderBottomColor:'#F2F4F6',
+                  }}
+                  onPress={() => {
+                    //setDgpaysModalVisible(!dgpaysModalVisible);
+                    marketingAgreementModalizeRef.current?.open() 
+                    }}>
+                      <View style={{flexDirection:'row', alignItems:'center'}}>                       
+                        <View>
+                          <Text style={{
+                            fontSize:14,
+                            fontWeight:'700',
+                            lineHeight:20,
+                            color:'#0B1929',
+                            textAlign:'left',
+                            width:300
+                          }}>
+                            İletişim İzni
+                          </Text>
+                        </View>
+                      </View>
+                      <Image
+                        source={require('../../../assets/img/export/arrow_right_dark.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#004F97'
+                        }}
+                      />  
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{
+                    minHeight:52,
+                    
+                    flexDirection:'row',
+                    alignItems:'center',
+                    justifyContent:'space-between',
+                    marginBottom:8,
+                    borderBottomWidth:1,
+                    borderBottomColor:'#F2F4F6',
+                  }}
+                  onPress={() => {
+                    //setDgpaysModalVisible(!dgpaysModalVisible);
+                    carrefourUserAgreementModalizeRef.current?.open() 
+                    }}>
+                      <View style={{flexDirection:'row', alignItems:'center'}}>                       
+                        <View>
+                          <Text style={{
+                            fontSize:14,
+                            fontWeight:'700',
+                            lineHeight:20,
+                            color:'#0B1929',
+                            textAlign:'left',
+                            width:300
+                          }}>
+                            CarrefourSA Kart Üyelik Sözleşmesi
                           </Text>
                         </View>
                       </View>
@@ -1383,7 +816,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   }}
                   onPress={() => {
                     //setDgpaysModalVisible(!dgpaysModalVisible);
-                    membershipModalizeRef.current?.open() 
+                    carrefourUserInfoModalizeRef.current?.open() 
                     }}>
                       <View style={{flexDirection:'row', alignItems:'center'}}>                       
                         <View>
@@ -1395,7 +828,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             textAlign:'left',
                             width:300
                           }}>
-                            Çerceve Ödeme Hizmetleri
+                            CarrefourSA Kart Üyelik Aydınlatma Metni
                           </Text>
                         </View>
                       </View>
@@ -1409,39 +842,6 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         }}
                       />  
                   </TouchableOpacity>
-                  {/* <TouchableOpacity style={{
-                    height:52,
-                    
-                    flexDirection:'row',
-                    alignItems:'center',
-                    justifyContent:'space-between',
-                    marginBottom:8,
-                  }}
-                  onPress={() => {setMembershipModalVisible(!membershipModalVisible) }}>
-                      <View style={{flexDirection:'row', alignItems:'center'}}>                        
-                        <View>
-                          <Text style={{
-                            fontSize:14,
-                            fontWeight:'700',
-                            lineHeight:20,
-                            color:'#0B1929',
-                            textAlign:'left',
-                            width:300
-                          }}>
-                            CarrefourSa Aydınlatma Metni
-                          </Text>
-                        </View>
-                      </View>
-                      <Image
-                        source={require('../../../assets/img/export/arrow_right_dark.png')}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: 'contain',
-                          tintColor:'#004F97'
-                        }}
-                      />  
-                  </TouchableOpacity> */}
                               
               </View>
               </View>

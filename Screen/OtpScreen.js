@@ -28,7 +28,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import TabHeader from './Components/TabHeader';
 import { OtpInput } from "react-native-otp-entry";
 import axios from 'react-native-axios';
-
+import Clipboard from '@react-native-clipboard/clipboard';
 import OTPTextView from 'react-native-otp-textinput';
 
 const OtpScreen = ({navigation, route}) => {
@@ -127,7 +127,7 @@ const OtpScreen = ({navigation, route}) => {
     };
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -156,7 +156,7 @@ const OtpScreen = ({navigation, route}) => {
     };
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -173,7 +173,7 @@ const OtpScreen = ({navigation, route}) => {
   const handleSubmitOtp = () => {
     console.log("otp submit");
     setTimerCount(0);
-    
+    setLoading(true);
     AsyncStorage.getItem('uniqueMPANumber').then(value =>{
       //otpInputRef.current.clear();
       let dataToSend = {"uniqueMPANumber":value};
@@ -197,11 +197,11 @@ const OtpScreen = ({navigation, route}) => {
     console.log("datatosend");
     console.log(dataToSend);
     let func = route.params.forgot ? 'verifycustomotp' : 'verifyotp';
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/'+func, dataToSend)
+    axios.post('http://payfourapp.test.kodegon.com/api/auth/'+func, dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data); 
-        //otpInputRef.current.clear();
+        otpInputRef2.current.clear();
         setOtp('');       
       if(response.data.error){
         Alert.alert(response.data.error.message);
@@ -229,6 +229,7 @@ const OtpScreen = ({navigation, route}) => {
     })
     .catch(error => {
       console.error("Error sending data: ", error);
+      otpInputRef.current.clear();
       Alert.alert('Girilen kod hatalı. Lütfen kontrol edin.');
       console.log(otpInputRef)
     });     
@@ -245,12 +246,15 @@ const OtpScreen = ({navigation, route}) => {
   const showTextAlert = () => otpInput && Alert.alert(otpInput);
 
   const handleCellTextChange = async (text, i) => {
-    /*if (i === 0) {
+    console.log("handleCellTextChange")
+    console.log(text, i);
+    if (i === 0) {
       const clippedText = await Clipboard.getString();
+      console.log(clippedText);
       if (clippedText.slice(0, 1) === text) {
         input.current?.setValue(clippedText, true);
       }
-    }*/
+    }
   };
 
   return (
@@ -371,12 +375,12 @@ const OtpScreen = ({navigation, route}) => {
         <ScrollView
             keyboardShouldPersistTaps="handled"
             style={{flexGrow:1}}>
-          <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
+          <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height-100 }}>
             <View
               style={{
                 flex: 1,
                 paddingTop: 68,
-                paddingBottom: 60,
+                paddingBottom: 30,
                 flexDirection:'column',
                 justifyContent:'space-between',
                 
@@ -415,7 +419,7 @@ const OtpScreen = ({navigation, route}) => {
                   6 haneli kodu giriniz.
                   </Text>
                 </View>
-                <View style={[styles.centerStyle, {paddingLeft:34, paddingRight:34}]}>
+                <View style={[styles.centerStyle, {paddingLeft:18, paddingRight:18}]}>
                   <View style={{paddingTop:12, paddingBottom:12}}>
                     {/* <OtpInput
                     ref={otpInputRef}
@@ -464,7 +468,8 @@ const OtpScreen = ({navigation, route}) => {
                     }}
                     handleCellTextChange={handleCellTextChange}
                     inputCount={6}
-                    keyboardType="numeric"
+                    keyboardType="number-pad"
+                    textcontentType="oneTimeCode"
                   />
                   
                   <View style={{marginTop:12}}>
@@ -615,8 +620,6 @@ const otpstyles = StyleSheet.create({
     paddingTop:5,
     paddingBottom:5,
     height:70,
-    width:Dimensions.get('window').width > 395? '16.5%' : '15%',
-    marginRight:Dimensions.get('window').width > 395? 5 : 4,
     backgroundColor:'#fff',
   },
   buttonWrapper: {

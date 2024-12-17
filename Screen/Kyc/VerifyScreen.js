@@ -14,8 +14,7 @@ import {
   Image,
   Platform
 } from 'react-native';
-import SubtabHeader from '../Components/SubtabHeader.js';
-import {FontFamilies} from '../../constants/fonts.js';
+import { FontFamilies } from '../../constants/fonts.js';
 import { useIsFocused } from '@react-navigation/native';
 import KvcLayout from './KvcLayout.js';
 
@@ -25,13 +24,6 @@ const VerifyScreen = ({ navigation, route }) => {
   const [allData, setAllData] = useState();
 
   const openEnQualifyActivity = async () => {
-
-    // NativeModules.EnQualifyModuleIOS.showSwiftUIView()
-    // return
-
-    NativeModules.EnQualifyModuleIOS.startKycIos()
-
-
     if (!allData) {
       return
     }
@@ -41,7 +33,6 @@ const VerifyScreen = ({ navigation, route }) => {
     } else {
       NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
     }
-    
   }
 
   const getData = async () => {
@@ -50,24 +41,24 @@ const VerifyScreen = ({ navigation, route }) => {
     let data = {}
     if (params) {
       if (params.user) {
-        data = { ...data, ...params.user}
+        data = { ...data, ...params.user }
       }
       if (params.incometypesSelected) {
-        data = { ...data, ...{ incometypesSelected : params.incometypesSelected}}
+        data = { ...data, ...{ incometypesSelected: params.incometypesSelected } }
       }
       if (params.data) {
-        data = { ...data, ...params.data}
+        data = { ...data, ...params.data }
       }
       if (params.referenceId) {
-        data = { ...data, ...{ referenceId: params.referenceId}}
+        data = { ...data, ...{ referenceId: params.referenceId } }
       }
       if (params.selectedaAreements) {
-        data = { ...data,...{ selectedaAreements : params.selectedaAreements}}
+        data = { ...data, ...{ selectedaAreements: params.selectedaAreements } }
       }
       if (token) {
-        data = { ...data, ...{ token: token}}
+        data = { ...data, ...{ token: token } }
       }
-      console.log(data)
+      // console.log(data)
       setAllData(data)
     }
   }
@@ -76,11 +67,11 @@ const VerifyScreen = ({ navigation, route }) => {
     navigation.goBack()
   }
 
-  useEffect(()=>{
-  if (isFocused) {
-    getData()
-  }
-  },[isFocused])
+  useEffect(() => {
+    if (isFocused) {
+      getData()
+    }
+  }, [isFocused])
 
   return (
     <KvcLayout disableScroll title={"Kullanıcı Onayı"}>
@@ -94,23 +85,28 @@ const VerifyScreen = ({ navigation, route }) => {
             <Text style={styles.title}>Onayın Gerekiyor</Text>
             <Text style={styles.text}>Kimlik tespiti sürecinde, uzaktan kimlik tespitinin yapılması amacıyla biyometrik verilerinin Dgpara Ödeme ve Elektronik Para Kuruluşu Anonim Şirketi (“Dgpara”) ve Dgpara’nın yalnızca bu amaçla sınırlı olarak yetkilendirdiği üçüncü kişiler tarafından işlenmesine onay veriyorum.</Text>
           </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              onPress={goBack}
-              style={[styles.buttonStyle, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#004F97' }]}
-              activeOpacity={0.5}
-            >
-              <Text style={[styles.buttonTextStyle, { color: '#004F97' }]}>Vazgeç</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={()=> openEnQualifyActivity()}
-              style={[styles.buttonStyle, {}]}
-              activeOpacity={0.5}
-            >
-              <Text style={styles.buttonTextStyle}>Onayla</Text>
-            </TouchableOpacity>
+          <View style={styles.bottom}>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                onPress={goBack}
+                style={[styles.buttonStyle, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#004F97' }]}
+                activeOpacity={0.5}
+              >
+                <Text style={[styles.buttonTextStyle, { color: '#004F97' }]}>Vazgeç</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => openEnQualifyActivity()}
+                style={[styles.buttonStyle, {}]}
+                activeOpacity={0.5}
+              >
+                <Text style={styles.buttonTextStyle}>Onayla</Text>
+              </TouchableOpacity>
+            </View>
+            <Image
+              source={require('../../assets/img/dgfin_legal.png')}
+              style={styles.dgfin}
+            />
           </View>
-
         </View>
       </View>
     </KvcLayout>
@@ -134,30 +130,30 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 24,
     flex: 1,
-    justifyContent:"space-between"
+    justifyContent: "space-between"
   },
-  content:{
-    paddingTop:64,
-    alignItems:"center"
+  content: {
+    paddingTop: 64,
+    alignItems: "center"
   },
-  image:{
-    width:120,
-    height:120
+  image: {
+    width: 120,
+    height: 120
   },
-  title:{
+  title: {
     color: '#004F97',
     fontFamily: FontFamilies.UBUNTU.medium,
     fontWeight: '500',
     fontSize: 16,
-    marginTop:24,
-    marginBottom:8
+    marginTop: 24,
+    marginBottom: 8
   },
-  text:{
+  text: {
     color: "#909EAA",
     fontFamily: FontFamilies.UBUNTU.normal,
     fontWeight: '400',
     fontSize: 12,
-    textAlign:"center"
+    textAlign: "center"
   },
   buttonContainer: {
     flexDirection: "row",
@@ -170,7 +166,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     height: 52,
     alignItems: 'center',
-    justifyContent:"center",
+    justifyContent: 'center',
     borderRadius: 10,
 
   },
@@ -181,8 +177,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 14,
   },
-  dgfin:{
-    width:"100%",
-    height:77
+  bottom: {
+    gap: 12
+  },
+  dgfin: {
+    width: "100%",
+    height: 77
   }
 });

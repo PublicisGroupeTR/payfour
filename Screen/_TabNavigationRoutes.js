@@ -358,17 +358,6 @@ const TabNavigatorRoutes = props => {
       <Tab.Screen
         name="wallet"
         component={WalletScreen}
-        listeners={({ navigation, route }) => ({
-          tabPress: (e) => {
-            // Prevent default action
-            e.preventDefault();
-              // Do something with the `navigation` object
-            //navigation.navigate('discover');
-            navigation.navigate('wallet', { 
-              screen: 'Balance'
-            })
-          },
-        })}
         options={{
           headerShown: false,
           tabBarIcon:({focused}) =>{
@@ -405,7 +394,7 @@ const TabNavigatorRoutes = props => {
           tabPress: e => {
             // Prevent default action
             e.preventDefault();
-            Linking.openURL('https://www.carrefoursa.com/')
+            Linking.openURL('https://www.CarrefourSA.com/')
           },
         }}
         options={{

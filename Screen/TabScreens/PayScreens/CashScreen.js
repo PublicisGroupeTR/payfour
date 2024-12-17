@@ -111,8 +111,9 @@ style={{}}
                           marginBottom:16,
                           textAlign:'center',
                         }}>
-                          Payfour ile online ya da 
-                          kasada ödeme yapabilirsiniz!
+                          Payfour ile hem online 
+                          hem de kasada
+                          ödeme yapabilirsiniz!
                         </Text>
                         <Text style={{
                           fontSize:16,
@@ -123,7 +124,7 @@ style={{}}
                           textAlign:'center',
                           marginBottom:26,
                         }}>
-                          Mağazalarımızdan veya CarrefourSa'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
+                          Mağazalarımızdan veya CarrefourSA'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
                       </Text>
                       <View style={{
                         padding:16,
@@ -137,7 +138,7 @@ style={{}}
                           fontSize:16,
                           color:'#0B1929',
                         }}>
-                          Payfour ID:
+                          Payfour No:
                         </Text>
                         <Text style={{
                           fontSize:16,

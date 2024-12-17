@@ -48,11 +48,11 @@ const CheckWaitingScreen = ({navigation}) => {
             headers: { Authorization: `Bearer ${value}` }
           };
           console.log("getwaitings");
-          axios.get('https://payfourapp.test.kodegon.com/api/payments/getwaitings', config).then(response => {
+          axios.get('http://payfourapp.test.kodegon.com/api/payments/getwaitings', config).then(response => {
             console.log("getwaitings");
             console.log(response.data);
             console.log(response.data.data.length);
-            setLoading(false);
+            setTimeout(function(){setLoading(false);}, 2000);
             if(response.data.data.length > 0){
               let pObj = response.data.data[0];
               console.log(pObj);
@@ -61,11 +61,11 @@ const CheckWaitingScreen = ({navigation}) => {
                 params: pObj
               })
             }else{
-              navigation.navigate('PayOptionsScreen');
+              navigation.navigate('PayOptionsScreen2');
             }
           })
           .catch(error => {
-            setLoading(false);
+            setTimeout(function(){setLoading(false);}, 2000);
             console.error("Error sending data: ", error);
             let msg="";
             (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);

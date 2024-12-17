@@ -13,6 +13,7 @@ const KycTextInput = ({
   isValid = true,
   title
 }) => {
+
   return (
     <View style={style.wrapper}>
         { title && 
@@ -20,7 +21,6 @@ const KycTextInput = ({
                 {title}
             </Text>
         }
-
         <TextInput
           style={[title ? style.inputStyleTitle : style.inputStyle, isValid === false && style.borderError, {
             ...propsStyle,
@@ -48,11 +48,10 @@ const style = StyleSheet.create({
     },
     title:{
         fontSize: 12,
-        lineHeight: 12,
         padding: 0,
         position: "absolute",
         color: '#909EAA',
-        top: 12,
+        top: 10,
         left: 16,
         zIndex:1
     },

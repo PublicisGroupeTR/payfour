@@ -50,7 +50,7 @@ const IbanScreen = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           setIban(response.data.data.defaultBankAccountNumber);         

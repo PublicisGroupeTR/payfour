@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, Image, TouchableOpacity, Text, Dimensions, StyleSheet } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Image, Pressable, TouchableOpacity, Text, Dimensions, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
 import { styles } from '../Components/Styles.js';
+import KvcLayout from './KvcLayout.js';
+
 import KycTextInput from './components/input.js';
 import KycHeader from './components/header.js';
 import { apiRequest, validateFormData } from './helper/index.js';
 import { FontFamilies } from '../../constants/fonts.js';
 import { Dropdown } from 'react-native-element-dropdown';
 import KycCheckbox from './components/checkbox.js';
-import KvcLayout from './KvcLayout.js';
 
 const IdentityDetailForm = ({ route, navigation }) => {
   const user = route.params.user
@@ -91,13 +92,13 @@ const IdentityDetailForm = ({ route, navigation }) => {
     }
 
     const data = {
-      userBirthplace:formData.userBirthplace.value,
-      monthlyAverage:formData.monthlyAverage.value,
-      transactionVolume:formData.transactionVolume.value,
-      transactionsNumbers:formData.transactionsNumbers.value,
-      occupation:formData.occupation.value,
-      occupationrole:formData.occupationrole.value,
-      educationlevel:formData.educationlevel.value,
+      userBirthplace: formData.userBirthplace.value,
+      monthlyAverage: formData.monthlyAverage.value,
+      transactionVolume: formData.transactionVolume.value,
+      transactionsNumbers: formData.transactionsNumbers.value,
+      occupation: formData.occupation.value,
+      occupationrole: formData.occupationrole.value,
+      educationlevel: formData.educationlevel.value,
     }
 
     setLoading(true)
@@ -159,136 +160,136 @@ const IdentityDetailForm = ({ route, navigation }) => {
   }, [])
 
 
-  // <SubtabHeader isKycPage name="Kimlik Bilgilerim" count="0" />
   return (
-   <KvcLayout title="Kimlik Bilgilerim" loading={loading}>
-     <View style={istyles.container}>
-            <KycHeader number="3" title="Bilgilerini Tamamla"></KycHeader>
-            <View style={istyles.form}>
-              <KycTextInput
-                value={formData.userBirthplace.value}
-                isValid={formData.userBirthplace.isValid}
-                onChange={(value) => handleChange("userBirthplace", value)}
-                placeholder="Doğum Yeri"
-              />
+    <KvcLayout title="Kimlik Bilgilerim" loading={loading}>
+      <View style={istyles.container}>
+        <KycHeader number="3" title="Bilgilerini Tamamla"></KycHeader>
+        <View style={istyles.form}>
 
-              {occupations && <Dropdown
-                style={[istyles.inputStyle, formData.occupation.isValid === false  && istyles.borderError, { height: 66 }]}
-                placeholderStyle={{
-                  fontSize: 14,
-                  color: '#909EAA',
-                }}
-                selectedTextStyle={{
-                  fontSize: 14,
-                  color: '#1D1D25',
-                }}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={occupations}
-                maxHeight={300}
-                labelField="name"
-                valueField="id"
-                placeholder={'Meslek'}
-                value={formData.occupation.value}
-                onChange={(item) => handleChange("occupation", item.id)}
-                renderItem={renderDropdownItem}
-              />}
-              {educationlevels && <Dropdown
-                style={[istyles.inputStyle, formData.educationlevel.isValid === false  && istyles.borderError, { height: 66 }]}
-                placeholderStyle={{
-                  fontSize: 14,
-                  color: '#909EAA',
-                }}
-                selectedTextStyle={{
-                  fontSize: 14,
-                  color: '#1D1D25',
-                }}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={educationlevels}
-                maxHeight={300}
-                labelField="name"
-                valueField="id"
-                placeholder={'Eğitim Durumu'}
-                value={formData.educationlevel.value}
-                onChange={(item) => handleChange("educationlevel", item.id)}
-                renderItem={renderDropdownItem}
-              />}
-              {occupationroles && <Dropdown
-                style={[istyles.inputStyle, formData.occupationrole.isValid === false  && istyles.borderError, { height: 66 }]}
-                placeholderStyle={{
-                  fontSize: 14,
-                  color: '#909EAA',
-                }}
-                selectedTextStyle={{
-                  fontSize: 14,
-                  color: '#1D1D25',
-                }}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={occupationroles}
-                maxHeight={300}
-                labelField="name"
-                valueField="id"
-                placeholder={'Unvan'}
-                value={formData.occupationrole.value}
-                onChange={(item) => handleChange("occupationrole", item.id)}
-                renderItem={renderDropdownItem}
-              />}
+          <KycTextInput
+            value={formData.userBirthplace.value}
+            isValid={formData.userBirthplace.isValid}
+            onChange={(value) => handleChange("userBirthplace", value)}
+            placeholder="Doğum Yeri"
+          />
 
-              {incometypes && <View style={istyles.incometypesContainer}>
-                <Text style={istyles.incometypesTitle}>Gelir Kaynaklarınız</Text>
-                <View style={istyles.incometypesBody}>
-                  {incometypes.map((item, index) =>
-                    <View key={index} style={istyles.incometypesItem}>
-                      <KycCheckbox isFullClick text={item.text} isValid={incometypesSelectedValid} show={incometypesSelected?.find(x => x == item.id)} onPress={() => toggleIncomeType(item.id)}></KycCheckbox>
-                    </View>
-                  )}
+          {occupations && <Dropdown
+            style={[istyles.inputStyle, formData.occupation.isValid === false && istyles.borderError, { height: Platform.OS == "ios" ? 55 : 66 }]}
+            placeholderStyle={{
+              fontSize: 14,
+              color: '#909EAA',
+            }}
+            selectedTextStyle={{
+              fontSize: 14,
+              color: '#1D1D25',
+            }}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={occupations}
+            maxHeight={300}
+            labelField="name"
+            valueField="id"
+            placeholder={'Meslek'}
+            value={formData.occupation.value}
+            onChange={(item) => handleChange("occupation", item.id)}
+            renderItem={renderDropdownItem}
+          />}
+          {educationlevels && <Dropdown
+            style={[istyles.inputStyle, formData.educationlevel.isValid === false && istyles.borderError, { height: Platform.OS == "ios" ? 55 : 66 }]}
+            placeholderStyle={{
+              fontSize: 14,
+              color: '#909EAA',
+            }}
+            selectedTextStyle={{
+              fontSize: 14,
+              color: '#1D1D25',
+            }}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={educationlevels}
+            maxHeight={300}
+            labelField="name"
+            valueField="id"
+            placeholder={'Eğitim Durumu'}
+            value={formData.educationlevel.value}
+            onChange={(item) => handleChange("educationlevel", item.id)}
+            renderItem={renderDropdownItem}
+          />}
+          {occupationroles && <Dropdown
+            style={[istyles.inputStyle, formData.occupationrole.isValid === false && istyles.borderError, { height: Platform.OS == "ios" ? 55 : 66 }]}
+            placeholderStyle={{
+              fontSize: 14,
+              color: '#909EAA',
+            }}
+            selectedTextStyle={{
+              fontSize: 14,
+              color: '#1D1D25',
+            }}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={occupationroles}
+            maxHeight={300}
+            labelField="name"
+            valueField="id"
+            placeholder={'Unvan'}
+            value={formData.occupationrole.value}
+            onChange={(item) => handleChange("occupationrole", item.id)}
+            renderItem={renderDropdownItem}
+          />}
+
+          {incometypes && <View style={istyles.incometypesContainer}>
+            <Text style={istyles.incometypesTitle}>Gelir Kaynaklarınız</Text>
+            <View style={istyles.incometypesBody}>
+              {incometypes.map((item, index) =>
+                <View key={index} style={istyles.incometypesItem}>
+                  <KycCheckbox isFullClick text={item.text} isValid={incometypesSelectedValid} show={incometypesSelected?.find(x => x == item.id)} onPress={() => toggleIncomeType(item.id)}></KycCheckbox>
                 </View>
-
-              </View>}
-
-              <KycTextInput
-                value={formData.monthlyAverage.value}
-                isValid={formData.monthlyAverage.isValid}
-                onChange={(value) => handleChange("monthlyAverage", value)}
-                placeholder="Aylık ortalama Net gelir"
-                keyboardType='numeric'
-              />
-
-              <KycTextInput
-                value={formData.transactionVolume.value}
-                isValid={formData.transactionVolume.isValid}
-                onChange={(value) => handleChange("transactionVolume", value)}
-                placeholder="Tahmini Aylık İşlem Hacmi"
-                keyboardType='numeric'
-              />
-
-              <KycTextInput
-                value={formData.transactionsNumbers.value}
-                isValid={formData.transactionsNumbers.isValid}
-                onChange={(value) => handleChange("transactionsNumbers", value)}
-                placeholder="Tahmini Aylık İşlem Sayısı"
-                keyboardType='numeric'
-              />
-
-              <View style={istyles.buttonContainer}>
-                <TouchableOpacity
-                  onPress={sendData}
-                  style={[istyles.buttonStyle]}
-                  activeOpacity={0.5}
-                >
-                  <Text style={istyles.buttonTextStyle}>Devam Et</Text>
-                </TouchableOpacity>
-
-                <Image
-                  source={require('../../assets/img/dgfin_legal.png')}
-                  style={istyles.dgfin}
-                />
-              </View>
+              )}
             </View>
+
+          </View>}
+
+          <KycTextInput
+            value={formData.monthlyAverage.value}
+            isValid={formData.monthlyAverage.isValid}
+            onChange={(value) => handleChange("monthlyAverage", value)}
+            placeholder="Aylık Ortalama Net Gelir"
+            keyboardType='numeric'
+          />
+
+          <KycTextInput
+            value={formData.transactionVolume.value}
+            isValid={formData.transactionVolume.isValid}
+            onChange={(value) => handleChange("transactionVolume", value)}
+            placeholder="Tahmini Aylık İşlem Hacmi"
+            keyboardType='numeric'
+          />
+
+          <KycTextInput
+            value={formData.transactionsNumbers.value}
+            isValid={formData.transactionsNumbers.isValid}
+            onChange={(value) => handleChange("transactionsNumbers", value)}
+            placeholder="Tahmini Aylık İşlem Sayısı"
+            keyboardType='numeric'
+          />
+
+          <View style={istyles.buttonContainer}>
+            <TouchableOpacity
+              onPress={sendData}
+              style={[istyles.buttonStyle]}
+              activeOpacity={0.5}
+            >
+              <Text style={istyles.buttonTextStyle}>Devam Et</Text>
+            </TouchableOpacity>
+
+            <Image
+              source={require('../../assets/img/dgfin_legal.png')}
+              style={istyles.dgfin}
+            />
           </View>
-   </KvcLayout>
+        </View>
+      </View>
+    </KvcLayout>
   );
 };
 
@@ -381,7 +382,7 @@ const istyles = StyleSheet.create({
   incometypesItem: {
     width: (Dimensions.get('window').width - 44) / 2,
   },
-  borderError:{
-    borderColor:"#E94B43"
+  borderError: {
+    borderColor: "#E94B43"
   }
 })

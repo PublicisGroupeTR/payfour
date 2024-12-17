@@ -18,6 +18,8 @@ import {
   Modal,
   Dimensions,
   StyleSheet,
+  Alert,
+  Platform
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -37,7 +39,8 @@ const ProfileInfo = ({navigation}) => {
   const [userName, setUserName] = useState('');
   const [userDate, setUserDate] = useState('');
   const [userData, setUserData] = useState({});
-
+  const [initials, setInitials] = useState('');
+  
   const [cityData, setCityData] = useState([]);
   const [selectedCity, setSelectedCity] = useState([]);
 
@@ -49,7 +52,10 @@ const ProfileInfo = ({navigation}) => {
   const [userPhone, setUserPhone] = useState('');
   const [userBirth, setUserBirth] = useState('');
   const [userAddress, setUserAddress] = useState('');
-  const [gender, setGender] = useState('Female');
+  const [gender, setGender] = useState('');
+
+  const [userBirthError, setUserBirthError] = useState(false);
+  const [userEmailError, setUserEmailError] = useState(false);
 
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -85,12 +91,19 @@ const ProfileInfo = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
           console.log(response);
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
           setUserData(response.data.data);
+          let u = response.data.data;
+          if(u.firstName != null && u.firstName != "" && u.lastName != null && u.lastName != ""){
+            let ch = u.firstName.charAt(0)+u.lastName.charAt(0);
+            console.log("initials");
+            console.log(ch);
+            setInitials(ch);
+          }
           //setIban(response.data.data.defaultBankAccountNumber);
           /*{"birthDate": "1977-06-03T00:00:00", 
           "commercialElectronic": true, 
@@ -111,7 +124,7 @@ const ProfileInfo = ({navigation}) => {
             console.log(dt.getFullYear());
             let day = dt.getDate()<10?"0"+dt.getDate() : dt.getDate();
             let mo = (dt.getMonth()+1)<10?"0"+(dt.getMonth()+1) : (dt.getMonth()+1);
-            setUserBirth(mo+""+day+""+dt.getFullYear())
+            setUserBirth(day+""+mo+""+dt.getFullYear())
           }
           
 
@@ -153,6 +166,7 @@ const ProfileInfo = ({navigation}) => {
         
         if(d.cityCode) {
           setSelectedCity(d.cityCode);
+          console.log("selectedCity");
           getCounties(d.cityCode, d);
         }
         setLoading(false);      
@@ -222,7 +236,10 @@ console.log("selectedCity");
   console.log(selectedCity);
   console.log("selectedCounty");
   console.log(selectedCounty);
+  let err = false;
 
+  let fd;
+  if(userBirth != ''){
   console.log(userBirth);
   let fb = userBirth.replace(/\//g, "");
       let a = fb;
@@ -234,28 +251,60 @@ console.log("selectedCity");
     console.log(y);
     console.log(m);
     console.log(day);
-
-      let dt = y+"-"+day+"-"+m;
+    let today = new Date();
+    
+    setUserBirthError(false);
+    if(parseInt(y) < 1900 || today.getFullYear()-parseInt(y) < 10){
+      console.log("y error");
+      setUserBirthError(true);
+      err = true;
+    }
+    if(parseInt(m) < 1 || parseInt(m) > 12){
+      console.log("m error");
+      setUserBirthError(true);
+      err = true;
+    }
+    if(parseInt(day) < 1 || parseInt(day) > 31){
+      console.log("day error");
+      setUserBirthError(true);
+      err = true;
+    }
+      let dt = y+"-"+m+"-"+day;
       console.log(dt);
       let d = new Date(dt);
-      let fd = d.toISOString()
+      fd = d.toISOString();
+  }else{
+    fd = "";
+  }
+  if(userEmail != ''){
+    console.log("userEmail");
+    console.log(userEmail);
+    console.log(validMail(userEmail));
+    if(!validMail(userEmail)){
+      err = true;
+      setUserEmailError(true);
+    }
+  }
 
 //setLoading(true);
 console.log("address");
 console.log(selectedCity);
 console.log(selectedCounty);
+    
     let dataToSend = {
       firstName: userName, 
       lastName: userSurname,
       email: userEmail,
       gender: gender,
       birthDate: fd,
-      districtCode: selectedCounty.id,
-      cityCode: selectedCity.id,
+      districtCode: selectedCounty,
+      cityCode: selectedCity.length<1? "":selectedCity,
     };    
 
+    console.log("err > "+err);
     console.log(dataToSend);
     //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
+    if(!err){
     axios.post('https://payfourapp.test.kodegon.com/api/account/updateuser', dataToSend, config)
       .then(response => {
         console.log(response.data);
@@ -275,8 +324,14 @@ console.log(selectedCounty);
         let msg="";
         (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
       });
+    }
     });
+  
   };
+  const validMail = (mail) =>
+  {
+      return  /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/ .test(mail);
+  }
   
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -288,7 +343,7 @@ console.log(selectedCounty);
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
@@ -434,7 +489,7 @@ console.log(selectedCounty);
       <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        style={[styles.scrollView, {width: '100%', paddingBottom: 200, backgroundColor: '#EAEAEA'}]}>
+        style={[styles.scrollView, {width: '100%', paddingBottom: 100, backgroundColor: '#EAEAEA'}]}>
         <View
           style={{
             flex: 1,
@@ -445,7 +500,7 @@ console.log(selectedCounty);
             paddingLeft: 16,
             paddingRight: 16,
             width: '100%',
-            paddingBottom: 200
+            paddingBottom: Platform.OS == 'ios' ? 220 : 150
           }}>
             <View style={{
               flexDirection: 'row',
@@ -465,13 +520,22 @@ console.log(selectedCounty);
                 justifyContent: 'center',
                 alignItems:'center',
               }}>
-              <Image
+               
+              {initials != '' ? <Text style={{color:'#fff', fontSize:38}}>{initials}</Text> :
+                <Image
+                    source={require('../../../assets/img/export/avatar2.png')}
+                    style={{
+                      width: 64,
+                      height: 64,
+                    }}
+                  />}
+              {/* <Image
                     source={require('../../../assets/img/export/user.png')}
                     style={{
                       width: 64,
                       height: 64,
                     }}
-                  />
+                  /> */}
                   </View>
             </View>
           <View
@@ -496,11 +560,13 @@ console.log(selectedCounty);
                     <TextInput                      
                       onChangeText={UserName => setUserName(UserName)}
                       placeholder={userName}
+                      value={userName}
                       placeholderTextColor="#7E797F"
                       onSubmitEditing={Keyboard.dismiss}
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
+                      maxLength={255}
                     />
                   </View>
                   <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0,width: '48%'}]}>  
@@ -519,11 +585,13 @@ console.log(selectedCounty);
                     <TextInput                      
                       onChangeText={UserSurname => setUserSurname(UserSurname)}
                       placeholder={userSurname}
+                      value={userSurname}
                       placeholderTextColor="#7E797F"
                       onSubmitEditing={Keyboard.dismiss}
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
+                      maxLength={255}
                     />
                   </View>
             
@@ -574,7 +642,7 @@ console.log(selectedCounty);
                       </Text>
                      </TouchableOpacity>
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, width:'100%'}]}>  
+                  <View style={[regstyles.registerInputStyle, {borderColor: userEmailError?'#ff0000':'#EBEBEB',paddingBottom:0, width:'100%'}]}>  
                     <Text style={{                                           
                           fontSize: 12,
                           lineHeight:12, 
@@ -597,9 +665,10 @@ console.log(selectedCounty);
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
+                      maxLength={255}
                     />
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0}]}>                      
+                  <View style={[regstyles.registerInputStyle, {borderColor: userBirthError?'#ff0000':'#EBEBEB',paddingBottom:0}]}>                      
                     
                     <Text style={{                                           
                         fontSize: 12,
@@ -617,10 +686,12 @@ console.log(selectedCounty);
                         keyboardType="numeric"
                         onChangeText={(masked, unmasked) => {
                           //setUserPhone(masked); // you can use the unmasked value as well
-                          setUserBirth(masked)
+                          setUserBirth(masked);
+                          console.log(masked.length);
+                          if(masked.length > 9) Keyboard.dismiss();
                           // assuming you typed "9" all the way:
-                          console.log(masked); // (99) 99999-9999
-                          console.log(unmasked); // 99999999999
+                          //console.log(masked); // (99) 99999-9999
+                          //console.log(unmasked); // 99999999999
                           //checkPhone();
                         }}
                         mask={[/\d/, /\d/,'/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
@@ -659,7 +730,10 @@ console.log(selectedCounty);
                   <Text style={{fontSize:12, color:'#909EAA'}}>Erkek</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style={{width:80, marginRight:8}}
+              
+            </View>
+            <View style={{flexDirection:'row', marginBottom:24}}>
+              <TouchableOpacity style={{ marginRight:8}}
               onPress={()=>{
                 setGender('Other');
               }}>
@@ -669,7 +743,7 @@ console.log(selectedCounty);
                   <View style={{width:24, height:24, borderRadius:24, borderWidth:1, backgroundColor:'#fff', borderColor:'#E4E4E8', alignItems:'center', justifyContent:'center', marginRight:4}}>
                     <View style={{width:12, height:12, borderRadius:12, backgroundColor:'#004F97', display: gender == 'Other' ? 'flex':'none'}}></View>
                   </View>
-                  <Text style={{fontSize:12, color:'#909EAA'}}>Diğer</Text>
+                  <Text style={{fontSize:12, color:'#909EAA'}}>Belirtmek İstemiyorum</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -713,7 +787,7 @@ console.log(selectedCounty);
                     onChange={item => {
                       console.log('selected');
                       console.log(item);
-                      setSelectedCity(item);
+                      setSelectedCity(item.id);
                       getCounties(item.id);
                     }}
                     renderItem={renderItem}
@@ -752,7 +826,7 @@ console.log(selectedCounty);
                     onChange={item => {
                       console.log('selected');
                       console.log(item);
-                      setSelectedCounty(item);
+                      setSelectedCounty(item.id);
                     }}
                     renderItem={renderItem}
                   />
@@ -840,14 +914,15 @@ const profileStyles = StyleSheet.create({
 const regstyles = StyleSheet.create({
   registerInputStyle:{
     backgroundColor:'#fff',
-    paddingTop:17,
+    paddingTop:28,
     paddingBottom:17, 
-    paddingLeft:12, 
+    paddingLeft:16, 
     paddingRight:12,    
     borderWidth: 1,
     borderRadius: 10,
     marginBottom:16,
     width:'100%',
+    height:60,
   },
   mainBody: {
     flex: 1,
