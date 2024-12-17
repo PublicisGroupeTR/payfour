@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import {View, Image, TouchableOpacity, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
-import { styles } from '../Components/Styles.js';
-import Loader from '../Components/Loader.js';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, Image, TouchableOpacity, Text, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 
 import MaskInput from 'react-native-mask-input';
-import SubtabHeader from '../Components/SubtabHeader.js';
 import KycTextInput from './components/input.js';
 import KycCheckbox from './components/checkbox.js';
 import KycHeader from './components/header.js';
 import { apiRequest, customAlert, validateFormData, isValidEmail, formatDate } from './helper/index.js';
 import { FontFamilies } from '../../constants/fonts.js';
+import KvcLayout from './KvcLayout.js';
 
 const IdentityForm = ({ route, navigation }) => {
 
@@ -63,22 +60,22 @@ const IdentityForm = ({ route, navigation }) => {
 
     updatedData.userBirth.isValid = validateDate(updatedData.userBirth.value)
     updatedData.userEmail.isValid = isValidEmail(updatedData.userEmail.value)
-    
+
     setFormData(updatedData);
 
     const mandatoryAgreements = agreements.filter((agreement) =>
       [1].includes(agreement.necessity)
     );
-    
+
     const unselectedMandatoryAgreements = mandatoryAgreements.filter(
       (agreement) => !agreement.selected
     );
-    
+
     const updatedAgreements = agreements.map((agreement) => {
       if (unselectedMandatoryAgreements.some((unselected) => unselected.id === agreement.id)) {
         return {
           ...agreement,
-          isValid: false, 
+          isValid: false,
         };
       }
       return agreement;
@@ -90,7 +87,7 @@ const IdentityForm = ({ route, navigation }) => {
       return;
     }
 
-    if (unselectedMandatoryAgreements.length != 0 ) {
+    if (unselectedMandatoryAgreements.length != 0) {
       return
     }
 
@@ -104,7 +101,7 @@ const IdentityForm = ({ route, navigation }) => {
       isPotential: false
     }
 
-    const selectedaAreements = agreements.filter((item) => item.selected === true) .map((item) => item.code);
+    const selectedaAreements = agreements.filter((item) => item.selected === true).map((item) => item.code);
 
     setLoading(true)
     const response = await apiRequest({
@@ -151,7 +148,7 @@ const IdentityForm = ({ route, navigation }) => {
     setAgreements((prevAgreements) =>
       prevAgreements.map((agreement) =>
         agreement.id === id
-          ? { ...agreement, selected: !agreement.selected, isValid: true}
+          ? { ...agreement, selected: !agreement.selected, isValid: true }
           : agreement
       )
     );
@@ -237,118 +234,112 @@ const IdentityForm = ({ route, navigation }) => {
   }, [])
 
   return (
-    <SafeAreaView style={istyles.main}>
-      <SubtabHeader isKycPage name="Kimlik Bilgilerim" count="0" />
-      <Loader loading={loading} />
-      <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, { paddingBottom: 32 }]}>
-        <KeyboardAvoidingView enabled>
-          <View style={istyles.container}>
-            <KycHeader number="1" title="Bilgilerini Tamamla" text="Kimlik kartındaki bilgiler alındı, şimdi kalanları tamamla"></KycHeader>
-            <View style={istyles.form}>
-              <MaskInput
-                style={[istyles.inputStyle, formData.userTCKN.isValid === false && istyles.borderError]}
-                value={formData.userTCKN.value}
-                onChangeText={(masked, unmasked) => handleChange("userTCKN", unmasked)}
-                placeholder="T.C Kimlik Numarası"
-                placeholderTextColor="#909EAA"
-                keyboardType="numeric"
-                mask={[/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]}
-              />
+    <KvcLayout title="Kimlik Bilgilerim" loading={loading}>
+      <View style={istyles.container}>
+        <KycHeader number="1" title="Bilgilerini Tamamla" text="Kimlik kartındaki bilgiler alındı, şimdi kalanları tamamla"></KycHeader>
+        <View style={istyles.form}>
+          <MaskInput
+            style={[istyles.inputStyle, formData.userTCKN.isValid === false && istyles.borderError]}
+            value={formData.userTCKN.value}
+            onChangeText={(masked, unmasked) => handleChange("userTCKN", unmasked)}
+            placeholder="T.C Kimlik Numarası"
+            placeholderTextColor="#909EAA"
+            keyboardType="numeric"
+            mask={[/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]}
+          />
 
-              {/* Ad */}
-              <KycTextInput
-                isValid={formData.userName.isValid}
-                value={formData.userName.value}
-                onChange={(value) => handleChange("userName", value)}
-                placeholder="Ad"
-                keyboardType="default"
-              />
+          {/* Ad */}
+          <KycTextInput
+            isValid={formData.userName.isValid}
+            value={formData.userName.value}
+            onChange={(value) => handleChange("userName", value)}
+            placeholder="Ad"
+            keyboardType="default"
+          />
 
-              {/* Soyad */}
-              <KycTextInput
-                isValid={formData.userLastName.isValid}
-                value={formData.userLastName.value}
-                onChange={(value) => handleChange("userLastName", value)}
-                placeholder="Soyad"
-                keyboardType="default"
-              />
+          {/* Soyad */}
+          <KycTextInput
+            isValid={formData.userLastName.isValid}
+            value={formData.userLastName.value}
+            onChange={(value) => handleChange("userLastName", value)}
+            placeholder="Soyad"
+            keyboardType="default"
+          />
 
-              {/* Telefon Numarası */}
-              <MaskInput
-                style={[istyles.inputStyle, formData.userPhone.isValid === false  && istyles.borderError]}
-                value={formData.userPhone.value}
-                onChangeText={(masked, unmasked) => handleChange("userPhone", unmasked)}
-                placeholder="Telefon No"
-                keyboardType="numeric"
-                placeholderTextColor="#909EAA"
-                mask={['+', '9', '0', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
-              />
+          {/* Telefon Numarası */}
+          <MaskInput
+            style={[istyles.inputStyle, formData.userPhone.isValid === false && istyles.borderError]}
+            value={formData.userPhone.value}
+            onChangeText={(masked, unmasked) => handleChange("userPhone", unmasked)}
+            placeholder="Telefon No"
+            keyboardType="numeric"
+            placeholderTextColor="#909EAA"
+            mask={['+', '9', '0', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
+          />
 
-              <View style={[istyles.inputStyle, formData.userBirth.isValid === false && istyles.borderError, { paddingBottom: 0, paddingLeft: 12 }]}>
-                <Text style={istyles.bhirtDateText}>
-                  Doğum Tarihi (GG/AA/YYYY)
-                </Text>
-                <MaskInput
-                  value={formData.userBirth.value}
-                  placeholder='GG/AA/YYYY'
-                  onChangeText={(masked, unmasked) => handleChange("userBirth", masked)}
-                  keyboardType="numeric"
-                  mask={[/\d/, /\d/, "/", /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/]}
-                />
-              </View>
-
-              <KycTextInput
-                isValid={formData.userEmail.isValid}
-                style={istyles.inputStyle}
-                value={formData.userEmail.value}
-                onChange={(value) => handleChange("userEmail", value)}
-                placeholder="E-Posta"
-                keyboardType="email-address"
-              />
-
-              {agreements && agreements.length !== 0 && (
-                <View style={istyles.agreementsContainer}>
-                  {agreements.map((item, index) =>
-                    item.necessity == 3 ?
-                      <View key={index} style={istyles.agreementsInfo}>
-                        <Image
-                          source={require("../../assets/img/export/information.png")}
-                          style={istyles.agreementsImage} />
-                        <Text onPress={item.templateDesignId ? () => selectedAgreement(item) : undefined} style={[istyles.agreementsInfoText, item.templateDesignId && { textDecorationLine: 'underline', color: "#004F97" }]}>{item.name}</Text>
-                      </View>
-                      :
-                      <KycCheckbox 
-                        key={index} 
-                        show={item.selected} 
-                        isValid={item.isValid}
-                        isFullClick={!item.templateDesignId} 
-                        onPress={() => changeAgreement(item.id)} 
-                        textOpen={item.templateDesignId ? () => selectedAgreement(item) : undefined} 
-                        text={item.name} 
-                      ></KycCheckbox>
-                  )}
-                </View>
-              )}
-
-              <View style={istyles.buttonContainer}>
-                <TouchableOpacity
-                  onPress={sendData}
-                  style={[istyles.buttonStyle]}
-                  activeOpacity={0.5}
-                >
-                  <Text style={istyles.buttonTextStyle}>Devam Et</Text>
-                </TouchableOpacity>
-
-                <Image
-                  source={require('../../assets/img/dgfin_legal.png')}
-                  style={istyles.dgfin}
-                />
-              </View>
-            </View>
+          <View style={[istyles.inputStyle, formData.userBirth.isValid === false && istyles.borderError, { paddingBottom: 0, paddingLeft: 12 }]}>
+            <Text style={istyles.bhirtDateText}>
+              Doğum Tarihi (GG/AA/YYYY)
+            </Text>
+            <MaskInput
+              value={formData.userBirth.value}
+              placeholder='GG/AA/YYYY'
+              onChangeText={(masked, unmasked) => handleChange("userBirth", masked)}
+              keyboardType="numeric"
+              mask={[/\d/, /\d/, "/", /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/]}
+            />
           </View>
-        </KeyboardAvoidingView>
-      </ScrollView>
-    </SafeAreaView>
+
+          <KycTextInput
+            isValid={formData.userEmail.isValid}
+            style={istyles.inputStyle}
+            value={formData.userEmail.value}
+            onChange={(value) => handleChange("userEmail", value)}
+            placeholder="E-Posta"
+            keyboardType="email-address"
+          />
+
+          {agreements && agreements.length !== 0 && (
+            <View style={istyles.agreementsContainer}>
+              {agreements.map((item, index) =>
+                item.necessity == 3 ?
+                  <View key={index} style={istyles.agreementsInfo}>
+                    <Image
+                      source={require("../../assets/img/export/information.png")}
+                      style={istyles.agreementsImage} />
+                    <Text onPress={item.templateDesignId ? () => selectedAgreement(item) : undefined} style={[istyles.agreementsInfoText, item.templateDesignId && { textDecorationLine: 'underline', color: "#004F97" }]}>{item.name}</Text>
+                  </View>
+                  :
+                  <KycCheckbox
+                    key={index}
+                    show={item.selected}
+                    isValid={item.isValid}
+                    isFullClick={!item.templateDesignId}
+                    onPress={() => changeAgreement(item.id)}
+                    textOpen={item.templateDesignId ? () => selectedAgreement(item) : undefined}
+                    text={item.name}
+                  ></KycCheckbox>
+              )}
+            </View>
+          )}
+
+          <View style={istyles.buttonContainer}>
+            <TouchableOpacity
+              onPress={sendData}
+              style={[istyles.buttonStyle]}
+              activeOpacity={0.5}
+            >
+              <Text style={istyles.buttonTextStyle}>Devam Et</Text>
+            </TouchableOpacity>
+
+            <Image
+              source={require('../../assets/img/dgfin_legal.png')}
+              style={istyles.dgfin}
+            />
+          </View>
+        </View>
+      </View>
+    </KvcLayout>
   );
 };
 export default IdentityForm;

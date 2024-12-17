@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Image, TouchableOpacity, Text, StyleSheet, SafeAreaView, Keyboard, KeyboardAvoidingView } from 'react-native';
-import Loader from '../Components/Loader.js';
 import { apiRequest, customAlert } from './helper/index.js';
-import SubtabHeader from '../Components/SubtabHeader.js';
 import { OtpInput } from "react-native-otp-entry";
 import { FontFamilies } from '../../constants/fonts.js';
+import KvcLayout from './KvcLayout.js';
 
 const KycOtp = ({ navigation }) => {
 
@@ -42,10 +41,10 @@ const KycOtp = ({ navigation }) => {
       startOtpTimer()
       setLoading(false)
     } else {
-      customAlert({title:"Hata", message:response.errors.message})
+      customAlert({ title: "Hata", message: response.errors.message })
       setLoading(false)
       setTimeout(() => {
-        navigation.navigate('TabNavigationRoutes', { 
+        navigation.navigate('TabNavigationRoutes', {
           screen: 'discover',
         })
       }, 1500);
@@ -90,8 +89,8 @@ const KycOtp = ({ navigation }) => {
       `${Math.floor(timerCount / 60)
         .toString()
         .padStart(2, "0")}:${(timerCount % 60)
-        .toString()
-        .padStart(2, "0")}`
+          .toString()
+          .padStart(2, "0")}`
     );
 
     const interval = setInterval(() => {
@@ -117,85 +116,81 @@ const KycOtp = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#efeff3' }}>
-      <SubtabHeader isKycPage name="Doğrulama Kodu" count="0" />
-      <Loader loading={loading} />
-      <KeyboardAvoidingView style={{ flex: 1 }}>
-        <View style={istyles.container}>
-          <View style={istyles.otpContainer}>
-            <Image
-              source={require('../../assets/img/kyc_otp.png')}
-              style={istyles.otpImage}
-            />
-            <Text style={istyles.text}>
-              <Text style={istyles.phone}>{user?.phone ?? "XXX XX XX"}</Text> numaralı telefonunuza gelen 6 haneli kodu girerek doğrulama işlemini tamamlayınız.
-            </Text>
-            <OtpInput
-              numberOfDigits={6}
-              disabled={timerCount == 0}
-              focusColor="#015096"
-              secureTextEntry={false}
-              ref={otpInputRef}
-              onTextChange={(text) => { setOtpError(false), setOtp(text); }}
-              onFilled={(text) => {
-                Keyboard.dismiss();
-              }}
-              textInputProps={{
-                accessibilityLabel: "Password",
-                secureTextEntry: true,
-              }}
-              theme={{
-                containerStyle:{
-                  alignItems:"center",
-                  justifyContent:"center",
-                  gap:8
-                },
-                pinCodeContainerStyle: {
-                  backgroundColor: '#fff',
-                  borderColor: otpError ? '#E42932' : '#909EAA',
-                  width: 40,
-                  height: 48,
-                  borderRadius:8
-                },
-                pinCodeTextStyle: {
-                  fontSize:16,
-                  fontWeight:FontFamilies.UBUNTU.bold,
-                  color:"#015096",
-                },
-                focusStickStyle: {},
-                focusedPinCodeContainerStyle: {
-                  borderColor: "#015096"
-                },
-              }}
-            />
-            {otpError && <Text style={[istyles.timer, { color: "#E94B43", marginTop: 8 }]}>Girilen kod hatalı. Lütfen kontrol edin.</Text>}
-            {timerText.length != 0 && timerCount != 0 && <Text style={[istyles.timer, { marginTop:16, fontFamily: FontFamilies.UBUNTU.bold }]}>{timerText}</Text>}
-            {timerCount == 0 &&
-              <TouchableOpacity onPress={againOtp}>
-                <Text style={[istyles.timer]}>Yeniden Gönder</Text>
-              </TouchableOpacity>
-            }
-
-          </View>
-          <View style={istyles.buttonContainer}>
-            <TouchableOpacity
-              disabled={(otp.length != 6)}
-              onPress={sendOtp}
-              style={[istyles.buttonStyle, otp.length != 6 && { backgroundColor: "#dadee7" }]}
-              activeOpacity={0.5}
-            >
-              <Text style={istyles.buttonTextStyle}>Doğrula</Text>
+    <KvcLayout disableScroll title="Doğrulama Kodu" loading={loading}>
+      <View style={istyles.container}>
+        <View style={istyles.otpContainer}>
+          <Image
+            source={require('../../assets/img/kyc_otp.png')}
+            style={istyles.otpImage}
+          />
+          <Text style={istyles.text}>
+            <Text style={istyles.phone}>{user?.phone ?? "XXX XX XX"}</Text> numaralı telefonunuza gelen 6 haneli kodu girerek doğrulama işlemini tamamlayınız.
+          </Text>
+          <OtpInput
+            numberOfDigits={6}
+            disabled={timerCount == 0}
+            focusColor="#015096"
+            secureTextEntry={false}
+            ref={otpInputRef}
+            onTextChange={(text) => { setOtpError(false), setOtp(text); }}
+            onFilled={(text) => {
+              Keyboard.dismiss();
+            }}
+            textInputProps={{
+              accessibilityLabel: "Password",
+              secureTextEntry: true,
+            }}
+            theme={{
+              containerStyle: {
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8
+              },
+              pinCodeContainerStyle: {
+                backgroundColor: '#fff',
+                borderColor: otpError ? '#E42932' : '#909EAA',
+                width: 40,
+                height: 48,
+                borderRadius: 8
+              },
+              pinCodeTextStyle: {
+                fontSize: 16,
+                fontWeight: FontFamilies.UBUNTU.bold,
+                color: "#015096",
+              },
+              focusStickStyle: {},
+              focusedPinCodeContainerStyle: {
+                borderColor: "#015096"
+              },
+            }}
+          />
+          {otpError && <Text style={[istyles.timer, { color: "#E94B43", marginTop: 8 }]}>Girilen kod hatalı. Lütfen kontrol edin.</Text>}
+          {timerText.length != 0 && timerCount != 0 && <Text style={[istyles.timer, { marginTop: 16, fontFamily: FontFamilies.UBUNTU.bold }]}>{timerText}</Text>}
+          {timerCount == 0 &&
+            <TouchableOpacity onPress={againOtp}>
+              <Text style={[istyles.timer]}>Yeniden Gönder</Text>
             </TouchableOpacity>
-
-            <Image
-              source={require('../../assets/img/dgfin_legal.png')}
-              style={istyles.dgfin}
-            />
-          </View>
+          }
 
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        <View style={istyles.buttonContainer}>
+          <TouchableOpacity
+            disabled={(otp.length != 6)}
+            onPress={sendOtp}
+            style={[istyles.buttonStyle, otp.length != 6 && { backgroundColor: "#dadee7" }]}
+            activeOpacity={0.5}
+          >
+            <Text style={istyles.buttonTextStyle}>Doğrula</Text>
+          </TouchableOpacity>
+
+          <Image
+            source={require('../../assets/img/dgfin_legal.png')}
+            style={istyles.dgfin}
+          />
+        </View>
+
+      </View>
+    </KvcLayout>
   );
 };
 export default KycOtp;
@@ -216,9 +211,9 @@ const istyles = StyleSheet.create({
     fontFamily: FontFamilies.UBUNTU.normal,
     fontSize: 14,
     textAlign: "center",
-    marginBottom:24,
-    paddingHorizontal:36,
-    lineHeight:20
+    marginBottom: 24,
+    paddingHorizontal: 36,
+    lineHeight: 20
   },
   phone: {
     color: "#0B1929",
@@ -230,7 +225,7 @@ const istyles = StyleSheet.create({
     width: 56,
     height: 56,
     objectFit: "cover",
-    marginBottom:16
+    marginBottom: 16
   },
   buttonContainer: {
     flexDirection: "col",
@@ -243,7 +238,7 @@ const istyles = StyleSheet.create({
     height: 52,
     alignItems: 'center',
     borderRadius: 10,
-    justifyContent:"center"
+    justifyContent: "center"
   },
   buttonTextStyle: {
     color: '#FFFFFF',
@@ -261,7 +256,7 @@ const istyles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 24,
     textAlign: 'center',
-    marginTop:12
+    marginTop: 12
   }
 })
 

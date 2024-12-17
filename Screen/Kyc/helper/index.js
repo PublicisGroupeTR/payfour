@@ -7,7 +7,7 @@ export const apiRequest = async ({ url, method = 'GET', params = {}, data = {}, 
   
   const token = await AsyncStorage.getItem('token');
   
-  console.log("TOKEN", token);
+  // console.log("TOKEN", token);
   
   const defaultHeaders = {
     Authorization: `Bearer ${token}`,

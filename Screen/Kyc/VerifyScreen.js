@@ -13,9 +13,9 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
-import SubtabHeader from '../Components/SubtabHeader.js';
-import {FontFamilies} from '../../constants/fonts.js';
+import { FontFamilies } from '../../constants/fonts.js';
 import { useIsFocused } from '@react-navigation/native';
+import KvcLayout from './KvcLayout.js';
 
 const VerifyScreen = ({ navigation, route }) => {
 
@@ -30,7 +30,7 @@ const VerifyScreen = ({ navigation, route }) => {
     if (!allData) {
       return
     }
-    
+
     NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
   }
 
@@ -40,22 +40,22 @@ const VerifyScreen = ({ navigation, route }) => {
     let data = {}
     if (params) {
       if (params.user) {
-        data = { ...data, ...params.user}
+        data = { ...data, ...params.user }
       }
       if (params.incometypesSelected) {
-        data = { ...data, ...{ incometypesSelected : params.incometypesSelected}}
+        data = { ...data, ...{ incometypesSelected: params.incometypesSelected } }
       }
       if (params.data) {
-        data = { ...data, ...params.data}
+        data = { ...data, ...params.data }
       }
       if (params.referenceId) {
-        data = { ...data, ...{ referenceId: params.referenceId}}
+        data = { ...data, ...{ referenceId: params.referenceId } }
       }
       if (params.selectedaAreements) {
-        data = { ...data,...{ selectedaAreements : params.selectedaAreements}}
+        data = { ...data, ...{ selectedaAreements: params.selectedaAreements } }
       }
       if (token) {
-        data = { ...data, ...{ token: token}}
+        data = { ...data, ...{ token: token } }
       }
       console.log(data)
       setAllData(data)
@@ -66,15 +66,14 @@ const VerifyScreen = ({ navigation, route }) => {
     navigation.goBack()
   }
 
-  useEffect(()=>{
-  if (isFocused) {
-    getData()
-  }
-  },[isFocused])
+  useEffect(() => {
+    if (isFocused) {
+      getData()
+    }
+  }, [isFocused])
 
   return (
-    <View style={styles.wrapper}>
-      <SubtabHeader isKycPage name="Kullanıcı Onayı" count="0" />
+    <KvcLayout disableScroll title={"Kullanıcı Onayı"}>
       <View style={styles.main}>
         <View style={styles.container}>
           <View style={styles.content}>
@@ -95,7 +94,7 @@ const VerifyScreen = ({ navigation, route }) => {
                 <Text style={[styles.buttonTextStyle, { color: '#004F97' }]}>Vazgeç</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={()=> openEnQualifyActivity()}
+                onPress={() => openEnQualifyActivity()}
                 style={[styles.buttonStyle, {}]}
                 activeOpacity={0.5}
               >
@@ -103,13 +102,13 @@ const VerifyScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
             <Image
-                source={require('../../assets/img/dgfin_legal.png')}
-                style={styles.dgfin}
+              source={require('../../assets/img/dgfin_legal.png')}
+              style={styles.dgfin}
             />
           </View>
         </View>
       </View>
-    </View>
+    </KvcLayout>
   );
 };
 
@@ -122,6 +121,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     padding: 16,
+    paddingBottom:0,
     backgroundColor:"#efeff3"
   },
   container: {
@@ -129,30 +129,30 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 24,
     flex: 1,
-    justifyContent:"space-between"
+    justifyContent: "space-between"
   },
-  content:{
-    paddingTop:64,
-    alignItems:"center"
+  content: {
+    paddingTop: 64,
+    alignItems: "center"
   },
-  image:{
-    width:120,
-    height:120
+  image: {
+    width: 120,
+    height: 120
   },
-  title:{
+  title: {
     color: '#004F97',
     fontFamily: FontFamilies.UBUNTU.medium,
     fontWeight: '500',
     fontSize: 16,
-    marginTop:24,
-    marginBottom:8
+    marginTop: 24,
+    marginBottom: 8
   },
-  text:{
+  text: {
     color: "#909EAA",
     fontFamily: FontFamilies.UBUNTU.normal,
     fontWeight: '400',
     fontSize: 12,
-    textAlign:"center"
+    textAlign: "center"
   },
   buttonContainer: {
     flexDirection: "row",
@@ -175,11 +175,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 14,
   },
-  bottom:{
-    gap:12
+  bottom: {
+    gap: 12
   },
-  dgfin:{
-    width:"100%",
-    height:77
+  dgfin: {
+    width: "100%",
+    height: 77
   }
 });

@@ -2,17 +2,19 @@ import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import Pdf from "react-native-pdf";
 import { FontFamilies } from '../../constants/fonts.js';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const AgreementsView = ({ route, navigation }) => {
   const base64 = route.params.base64
   const data = route.params.data
+  const insets = useSafeAreaInsets();
 
   const source = {
     uri: "data:application/pdf;base64," + base64,
     cache: true,
   };
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {paddingTop: insets.top}]}>
       <View style={styles.header}>
         <Text style={styles.title}>{data.name}</Text>
         <TouchableOpacity onPress={()=> navigation.goBack()} style={styles.iconContainer}>
