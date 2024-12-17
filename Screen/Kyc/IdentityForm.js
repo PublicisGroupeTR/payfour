@@ -109,7 +109,6 @@ const IdentityForm = ({ route, navigation }) => {
       data: data
     });
     if (response.success) {
-      console.log("data", data)
       navigation.navigate('Kyc', {
         screen: 'AddressInfo', params: {
           user: user,
@@ -134,6 +133,7 @@ const IdentityForm = ({ route, navigation }) => {
           selected: false,
           isValid: true
         })
+        console.log(response.data)
       });
       if (data && data.length != 0) {
         setAgreements(data)

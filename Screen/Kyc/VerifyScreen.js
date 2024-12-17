@@ -85,23 +85,28 @@ const VerifyScreen = ({ navigation, route }) => {
             <Text style={styles.title}>Onayın Gerekiyor</Text>
             <Text style={styles.text}>Kimlik tespiti sürecinde, uzaktan kimlik tespitinin yapılması amacıyla biyometrik verilerinin Dgpara Ödeme ve Elektronik Para Kuruluşu Anonim Şirketi (“Dgpara”) ve Dgpara’nın yalnızca bu amaçla sınırlı olarak yetkilendirdiği üçüncü kişiler tarafından işlenmesine onay veriyorum.</Text>
           </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              onPress={goBack}
-              style={[styles.buttonStyle, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#004F97' }]}
-              activeOpacity={0.5}
-            >
-              <Text style={[styles.buttonTextStyle, { color: '#004F97' }]}>Vazgeç</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={()=> openEnQualifyActivity()}
-              style={[styles.buttonStyle, {}]}
-              activeOpacity={0.5}
-            >
-              <Text style={styles.buttonTextStyle}>Onayla</Text>
-            </TouchableOpacity>
+          <View style={styles.bottom}>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                onPress={goBack}
+                style={[styles.buttonStyle, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#004F97' }]}
+                activeOpacity={0.5}
+              >
+                <Text style={[styles.buttonTextStyle, { color: '#004F97' }]}>Vazgeç</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={()=> openEnQualifyActivity()}
+                style={[styles.buttonStyle, {}]}
+                activeOpacity={0.5}
+              >
+                <Text style={styles.buttonTextStyle}>Onayla</Text>
+              </TouchableOpacity>
+            </View>
+            <Image
+                source={require('../../assets/img/dgfin_legal.png')}
+                style={styles.dgfin}
+            />
           </View>
-
         </View>
       </View>
     </View>
@@ -169,6 +174,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Ubuntu-Bold',
     fontWeight: '500',
     fontSize: 14,
+  },
+  bottom:{
+    gap:12
   },
   dgfin:{
     width:"100%",

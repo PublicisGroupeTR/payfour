@@ -9,7 +9,7 @@ import { FontFamilies } from '../../constants/fonts.js';
 const KycOtp = ({ navigation }) => {
 
   const [otpError, setOtpError] = useState(false);
-  const [otp, setOtp] = useState(false);
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState();
   const [transactionId, setTransactionId] = useState();
@@ -36,7 +36,6 @@ const KycOtp = ({ navigation }) => {
       method: 'POST',
     });
     if (response && response.data && response.success) {
-      otpInputRef.current.focus()
       setTransactionId(response.data.transactionId)
       setTimerCount(180)
       setTimerText("")
@@ -80,6 +79,7 @@ const KycOtp = ({ navigation }) => {
   }
 
   const againOtp = async () => {
+    otpInputRef.current.clear()
     setLoading(true)
     initOtp()
   }
@@ -93,7 +93,7 @@ const KycOtp = ({ navigation }) => {
         .toString()
         .padStart(2, "0")}`
     );
-  
+
     const interval = setInterval(() => {
       setTimerCount((lastTimerCount) => {
         if (lastTimerCount <= 0) {
@@ -134,7 +134,6 @@ const KycOtp = ({ navigation }) => {
               numberOfDigits={6}
               disabled={timerCount == 0}
               focusColor="#015096"
-              focusStickBlinkingDuration={500}
               secureTextEntry={false}
               ref={otpInputRef}
               onTextChange={(text) => { setOtpError(false), setOtp(text); }}

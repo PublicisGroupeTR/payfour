@@ -260,7 +260,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
                 value={formData.monthlyAverage.value}
                 isValid={formData.monthlyAverage.isValid}
                 onChange={(value) => handleChange("monthlyAverage", value)}
-                placeholder="Aylık ortalama Net gelir"
+                placeholder="Aylık Ortalama Net Gelir"
                 keyboardType='numeric'
               />
 
