@@ -7,16 +7,19 @@ import React from 'react';
 import {StyleSheet, View, TouchableOpacity, Image, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Bildirim from '../../assets/img/svg/bildirim.svg';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SubtabHeader = props => {
   const {routetarget, name, count, isKycPage, mode, ...attributes} = props;
 
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+
 
   /*console.log(navigation);
   console.log(routetarget);*/
   return (
-    <View style={[styles.topStyle, {backgroundColor: props.mode === 'dark' ? 'transparent' : '#fff'}]}>
+    <View style={[styles.topStyle, isKycPage && { paddingTop: 13 + insets.top }, {backgroundColor: props.mode === 'dark' ? 'transparent' : '#fff'}]}>
       <TouchableOpacity
         style={[
           styles.buttonClose,
