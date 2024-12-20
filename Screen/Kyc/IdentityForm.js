@@ -13,6 +13,8 @@ const IdentityForm = ({ route, navigation }) => {
 
   const tempToken = route.params.tempToken
   const user = route.params.user
+  const [agreementConfirm, setAgreementConfirm] = useState();
+
   // console.log(tempToken)
   // console.log(user)
   // const tempToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFwcGx5bG9hbnwwMTkzYWY5Ny1mMTU0LTczZTYtOGI1ZC02YjIyYjlhOWI2M2IiLCJtZW1iZXJpZCI6IjM1ODMiLCJleHAiOjE3MzM4MjE0MDIsImlzcyI6IlBheWZvdXJBcHBTZXJ2aWNlIiwiYXVkIjoiUGF5Zm91clRlbXBUb2tlbiJ9.yortaIurPVV3Efu7bpRoQPmZbx-l0dhxpUd538ceYiY"
@@ -21,9 +23,10 @@ const IdentityForm = ({ route, navigation }) => {
 
   const [loading, setLoading] = useState(false);
   const [agreements, setAgreements] = useState();
+  const [alreadyConfirmAgreement, setAlreadyConfirmAgreement] = useState([]);
 
   const [formData, setFormData] = useState({
-    userTCKN: { value: "", isValid: true },
+    userTCKN: { value: "64317832464", isValid: true },
     userName: { value: user.firstName, isValid: true },
     userLastName: { value: user.lastName, isValid: true },
     userEmail: { value: user.email, isValid: true },
@@ -161,7 +164,7 @@ const IdentityForm = ({ route, navigation }) => {
     const response = await apiRequest({
       url: '/loans/consentdata/' + value.templateDesignId,
     });
-
+    setAgreementConfirm("")
     if (response.data) {
       navigation.navigate('Kyc', {
         screen: 'AgreementsView', params: {
@@ -231,6 +234,29 @@ const IdentityForm = ({ route, navigation }) => {
   useEffect(() => {
     getAgrements()
   }, [])
+
+  useEffect(()=>{
+    if (route.params?.agreementId) {
+
+      setAgreementConfirm(route.params?.agreementId)
+      console.log("route")
+     
+    }
+  },[route])
+
+  useEffect(()=>{
+    if (agreementConfirm) {
+      console.log("agreementConfirm", agreementConfirm)
+      setAlreadyConfirmAgreement([...alreadyConfirmAgreement, agreementConfirm])
+      setAgreements((prevAgreements) =>
+        prevAgreements.map((agreement) =>
+          agreement.id === agreementConfirm
+            ? { ...agreement, selected: true, isValid: true }
+            : agreement
+        )
+      );
+    }
+  },[agreementConfirm])
 
   return (
     <KvcLayout title="Kimlik Bilgilerim" loading={loading}>
@@ -306,13 +332,14 @@ const IdentityForm = ({ route, navigation }) => {
                     <Image
                       source={require("../../assets/img/export/information.png")}
                       style={istyles.agreementsImage} />
-                    <Text onPress={item.templateDesignId ? () => selectedAgreement(item) : undefined} style={[istyles.agreementsInfoText, item.templateDesignId && { textDecorationLine: 'underline', color: "#004F97" }]}>{item.name}</Text>
+                    <Text onPress={item.templateDesignId ? () => selectedAgreement(item) : undefined} style={[istyles.agreementsInfoText, item.templateDesignId && { textDecorationLine: 'underline', color: "#004F97", fontFamily: FontFamilies.UBUNTU.medium, fontWeight:600  }]}>{item.name}</Text>
                   </View>
                   :
                   <KycCheckbox
                     key={index}
                     show={item.selected}
                     isValid={item.isValid}
+                    alreadyConfirm={alreadyConfirmAgreement.some(x=> x == item.id)}
                     isFullClick={!item.templateDesignId}
                     onPress={() => changeAgreement(item.id)}
                     textOpen={item.templateDesignId ? () => selectedAgreement(item) : undefined}

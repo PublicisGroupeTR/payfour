@@ -140,6 +140,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
     const occupationroles = await apiRequest({ url: '/loans/occupationroles' });
     const occupations = await apiRequest({ url: '/loans/occupations' });
     const incometypes = await apiRequest({ url: '/loans/incometypes' });
+
     if (educationlevels && educationlevels.data) {
       setEducationlevels(educationlevels.data)
     }
@@ -327,15 +328,6 @@ const istyles = StyleSheet.create({
     top: 14,
     left: 16
   },
-  buttonStyle: {
-    backgroundColor: '#004F97',
-    borderWidth: 0,
-    color: '#FFFFFF',
-    height: 52,
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-
   buttonContainer: {
     width: "100%",
     flexDirection: "col",

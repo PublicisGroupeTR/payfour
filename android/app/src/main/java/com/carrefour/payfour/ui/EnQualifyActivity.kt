@@ -469,6 +469,8 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
 
     override fun onCertificateFailed() {
         Log.i("Custom", "TEST-KYC onCertificateFailed")
+        isSdkInitialized = false
+        kycError()
     }
 
     override fun onSessionStartSucceed(p0: Boolean, p1: String?) {

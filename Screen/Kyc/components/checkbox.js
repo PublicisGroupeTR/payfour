@@ -1,5 +1,6 @@
 import React from 'react';
-import { TextInput, Keyboard, View, StyleSheet, Text, Pressable, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Pressable, Image, TouchableOpacity } from 'react-native';
+import { FontFamilies } from '../../../constants/fonts.js';
 
 const KycCheckbox = ({
     show,
@@ -7,18 +8,29 @@ const KycCheckbox = ({
     text,
     textOpen,
     isFullClick,
-    isValid
+    isValid,
+    alreadyConfirm
 }) => {
 
     const Content = () => {
+
+        const pressablePress = () => {
+            if (textOpen && !show && !alreadyConfirm) {
+                textOpen()
+                return
+            }
+            onPress()
+        }
+
         return (
             <>
-                <Pressable
+                <TouchableOpacity
                     style={[style.checkbox, {
                         backgroundColor: show ? '#015096' : '#dadee7',
+                        borderColor: isValid == false ? "#E94B43" : "#dadee7"
                     }]}
                     disabled={isFullClick}
-                    onPress={onPress}>
+                    onPress={pressablePress}>
                     <Image
                         source={require('../../../assets/img/export/check.png')}
                         style={{
@@ -27,16 +39,15 @@ const KycCheckbox = ({
                             resizeMode: 'contain',
                         }}
                     />
-                </Pressable>
-
+                </TouchableOpacity>
                 {textOpen ?
                     <TouchableOpacity onPress={textOpen}>
-                        <Text style={[style.text, { textDecorationLine: 'underline', color:"#004F97" }, isValid === false && style.textError]}>
+                        <Text style={[style.text, { textDecorationLine: 'underline', color:"#004F97", fontFamily: FontFamilies.UBUNTU.medium, fontWeight:600  }]}>
                             {text}
                         </Text>
                     </TouchableOpacity>
                     :
-                    <Text style={[style.text, isValid === false && style.textError]}>
+                    <Text style={[style.text]}>
                         {text}
                     </Text>
                 }
@@ -68,16 +79,14 @@ const style = StyleSheet.create({
         marginRight: 8,
         borderRadius: 5,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderWidth:1,
     },
     text: {
         fontWeight: '300',
         color: '#1E242F',
         fontSize: 12,
     },
-    textError: {
-        color: "#E94B43"
-    }
 });
 
 export default KycCheckbox;
