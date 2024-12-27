@@ -29,7 +29,7 @@ const VerifyScreen = ({ navigation, route }) => {
     }
 
     if (Platform.OS == "ios") {
-      NativeModules.EnQualifyModuleIOS.startKycIos()
+      NativeModules.EnQualifyModuleIOS.startVerification()
     } else {
       NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
     }

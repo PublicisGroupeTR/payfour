@@ -29,6 +29,10 @@ import AgreementsView from './Screen/Kyc/AgreementsView';
 import IdentityDetailForm from './Screen/Kyc/IdentityDetailForm';
 import VerifyScreen from './Screen/Kyc/VerifyScreen';
 
+import {
+  NativeModules,
+} from 'react-native';
+
 const Stack = createStackNavigator();
 
 const Auth = () => {
@@ -36,6 +40,13 @@ const Auth = () => {
     Appearance.setColorScheme('light');
     console.log("colorScheme");
     console.log(Appearance.getColorScheme());
+
+    // NativeModules.EnQualifyModuleIOS.viewDidLoadNative()
+    // setTimeout(() => {
+    //   NativeModules.EnQualifyModuleIOS.startVerification()
+    // }, 10000);
+    console.log("AAAA")
+    
   },
   [])
   // Stack Navigator for Login and Sign up Screen
