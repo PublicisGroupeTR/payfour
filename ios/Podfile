@@ -45,7 +45,7 @@ target 'Payfour' do
   
   pre_install do |installer|
         installer.pod_targets.each do |pod|
-          if pod.name.eql?('RNReanimated') || pod.name.eql?('tealium-react-native')
+          if pod.name.eql?('RNReanimated')
             def pod.build_type
               Pod::BuildType.static_library
             end

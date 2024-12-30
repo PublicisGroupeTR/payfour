@@ -41,10 +41,10 @@ const Auth = () => {
     console.log("colorScheme");
     console.log(Appearance.getColorScheme());
 
-    // NativeModules.EnQualifyModuleIOS.viewDidLoadNative()
-    // setTimeout(() => {
-    //   NativeModules.EnQualifyModuleIOS.startVerification()
-    // }, 10000);
+    // NativeModules.BridgeModuleIOS.viewDidLoadNative()
+    setTimeout(() => {
+      // NativeModules.EnQualifyModuleIOS.startVerification()
+    }, 10000);
     console.log("AAAA")
     
   },

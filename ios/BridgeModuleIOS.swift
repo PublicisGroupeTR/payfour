@@ -5,8 +5,8 @@ import Foundation
 import React
 import UIKit
 
-@objc(VerificationModuleIOS)
-class VerificationModuleIOS: BaseViewController, EnVerifyDelegate {
+@objc(BridgeModuleIOS)
+class BridgeModuleIOS: BaseViewController, EnVerifyDelegate {
 
   var agentRequestType: AgentRequestType = .none
   var isNFCRetry: Bool = false
