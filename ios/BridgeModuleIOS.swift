@@ -5,8 +5,8 @@ import Foundation
 import React
 import UIKit
 
-@objc(EnQualifyModuleIOS)
-class EnQualifyModuleIOS: BaseViewController, EnVerifyDelegate {
+@objc(VerificationModuleIOS)
+class VerificationModuleIOS: BaseViewController, EnVerifyDelegate {
 
   var agentRequestType: AgentRequestType = .none
   var isNFCRetry: Bool = false
@@ -465,7 +465,7 @@ class EnQualifyModuleIOS: BaseViewController, EnVerifyDelegate {
         print("viewDidLoadNative")
 
         self.setCustomerInformation()
-        print("viewDidLoadNative")
+        print("viewDidLoadNative setCustomerInformation")
         let holoDetectionType = "HOLO_ANY_DETECT"
         EnVerifyCustomerCard.shared.setHoloDetectionType(holoDetectionType: holoDetectionType)
         EnVerifyCustomerCard.shared.setDetectionThreshold(threshold: 0.9)
@@ -494,13 +494,13 @@ class EnQualifyModuleIOS: BaseViewController, EnVerifyDelegate {
           print("setSettings")
           
           print("aiUserName", UserDefaults.standard.string(forKey: "aiUserName"))
-          self._startVerification()
-//          DispatchQueue.main.async {
-//
-//            print(self)
-//            guard EnVerify.idVerifyStart(self) else {return}
-//            EnVerify.requestVideoAudioPermissions()
-//          }
+          // self._startVerification()
+         DispatchQueue.main.async {
+
+           print(self)
+           guard EnVerify.idVerifyStart(self) else {return}
+           EnVerify.requestVideoAudioPermissions()
+         }
         } else {
           self.presentCameraSettings(vc: self)
         }
@@ -534,7 +534,6 @@ class EnQualifyModuleIOS: BaseViewController, EnVerifyDelegate {
       }
     }
   }
-
 
   @objc func startVerification() {
     DispatchQueue.main.async {
@@ -574,13 +573,10 @@ class EnQualifyModuleIOS: BaseViewController, EnVerifyDelegate {
     EnVerify.setSSLPinning(required: true)
     EnVerify.setShowLogs(value: true)
     AppSettings().getConfigurations(){ bool in
-        EnVerify.getAuthTokenBeforeSDK(UserDefaults.standard.string(forKey: "apiServerUser"), UserDefaults.standard.string(forKey: "apiServer") ?? ""){(_) -> () in
-          completionHandler()
-        }
-      
-      
-      
-      }}
+      EnVerify.getAuthTokenBeforeSDK(UserDefaults.standard.string(forKey: "apiServerUser"), UserDefaults.standard.string(forKey: "apiServer") ?? ""){(_) -> () in
+        completionHandler()
+      }
+    }}
 }
 
 // @objc(EnQualifyModuleIOS)
