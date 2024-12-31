@@ -1,7 +1,6 @@
 import UIKit
 import Firebase
 import EnQualify
-import React
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

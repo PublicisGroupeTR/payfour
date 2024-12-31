@@ -41,7 +41,7 @@ const Auth = () => {
     console.log("colorScheme");
     console.log(Appearance.getColorScheme());
 
-    // NativeModules.BridgeModuleIOS.viewDidLoadNative()
+    // NativeModules.ModuleIOS.viewDidLoadNative()
     setTimeout(() => {
       // NativeModules.EnQualifyModuleIOS.startVerification()
     }, 10000);

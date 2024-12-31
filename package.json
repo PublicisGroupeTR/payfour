@@ -18,6 +18,7 @@
     "@react-native-firebase/messaging": "^17.5.0",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/stack": "^6.4.1",
+    "@timotismjntk/react-native-carousel": "^0.2.1",
     "keen-slider-extended": "^6.8.8",
     "react": "^18.2.0",
     "react-native": "0.75.2",
@@ -48,8 +49,7 @@
     "react-native-swiper": "^1.6.0",
     "react-native-webview": "^13.12.2",
     "reactotron-react-native": "^5.1.10",
-    "world-countries": "^5.0.0",
-    "@timotismjntk/react-native-carousel": "^0.2.1"
+    "world-countries": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
