@@ -1,3 +1,22 @@
+//import Foundation
+//import React
+//
+//@objc(BridgeModuleIOS)
+//class ModuleIOS: NSObject {
+//  @objcBridgeModuleIOS//  func viewDidLoadNative() {
+//    print("viewDidLoadNative called")
+//  }
+//
+//  @objc
+//  func startVerification() {
+//    print("startVerification called")
+//  }
+//}
+//
+
+
+
+
 import AVFoundation
 import CoreNFC
 import EnQualify
