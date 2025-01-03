@@ -31,9 +31,10 @@ import MaskInput from 'react-native-mask-input';
 import LinearGradient from 'react-native-linear-gradient';
 import {Dropdown} from 'react-native-element-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useError } from '../../Contexts/ErrorContext';
 
 const ProfileCoupon = ({navigation}) => { 
-
+  const { showError } = useError();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -81,7 +82,8 @@ const ProfileCoupon = ({navigation}) => {
               let msg="";
               (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; 
               (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
-              Alert.alert(msg);
+              //Alert.alert(msg);
+              showError(msg);
         
               
               //Alert.alert("Error sending data: ", error);

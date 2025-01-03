@@ -92,7 +92,7 @@ const IntroScreen = ({navigation}) => {
         }}
         onIndexChanged={(index) =>{
           console.log('index:', index);
-          let end =  index ==3;
+          let end =  index ==2;
           console.log("end? "+end);
           setSlideEnd(end);
         }}
@@ -142,7 +142,7 @@ const IntroScreen = ({navigation}) => {
             </Text>
           </View>
           </View>
-          <View style={styles.slide2}>
+          {/* <View style={styles.slide2}>
             <View style={styles.header}>
               <Text style={styles.text}>%10 Nakit İade 
               Avantajı!</Text>
@@ -160,7 +160,7 @@ const IntroScreen = ({navigation}) => {
             Üstelik Payfour Platin üyelerine özel <Text style={{fontWeight:'700'}}>%10 nakit </Text>iade sizleri bekliyor!
             </Text>
           </View>
-          </View>
+          </View> */}
           <View style={styles.slide3}>
             <View style={styles.header}>
               <Text style={styles.text}>CarrefourSA Puan
@@ -186,7 +186,7 @@ const IntroScreen = ({navigation}) => {
               Ödemesini Sonra Yap</Text>
             </View>
             <Image
-          source={require('../assets/img/export/tut4.png')}
+          source={require('../assets/img/export/tut2.png')}
           style={{
             width: Dimensions.get('window').height*0.461, 
             height:Dimensions.get('window').height * 0.418, 

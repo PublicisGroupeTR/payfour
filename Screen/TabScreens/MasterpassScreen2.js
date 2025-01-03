@@ -1188,8 +1188,11 @@ const AddCards = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [cardSuccessModalVisible, setCardSuccessModalVisible] = useState(false);
   const [cardAlreadyAddedModalVisible, setCardAlreadyAddedModalVisible] = useState(false);
+  const [validName, setValidName] = useState(true);
   const [validNumber, setValidNumber] = useState(true);
   const [validCvc, setValidCvc] = useState(true);
+  const [validDate, setValidDate] = useState(true);
+  const [validNick, setValidNick] = useState(true);
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cardDate, setCardDate] = useState('');
@@ -1215,7 +1218,6 @@ const AddCards = ({navigation}) => {
   
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => { 
-
       //webview.current.postMessage("Hello from RN");
 
       //MasterPassSDK.setAddress('https://mp-test-sdk.masterpassturkiye.com/');
@@ -1331,6 +1333,15 @@ const AddCards = ({navigation}) => {
     }
   }
   const addCard = ()=>{
+    let err = false;
+if(cardName.length < 5){setValidName(false); err = true;}
+if(!checkValidCard(cardNumber)) err = true;
+if(cardDate.length <4){setValidDate(false); err = true;}
+if(!checkValidCVC(cardCVC)) err = true;
+if(!mpSave) err = true;
+if(cardNick.length < 3){setValidNick(false); err = true;}
+
+if(err) return;
     console.log("addCard");
     AsyncStorage.getItem('token').then(value =>{
         
@@ -2048,14 +2059,14 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                         </Text>
                         
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, height:60, paddingTop:30}]}>  
+                  <View style={[regstyles.registerInputStyle, {borderColor: validName ? '#EBEBEB': '#ff0000',paddingBottom:0, height:60, paddingTop:30}]}>  
                     <Text style={{                                           
                           fontSize: 12,
-                          lineHeight:12, 
+                          lineHeight:14, 
                           padding:0,
                           color: '#909EAA', 
                           position:'absolute',
-                          top:14,                     
+                          top:12,                     
                           left:12,
                           pointerEvents:"none",
                       }}>
@@ -2065,10 +2076,12 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                         value={cardName}
                         //onChangeText={UserName => setCardName(UserName)}
                         onChangeText={UserName => {
-                          let isValid = /^[A-Za-z]+[A-Za-z ]*$/.test(UserName);
+                          let isValid = /^[A-Za-zğüışöçĞÜİŞÖÇ ]*$/.test(UserName);
                           console.log(UserName);
                           console.log(isValid);
-                          if(isValid)setCardName(UserName)}}
+                          if(isValid)setCardName(UserName);
+                          (UserName.length > 2)?setValidName(true):setValidName(false);
+                          }}
                         placeholder="Ad Soyad" //12345
                         placeholderTextColor="#909EAA"
                         keyboardType="default"
@@ -2081,7 +2094,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                         autoCorrect='false'
                       />
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, height:60, paddingTop:30}]}>  
+                  <View style={[regstyles.registerInputStyle, {borderColor: validNumber? '#EBEBEB': '#ff0000',paddingBottom:0, height:60, paddingTop:30}]}>  
                     <Text style={{                                           
                           fontSize: 12,
                           lineHeight:12, 
@@ -2101,9 +2114,10 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                         setCardNumber(cn);
                         checkValidCard(cn);
                       }}
+                      maxLength={16}
                       placeholder="Kart No." //12345
                       placeholderTextColor="#909EAA"
-                        keyboardType="default"
+                        keyboardType="numeric"
                         onSubmitEditing={Keyboard.dismiss}
                         blurOnSubmit={false}
                         underlineColorAndroid="#f000"
@@ -2117,7 +2131,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                     flexDirection:'row',
                     justifyContent:'space-between'
                   }}>
-                    <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',width:'48%', height:54}]}> 
+                    <View style={[regstyles.registerInputStyle, {borderColor: validDate? '#EBEBEB': '#ff0000',width:'48%', height:54}]}> 
                     <MaskInput
                         style={{                      
                           fontSize: 14,
@@ -2140,6 +2154,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                         }}
                         onChangeText={CardDate => {
                           setCardDate(CardDate);
+                          (CardDate.length > 3)?setValidDate(true):setValidDate(false);
                         }}
                         //placeholder="AA/YY" //12345
                         placeholderTextColor="#909EAA"
@@ -2210,7 +2225,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                   </View>
 
                   </View>
-                <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB', height:54}]}>            
+                <View style={[regstyles.registerInputStyle, {borderColor: validNick ? '#EBEBEB': '#ff0000', height:54}]}>            
                     <TextInput
                       style={{                      
                         fontSize: 14,
@@ -2219,7 +2234,10 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                         color: '#909EAA',
                       }}
                       value={cardNick}
-                      onChangeText={CardNick => setCardNick(CardNick)}
+                      onChangeText={CardNick => {
+                        (CardNick.length > 2)?setValidNick(true):setValidNick(false);
+                        setCardNick(CardNick);
+                      }}
                       placeholder="Karta İsim Verin ( kişisel, iş vb.)" //12345
                       placeholderTextColor="#909EAA"
                       keyboardType="default"
@@ -2268,7 +2286,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       padding:0,
                     },
                   ]}
-                  onPress={() => addCard()}>
+                  onPress={() => {if(validName&&validNumber&&validDate&&validCvc&&validNick) addCard();}}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
                     Kart Ekle
@@ -2287,7 +2305,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
             // update component to be aware of loading status
             //const { nativeEvent } = syntheticEvent;
             //this.isLoading = nativeEvent.loading;
-            Alert.alert('iframe loaded');
+            //Alert.alert('iframe loaded');
             addcardMessage();
           }}
           onMessage={(event)=>{
@@ -2338,6 +2356,7 @@ const Payment = ({route, navigation}) => {
   const [timerCount, setTimerCount] = useState(180);
   const [timerText, setTimerText] = useState('03:00');
   const [resetTimer, setResetTimer] = useState(false);
+  const [url3d, setUrl3d] = useState('');
 
   const { id, cardAlias, maskedCardNumber, issuer, logo } = route.params;
   useEffect(() => {   
@@ -2541,30 +2560,79 @@ const Payment = ({route, navigation}) => {
     }
   }
   const sendPayment = () =>{
+    //let tk = user.token.replace('Bearer ', '');
+
+    let am = amount+"00";
+    let dataToSend = {      
+      "isDirectPayment": false,
+      "amount": am     
+    }
+    AsyncStorage.getItem('token').then(value =>{
+        
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+    
+    console.log(config);
+    setLoading(true);
+    axios.post('https://payfourapp.test.kodegon.com/api/payments/generatemasterpassorder',dataToSend, config)
+            .then(response => {
+              console.log(response);
+              console.log(response.data);
+              /*{"data": {
+              "orderId": "53e73d23-ec6f-488d-85a8-07476bc2095e", 
+              "returnUrl": "https://payfourapp.test.kodegon.com/masterpass/completepayment"}, 
+              "status": 200, 
+              "success": true}*/
+              sendPaymentToMasterPass(response.data.data.orderId, response.data.data.returnUrl);
+            })
+            .catch(error => {
+              setLoading(false);
+              console.error("Error sending data: ", error);
+              console.error("Error sending data: ", error.response);
+              console.error("Error sending data: ", error.response.data.errors.message);
+              //console.log(JSON.parse(error.response));
+              let msg="";
+              (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        
+              
+              //Alert.alert("Error sending data: ", error);
+            });   
+      });   
+  }
+  const sendPaymentToMasterPass = (orderId, returnUrl) =>{
     let tk = user.token.replace('Bearer ', '');
     let ph = user.phone.replace('+', '');
   
     let refNo = Math.floor(Math.random() * (999999 - 111111 + 1) + 111111)
     let orderNo = Math.floor(Math.random() * (999999 - 111111 + 1) + 111111)
+    
+    let am = amount+"00";
     let dataToSend = {
       "MerchantId": "347102188",
       "RequestReferenceNo":refNo,
       "AccountKey":ph,
-      "Amount": amount,
+      "Amount": am,
       "terminalGroupId": "102188638556903343042785",
       "AuthenticationMethod":"otp",
       "CardAlias": cardAlias,
       "SourceChannel": "Android",
       "CurrencyCode": "TRY",
-      "OrderNo": orderNo,
+      "OrderNo": orderId,
     }
     console.log(dataToSend);
-    console.log("currentObj before send");
-    console.log(currentObj);
-    setCurrentObj({
+    /*console.log("currentObj before send");
+    console.log(currentObj);*/
+    
+    console.log("currentobj after orderid");
+    //console.log(currentObj);
+    /*setCurrentObj({
       type:'payment',
       data:dataToSend
-    });
+    });*/
+    currentObj.type = 'payment';
+    currentObj.data = dataToSend;
+    currentObj.data.orderId = orderId;
     console.log(currentObj);
     console.log(">>>>>>>>>>>>>>>");
     console.log("SendPayment : "+'https://mp-test-sdk.masterpassturkiye.com/payment/api/Payment/request')
@@ -2599,7 +2667,7 @@ const Payment = ({route, navigation}) => {
               d.type="payment";
               d.data.token = response.data.result.token;
               d.data.cardNumber = response.data.result.maskedNumber;
-              d.data.orderId = orderNo;
+              //d.data.orderId = orderNo;
               d.data.amount = amount;
               setCurrentObj(d);
               /*setCurrentObj({
@@ -2627,7 +2695,11 @@ const Payment = ({route, navigation}) => {
                 //postPaymentOtp("123456",response.data.result.token);
                 //setTimeout(sendOtp, 2000);
               }else if(response.data.result.responseCode == "5010"){
-                Alert.alert("5010 - 3ds onayı gerekli");
+                //Alert.alert("5010 - 3ds onayı gerekli");
+                console.log(returnUrl);
+                console.log(response.data.result.url3d+"&returnUrl="+returnUrl);
+                setUrl3d(response.data.result.url3d+"&returnUrl="+returnUrl);
+                //checkOrderCompletion(currentObj.data.orderId);
                }
   
               }else{
@@ -2659,6 +2731,57 @@ const Payment = ({route, navigation}) => {
               
               //Alert.alert("Error sending data: ", error);
             });
+  }
+  const checkOrderCompletion = (orderId)=>{
+    setTimeout(function(){
+      AsyncStorage.getItem('token').then(value =>{
+        
+        const config = {
+          headers: { Authorization: `Bearer ${value}` }
+        };
+      
+      //setLoading(true);
+      axios.get('https://payfourapp.test.kodegon.com/api/payments/getmasterpassorder/'+orderId, config)
+      .then(response => {
+        console.log(response);
+        console.log(response.data);
+        if(!response.data.data(isCompleted))checkOrderCompletion(orderId);
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error("Error sending data: ", error);
+        console.error("Error sending data: ", error.response);
+        console.error("Error sending data: ", error.response.data.errors.message);
+        //console.log(JSON.parse(error.response));
+        let msg="";
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+  
+        
+        //Alert.alert("Error sending data: ", error);
+      });
+    },3000)
+    });
+  }
+  const on3dMessage = (message) => {
+    console.log("on3dmessage result");
+    console.log(message);    
+    console.log(message.nativeEvent.data);  
+    console.log(message.nativeEvent.data.isSuccess);  
+    let res = JSON.parse(message.nativeEvent.data);
+    console.log("res");
+    console.log(res);
+    console.log(res.isSuccess);
+    console.log(res.errorMessage);
+    if(res.isSuccess == true){
+      console.log("3d success");
+      setUrl3d("");
+      setSuccessModalVisible(true);
+    }else{
+      console.log("3d fail");
+      setUrl3d("");
+      Alert.alert(res.errorMessage);
+    }
+    
   }
   const postPaymentOtp = (otp, ptoken)=>{
     console.log("postpaymentotp");
@@ -2737,12 +2860,13 @@ const Payment = ({route, navigation}) => {
       //   "cvv": "889",
       //   "accountAliasName": "sanal"
       // }
+      let am = currentObj.data.amount+"00";
       let dataToSend ={
         "masterpassUserToken":user.token.replace('Bearer ', ''),
         "paymentToken": ptoken,
         "orderId": currentObj.data.orderId,
         "cardNumber": currentObj.data.cardNumber,
-        "amount": currentObj.data.amount,
+        "amount": am,
         "isDirectPayment": false
       }
       console.log(dataToSend);
@@ -2861,6 +2985,7 @@ const Payment = ({route, navigation}) => {
             onRequestClose={() => {
               setModalVisible(!modalVisible);
             }}>
+              <KeyboardAvoidingView behavior='padding' style={{flex:1}}>
             <View
               style={{
                 flex: 1,                
@@ -2874,7 +2999,7 @@ const Payment = ({route, navigation}) => {
                   borderTopLeftRadius: 24,
                   borderTopRightRadius: 24,
                   paddingTop: 16,
-                  paddingBottom: 16,
+                  paddingBottom: 36,
                   paddingLeft: 16,
                   paddingRight: 16,
                   width: '100%',
@@ -2919,7 +3044,7 @@ const Payment = ({route, navigation}) => {
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:8, 
+                        lineHeight:16, 
                         padding:0,
                         color: '#909EAA',
                       }}
@@ -2984,6 +3109,7 @@ const Payment = ({route, navigation}) => {
                </View>
               </View>
             </View>
+            </KeyboardAvoidingView>
       </Modal>
       <Modal
           animationType="slide"
@@ -3248,6 +3374,45 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
               </View>
               </KeyboardAvoidingView>
               </ScrollView>
+              { 
+                (url3d != "") ? 
+                <View style={{
+                  position:'absolute',
+                  top:80,
+                  left:0,
+                  width:Dimensions.get('window').width,
+                  height:Dimensions.get('window').height,
+                }}>
+                  <WebView 
+                source={{ uri: url3d }} 
+                javaScriptEnabled={true}
+                
+                //ref={payWebview}
+                onLoadEnd={(syntheticEvent) => {
+                  // update component to be aware of loading status
+                  //const { nativeEvent } = syntheticEvent;
+                  //this.isLoading = nativeEvent.loading;
+                  //addcardMessage();
+                  console.log("3d iframe loaded");
+                }}
+                onMessage={(event)=>{
+                  console.log("on3dMessage");
+                  console.log(event);
+                  let message  = event.nativeEvent.data;
+                  on3dMessage(event);
+                            
+                }}
+                style={{ 
+                  flex:1,marginTop:40,
+                  //backgroundColor:'#0000ff',
+                }} 
+                />
+                </View>
+                :
+                <View>
+
+                </View>
+              }
               </SafeAreaView>
   )
 }

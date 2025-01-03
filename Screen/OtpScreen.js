@@ -199,7 +199,7 @@ const OtpScreen = ({navigation, route}) => {
     let func = route.params.forgot ? 'verifycustomotp' : 'verifyotp';
     axios.post('http://payfourapp.test.kodegon.com/api/auth/'+func, dataToSend)
     .then(response => {
-      setLoading(false);
+        setLoading(false);
         console.log(response.data); 
         otpInputRef2.current.clear();
         setOtp('');       
@@ -228,22 +228,18 @@ const OtpScreen = ({navigation, route}) => {
       }
     })
     .catch(error => {
+      setTimeout(function(){setLoading(false);},1000);
+
       console.error("Error sending data: ", error);
-      otpInputRef.current.clear();
+      otpInputRef2.current.clear();
       Alert.alert('Girilen kod hatalı. Lütfen kontrol edin.');
-      console.log(otpInputRef)
+      console.log(otpInputRef2)
     });     
     
   };
   const [otpInput, setOtpInput] = useState('');
 
   const input = useRef<OTPTextView>(null);
-
-  const clear = () => input.current?.clear();
-
-  const updateOtpText = () => input.current?.setValue(otpInput);
-
-  const showTextAlert = () => otpInput && Alert.alert(otpInput);
 
   const handleCellTextChange = async (text, i) => {
     console.log("handleCellTextChange")
@@ -421,36 +417,7 @@ const OtpScreen = ({navigation, route}) => {
                 </View>
                 <View style={[styles.centerStyle, {paddingLeft:18, paddingRight:18}]}>
                   <View style={{paddingTop:12, paddingBottom:12}}>
-                    {/* <OtpInput
-                    ref={otpInputRef}
-                    numberOfDigits={6}
-                    focusColor="#015096"
-                    focusStickBlinkingDuration={500}
-                    autoFocus={false}
-                    onFocus={()=> {console.log('focus'); }}
-                    onTextChange={(text) => {console.log(text);setOtpError(false);}}
-                    onFilled={(text) => {
-                      console.log(`OTP is ${text}`); 
-                      setOtp(text); 
-                      setToggleSubmit(true);
-                      Keyboard.dismiss();
-                    }}
-                    textInputProps={{
-                      accessibilityLabel: "One-Time Password",
-                    }}
-                    theme={{
-                      containerStyle: styles.container,
-                      pinCodeContainerStyle: {
-                        backgroundColor:'#fff',
-                        borderColor: otpError? '#E42932':'#DADEE7'
-                      },
-                      pinCodeTextStyle: styles.pinCodeText,
-                      focusStickStyle: styles.focusStick,
-                      focusedPinCodeContainerStyle: {
-                        borderColor:"#015096"
-                      },
-                    }}
-                  /> */}
+                  
                   <OTPTextView
                     ref={otpInputRef2}
                     containerStyle={otpstyles.textInputContainer}

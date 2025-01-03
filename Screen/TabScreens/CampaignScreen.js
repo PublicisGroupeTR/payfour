@@ -346,7 +346,7 @@ const renderSuggestionItems = () =>{
   }
   const onInput = (data) => {
     console.log("onInput", data);
-      setLoading(true);
+      //setLoading(true);
       AsyncStorage.getItem('token').then(value =>{
         const config = {
           headers: { Authorization: `Bearer ${value}` }

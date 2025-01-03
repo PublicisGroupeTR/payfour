@@ -51,6 +51,7 @@ const RegisterScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState("");
   const [secureText, setSecureText] = useState(true);
+  const [secureText2, setSecureText2] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [userKVKKAgreement, setUserKVKKAgreement] = useState(false);
@@ -90,10 +91,10 @@ const RegisterScreen = ({ navigation }) => {
       err = true;
       setUserPasswordError(true);
     }
-    /*if(userPassword != userPasswordAgain){
+    if(userPassword != userPasswordAgain){
       err = true;
       setUserPasswordError(true);
-    }*/
+    }
     if(!userAgreement){
       err = true;
       setUserAgreementError(true);
@@ -946,14 +947,28 @@ const RegisterScreen = ({ navigation }) => {
                         }}
                         onPress={() => setSecureText(!secureText)}
                       >
-                        <Image
+                        {secureText? <Image
+                              source={require('../assets/img/export/eye_off.png')}
+                              style={{
+                                width:24,
+                                height:24
+                              }}>
+                              </Image> :
+                              <Image
+                              source={require('../assets/img/export/eye.png')}
+                              style={{
+                                width:24,
+                                height:24
+                              }}>
+                              </Image>}
+                        {/* <Image
                           source={require("../assets/img/export/eye.png")}
                           style={{
                             width: 24,
                             height: 24,
                             resizeMode: "contain",
                           }}
-                        />
+                        /> */}
                       </TouchableOpacity>
                       <TextInput
                         style={
@@ -974,6 +989,7 @@ const RegisterScreen = ({ navigation }) => {
                         secureTextEntry={secureText}
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
+                        maxLength={6}
                       />
                       {errortext !== "" ? (
                         <Text style={registerStyles.errorTextStyle}>
@@ -1033,17 +1049,31 @@ const RegisterScreen = ({ navigation }) => {
                           right: 20,
                           zIndex: 10,
                         }}
-                        onPress={() => setSecureText(!secureText)}
+                        onPress={() => setSecureText2(!secureText2)}
                       >
+                        {secureText2? <Image
+                              source={require('../assets/img/export/eye_off.png')}
+                              style={{
+                                width:24,
+                                height:24
+                              }}>
+                              </Image> :
+                              <Image
+                              source={require('../assets/img/export/eye.png')}
+                              style={{
+                                width:24,
+                                height:24
+                              }}>
+                              </Image>}
                         {/* <Eye width={22} height={12} /> */}
-                        <Image
+                        {/* <Image
                           source={require("../assets/img/export/eye.png")}
                           style={{
                             width: 24,
                             height: 24,
                             resizeMode: "contain",
                           }}
-                        />
+                        /> */}
                       </TouchableOpacity>
                       <TextInput
                         style={[
@@ -1062,9 +1092,10 @@ const RegisterScreen = ({ navigation }) => {
                         ref={passwordInputRef}
                         onSubmitEditing={Keyboard.dismiss}
                         blurOnSubmit={false}
-                        secureTextEntry={secureText}
+                        secureTextEntry={secureText2}
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
+                        maxLength={6}
                       />
                       {errortext !== "" ? (
                         <Text style={registerStyles.errorTextStyle}>
@@ -1098,7 +1129,13 @@ const RegisterScreen = ({ navigation }) => {
                             ? registerStyles.inputIos
                             : registerStyles.inputAndroid
                         }
-                        onChangeText={(UserName) => setUserName(UserName)}
+                        value={userName}
+                        onChangeText={UserName => {
+                          let isValid = /^[A-Za-zğüşöçİĞÜŞÖÇ ]*$/.test(UserName);
+                          console.log(UserName);
+                          console.log(isValid);
+                          if(isValid)setUserName(UserName);
+                        }}
                         placeholder=""
                         placeholderTextColor="#7E797F"
                         onSubmitEditing={Keyboard.dismiss}
@@ -1132,9 +1169,13 @@ const RegisterScreen = ({ navigation }) => {
                             ? registerStyles.inputIos
                             : registerStyles.inputAndroid
                         }
-                        onChangeText={(UserSurname) =>
-                          setUserSurname(UserSurname)
-                        }
+                        value={userSurname}
+                        onChangeText={UserSurname => {
+                          let isValid = /^[A-Za-zğüşöçİĞÜŞÖÇ ]*$/.test(UserSurname);
+                          console.log(UserSurname);
+                          console.log(isValid);
+                          if(isValid)setUserSurname(UserSurname);
+                        }}
                         placeholder=""
                         placeholderTextColor="#7E797F"
                         onSubmitEditing={Keyboard.dismiss}

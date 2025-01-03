@@ -669,6 +669,7 @@ const Discover = ({route, navigation}) => {
     console.log("getWaiting "+cs);
     setLoading(true);
     setCreditStatus(cs);
+    //setCreditStatus(1);
     //setCreditStatus(3);
     AsyncStorage.getItem('token').then(value =>{
       const config = {
@@ -691,6 +692,8 @@ const Discover = ({route, navigation}) => {
           {"amount": 22, "channelTypeId": 6, "dateUTC": "2024-12-06T13:02:08.4449536", "paymentId": 1697, "storeCode": "1012", "storeName": " CarrefourSA İstanbul Acıbadem"}, 
           {"amount": 10, "channelTypeId": 6, "dateUTC": "2024-12-06T13:02:16.8198694", "paymentId": 1698, "storeCode": "1015"}
           ];*/
+
+          setTimeout(function(){setLoading(false)},2000);
         if(response.data.data.length > 0){
           let pObj = response.data.data[0];
           pObj.balance = balance;
@@ -1187,7 +1190,7 @@ const Discover = ({route, navigation}) => {
               </View>
             </View>
       </Modal>
-      <Modal
+      {/* <Modal
             animationType="slide"
             transparent={true}
             visible={cashModalVisible}
@@ -1300,6 +1303,123 @@ const Discover = ({route, navigation}) => {
                 </TouchableOpacity>
                
               </View>
+            </View>
+      </Modal> */}
+      <Modal
+            animationType="slide"
+            transparent={true}
+            visible={cashModalVisible}
+            onRequestClose={() => {
+              setCashModalVisible(!cashModalVisible);
+            }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 79, 151, 0.6)',
+              }}>
+              <View
+                                style={{
+                                  backgroundColor:'#fff',
+                                  borderTopLeftRadius: 24,
+                                  borderTopRightRadius: 24,
+                                  paddingTop: 16,
+                                  paddingBottom: 100,
+                                  paddingLeft: 16,
+                                  paddingRight: 16,
+                                  width: '100%',
+                                }}>
+                                  
+                                  <View style={{
+                                    paddingTop:24,
+                                    paddingBottom:24,
+                                    alignItems:'center',
+                                    justifyContent:'center',
+                                  }}>
+                                    <Image 
+                                        source={require('../../assets/img/export/payfourid_icon2.png')}
+                                        style={{
+                                          width: 93,
+                                          height: 93,
+                                          resizeMode: 'contain',
+                                          marginBottom:14,
+                                        }}
+                                        />
+                                  </View>
+                                  <View style={{
+                                      marginBottom:24,
+                                      }}>
+                                        <Text style={{
+                                          fontSize:20,
+                                          fontWeight:'700',
+                                          color:'#004F97',
+                                          marginBottom:16,
+                                          textAlign:'center',
+                                        }}>
+                                          Kasadaki görevliyle aşağıdaki bilgilerinizi
+                                          veya telefon numaranızı paylaşınız
+                                        </Text>
+                                        <Text style={{
+                                          fontSize:12,
+                                          lineHeight:20,
+                                          color:'#909EAA',
+                                          paddingLeft:24,
+                                          paddingRight:24,
+                                          textAlign:'center',
+                                          marginBottom:26,
+                                        }}>
+                                          Payfour hesabınıza para yükleyin, keyifle kullanın!
+                                      </Text>
+                                      <View style={{
+                                        padding:16,
+                                        borderRadius:8,
+                                        backgroundColor:'#F2F4F6',
+                                        flexDirection:'row',
+                                        alignItems:'center',
+                                        justifyContent:'center',
+                                      }}>
+                                        <Text style={{
+                                          fontSize:16,
+                                          color:'#0B1929',
+                                        }}>
+                                          Payfour No:
+                                        </Text>
+                                        <Text style={{
+                                          fontSize:16,
+                                          color:'#004F97',
+                                        }}>
+                                          {payfourId}
+                                        </Text>
+                                      </View>
+                                  </View>
+                                  
+                                
+                                <TouchableOpacity
+                                  style={[
+                                    styles.buttonStyle,
+                                    {
+                                      width: '100%',
+                                      height: 52,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      borderWidth: 2,
+                                      borderColor: '#004F97',
+                                      backgroundColor: '#004F97',
+                                      padding:0,
+                                    },
+                                  ]}
+                                  
+                                onPress={() => setCashModalVisible(false)}>
+
+                                  <Text
+                                    style={{fontSize: 14, color: '#ffffff'}}>
+                                    Kapat
+                                  </Text>
+                                </TouchableOpacity>
+                               
+                              </View>
             </View>
       </Modal>
       <Modal
@@ -2083,10 +2203,10 @@ const Discover = ({route, navigation}) => {
             </View>
           </View>
           <View style={
-            [styles.sectionStyle,{marginBottom:24, flexDirection:'row', justifyContent:'center', display:creditStatus != 1 && creditStatus != 3? 'none' : 'flex'}]
+            [styles.sectionStyle,{marginBottom:24, flexDirection:'row', justifyContent:'center', display:creditStatus != 1 && creditStatus != 3? 'flex' : 'flex'}]
           }>
             <TouchableOpacity 
-            style={{width:'49%', marginRight:'2%', display:creditStatus == 1? 'flex' : 'none'}}
+            style={{width:'49%', marginRight:'2%', display:creditStatus == 1? 'flex' : 'flex'}}
             onPress={() => navigation.navigate('wallet', { screen: 'CreditScreen',params: {
               screen: 'IntroHazirLimit', }})}
             >

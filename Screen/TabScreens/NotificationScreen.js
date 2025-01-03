@@ -4,7 +4,7 @@
 
 // Import React and Component
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, SafeAreaView, Image, Linking, FlatList, TouchableOpacity} from 'react-native';
+import {View, Text, SafeAreaView, Image, Linking, FlatList, TouchableOpacity, Dimensions} from 'react-native';
 import Loader from '../Components/Loader.js';
 import SubtabHeader from '../Components/SubtabHeader.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -78,6 +78,8 @@ const NotificationScreen = ({navigation, route}) => {
     <View key={id} style={{
       paddingTop:24,
       paddingBottom:24,
+      paddingLeft:24,
+      paddingRight:24,
       borderBottomWidth:1,
       borderBottomColor:'#EFF1F5',
       backgroundColor:isRead?  '#fff' : '#DFF0FF',
@@ -90,18 +92,19 @@ const NotificationScreen = ({navigation, route}) => {
       paddingRight:8,
       
     }}
-    onPress={() => { 
-      
-  
+    onPress={() => {      
         console.log("notification click");
         console.log(id);
         }}
         >
           <View style={{
+            position:'absolute',
+            left:-8,
             width:8,
             height:8,
             borderRadius:8,
             backgroundColor:isRead?  '#fff' : '#F85064',
+            display:isRead? 'none': 'flex',
             marginRight:8,
           }}>
           </View>
@@ -114,7 +117,7 @@ const NotificationScreen = ({navigation, route}) => {
           
         }}
       />
-      <View style={{}}>
+      <View style={{width:Dimensions.get('window').width - 116}}>
         <Text style={{
           fontSize:12,
           lineHeight:18,
@@ -168,7 +171,7 @@ const NotificationScreen = ({navigation, route}) => {
               )}
               keyExtractor={item => item.id+Math.random()}
               style={{paddingLeft: 30,
-                paddingRight: 30, marginLeft:-30, marginRight:-30}}
+                paddingRight: 30, marginLeft:-30, marginRight:-30, }}
               // onEndReached={setPage}
               initialNumToRender={20}            
             />
@@ -200,7 +203,7 @@ const NotificationScreen = ({navigation, route}) => {
       
       <SubtabHeader routetarget="Discover" name="Bildirimler" count="0" />
       {renderNotifications()}
-      <View>
+      <View style={{paddingBottom:80}}>
       </View>
     </SafeAreaView>
   );

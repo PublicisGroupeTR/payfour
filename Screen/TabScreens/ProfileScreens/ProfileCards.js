@@ -1168,8 +1168,11 @@ const AddCards = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [cardSuccessModalVisible, setCardSuccessModalVisible] = useState(false);
+  const [validName, setValidName] = useState(true);
   const [validNumber, setValidNumber] = useState(true);
   const [validCvc, setValidCvc] = useState(true);
+  const [validDate, setValidDate] = useState(true);
+  const [validNick, setValidNick] = useState(true);
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cardDate, setCardDate] = useState('');
@@ -1195,7 +1198,7 @@ const AddCards = ({navigation}) => {
 
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => { 
-
+      //setResetMasterPassModalVisible(true)
       //webview.current.postMessage("Hello from RN");
 
       //MasterPassSDK.setAddress('https://mp-test-sdk.masterpassturkiye.com/');
@@ -1352,6 +1355,15 @@ const AddCards = ({navigation}) => {
           });
   }
   const addCard = ()=>{
+    let err = false;
+if(cardName.length < 5){setValidName(false); err = true;}
+if(!checkValidCard(cardNumber)) err = true;
+if(cardDate.length <4){setValidDate(false); err = true;}
+if(!checkValidCVC(cardCVC)) err = true;
+if(!mpSave) err = true;
+if(cardNick.length < 3){setValidNick(false); err = true;}
+
+if(err) return;
     console.log("addCard");
     AsyncStorage.getItem('token').then(value =>{
         
@@ -1997,14 +2009,14 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         </Text>
                         
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, height:60, paddingTop:30}]}>  
+                  <View style={[regstyles.registerInputStyle, {borderColor: validName ? '#EBEBEB': '#ff0000',paddingBottom:0, height:60, paddingTop:30}]}>  
                     <Text style={{                                           
                           fontSize: 12,
-                          lineHeight:12, 
+                          lineHeight:14, 
                           padding:0,
                           color: '#909EAA', 
                           position:'absolute',
-                          top:14,                     
+                          top:12,                     
                           left:12,
                           pointerEvents:"none",
                       }}>
@@ -2014,10 +2026,12 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         value={cardName}
                         //onChangeText={UserName => setCardName(UserName)}
                         onChangeText={UserName => {
-                          let isValid = /^[A-Za-z]+[A-Za-z ]*$/.test(UserName);
+                          let isValid = /^[A-Za-zğüışöçĞÜİŞÖÇ ]*$/.test(UserName);
                           console.log(UserName);
                           console.log(isValid);
-                          if(isValid)setCardName(UserName)}}
+                          if(isValid)setCardName(UserName);
+                          (UserName.length > 2)?setValidName(true):setValidName(false);
+                          }}
                         placeholder="Ad Soyad" //12345
                         placeholderTextColor="#909EAA"
                         keyboardType="default"
@@ -2030,7 +2044,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         autoCorrect='false'
                       />
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, height:60, paddingTop:30}]}>  
+                  <View style={[regstyles.registerInputStyle, {borderColor: validNumber? '#EBEBEB': '#ff0000',paddingBottom:0, height:60, paddingTop:30}]}>  
                     <Text style={{                                           
                           fontSize: 12,
                           lineHeight:12, 
@@ -2050,9 +2064,10 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         setCardNumber(cn);
                         checkValidCard(cn);
                       }}
+                      maxLength={16}
                       placeholder="Kart No." //12345
                       placeholderTextColor="#909EAA"
-                        keyboardType="default"
+                        keyboardType="numeric"
                         onSubmitEditing={Keyboard.dismiss}
                         blurOnSubmit={false}
                         underlineColorAndroid="#f000"
@@ -2066,7 +2081,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                     flexDirection:'row',
                     justifyContent:'space-between'
                   }}>
-                    <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',width:'48%', height:54}]}> 
+                    <View style={[regstyles.registerInputStyle, {borderColor: validDate? '#EBEBEB': '#ff0000',width:'48%', height:54}]}> 
                     <MaskInput
                         style={{                      
                           fontSize: 14,
@@ -2089,6 +2104,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         }}
                         onChangeText={CardDate => {
                           setCardDate(CardDate);
+                          (CardDate.length > 3)?setValidDate(true):setValidDate(false);
                         }}
                         //placeholder="AA/YY" //12345
                         placeholderTextColor="#909EAA"
@@ -2111,8 +2127,9 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         value={cardCVC}
                         maxLength={3}
                         onChangeText={CardCVC => {
-                          setCardCVC(CardCVC)
-                          checkValidCVC(CardCVC);
+                          let cn = CardCVC.replace(/[^0-9]/g, '');
+                          setCardCVC(cn);
+                          checkValidCVC(cn);
                         }}
                         placeholder="CVV" //12345
                         placeholderTextColor="#909EAA"
@@ -2158,7 +2175,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   </View>
 
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB', height:54}]}>            
+                  <View style={[regstyles.registerInputStyle, {borderColor: validNick ? '#EBEBEB': '#ff0000', height:54}]}>            
                     <TextInput
                       style={{                      
                         fontSize: 14,
@@ -2167,7 +2184,10 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         color: '#909EAA',
                       }}
                       value={cardNick}
-                      onChangeText={CardNick => setCardNick(CardNick)}
+                      onChangeText={CardNick => {
+                        (CardNick.length > 2)?setValidNick(true):setValidNick(false);
+                        setCardNick(CardNick);
+                      }}
                       placeholder="Karta İsim Verin ( kişisel, iş vb.)" //12345
                       placeholderTextColor="#909EAA"
                       keyboardType="default"
@@ -2216,7 +2236,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       padding:0,
                     },
                   ]}
-                  onPress={() => addCard()}>
+                  onPress={() => {if(validName&&validNumber&&validDate&&validCvc&&validNick) addCard();}}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
                     Kart Ekle

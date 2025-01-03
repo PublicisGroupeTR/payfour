@@ -76,7 +76,7 @@ style={{}}
                 width:Dimensions.get('window').width,
               
               }}>
-              <View
+              {/* <View
                 style={{
                   backgroundColor:'#fff',
                   borderTopLeftRadius: 24,
@@ -174,7 +174,106 @@ style={{}}
                   </Text>
                 </TouchableOpacity>
                
-              </View>
+              </View> */}
+              <View
+                              style={{
+                                backgroundColor:'#fff',
+                                borderTopLeftRadius: 24,
+                                borderTopRightRadius: 24,
+                                paddingTop: 16,
+                                paddingBottom: 96,
+                                paddingLeft: 16,
+                                paddingRight: 16,
+                                width: '100%',
+                              }}>
+                                
+                                <View style={{
+                                  paddingTop:24,
+                                  paddingBottom:24,
+                                  alignItems:'center',
+                                  justifyContent:'center',
+                                }}>
+                                  <Image 
+                                      source={require('../../../assets/img/export/payfourid_icon.png')}
+                                      style={{
+                                        width: 93,
+                                        height: 93,
+                                        resizeMode: 'contain',
+                                        marginBottom:14,
+                                      }}
+                                      />
+                                </View>
+                                <View style={{
+                                    marginBottom:24,
+                                    }}>
+                                      <Text style={{
+                                        fontSize:20,
+                                        fontWeight:'700',
+                                        color:'#004F97',
+                                        marginBottom:16,
+                                        textAlign:'center',
+                                      }}>
+                                        Payfour ile online ya da 
+                                        kasada ödeme yapabilirsiniz!
+                                      </Text>
+                                      <Text style={{
+                                        fontSize:16,
+                                        lineHeight:20,
+                                        color:'#004F97',
+                                        paddingLeft:24,
+                                        paddingRight:24,
+                                        textAlign:'center',
+                                        marginBottom:26,
+                                      }}>
+                                        Mağazalarımızdan veya CarrefourSA'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
+                                    </Text>
+                                    <View style={{
+                                      padding:16,
+                                      borderRadius:8,
+                                      backgroundColor:'#F2F4F6',
+                                      flexDirection:'row',
+                                      alignItems:'center',
+                                      justifyContent:'center',
+                                    }}>
+                                      <Text style={{
+                                        fontSize:16,
+                                        color:'#0B1929',
+                                      }}>
+                                        Payfour No:
+                                      </Text>
+                                      <Text style={{
+                                        fontSize:16,
+                                        color:'#004F97',
+                                      }}>
+                                        {payfourId}
+                                      </Text>
+                                    </View>
+                                </View>
+                                
+                              
+                              <TouchableOpacity
+                                style={[
+                                  styles.buttonStyle,
+                                  {
+                                    width: '100%',
+                                    height: 52,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    borderWidth: 2,
+                                    borderColor: '#004F97',
+                                    backgroundColor: '#004F97',
+                                    padding:0,
+                                  },
+                                ]}
+                                onPress={() => navigation.navigate('Discover')}>
+                                <Text
+                                  style={{fontSize: 14, color: '#ffffff'}}>
+                                  Kapat
+                                </Text>
+                              </TouchableOpacity>
+                             
+                            </View>
             </View>
 
               </KeyboardAvoidingView>

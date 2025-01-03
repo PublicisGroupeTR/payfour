@@ -35,7 +35,7 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
 
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => {
-        console.log("<<<<<<<<<<<<< CreditInstallmentsScreen");
+        console.log("<<<<<<<<<<<<< CreditInstallmentsScreen >>>>>>>>>>>>>>>");
         console.log(navigation);
         console.log(route);
         console.log(route.params);
@@ -61,8 +61,11 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
   "tokenId": "f8cf1721-c680-42fe-9796-ae36349beb9f",
   "firstInstallmentDate": "2024-12-25"
 }*/
+console.log("route.params.params.firstInstallmentDate");
+console.log(route.params.params.firstInstallmentDate);
       let date = new Date(route.params.params.firstInstallmentDate);
       console.log("firstInstallmentDate");
+      console.log(date);
       console.log(date.getDate());
       console.log((date.getMonth()+1));
       console.log(date.getFullYear());
@@ -131,6 +134,10 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
         setLoading(false);
         
         console.error("Error sending data: ", error);
+        console.log(error.response);
+      let msg="";
+      (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+    
       });     
     });
   }
@@ -305,7 +312,7 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>      
       <Loader loading={loading} />
-      <SubtabHeader routetarget="Wallet" name="İşlem Başarılı" count="0" />
+      <SubtabHeader routetarget="wallet" name="İşlem Başarılı" count="0" />
       <LinearGradient colors={['#d4dde9', '#ecedf2']} 
       style={{
         position:'absolute',
@@ -360,7 +367,7 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
                   color:'#004F97',
                   marginBottom:10
                 }}>
-                  Ödemeniz Hazır
+                  Krediniz Hazır
                 </Text>
                 <Text style={{
                   fontSize:32,
@@ -371,7 +378,7 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
                   {route.params.params.amount} TL
                 </Text>
             </View>
-            <View style={{
+            {/* <View style={{
               borderRadius:8,
               backgroundColor:'#F2F9FF',
               padding:12,
@@ -397,7 +404,7 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
                   Size özel hazır limit tutarınızı <Text style={{fontWeight:'700'}}>12.10.2024</Text> tarihine kadar kullanabilirsiniz. Seçtiğiniz ürüne göre ödeme planınız size özel oluşturulacaktır.
                 </Text>
               </View>
-            </View>
+            </View> */}
             <View style={{
               height:34,
               marginBottom:12,
@@ -416,7 +423,7 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
             style={[regstyles.buttonStyle, {padding:0, backgroundColor: '#004F97', flex:1, marginBottom:12,marginTop:24,}]}              
             activeOpacity={0.5}
             onPress={handleSubmitPress}>
-            <Text style={regstyles.buttonTextStyle}>Başvur</Text>
+            <Text style={regstyles.buttonTextStyle}>Devam Et</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[regstyles.buttonStyle, {padding:0, backgroundColor: '#fff',borderWidth:1, borderColor:'#004F97', flex:1, marginBottom:12,}]}              

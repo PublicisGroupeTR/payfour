@@ -7,10 +7,12 @@ import React, {useState, useEffect} from 'react';
 import {ActivityIndicator, View, StyleSheet, Image, ImageBackground, Text} from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'react-native-axios';
 
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -34,25 +36,88 @@ const SplashScreen = ({navigation}) => {
 
           console.log("storage");
           console.log(obj);
-          navigation.navigate('IntroScreen');
+          //navigation.navigate('IntroScreen');
 
 
           if(!obj.tutorial){
             navigation.navigate('IntroScreen');
-          }else if (obj.phone !== 'null' && obj.uniqueMPANumber !== 'null'){
-            //navigation.replace('LoginWithPasswordScreen')
-            navigation.navigate('Auth', { screen: 'LoginWithPasswordScreen' })
-            //navigation.navigate('Auth', { screen: 'RegisterScreen' })
-            //navigation.navigate('Auth', { screen: 'BiometricsScreen' })
+          // }else if (obj.phone !== 'null' && obj.uniqueMPANumber !== 'null'){
+          //   //navigation.replace('LoginWithPasswordScreen')
+          //   navigation.navigate('Auth', { screen: 'LoginWithPasswordScreen' })
+          //   //navigation.navigate('Auth', { screen: 'RegisterScreen' })
+          //   //navigation.navigate('Auth', { screen: 'BiometricsScreen' })
+          // }else{
+          //   navigation.navigate('Auth', { screen: 'LoginScreen' });
+          // }
+          }else if(obj.phone && obj.deviceId && obj.uniqueMPANumber){
+            begin();
           }else{
-            navigation.navigate('Auth', { screen: 'LoginScreen' });
-          }
+             navigation.navigate('Auth', { screen: 'LoginScreen' });
+           }
         });
       });
       //navigation.replace('Auth');
     }, 5000);
   }, [navigation]);
-
+ const begin =()=>{
+  AsyncStorage.getAllKeys((err, keys) => {
+    AsyncStorage.multiGet(keys, (err, stores) => {
+      let obj = {};
+      stores.map((result, i, store) => {
+        // get at each store's key/value so you can work with it
+        
+        let key = store[i][0];
+        let value = store[i][1];
+        obj[key] = value;          
+      });
+      let dataToSend ={
+        "phone": obj.phone,
+        "deviceId": obj.deviceId,
+        "uniqueMPANumber": obj.uniqueMPANumber,
+        "dgpaysAgreements": true
+      }
+      console.log("datatosend");
+      console.log(dataToSend)
+      axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
+      .then(response => {
+        setLoading(false);
+          console.log(response.data);
+          if(response.data.data.sendOTP){
+            navigation.navigate('Auth', { 
+              screen: 'OtpScreen',
+              params: {phone: obj.phone}
+            });
+            
+          }else{
+            navigation.navigate('Auth', { screen: 'LoginWithPasswordScreen' })
+            //navigation.navigate('Auth', { screen: 'RegisterScreen' })
+          }
+          //setLogin();
+          /*let dds = dId.toString();
+          console.log("dds", dds)
+          AsyncStorage.setItem('deviceId', dds).then(() =>{
+            var ph = (countryCode+userPhone).replace('(', "").replace(")", "").replace(/ /g, '');
+            console.log("set phone", ph);
+            AsyncStorage.setItem('phone', ph).then(() =>{
+              console.log("navigate to otp");
+              navigation.navigate("OtpScreen", {
+                phone: ph,
+              });
+            });
+          });*/
+        });
+      });
+  })
+  .catch(error => {
+    setLoading(false);
+    console.error("Error sending data: ", error);
+    console.log(error.response);
+    let msg="";
+    (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
+    //Alert.alert(msg);
+    showError(msg);
+  });
+ }
   return (
     <View style={styles.container}>
       <ImageBackground

@@ -30,6 +30,7 @@ import { OtpInput } from "react-native-otp-entry";
 import axios from 'react-native-axios';
 
 import OTPTextView from 'react-native-otp-textinput';
+import {Dropdown} from 'react-native-element-dropdown';
 
 const CreditOtpScreen = ({navigation, route}) => {
   const [userEmail, setUserEmail] = useState('');
@@ -49,11 +50,18 @@ const CreditOtpScreen = ({navigation, route}) => {
   const [timerText, setTimerText] = useState('03:00');
   const [resetTimer, setResetTimer] = useState(false);
 
+  const [creditDateModalVisible, setCreditDateModalVisible] = useState(false);
+
   const otpInputRef = useRef();
   const otpInputRef2 = useRef();
 
+  const [creditToken, setCreditToken] = useState("");
+  const [firstDateData, setFirstDateData] = useState([]);
+  const [selectedFirstDate, setSelectedFirstDate] = useState([]);
+  const firstDateRef = useRef();
+
   useEffect(() => {
-    console.log("credit otp")
+    console.log("credit otp start")
     console.log(route);
     console.log(route.params);
     resetOtpTimer();
@@ -174,6 +182,7 @@ const CreditOtpScreen = ({navigation, route}) => {
     console.log("creditotp submit");
     setTimerCount(0);
     setLoading(true);
+    console.log(route.params);
     console.log(route.params.params.transactionId);
    let dataToSend = {
     "transactionId": route.params.params.transactionId,
@@ -219,21 +228,47 @@ const CreditOtpScreen = ({navigation, route}) => {
       .then(response => {
         setLoading(false);
           console.log(response.data); 
-
+          console.log(response.data.data.calculatedInstallmentDate);
+          
                 
         if(response.data.error){
           otpInputRef2.current.clear();
           Alert.alert(response.data.error.message);
         }else{
-          navigation.navigate('CreditInstallmentsScreen', {
-            params:{
-              transactionId:route.params.params.transactionId,
-              paymentId: route.params.params.paymentId,
-              firstInstallmentDate:response.data.data.calculatedInstallmentDate,
-              amount:route.params.params.amount,
-              tokenId:tokenId
+          if(response.data.data.calculatedInstallmentDate != null && response.data.data.calculatedInstallmentDate != undefined){
+            navigation.navigate('CreditInstallmentsScreen', {
+              params:{
+                transactionId:route.params.params.transactionId,
+                paymentId: route.params.params.paymentId,
+                firstInstallmentDate:response.data.data.calculatedInstallmentDate,
+                amount:route.params.params.amount,
+                tokenId:tokenId
+              }
+            })
+          }else{
+            console.log(response.data.data.availableDayOptions);
+            let arr = response.data.data.availableDayOptions;
+            for(var i=0; i < arr.length; i++){
+              arr[i].dayOfMonth = arr[i].dayOfMonth.toString();
             }
-          })
+            setCreditToken(tokenId);
+            setFirstDateData(arr);
+            //setCityData(response.data.data)
+            /*console.log(response.data);
+            console.log(response.data.data);
+            
+            //setUserData(response.data.data);
+            //setIban(response.data.data.defaultBankAccountNumber);
+            
+            if(d.cityCode) {
+              setSelectedFirstDate(d.cityCode);
+              console.log("selectedFirstDate");
+              getCounties(d.cityCode, d);
+            }*/
+            setCreditDateModalVisible(true);
+          }
+
+        
           
         }
       })
@@ -244,6 +279,22 @@ const CreditOtpScreen = ({navigation, route}) => {
         Alert.alert('Girilen kod hatalı. Lütfen kontrol edin.');
       });     
     });
+  }
+  const setCreditDate = ()=>{
+    console.log("tokenId: "+creditToken);
+    console.log("firstInstallmentDate: "+selectedFirstDate);
+    console.log("firstInstallmentDate: "+selectedFirstDate.replace(/-/g, ""));
+    let inst = selectedFirstDate.replace(/-/g, "");
+    setCreditDateModalVisible(false);
+    navigation.navigate('CreditInstallmentsScreen', {
+      params:{
+        transactionId:route.params.params.transactionId,
+        paymentId: route.params.params.paymentId,
+        firstInstallmentDate:selectedFirstDate,
+        amount:route.params.params.amount,
+        tokenId:creditToken
+      }
+    })
   }
   const [otpInput, setOtpInput] = useState('');
 
@@ -263,7 +314,25 @@ const CreditOtpScreen = ({navigation, route}) => {
       }
     }*/
   };
-
+const renderItem = item => {  
+    return (
+      <View
+      key={item.availableDate}
+        style={{
+          padding: 18,
+          height: 54,
+          color: '#1D1D25',
+        }}>
+        <Text
+          style={{
+            fontSize: 12,
+            color: '#1D1D25',
+          }}>
+          {item.availableDate}
+        </Text>
+      </View>
+    );
+  };
   return (
     <View style={styles.mainBody}>
       <ImageBackground
@@ -271,6 +340,166 @@ const CreditOtpScreen = ({navigation, route}) => {
        resizeMode="cover"
        source={require('../../../assets/img/export/login_bg.png')}>
       <SafeAreaView syle={{flex: 1}}>
+      <Modal
+            animationType="slide"
+            transparent={true}
+            visible={creditDateModalVisible}
+            onRequestClose={() => {
+              setCreditDateModalVisible(!creditDateModalVisible);
+            }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 16,
+                  paddingBottom: 16,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width: '100%',
+                }}>
+                  <View style={{
+                    flexDirection:'row',
+                    justifyContent:'flex-end',
+                  }}>
+                    <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        setCreditDateModalVisible(false);
+                        //navigation.navigate('discover')
+                        }}>                  
+                        <Image 
+                        source={require('../../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </TouchableOpacity>
+                </View>
+                  <View style={{
+                    paddingTop:24,
+                    paddingBottom:24,
+                    alignItems:'center',
+                    justifyContent:'center',
+                  }}>
+                    <Image 
+                        source={require('../../../assets/img/export/information_large.png')}
+                        style={{
+                          width: 80,
+                          height: 80,
+                          resizeMode: 'contain',
+                          marginBottom:16,
+                        }}
+                        />
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          lineHeight:20,
+                          color:'#0B1929',
+                          marginBottom:8,
+                        }}>
+                          Bilgilerini Gir
+                        </Text>
+                        <Text style={{
+                          fontSize:14,
+                          lineHeight:20,
+                          color:'#909EAA',
+                          paddingLeft:24,
+                          paddingRight:24,
+                          textAlign:'center',
+                        }}>
+                          Alışveriş kredisi kullanabilmek için ilk  taksit ödeme tarihini girmen gereklidir.
+                      </Text>
+                  </View>
+                  
+                  
+                  
+                  <Dropdown
+                    style={{
+                      borderColor: '#EBEBEB',
+                      borderWidth: 1,
+                      padding: 16,
+                      fontSize: 14,
+                      borderRadius: 10,
+                      height: 54,
+                      color: '#1D1D25',
+                      marginBottom: 18,                      
+                      backgroundColor:'#fff',
+                      width:Dimensions.get('window').width - 32,
+                    }}
+                    placeholderStyle={{
+                      fontSize: 14,
+                      color: '#909EAA',
+                    }}
+                    selectedTextStyle={{
+                      fontSize: 14,
+                      color: '#1D1D25',
+                    }}
+                    dropdownPosition='top'
+                    inverted={false}
+                    inputSearchStyle={styles.inputSearchStyle}
+                    iconStyle={styles.iconStyle}
+                    data={firstDateData}
+                    maxHeight={300}
+                    labelField="availableDate"
+                    valueField="availableDate"
+                    placeholder={'İlk Taksit Tarihi'}
+                    searchPlaceholder="Search..."
+                    value={selectedFirstDate}
+                    ref={firstDateRef}
+                    onChange={item => {
+                      // {"availableDate": "2025-01-06", "dayOfMonth": 6}
+                      console.log('selected');
+                      console.log(item);
+                      setSelectedFirstDate(item.availableDate);
+                    }}
+                    renderItem={renderItem}
+                  />
+                  
+                
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      marginLeft:0,
+                    },
+                  ]}
+                  onPress={() => {
+                    console.log("select date");
+                    //setCreditLogin();
+                    setCreditDate();
+                    }}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Alışveriş Kredisi ile Öde
+                  </Text>
+                </TouchableOpacity>
+               
+              </View>
+            </View>
+      </Modal>
         <Modal
           animationType="slide"
           transparent={true}
@@ -381,8 +610,8 @@ const CreditOtpScreen = ({navigation, route}) => {
         <Loader loading={loading} />
         <ScrollView
             keyboardShouldPersistTaps="handled"
-            style={{flexGrow:1}}>
-          <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
+            style={{flexGrow:1, height:Dimensions.get('window').height-100}}>
+          
             <View
               style={{
                 flex: 1,
@@ -422,7 +651,7 @@ const CreditOtpScreen = ({navigation, route}) => {
                     fontSize:14,
                     fontWeight:'700',
                     color:'#0B1929'
-                  }}> {route.params.phone} </Text>numaralı telefona gelen
+                  }}> {route.params.params.phone} </Text>numaralı telefona gelen
                   6 haneli kodu giriniz.
                   </Text>
                 </View>
@@ -506,7 +735,6 @@ const CreditOtpScreen = ({navigation, route}) => {
                 </TouchableOpacity>
               </View>
             </View>
-          </KeyboardAvoidingView>
         </ScrollView>
       </SafeAreaView>
       </ImageBackground>
@@ -648,5 +876,93 @@ const otpstyles = StyleSheet.create({
     letterSpacing: 5,
     marginBottom: 10,
     textAlign: 'center',
+  },
+});
+const regstyles = StyleSheet.create({
+  registerInputStyle:{
+    backgroundColor:'#fff',
+    paddingTop:17,
+    paddingBottom:17, 
+    paddingLeft:12, 
+    paddingRight:12,    
+    borderWidth: 1,
+    borderRadius: 10,
+    marginBottom:16,
+    width:'100%',
+  },
+  mainBody: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    alignContent: 'center',
+  },
+  topStyle: {
+    alignContent: 'center',
+    paddingTop: 39,
+    paddingBottom: 30,
+    borderColor: '#EBEBEB',
+    borderBottomWidth: 1,
+  },
+  centerStyle: {
+    alignContent: 'center',
+  },
+  sectionStyle: {
+    flexDirection: 'column',
+    marginTop: 20,
+    marginLeft: 35,
+    marginRight: 35,
+    margin: 10,
+  },
+  buttonStyle: {
+    backgroundColor: '#1D1D25',
+    borderWidth: 0,
+    color: '#FFFFFF',
+    height: 65,
+    alignItems: 'center',
+    borderRadius: 10,
+    marginLeft: 35,
+    marginRight: 35,
+    marginBottom: 25,
+  },
+  buttonTextStyle: {
+    color: '#FFFFFF',
+    paddingVertical: 20,
+    fontFamily: 'Helvetica-Bold',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  inputTitleStyle: {
+    color: '#7E797F',
+    fontSize: 12,
+    marginBottom: 10,
+  },
+  inputStyle: {
+    color: '#1D1D25',
+    paddingTop: 30,
+    paddingBottom: 30,
+    fontFamily: 'Helvetica-Bold',
+    fontSize: 14,
+    borderWidth: 1,
+    borderColor: '#EBEBEB',
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    marginBottom: 48,
+    opacity: 1,
+  },
+  bottomStyle: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  copyrightTextStyle: {
+    color: '#7E797F',
+    textAlign: 'center',
+    fontWeight: 'light',
+    fontSize: 10,
+    alignSelf: 'center',
+  },
+  errorTextStyle: {
+    color: 'red',
+    textAlign: 'center',
+    fontSize: 14,
   },
 });

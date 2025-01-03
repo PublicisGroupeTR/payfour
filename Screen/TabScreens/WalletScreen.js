@@ -15,6 +15,7 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  KeyboardAvoidingView,
   TextInput,
   Keyboard
 } from 'react-native';
@@ -33,6 +34,8 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import MasterpassScreen2 from './MasterpassScreen2';
 import CreditScreen from './CreditScreen';
 import CreditOtpScreen from './CreditScreens/CreditOtpScreen.js';
+import CreditChangePasswordScreen from './CreditScreens/CreditChangePasswordScreen.js';
+import CreditPasswordOtpScreen from './CreditScreens/CreditPasswordOtpScreen.js';
 import CreditInstallmentsScreen from './CreditScreens/CreditInstallmentsScreen.js';
 
 const Stack = createStackNavigator();
@@ -258,7 +261,7 @@ const Balance = ({navigation, route}) => {
 
     
     console.log('path');
-    qpath = 'https://payfourapp.test.kodegon.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&size=12';
+    qpath = 'https://payfourapp.test.kodegon.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&size=100';
     console.log(qpath);
 
     AsyncStorage.getItem('token').then(value =>{
@@ -1079,6 +1082,7 @@ const Waiting = ({route, navigation}) => {
   const [userPasswordError, setUserPasswordError] = useState(false);
 
   const [payStatus, setPayStatus] = useState(3);
+  const [payText, setPayText] = useState('Hemen Başvur');
   const [available, setAvailable] = useState('0,00');
   const [payMode, setPayMode] = useState('wallet');
   const [amount, setAmount] = useState('0,00');
@@ -1095,7 +1099,7 @@ const Waiting = ({route, navigation}) => {
       console.log(route);
       console.log(route.params);
 
-      setLoading(true);
+      //setLoading(true);
       let b = parseFloat(route.params.amount).toFixed(2);
         //let fb = checkCurrency(b);
         /*setBalance(fb);
@@ -1119,13 +1123,20 @@ const Waiting = ({route, navigation}) => {
         let rd = response.data.data;
         console.log("channelType");
         console.log(route.params.channelTypeId);
-        
+        console.log("***************");
+        console.log(rd.loanApplication);
+        console.log(rd.potentialLimit);
+        /*setUserCreditData(rd.loanApplication);
+        setUserLimitData(rd.potentialLimit);*/
+
         if(route.params.channelTypeId == 1 || route.params.channelTypeId == 2 ||route.params.channelTypeId == 3){
           console.log("no credit payment");
           setPayStatus(0);
         }else if(response.data.success){
           //navigation.navigate('Success');
-          console.log("cases");
+
+          
+          /*console.log("cases");
           console.log(rd.potentialLimit);
           console.log((rd.potentialLimit != null && rd.potentialLimit !=  'undefined' && rd.potentialLimit != undefined));
           console.log(rd.loanApplication);
@@ -1140,16 +1151,16 @@ const Waiting = ({route, navigation}) => {
           }else{
             console.log("limit öğren");
             setPayStatus(2);
-          }
+          }*/
           // else if(response.data.loanApplication.firstLimit == null){
 
           // }else if(response.data.loanApplication.)
-          //setPayStatus(3);
+          //setPayStatus(4);
           setPayfourId(rd.payfourId);
           setIban(rd.defaultBankAccountNumber);
           setLoading(false);
           //checkCurrentBalance();
-          checkCurrentLimit();
+          checkCurrentLimit(rd.loanApplication, rd.potentialLimit);
         }else{
           setLoading(false);
           console.log("NO SUCCESSS")
@@ -1174,7 +1185,11 @@ const Waiting = ({route, navigation}) => {
     });
     return unsubscribe;
   }, [navigation]);
-  const checkCurrentLimit = () => {
+  const checkCurrentLimit = (userCreditData, userLimitData) => {
+    console.log("checkCurrentLimit");
+    console.log(userCreditData);
+    console.log(userLimitData);
+    console.log("-------");
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
@@ -1189,6 +1204,8 @@ const Waiting = ({route, navigation}) => {
             response.data.data.availableAllotmentAmount,
           ).replace('TRY', '').trim())
         }
+        setTimeout(function(){setLoading(false);},1500)
+        checkUserCreditStatus(userCreditData, userLimitData, response.data.data);
         checkCurrentBalance();
       })
       .catch(error => {
@@ -1200,40 +1217,46 @@ const Waiting = ({route, navigation}) => {
 
     });
   }
-  /*const checkCurrency = data =>{
-    if(parseInt(data) < 1000){
-      let arr= data.toString().split(".");
-      console.log(arr);
-      //let add = arr[1] ? ","+arr[1] : ",00";
-      let frc;
-      if(arr[1]){
-        frc = arr[1] < 10 ? arr[1]+"0":arr[1];
-      }
-      let add = arr[1] ? ","+frc : ",00";
-      return arr[0]+add+"TL"
+  const checkUserCreditStatus= (userCreditData, userLimitData, availableLimit) =>{
+    console.log("checkUserCreditStatus");
+    console.log(userCreditData);
+    console.log(userLimitData);
+    console.log("-------");
+    console.log(availableLimit);
+    console.log("-------");
+    /*userLimitData = 1000;
+    userCreditData = null;
+    availableLimit.availableAllotmentAmount = 5;*/
+    let hasCredit = (userCreditData != null && userCreditData != undefined && userCreditData != "undefined");
+    let hasActiveCredit = hasCredit && userCreditData.status == 2;
+    let hasLimit = (userLimitData != null && userLimitData != undefined && userLimitData != "undefined");
+    let hasAvailable = availableLimit.availableAllotmentAmount > 0 && availableLimit.availableAllotmentAmount >= route.params.amount;
+
+    console.log(hasLimit);
+    console.log(hasCredit);
+    console.log(hasActiveCredit);
+    console.log(hasAvailable);
+    setLoading(false);
+    if((!hasLimit && !hasCredit) || (hasCredit && !hasActiveCredit)){
+        setPayStatus(2);
+        setPayText("Limitini Öğren");      
+    }else if(hasLimit && !hasCredit){
+        setPayStatus(1);
+        setPayText("Hemen Başvur");
     }else{
-      let arr= data.toString().split(".");
-      console.log(arr)
-      let t = Math.floor(parseInt(data) / 1000);
-      let o = parseInt(data) - (t*1000);
-      let b;
-      if(o < 1){
-        b = "000";
-      }else if(o < 10){
-        b = "00"+o
-      }else if(o < 100){
-        b="0"+o;
-      }else b = o
-      let frc;
-      if(arr[1]){
-        frc = arr[1] < 10 ? arr[1]+"0":arr[1];
+      if(hasAvailable){
+        setPayStatus(3);
+        setPayText("Hemen Öde");
+      }else{
+        setPayStatus(4);
+        setPayText("Taksit Öde");
       }
-      let add = arr[1] ? ","+frc : ",00";
-      let f = t+"."+b+add+"TL"
-      console.log(f)
-      return f;
     }
-  }*/
+    console.log("PAYSTATUS");
+    console.log(payStatus);
+    setTimeout(function(){setLoading(false);},1000)
+  }
+  
     const checkCurrency = data =>{
       if(parseInt(data) < 1000){
         let arr= data.toString().split(".");
@@ -1269,6 +1292,8 @@ const Waiting = ({route, navigation}) => {
       }
     }
   const checkCurrentBalance = () => {
+    console.log("checkCurrentBalance!");
+    setLoading(false);
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
@@ -1287,11 +1312,14 @@ const Waiting = ({route, navigation}) => {
           setBalance(fr);
         }
         setLoading(false);
+        setTimeout(function(){setLoading(false);},1500)
         if(route.params){
           if(route.params.payment) setAddModalVisible(true);
         }
       })
       .catch(error => {
+        setLoading(false);
+        setTimeout(function(){setLoading(false);},1500)
         console.error("Error sending data: ", error);
         let msg="";
         (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
@@ -1301,11 +1329,11 @@ const Waiting = ({route, navigation}) => {
   }
   const setCreditLogin = () =>{
     let err = false;
-    if(userTCKN == ''){
+    if(userTCKN.length < 4){
       setUserTCKNError(true);
       err = true;
     }
-    if(userPassword == ''){
+    if(userPassword.length < 4){
       setUserPasswordError(true);
       err = true;
     }
@@ -1328,16 +1356,33 @@ const Waiting = ({route, navigation}) => {
           console.log(response);
           console.log(response.data);
           /*{"data": {"passwordMustBeRenewed": false, "transactionId": "def0605a415f6b12830a487c4b64e13b74c774a89b6af939a0315ab3c8d5309cWi3YoPqM8KwziFTEpl0cWA==LNeccJqFAlZO9tgclQbiP6gHhI62FSL7Ss3ZQEu+Cayz0GCTziPq+0GX7qRYFqv2reN9tFL/wGIGmgVNZEwghQ=="}, "status": 200, "success": true}*/
-          navigation.navigate('CreditOtpScreen', {
-            params:{
-              transactionId:response.data.data.transactionId,
-              paymentId: route.params.paymentId,
-              amount:amount
-            }
-          })
+          if(response.data.data.passwordMustBeRenewed){
+            console.log("renew credit password");
+            navigation.navigate('CreditChangePasswordScreen', {
+              params:{
+                //transactionId:response.data.data.transactionId,
+                userName: userTCKN,
+                paymentId: route.params.paymentId,
+                amount:amount
+              }
+            })
+          }else{
+            AsyncStorage.getItem('phone').then((ph) =>{
+              navigation.navigate('CreditOtpScreen', {
+                params:{
+                  transactionId:response.data.data.transactionId,
+                  paymentId: route.params.paymentId,
+                  amount:amount,
+                  phone:ph
+                }
+              })
+            })
+          }
+          setTimeout(function(){setLoading(false);},1500)
         })
         .catch(error => {
           setLoading(false);
+          setTimeout(function(){setLoading(false);},1500)
           console.error("Error sending data: ", error);
           console.error("Error sending data: ", error.response);
           console.error("Error sending data: ", error.response.data.errors.message);
@@ -1351,10 +1396,11 @@ const Waiting = ({route, navigation}) => {
       });
     }
   }
-  const handleSubmitPress = () =>{
-    console.log("handleSubmitPress");
-    console.log(payStatus);
-    if(payMode == 'wallet'){
+  const handleSubmitPress = (type) =>{
+    console.log('credit handleSubmitPress');
+    console.log(payMode);
+    (type == 'credit')? setPayMode('credit'):setPayMode('wallet');
+    if(type != 'credit'){
       
       setLoading(true);
 
@@ -1396,18 +1442,20 @@ const Waiting = ({route, navigation}) => {
         });
       });
     }else{
-      //console.log('credit login');
+      console.log('credit switch');
+      console.log(payStatus);
       //setCreditModalVisible(true);
       switch (payStatus){
         case 1:
           navigation.navigate('CreditScreen', { 
-            screen: 'Intro2',
+            screen: 'IntroSonraOde',
           })
           break;
         case 2:
           navigation.navigate('CreditScreen', { 
-            screen: 'CreditOtp',
+            screen: 'IntroHazirLimit',
           })
+          //setCreditModalVisible(true);
           break;      
         case 3:
           setCreditModalVisible(true);
@@ -2268,6 +2316,7 @@ const handleSubmitCancel = () =>{
             onRequestClose={() => {
               setCreditModalVisible(!creditModalVisible);
             }}>
+              
             <View
               style={{
                 flex: 1,                
@@ -2275,6 +2324,8 @@ const handleSubmitCancel = () =>{
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(92, 92, 92, 0.56)',
               }}>
+                <KeyboardAvoidingView enabled behavior='padding' style={{flex:1,justifyContent: 'flex-end',
+                alignItems: 'flex-end',width:Dimensions.get('screen').width}}>
               <View
                 style={{
                   backgroundColor:'#fff',
@@ -2468,7 +2519,9 @@ const handleSubmitCancel = () =>{
                 </TouchableOpacity>
                
               </View>
+              </KeyboardAvoidingView>
             </View>
+            
       </Modal>
       <Loader loading={loading} />
       <SubtabHeader routetarget="Balance" name="Ödeme İşlemi" count="0" />
@@ -2639,7 +2692,7 @@ const handleSubmitCancel = () =>{
               setCreditModalVisible(true);
             }*/
             setPayMode('credit');
-            handleSubmitPress();
+            handleSubmitPress('credit');
           }}
           >
             {(payStatus == 3)?
@@ -2665,7 +2718,7 @@ const handleSubmitCancel = () =>{
         <TouchableOpacity
             style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, backgroundColor: '#004F97', flex:1}]}              
             activeOpacity={0.5}
-            onPress={handleSubmitPress}>
+            onPress={()=>handleSubmitPress(payMode)}>
             <Text style={regstyles.buttonTextStyle}>Öde</Text>
           </TouchableOpacity>
       </View>
@@ -2876,6 +2929,16 @@ const WalletScreen = ({navigation}) => {
       <Stack.Screen
         name="CreditScreen"
         component={CreditScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="CreditChangePasswordScreen"
+        component={CreditChangePasswordScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="CreditPasswordOtpScreen"
+        component={CreditPasswordOtpScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen

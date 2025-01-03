@@ -14,13 +14,15 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {ScrollView} from 'react-native-gesture-handler';
 import Swiper from 'react-native-swiper';
 
+import LimitOtpScreen from './CreditScreens/LimitOtpScreen.js';
+
 import axios from 'react-native-axios';
-import MaskInput from 'react-native-mask-input';
 import SubtabHeader from '../Components/SubtabHeader.js';
 import {Dropdown} from 'react-native-element-dropdown';
 import OTPTextView from 'react-native-otp-textinput';
 import { Modalize } from 'react-native-modalize';
 import LimitSorgulaAydinlatmaMetni from '../Legals/LimitSorgulaAydinlatmaMetni.js';
+import MaskInput, { createNumberMask } from 'react-native-mask-input';
 
 const Stack = createStackNavigator();
 
@@ -425,7 +427,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                 //disabled={!userKVKKAgreement}
                 onPress={()=>{
                   //navigation.navigate('CreditForm');
-                  navigation.navigate('CreditOtp');
+                  navigation.navigate('LimitOtpScreen');
                 }
                   }>
                 <Text style={styles.buttonTextStyle}>Hazır Limitini Öğren</Text>
@@ -638,7 +640,7 @@ const Intro2 = ({navigation}) => {
                 activeOpacity={0.5}
                 onPress={()=>{
                   //navigation.navigate('CreditForm');
-                  navigation.navigate('Kyc')
+                  navigation.navigate('LimitOtpScreen')
                 }
                   }>
                 <Text style={styles.buttonTextStyle}>Şimdi Kredi Kullan</Text>
@@ -722,7 +724,7 @@ const CreditOtp = ({navigation, route}) => {
         console.log(response.data.data);
         setTransactionId(response.data.data.transactionId);
         //setModalVisible(true);
-        startOtpTimer();
+        //startOtpTimer();
         //setTitleData(response.data.data);
         //fillRoles();
       })
@@ -818,11 +820,12 @@ const CreditOtp = ({navigation, route}) => {
         });
         console.log("storage");
         console.log(obj);
-        route.params && route.params.forgot ? resendForgot(obj) : resendData(obj);
+        route.params.forgot ? resendForgot(obj) : resendData(obj);
       });
     });
 
   }
+  
   const resendForgot = (obj) => {
     console.log("forgot resend");
     /*let dataToSend ={
@@ -945,23 +948,20 @@ const CreditOtp = ({navigation, route}) => {
     });     
     
   };
-  const [otpInput, setOtpInput] = useState('');
+
 
   const input = useRef<OTPTextView>(null);
 
-  const clear = () => input.current?.clear();
-
-  const updateOtpText = () => input.current?.setValue(otpInput);
-
-  const showTextAlert = () => otpInput && Alert.alert(otpInput);
-
   const handleCellTextChange = async (text, i) => {
-    /*if (i === 0) {
+    console.log("handleCellTextChange")
+    console.log(text, i);
+    if (i === 0) {
       const clippedText = await Clipboard.getString();
+      console.log(clippedText);
       if (clippedText.slice(0, 1) === text) {
         input.current?.setValue(clippedText, true);
       }
-    }*/
+    }
   };
 
   return (
@@ -1126,38 +1126,9 @@ const CreditOtp = ({navigation, route}) => {
                   6 haneli kodu giriniz.
                   </Text>
                 </View>
-                <View style={[styles.centerStyle, {paddingLeft:34, paddingRight:34}]}>
+                <View style={[styles.centerStyle, {paddingLeft:18, paddingRight:18}]}>
                   <View style={{paddingTop:12, paddingBottom:12}}>
-                    {/* <OtpInput
-                    ref={otpInputRef}
-                    numberOfDigits={6}
-                    focusColor="#015096"
-                    focusStickBlinkingDuration={500}
-                    autoFocus={false}
-                    onFocus={()=> {console.log('focus'); }}
-                    onTextChange={(text) => {console.log(text);setOtpError(false);}}
-                    onFilled={(text) => {
-                      console.log(`OTP is ${text}`); 
-                      setOtp(text); 
-                      setToggleSubmit(true);
-                      Keyboard.dismiss();
-                    }}
-                    textInputProps={{
-                      accessibilityLabel: "One-Time Password",
-                    }}
-                    theme={{
-                      containerStyle: styles.container,
-                      pinCodeContainerStyle: {
-                        backgroundColor:'#fff',
-                        borderColor: otpError? '#E42932':'#DADEE7'
-                      },
-                      pinCodeTextStyle: styles.pinCodeText,
-                      focusStickStyle: styles.focusStick,
-                      focusedPinCodeContainerStyle: {
-                        borderColor:"#015096"
-                      },
-                    }}
-                  /> */}
+                  
                   <OTPTextView
                     ref={otpInputRef2}
                     containerStyle={otpstyles.textInputContainer}
@@ -1165,7 +1136,6 @@ const CreditOtp = ({navigation, route}) => {
                     tintColor="#015096"
                     offTintColor={'#DADEE7'}
                     handleTextChange={(text) => {
-                      setOtpInput(text);
                       console.log(`OTP is ${text}`); 
                       setOtp(text);
                       if(text.length >5){ 
@@ -1175,7 +1145,8 @@ const CreditOtp = ({navigation, route}) => {
                     }}
                     handleCellTextChange={handleCellTextChange}
                     inputCount={6}
-                    keyboardType="numeric"
+                    keyboardType="number-pad"
+                    textcontentType="oneTimeCode"
                   />
                   
                   <View style={{marginTop:12}}>
@@ -1227,6 +1198,7 @@ const CreditForm = ({route, navigation}) => {
   const [errorMessage, setErrorMessage] = useState('');
   
   const [otp, setOtp] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [stopOtpTimer, setStopOtpTimer] = useState(false);
   const [timerCount, setTimerCount] = useState(180);
   const [timerText, setTimerText] = useState('03:00');
@@ -1235,12 +1207,16 @@ const CreditForm = ({route, navigation}) => {
   const [educationData, setEducationData] = useState([]);
   const [jobData, setJobData] = useState([]);
   const [titleData, setTitleData] = useState([]);
+  const [consentList, setConsentList] = useState([]);
+  const [consentCheckList, setConsentCheckList] = useState([]);
+  const [consentValidateList, setConsentValidateList] = useState([]);
 
   const [selectedEducation, setSelectedEducation] = useState('');
   const [selectedJob, setSelectedJob] = useState('');
   const [selectedTitle, setSelectedTitle] = useState('');
 
   const [userTCKN, setUserTCKN] = useState('');
+  const [userTCKNError, setUserTCKNError] = useState('');
   const [userBirth, setUserBirth] = useState('');
 
   const [income, setIncome] = useState('');
@@ -1364,10 +1340,54 @@ const CreditForm = ({route, navigation}) => {
         console.log(response.data.data);
         setTitleData(response.data.data);
         //sendOtp();
+        fillConsent();
       })
       .catch(error => {
         setLoading(false);
         //console.error("Error sending data: ", error);
+        let msg="";
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+      });
+    });
+  }
+  const fillConsent = () =>{
+    setLoading(true);   
+    AsyncStorage.getItem('token').then(value =>{
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };    
+      axios.get('https://payfourapp.test.kodegon.com/api/loans/consentlist', config).then(response => {
+        setLoading(false);
+        console.log("onconsentlist");
+        console.log(response);
+        console.log(response.data.data);
+        let cl = response.data.data;
+        let ccl=[];
+        let cvl = [];
+        
+        for(var i=0; i < cl.length;i++){
+          //ccl.push(cl[i].code);
+          ccl.push("");
+          cvl.push({necessity:cl[i].necessity, error:false, id:cl[i].code});
+        }
+        
+        setConsentValidateList(cvl);
+        setConsentCheckList(ccl);
+        setConsentList(cl);
+        setRefresh(!refresh);
+        console.log("&&&&&&&&&&& consents &&&&&&&&&&&");
+        console.log(cl);
+        console.log(ccl);
+        console.log(cvl);
+        //setTitleData(response.data.data);
+        //sendOtp();
+        //fillConsent();
+
+        
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error("Error sending data: ", error);
         let msg="";
         (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
       });
@@ -1436,6 +1456,20 @@ const CreditForm = ({route, navigation}) => {
   }
   const sendData = () =>{
     //navigation.navigate('CreditSuccess');
+    let err = false;
+    //cvl.push({necessity:cl[i].necessity, error:[false], id:cl[i].code});
+    for(var i=0; i < consentValidateList.length;i++){
+      console.log(consentValidateList[i]);
+      console.log(consentValidateList[i].necessity == 1 && (consentValidateList[i].id=="" || consentValidateList[i].id==undefined));
+      if(consentValidateList[i].necessity == 1 && (consentValidateList[i].id=="" || consentValidateList[i].id==undefined)){
+        err = true;
+        let obj = {necessity:consentValidateList[i].necessity, error:true, id:consentValidateList[i].code};
+        consentValidateList[i] = obj;
+      }
+    }
+    console.log(consentValidateList);
+    setRefresh(!refresh);
+    if(!err){
     console.log("sendData");
     /*{
       "tempToken": "string",
@@ -1483,8 +1517,10 @@ const CreditForm = ({route, navigation}) => {
     occupationId:selectedJob.id,
     educationLevelId:selectedEducation.id,
     occupationRoleId:selectedTitle.id,
+    consents:consentCheckList,
    }
-
+   console.log("sendData");
+   console.log(sendData);
    setLoading(true);   
     AsyncStorage.getItem('token').then(value =>{
       const config = {
@@ -1509,6 +1545,7 @@ const CreditForm = ({route, navigation}) => {
         (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
       });
     });
+  }
   }
   const formatIncome = (income) =>{
     let b = parseFloat(income).toFixed(2);
@@ -1550,6 +1587,78 @@ const CreditForm = ({route, navigation}) => {
       </View>
     );
   };
+  const TCNOKontrol =(TCNO) => {
+    var tek = 0,
+      cift = 0,
+      sonuc = 0,
+      TCToplam = 0,
+      i = 0,
+      hatali = [11111111110, 22222222220, 33333333330, 44444444440, 55555555550, 66666666660, 7777777770, 88888888880, 99999999990];;
+
+    if (TCNO.length != 11) return false;
+    if (isNaN(TCNO)) return false;
+    if (TCNO[0] == 0) return false;
+
+    tek = parseInt(TCNO[0]) + parseInt(TCNO[2]) + parseInt(TCNO[4]) + parseInt(TCNO[6]) + parseInt(TCNO[8]);
+    cift = parseInt(TCNO[1]) + parseInt(TCNO[3]) + parseInt(TCNO[5]) + parseInt(TCNO[7]);
+
+    tek = tek * 7;
+    sonuc = tek - cift;
+    if (sonuc % 10 != TCNO[9]) return false;
+
+    for (var i = 0; i < 10; i++) {
+      TCToplam += parseInt(TCNO[i]);
+    }
+
+    if (TCToplam % 10 != TCNO[10]) return false;
+
+    if (hatali.toString().indexOf(TCNO) != -1) return false;
+
+    return true;
+  }
+  const getDocument = (documentId, title) => {
+    console.log("documentId");
+    console.log(documentId);
+    console.log(title);
+    setLoading(true);   
+    AsyncStorage.getItem('token').then(value =>{
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };  
+      axios.get('https://payfourapp.test.kodegon.com/api/loans/consentdata/'+documentId, config).then(response => {
+        setLoading(false);
+        console.log("document data");
+        /*console.log(response);
+        console.log(response.data);
+        console.log(response.data.data);*/
+        console.log(response.data.data.documentContext);
+        /*navigation.navigate('AggreementScreen', { 
+          params: {
+            base64:response.data.data.documentContext,
+            data:title
+          }
+        })*/
+        //setModalVisible(true);
+        //setTitleData(response.data.data);
+        //fillRoles();
+        //navigation.navigate('CreditSuccess');
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error("Error sending data: ", error);
+        console.error("Error sending data: ", error.response);
+        console.error("Error sending data: ", error.response.data.errors.message);
+        let msg="";
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+      });
+    });
+  }
+  const tlMask = createNumberMask({
+    prefix: [''],
+    delimiter: '.',
+    separator: '',
+    precision: 0,
+  })
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <Modalize ref={consentModalizeRef}
@@ -1587,7 +1696,7 @@ const CreditForm = ({route, navigation}) => {
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          Açık Rıza Formu
+                          CARREFOURSA PAYFOUR LİMİT SORGULA AYDINLATMA METNİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -1608,7 +1717,7 @@ const CreditForm = ({route, navigation}) => {
                       />
                     </TouchableOpacity>
                        </View> 
-                      <View style={{marginBottom:24}}>
+                      {/* <View style={{marginBottom:24}}>
                         <Text style={{
                           fontSize:12,
                           color:'#909EAA',
@@ -1656,7 +1765,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                         </Text>
                        
                
-                      </View>
+                      </View> */}
                   </View>
                   
               <View style={{
@@ -2049,26 +2158,32 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                           Size özel hazır limitinizi hemen öğrenebilirsiniz.
                       </Text>
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
+                  <View style={[regstyles.registerInputStyle, {borderColor: userTCKNError? '#ff0000': '#EBEBEB',}]}>            
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:18, 
+                        lineHeight:16, 
                         padding:0,
                         paddingLeft:4,
-                        color: '#909EAA',
+                        color: '#0B1929',
                       }}
-                      onChangeText={UserTCKN => {setUserTCKN(UserTCKN); checkForm();}}
+                      maxLength={11}
+                      value={userTCKN}
+                      onChangeText={UserTCKN => {
+                        let cn = UserTCKN.replace(/[^0-9]/g, '');
+                        setUserTCKN(cn);
+                        setUserTCKNError(!TCNOKontrol(cn)); 
+                        checkForm();}}
                       placeholder="TCKN" //12345
                       placeholderTextColor="#909EAA"
-                      keyboardType="default"
+                      keyboardType="numeric"
                       onSubmitEditing={Keyboard.dismiss}
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
                     />
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, paddingTop:28, height:60}]}>                      
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB', paddingTop:30}]}>                      
                     
                     <Text style={{                                           
                         fontSize: 12,
@@ -2077,7 +2192,7 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                         color: '#909EAA', 
                         position:'absolute',
                         top:14,                     
-                        left:12
+                        left:16
                     }}>
                       Doğum Tarihi (GG/AA/YYYY)
                     </Text>
@@ -2206,18 +2321,20 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       checkForm();
                     }}
                     renderItem={renderItem}
-                  />
+                  />                  
                   <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
-                    <TextInput
+                    {/* <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:18, 
-                        padding:0,                        
+                        lineHeight:16, 
+                        padding:0,
                         paddingLeft:4,
                         color: '#909EAA',
                       }}
-                      onChangeText={Income => { setIncome(Income); checkForm();}}
                       value={income}
+                      onChangeText={Income => { 
+                        let cn = Income.replace(/[^0-9]/g, '');
+                        setIncome(cn); checkForm();}}
                       placeholder="Gelir" //12345
                       placeholderTextColor="#909EAA"
                       keyboardType="numeric"
@@ -2225,9 +2342,31 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
-                    />
+                    /> */}
+                    <MaskInput
+                        style={{                      
+                          // fontSize: 14,
+                          // lineHeight:14, 
+                          // padding:0,
+                          // color: '#909EAA',
+                          color: '#0B1929',
+                        }}
+                        value={income}
+                        keyboardType="numeric"
+                        placeholder="Aylık Ortalama Net Gelir"
+                        maxLength={11}
+                        onChangeText={(masked, unmasked) => {
+                          //setUserPhone(masked); // you can use the unmasked value as well
+                          setIncome(unmasked)
+                          // assuming you typed "9" all the way:
+                          console.log(masked); // (99) 99999-9999
+                          console.log(unmasked); // 99999999999
+                          //checkPhone();
+                        }}
+                        mask={tlMask}
+                        />
                   </View>
-                  <View style={{
+                  {/* <View style={{
                   marginBottom:22,
                   alignItems:'center',
                   flexDirection:'row',
@@ -2407,7 +2546,160 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
                   Dgfin <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700', fontSize:12, lineHeight:12}}>Kişisel Verilerin Korunması Kanunu</Text> ve <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Açık Rıza Formu’nu</Text> onaylıyorum.
                   </Text>
                   </Pressable>
-                  </View>
+                  </View> */}
+                  {/* {[{"code": "ETK", "consentItemId": "0192e90c-fb12-73d0-ac27-8be179da1e76", 
+                    "description": "Elektronik Ticari İleti Kanunu", 
+                    "documentItemId": "00000000-0000-0000-0000-000000000000", 
+                    "id": "61984b54-8648-4eaa-8cd9-b4972b0ef80e", "isActive": true, 
+                    "name": "Dgfin Finansman A.Ş.'nin sunacağı pazarlama ve tanıtım amaçlı iletişime izin veriyorum.", 
+                    "necessity": 2, 
+                    "processDefinitionId": "36c662a8-eeb5-4c79-9fc0-db54dc10d57c"}, 
+                    {"code": "GKS", "consentItemId": "0192e8e2-484c-70c6-a286-dc51dbdaf1f9", 
+                    "description": "Kredi Sözleşmesi Ön Bilgilendirme Formu ", 
+                    "documentItemId": "01913755-1649-762e-85a3-6637e1b55578", 
+                    "id": "93178165-4f2b-494d-bed3-dc4bcd6b29ca", "isActive": true, 
+                    "name": "Kredi Sözleşmesi Ön Bilgilendirme Formu ", "necessity": 1, 
+                    "processDefinitionId": "36c662a8-eeb5-4c79-9fc0-db54dc10d57c", 
+                    "templateDesignId": "c5d38aee-6e4f-4b96-a63a-1ef16a0265d4"}, 
+                    {"code": "USAGR", "consentItemId": "58116e29-295f-432b-bb33-1bb2d67c16e9", 
+                    "description": "Dgfin Kullanıcı Sözleşmesi", "documentItemId": "0192e90b-277a-70fb-85fc-2ae85d1c6879", 
+                    "id": "96d466c2-9ad9-4c7d-9361-ef2c8aa1d9ba", "isActive": true, "name": "Dgfin Kullanıcı Sözleşmesi", 
+                    "necessity": 1, "processDefinitionId": "36c662a8-eeb5-4c79-9fc0-db54dc10d57c", 
+                    "templateDesignId": "0192e8f5-6931-7472-a54b-d0d57335e168"}, 
+                    {"code": "KVKK", "consentItemId": "7163a020-40b5-3626-b936-5b91ad631815", 
+                    "description": "KVKK Kapsamında Aydınlatma Metni ", 
+                    "documentItemId": "00000000-0000-0000-0000-000000000000", 
+                    "id": "a22110bd-d11e-4e1e-a196-5bd79f61edea", "isActive": true, "name": "KVKK Kapsamında Aydınlatma Metni", 
+                    "necessity": 3, "processDefinitionId": "36c662a8-eeb5-4c79-9fc0-db54dc10d57c", 
+                    "templateDesignId": "70b07788-b9d0-4c51-b11f-e1bea035f72d"}]} */}
+                  {
+                      consentList.map((data, i) => {
+                        console.log("consentList "+consentList.length);
+                        console.log("data "+data[i]);
+                      return (
+                        consentList.length > 0 ? 
+                        <View key={"a"+consentList[i].id}
+                        style={{
+                          marginBottom:22,
+                          alignItems:'center',
+                          flexDirection:'row',
+                          paddingRight:16,
+                          }}>
+                            {consentList[i].necessity != 3 ?
+                          <Pressable
+                            style={{
+                            width:20,
+                            height:20,
+                            marginRight:8,
+                            backgroundColor:consentCheckList[i] !="" ? '#015096':'#dadee7',
+                            borderWidth:consentValidateList[i].error? 1:0,
+                            borderColor: consentValidateList[i].error? '#ff0000':'#dadee7',
+                            borderRadius:5,
+                            alignItems:'center',
+                            justifyContent:'center'
+                            }}
+                            onPress={()=> {
+                              let c = consentCheckList[i];
+                              let a = "";
+                              c == ""? a =consentList[i].code :a = "";
+                              let b = consentCheckList;
+                              b[i] = a;
+                              let v = consentValidateList;
+                              v[i].id = a;
+                              v[i].error = false;
+                              setConsentCheckList(b);
+                              setConsentValidateList(v);
+                              console.log("consentCheckList");
+                              console.log(consentCheckList);
+                              console.log(consentValidateList);
+                              setRefresh(!refresh);
+                            }}>
+                              
+                              <Image
+                              source={require('../../assets/img/export/check.png')}
+                              style={{
+                              width: consentCheckList[i] !="" ? 14 : 0,
+                              height: consentCheckList[i] !="" ?  10 : 0,
+                              resizeMode: 'contain',
+                              }}
+                              />
+                          </Pressable>:
+                          <Image
+                          source={require('../../assets/img/export/information.png')}
+                          style={{
+                          width: 20,
+                          height: 20,
+                          marginRight:8,
+                          resizeMode: 'contain',
+                          }}
+                          />
+                          }{
+                            consentList[i].templateDesignId != null && consentList[i].templateDesignId != 'undefined' &&consentList[i].templateDesignId != ""?
+                          <Pressable style={{
+                          fontWeight:'300',
+                          color:'#1E242F',
+                          fontSize:12,
+                          lineHeight:12,
+                          flexDirection:'column',
+                          justifyContent:'flex-end'
+                          }} onPress={()=> getDocument(consentList[i].templateDesignId, consentList[i].description)}>  
+                          <Text style={{
+                          fontWeight:'300',
+                          color:'#1E242F',
+                          fontSize:12,
+                          }}>
+                            <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700', fontSize:12, lineHeight:12}}>
+                            {consentList[i].name}
+                            </Text>
+                          {/* Dgfin Kişisel Verilerin Korunması Kanunu</Text> ve <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Açık Rıza Formu’nu</Text> onaylıyorum. */}
+                          </Text>
+                          </Pressable>:
+                          <View style={{
+                            fontWeight:'300',
+                            color:'#1E242F',
+                            fontSize:12,
+                            lineHeight:12,
+                            flexDirection:'column',
+                            justifyContent:'flex-end'
+                            }}>  
+                            <Text style={{
+                            fontWeight:'300',
+                            color:'#1E242F',
+                            fontSize:12,
+                            }}>
+                              {consentList[i].name}
+                            {/* Dgfin <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700', fontSize:12, lineHeight:12}}>Kişisel Verilerin Korunması Kanunu</Text> ve <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Açık Rıza Formu’nu</Text> onaylıyorum. */}
+                            </Text>
+                            </View>
+                          }
+                          </View>                        
+                        : <View></View>
+                      )
+                    })
+                    }
+                    <View style={{
+                        padding:16,
+                        flexDirection:'column',
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}>
+                        <Image
+                            source={require('../../assets/img/export/dgfin_logo.png')}
+                            style={{
+                              width: 73,
+                              height: 25,
+                              resizeMode: 'contain',
+                              marginBottom:6,
+                            }}
+                          />
+                          <Text style={{
+                          color:'#0B1929',
+                          fontSize:12,
+                          textAlign:'center',
+                        }}>
+                        dgfin BDDK onaylı finansman kuruluşudur.
+                        </Text>
+                    </View>
                 <TouchableOpacity
                   style={[
                     styles.buttonStyle,
@@ -2552,9 +2844,14 @@ const CreditScreen = ({navigation}) => {
         component={Intro2}
         options={{headerShown: false}}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="CreditOtp"
         component={CreditOtp}
+        options={{headerShown: false}}
+      /> */}
+      <Stack.Screen
+        name="LimitOtpScreen"
+        component={LimitOtpScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen

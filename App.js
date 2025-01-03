@@ -4,7 +4,6 @@ import 'react-native-gesture-handler';
 
 // Import React and Component
 import React, {useEffect} from 'react';
-import { Appearance } from 'react-native';
 
 // Import Navigators from React Navigation
 import {NavigationContainer} from '@react-navigation/native';
@@ -20,14 +19,7 @@ import RegisterScreen from './Screen/RegisterScreen';
 import LoginWithPasswordScreen from './Screen/LoginWithPasswordScreen';
 import TabNavigationRoutes from './Screen/TabNavigationRoutes';
 import { ErrorProvider } from './Screen/Contexts/ErrorContext';
-
-// Kyc Screens
-import KycOtp from './Screen/Kyc/Otp';
-import IdentityForm from './Screen/Kyc/IdentityForm';
-import AddressInfo from './Screen/Kyc/AddressInfo';
-import AgreementsView from './Screen/Kyc/AgreementsView';
-import IdentityDetailForm from './Screen/Kyc/IdentityDetailForm';
-import VerifyScreen from './Screen/Kyc/VerifyScreen';
+import { Appearance } from 'react-native';
 
 import {
   NativeModules,
@@ -40,13 +32,6 @@ const Auth = () => {
     Appearance.setColorScheme('light');
     console.log("colorScheme");
     console.log(Appearance.getColorScheme());
-
-    // NativeModules.ModuleIOS.viewDidLoadNative()
-    setTimeout(() => {
-      // NativeModules.EnQualifyModuleIOS.startVerification()
-    }, 10000);
-    console.log("AAAA")
-    
   },
   [])
   // Stack Navigator for Login and Sign up Screen
@@ -90,50 +75,6 @@ const Auth = () => {
   );
 };
 
-const Kyc = () => {
-  // Stack Navigator for Login and Sign up Screen
-  return (
-    <Stack.Navigator initialRouteName="KycOtp"
-    screenOptions={{
-      contentStyle:{
-        backgroundColor:'#FFFFFF'
-      }
-   }}
-    >
-       <Stack.Screen
-          name="KycOtp"
-          component={KycOtp}
-          options={{headerShown: false}}
-        />
-       <Stack.Screen
-          name="IdentityForm"
-          component={IdentityForm}
-          options={{headerShown: false}}
-        />
-       <Stack.Screen
-          name="AgreementsView"
-          component={AgreementsView}
-          options={{headerShown: false}}
-        />
-       <Stack.Screen
-          name="AddressInfo"
-          component={AddressInfo}
-          options={{headerShown: false}}
-        />
-       <Stack.Screen
-          name="IdentityDetailForm"
-          component={IdentityDetailForm}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="VerifyScreen"
-          component={VerifyScreen}
-          options={{headerShown: false}}
-        />
-    </Stack.Navigator>
-  );
-};
-
 /* Switch Navigator for those screens which needs to be switched only once
   and we don't want to switch back once we switch from them to the next one */
 const App = () => {
@@ -141,6 +82,16 @@ const App = () => {
     Appearance.setColorScheme('light');
     console.log("colorScheme");
     console.log(Appearance.getColorScheme());
+
+    NativeModules.ModuleIOS.viewDidLoadNative()
+
+    setTimeout(() => {
+      // NativeModules.ModuleIOS.startVerification()
+      NativeModules.ModuleIOS.openOcrController()
+
+      console.log("AAAA")
+      
+    }, 5000);
   },
   [])
   return (
@@ -175,11 +126,6 @@ const App = () => {
           name="TabNavigationRoutes"
           component={TabNavigationRoutes}
           // Hiding header for Navigation Drawer as we will use our custom header
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Kyc"
-          component={Kyc}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
