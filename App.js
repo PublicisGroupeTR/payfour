@@ -20,10 +20,7 @@ import LoginWithPasswordScreen from './Screen/LoginWithPasswordScreen';
 import TabNavigationRoutes from './Screen/TabNavigationRoutes';
 import { ErrorProvider } from './Screen/Contexts/ErrorContext';
 import { Appearance } from 'react-native';
-
-import {
-  NativeModules,
-} from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -78,20 +75,35 @@ const Auth = () => {
 /* Switch Navigator for those screens which needs to be switched only once
   and we don't want to switch back once we switch from them to the next one */
 const App = () => {
+
+  const eventEmitter = new NativeEventEmitter(NativeModules.ModuleIOS);
+
+  useEffect(() => {
+    // Event'i dinle
+    const completionListener = eventEmitter.addListener('onKycProcessCompleted', (data) => {
+      console.log('KYC Tamamlandı:', data);
+  });
+
+    // Cleanup
+    return () => {
+      completionListener.remove();
+    };
+  }, []);
+
   useEffect(() => {
     Appearance.setColorScheme('light');
     console.log("colorScheme");
     console.log(Appearance.getColorScheme());
 
-    NativeModules.ModuleIOS.viewDidLoadNative()
+    const kycData = JSON.stringify({
+        userId: "67890",
+        userName: "Jane Doe",
+        email: "jane.doe@example.com",
+        country: "Canada"
+    });
 
-    setTimeout(() => {
-      // NativeModules.ModuleIOS.startVerification()
-      NativeModules.ModuleIOS.openOcrController()
-
-      console.log("AAAA")
-      
-    }, 5000);
+    NativeModules.ModuleIOS.viewDidLoadNative(kycData)
+ 
   },
   [])
   return (

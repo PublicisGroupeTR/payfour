@@ -3,9 +3,8 @@
 
 @interface RCT_EXTERN_MODULE(ModuleIOS, NSObject)
   // RCT_EXTERN_METHOD(startNFCService)
-  RCT_EXTERN_METHOD(viewDidLoadNative)
+  RCT_EXTERN_METHOD(viewDidLoadNative: (NSString *)kycData)
   RCT_EXTERN_METHOD(startVerification)
-  RCT_EXTERN_METHOD(openOcrController)
   // RCT_EXTERN_METHOD(OCRCompleteNative)
   // RCT_EXTERN_METHOD(NFCStartNative)
   // RCT_EXTERN_METHOD(onRetryDocNative)

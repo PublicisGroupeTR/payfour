@@ -1,22 +1,41 @@
 import UIKit
 
-class OcrInfo: UIViewController {
+@available(iOS 13.0, *)
+class EnQualifyViewController: UIViewController {
+  
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
   
     @IBOutlet weak var contentView: UIView!
 
     @IBAction func buttonTapped(_ sender: UIButton) {
-          print("Butona tıklandı!")
+      ModuleIOS.shared.goToNextPage(page : "OcrSuccess")
     }
 
     @IBAction func backButtonTapped(_ sender: UIButton) {
-        print("Back button tapped!")
-        self.dismiss(animated: true, completion: nil)
-    }
+        guard let storyboardName = self.storyboard?.value(forKey: "name") as? String else {
+            print("Storyboard adı alınamadı.")
+            self.navigationController?.popViewController(animated: true)
+            return
+        }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-      
-//        contentView.layer.cornerRadius = 16
-//        contentView.layer.masksToBounds = true
-    }
+        print("Bu view controller \(storyboardName) adlı storyboarddan geliyor.")
+
+        if storyboardName == "OcrInfo" {
+            self.navigationController?.popViewController(animated: true)
+            return
+        }
+
+        var targetPage = ""
+
+        switch storyboardName {
+        case "OrcSuccesss":
+            targetPage = "OcrInfo"
+        default:
+            targetPage = "OcrInfo"
+        }
+
+      ModuleIOS.shared.goBackPage(page : targetPage)
+  }
 }

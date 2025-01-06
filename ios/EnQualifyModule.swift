@@ -5,48 +5,118 @@ import Foundation
 import React
 import UIKit
 
-  @objc(ModuleIOS)
-  class ModuleIOS: NSObject {
+@available(iOS 13.0, *)
+@objc(ModuleIOS)
+class ModuleIOS: RCTEventEmitter {
+    static let shared = ModuleIOS()
+    private var kycData: [String: Any]?
   
+    override func supportedEvents() -> [String]! {
+        return ["onKycProcessUpdate", "onKycProcessCompleted"]
+    }
+
+    func sendEventToReactNative(eventName: String, body: [String: Any]) {
+        self.sendEvent(withName: eventName, body: body)
+    }
+
     @objc
-    func viewDidLoadNative() {
-      print("viewDidLoadNative called")
+    func viewDidLoadNative(_ kycData: String) {
+
+        if let data = kycData.data(using: .utf8) {
+            do {
+                // JSON verisini Swift Dictionary'e çevir
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    print("KYC Verisi: \(json)")
+                    
+                    self.kycData = json
+                    
+                    if let userName = self.kycData?["userName"] as? String {
+                        print("Kullanıcı Adı: \(userName)")
+                    }
+            
+                    
+                }
+            } catch {
+                print("JSON Parse Hatası: \(error.localizedDescription)")
+            
+            }
+        } else {
+            // Geçersiz JSON string
+            print("Geçersiz JSON string")
+        }
+
+        print("viewDidLoadNative called")
+        // React Native'e bir event gönder
+                let data: [String: Any] = [
+                    "status": "started",
+                    "data": kycData
+                ]
+        self.sendEventToReactNative(eventName: "onKycProcessCompleted", body: data)
+        goToNextPage(page: "OcrInfo")
     }
 
     @objc
     func startVerification() {
       print("startVerification called")
-   
     }
+    
+    func goToNextPage(page: String) {
+      DispatchQueue.main.async {
+        
+        print("goToNextPage")
 
-    @available(iOS 13.0, *)
-    @objc
-     func openOcrController() {
-         DispatchQueue.main.async {
-             // Root ViewController'ı al
-             guard let rootVC = UIApplication.shared.connectedScenes
-                 .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                 .first else {
-                 print("Root ViewController bulunamadı.")
-                 return
-             }
+        guard let rootVC = UIApplication.shared.connectedScenes
+            .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+            .first else {
+            print("Root ViewController bulunamadı.")
+            return
+        }
+        
+        if let navigationController = rootVC as? UINavigationController {
+            let storyboard = UIStoryboard(name:page, bundle: nil)
+            if let ocrVC = storyboard.instantiateViewController(withIdentifier: page) as? EnQualifyViewController {
+                navigationController.pushViewController(ocrVC, animated: true)
+            } else {
+                print("OcrController storyboard'da bulunamadı.")
+            }
+        } else {
+            print("Root ViewController bir UINavigationController değil.")
+        }
+      }
+    }
+    
+    func goBackPage(page: String) {
+      
+      DispatchQueue.main.async {
+        
+        guard let rootVC = UIApplication.shared.connectedScenes
+            .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+            .first else {
+            print("Root ViewController bulunamadı.")
+            return
+        }
+        
+        print("goBackPage")
+        if let navigationController = rootVC as? UINavigationController {
+            for controller in navigationController.viewControllers {
+                // Hedef storyboard'u kontrol et
+                if let targetStoryboardName = controller.storyboard?.value(forKey: "name") as? String,
+                targetStoryboardName == page { // Değiştirilecek storyboard adı
+                    navigationController.popToViewController(controller, animated: true)
+                    return
+                }
+            }
+            print("Hedef storyboard navigation stack'te bulunamadı.")
+        } else {
+            print("Navigation controller bulunamadı.")
+        }
 
-             // UINavigationController kontrolü
-             if let navigationController = rootVC as? UINavigationController {
-                 let storyboard = UIStoryboard(name: "OcrInfo", bundle: nil)
-                 if let ocrVC = storyboard.instantiateViewController(withIdentifier: "OcrInfo") as? OcrInfo {
-                     navigationController.pushViewController(ocrVC, animated: true)
-                 } else {
-                     print("OcrController storyboard'da bulunamadı.")
-                 }
-             } else {
-                 print("Root ViewController bir UINavigationController değil.")
-             }
-         }
-     }
-  }
-//
-//
+      }
+        
+    }
+}
+
+
 //@objc(ModuleIOS)
 //class ModuleIOS: BaseViewController, EnVerifyDelegate {
 //
