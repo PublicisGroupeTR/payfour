@@ -42,6 +42,12 @@
 	<string>This application wants to access to your FaceId scanner.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string>Kamera kullanmak istiyorum.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Mikrofon kullanmak istiyorum.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Fotoğraflara erişmek istiyorum.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

@@ -640,7 +640,7 @@ const Intro2 = ({navigation}) => {
                 activeOpacity={0.5}
                 onPress={()=>{
                   //navigation.navigate('CreditForm');
-                  navigation.navigate('LimitOtpScreen')
+                  navigation.navigate('Kyc')
                 }
                   }>
                 <Text style={styles.buttonTextStyle}>Şimdi Kredi Kullan</Text>

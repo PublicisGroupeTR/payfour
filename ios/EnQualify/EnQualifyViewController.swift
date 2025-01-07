@@ -10,7 +10,7 @@ class EnQualifyViewController: UIViewController {
     @IBOutlet weak var contentView: UIView!
 
     @IBAction func buttonTapped(_ sender: UIButton) {
-      ModuleIOS.shared.goToNextPage(page : "OcrSuccess")
+    //   ModuleIOS.shared.goToNextPage(page : "OcrSuccess")
     }
 
     @IBAction func backButtonTapped(_ sender: UIButton) {
@@ -36,6 +36,6 @@ class EnQualifyViewController: UIViewController {
             targetPage = "OcrInfo"
         }
 
-      ModuleIOS.shared.goBackPage(page : targetPage)
+    //   ModuleIOS.shared.goBackPage(page : targetPage)
   }
 }

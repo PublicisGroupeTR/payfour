@@ -22,6 +22,14 @@ import { ErrorProvider } from './Screen/Contexts/ErrorContext';
 import { Appearance } from 'react-native';
 import { NativeModules, NativeEventEmitter } from 'react-native';
 
+// Kyc Screens
+import KycOtp from './Screen/Kyc/Otp';
+import IdentityForm from './Screen/Kyc/IdentityForm';
+import AddressInfo from './Screen/Kyc/AddressInfo';
+import AgreementsView from './Screen/Kyc/AgreementsView';
+import IdentityDetailForm from './Screen/Kyc/IdentityDetailForm';
+import VerifyScreen from './Screen/Kyc/VerifyScreen';
+
 const Stack = createStackNavigator();
 
 const Auth = () => {
@@ -72,37 +80,81 @@ const Auth = () => {
   );
 };
 
+const Kyc = () => {
+  return (
+    <Stack.Navigator initialRouteName="KycOtp"
+    screenOptions={{
+      contentStyle:{
+        backgroundColor:'#FFFFFF'
+      }
+   }}
+    >
+       <Stack.Screen
+          name="KycOtp"
+          component={KycOtp}
+          options={{headerShown: false}}
+        />
+       <Stack.Screen
+          name="IdentityForm"
+          component={IdentityForm}
+          options={{headerShown: false}}
+        />
+       <Stack.Screen
+          name="AgreementsView"
+          component={AgreementsView}
+          options={{headerShown: false}}
+        />
+       <Stack.Screen
+          name="AddressInfo"
+          component={AddressInfo}
+          options={{headerShown: false}}
+        />
+       <Stack.Screen
+          name="IdentityDetailForm"
+          component={IdentityDetailForm}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="VerifyScreen"
+          component={VerifyScreen}
+          options={{headerShown: false}}
+        />
+    </Stack.Navigator>
+  );
+};
+
+
 /* Switch Navigator for those screens which needs to be switched only once
   and we don't want to switch back once we switch from them to the next one */
 const App = () => {
 
-  const eventEmitter = new NativeEventEmitter(NativeModules.ModuleIOS);
+  // const eventEmitter = new NativeEventEmitter(NativeModules.ModuleIOS);
 
-  useEffect(() => {
-    // Event'i dinle
-    const completionListener = eventEmitter.addListener('onKycProcessCompleted', (data) => {
-      console.log('KYC Tamamlandı:', data);
-  });
+  // useEffect(() => {
+  //   // Event'i dinle
+  //   const completionListener = eventEmitter.addListener('onKycProcessCompleted', (data) => {
+  //     console.log('KYC Tamamlandı:', data);
+  // });
 
-    // Cleanup
-    return () => {
-      completionListener.remove();
-    };
-  }, []);
+  //   // Cleanup
+  //   return () => {
+  //     completionListener.remove();
+  //   };
+  // }, []);
 
   useEffect(() => {
     Appearance.setColorScheme('light');
     console.log("colorScheme");
     console.log(Appearance.getColorScheme());
 
-    const kycData = JSON.stringify({
-        userId: "67890",
-        userName: "Jane Doe",
-        email: "jane.doe@example.com",
-        country: "Canada"
-    });
+    // const kycData = JSON.stringify({
+    //     userId: "67890",
+    //     userName: "Jane Doe",
+    //     email: "jane.doe@example.com",
+    //     country: "Canada"
+    // });
 
-    NativeModules.ModuleIOS.viewDidLoadNative(kycData)
+    // NativeModules.ModuleIOS.viewDidLoadNative(kycData)
  
   },
   [])
@@ -138,6 +190,11 @@ const App = () => {
           name="TabNavigationRoutes"
           component={TabNavigationRoutes}
           // Hiding header for Navigation Drawer as we will use our custom header
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Kyc"
+          component={Kyc}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
