@@ -455,41 +455,41 @@ import UIKit
 //         self.sendEvent(withName: eventName, body: body)
 //     }
 
-//     @objc
-//     func viewDidLoadNative(_ kycData: String) {
+    // @objc
+    // func viewDidLoadNative(_ kycData: String) {
 
-//         if let data = kycData.data(using: .utf8) {
-//             do {
-//                 // JSON verisini Swift Dictionary'e çevir
-//                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-//                     print("KYC Verisi: \(json)")
+    //     if let data = kycData.data(using: .utf8) {
+    //         do {
+    //             // JSON verisini Swift Dictionary'e çevir
+    //             if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+    //                 print("KYC Verisi: \(json)")
                     
-//                     self.kycData = json
+    //                 self.kycData = json
                     
-//                     if let userName = self.kycData?["userName"] as? String {
-//                         print("Kullanıcı Adı: \(userName)")
-//                     }
+    //                 if let userName = self.kycData?["userName"] as? String {
+    //                     print("Kullanıcı Adı: \(userName)")
+    //                 }
             
                     
-//                 }
-//             } catch {
-//                 print("JSON Parse Hatası: \(error.localizedDescription)")
+    //             }
+    //         } catch {
+    //             print("JSON Parse Hatası: \(error.localizedDescription)")
             
-//             }
-//         } else {
-//             // Geçersiz JSON string
-//             print("Geçersiz JSON string")
-//         }
+    //         }
+    //     } else {
+    //         // Geçersiz JSON string
+    //         print("Geçersiz JSON string")
+    //     }
 
-//         print("viewDidLoadNative called")
-//         // React Native'e bir event gönder
-//                 let data: [String: Any] = [
-//                     "status": "started",
-//                     "data": kycData
-//                 ]
-//         self.sendEventToReactNative(eventName: "onKycProcessCompleted", body: data)
-//         goToNextPage(page: "OcrInfo")
-//     }
+    //     print("viewDidLoadNative called")
+    //     // React Native'e bir event gönder
+    //             let data: [String: Any] = [
+    //                 "status": "started",
+    //                 "data": kycData
+    //             ]
+    //     self.sendEventToReactNative(eventName: "onKycProcessCompleted", body: data)
+    //     goToNextPage(page: "OcrInfo")
+    // }
 
 //     @objc
 //     func startVerification() {
@@ -558,9 +558,13 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
 var agentRequestType: AgentRequestType = .none
 var isNFCRetry: Bool = false
-
+  
+static let shared = ModuleIOS()
+private var kycData: [String: Any]?
+  
 func idSelfVerifyReady() {
   print("idSelfVerifyReady")
+  // EnVerify.idFrontStart()
 }
 
 func callWait() {
@@ -576,6 +580,7 @@ func idTypeCheck() {
 }
 
 func idTypeCheckCompleted() {
+   EnVerify.idFrontStart()
   print("idTypeCheckCompleted")
 }
 
@@ -592,6 +597,7 @@ func idFront() {
 }
 
 func idFrontCompleted() {
+ EnVerify.idBackStart()
   print("idFrontCompleted")
 }
 
@@ -600,10 +606,14 @@ func idBack() {
 }
 
 func idBackCompleted() {
+   EnVerify.idDocStore()
   print("idBackCompleted")
+//  TODO KALKACAK
+  goToNextPage(page: "OcrSuccess")
 }
 
 func idDocCompleted() {
+//  TODO OCR SUCCESS SAYFASI
   print("idDocCompleted")
 }
 
@@ -772,6 +782,7 @@ func faceRetry() {
 }
 
 func hostConnected() {
+  goToNextPage(page: "OcrInfo")
   print("hostConnected")
 }
 
@@ -851,15 +862,16 @@ func addFaceFailure() {
   print("addFaceFailure")
 }
 
-//  func requestVideoAudioPermissionsResult(_ granted: Bool) {
-//    print("requestVideoAudioPermissionsResult")
-//  }
+ func requestVideoAudioPermissionsResult(_ granted: Bool) {
+   print("requestVideoAudioPermissionsResult")
+ }
 
 func forceHangup() {
   print("forceHangup")
 }
 
 func idTextRecognitionTimeout() {
+  
   print("idTextRecognitionTimeout")
 }
 
@@ -1005,22 +1017,96 @@ override func viewDidLoad() {
   super.viewDidLoad()
   // Additional setup
 }
+  
+  
+func goToNextPage(page: String) {
+ DispatchQueue.main.async {
+  
+   print("goToNextPage")
 
-@objc func viewDidLoadNative() {
+   guard let rootVC = UIApplication.shared.connectedScenes
+       .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+       .first else {
+       print("Root ViewController bulunamadı.")
+       return
+   }
+  
+   if let navigationController = rootVC as? UINavigationController {
+       let storyboard = UIStoryboard(name:page, bundle: nil)
+       if let ocrVC = storyboard.instantiateViewController(withIdentifier: page) as? EnQualifyViewController {
+           navigationController.pushViewController(ocrVC, animated: true)
+       } else {
+           print("OcrController storyboard'da bulunamadı.")
+       }
+   } else {
+       print("Root ViewController bir UINavigationController değil.")
+   }
+ }
+}
+
+func goBackPage(page: String) {
+
+ DispatchQueue.main.async {
+  
+   guard let rootVC = UIApplication.shared.connectedScenes
+       .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+       .first else {
+       print("Root ViewController bulunamadı.")
+       return
+   }
+  
+   print("goBackPage")
+   if let navigationController = rootVC as? UINavigationController {
+       for controller in navigationController.viewControllers {
+           // Hedef storyboard'u kontrol et
+           if let targetStoryboardName = controller.storyboard?.value(forKey: "name") as? String,
+           targetStoryboardName == page { // Değiştirilecek storyboard adı
+               navigationController.popToViewController(controller, animated: true)
+               return
+           }
+       }
+       print("Hedef storyboard navigation stack'te bulunamadı.")
+   } else {
+       print("Navigation controller bulunamadı.")
+   }
+
+ }
+  
+}
+
+@objc func viewDidLoadNative(_ kycData: String) {
+  
+   if let data = kycData.data(using: .utf8) {
+       do {
+           // JSON verisini Swift Dictionary'e çevir
+           if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+               print("KYC Verisi: \(json)")
+               self.kycData = json
+           }
+       } catch {
+           print("JSON Parse Hatası: \(error.localizedDescription)")
+      
+       }
+   } else {
+       // Geçersiz JSON string
+       print("Geçersiz JSON string")
+   }
+  
+  
   getAppSettings(){
     DispatchQueue.main.async {
       
       print("viewDidLoadNative")
 
       self.setCustomerInformation()
-      print("viewDidLoadNative setCustomerInformation")
-      let holoDetectionType = "HOLO_ANY_DETECT"
-      EnVerifyCustomerCard.shared.setHoloDetectionType(holoDetectionType: holoDetectionType)
-      EnVerifyCustomerCard.shared.setDetectionThreshold(threshold: 0.9)
+
       if EnVerify.checkPermissions() {
-        let referenceUUID = UUID().uuidString
+        
+  
+         let referenceUUID = self.kycData?["referenceId"] as? String ?? ""
         
         print("referenceUUID", referenceUUID)
+        
         if (!EnVerify.idvSettings(domainName: UserDefaults.standard.string(forKey: "domainName"),
                                   certificateNames: ["dgfinansman"],
                                   aiUsername: UserDefaults.standard.string(forKey: "aiUserName"),
@@ -1039,14 +1125,11 @@ override func viewDidLoad() {
         }
 
         self.setSettings()
-        print("setSettings")
-        
-        print("aiUserName", UserDefaults.standard.string(forKey: "aiUserName"))
-        // self._startVerification()
        DispatchQueue.main.async {
 
          print(self)
          guard EnVerify.idVerifyStart(self) else {return}
+        //  self._startVerification()
          EnVerify.requestVideoAudioPermissions()
        }
       } else {
@@ -1075,15 +1158,15 @@ func presentCameraSettings(vc: UIViewController) {
   vc.present(alertController, animated: true)
 }
 
-func requestVideoAudioPermissionsResult(_ granted: Bool) {
-  if !EnVerify.checkPermissions() {
-    DispatchQueue.main.async {
-      self.presentCameraSettings(vc: self)
-    }
-  }
-}
+//func requestVideoAudioPermissionsResult(_ granted: Bool) {
+//  if !EnVerify.checkPermissions() {
+//    DispatchQueue.main.async {
+//      self.presentCameraSettings(vc: self)
+//    }
+//  }
+//}
 
-@objc func startVerification() {
+func startVerification() {
   DispatchQueue.main.async {
     self._startVerification()
   }

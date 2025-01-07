@@ -1,17 +1,13 @@
-/* eslint-disable react-native/no-inline-styles */
-// Example of Splash, Login and Sign Up in React Native
-// https://aboutreact.com/react-native-login-and-signup/
-
-// Import React and Component
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
   Text,
   NativeModules,
   TouchableOpacity,
-  Image
+  Image,
+  Platform
 } from 'react-native';
 import { FontFamilies } from './helper/index.js';
 import { useIsFocused } from '@react-navigation/native';
@@ -20,18 +16,22 @@ import KvcLayout from './KvcLayout.js';
 const VerifyScreen = ({ navigation, route }) => {
 
   const isFocused = useIsFocused();
-  const [allData, setAllData] = useState();
+  // const [allData, setAllData] = useState();
+  const [allData, setAllData] = useState({"birthDate": "2001-10-10T00:00:00", "commercialElectronic": true, "crmCustomerId": "15628932", "defaultBankAccountNumber": "3594488206101", "educationlevel": "5d18065a-742c-5c06-6e45-aa7d8ae95499", "email": "", "firstName": "Mahmut Bilal", "gender": "Male", "incometypesSelected": [4, 6], "isStudent": false, "lastName": "TEKİROĞLU", "monthlyAverage": "15000", "occupation": "5d1912c0-3818-7d03-f337-9ad31752832a", "occupationrole": "18f1e288-4786-404b-a879-83272a1b96b2", "payfourId": 3583, "phone": "+905533600910", "referenceId": "0194411f-246f-73d0-992b-d575f5e06c38", "referralCode": "PYF2jzBnEzjQhS7", "registrationCompleted": true, "segment": 1, "segmentInfo": {"autoRenew": false, "isAnnual": false, "segment": 1, "startDateUTC": "2024-11-19T06:54:35.5703137"}, "selectedaAreements": ["ETK", "GKS", "USAGR"], "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVtcGFudW1iZXIiOiI2ZDMwYjU1Zjg4ZGNkYTRiOTk1MjIzMGE2MTc0YjYzY2Q5YzUwMmQxZmRhMDI2Y2E1MzE1OTZjYmEzYzc4ODBkIiwiZGV2aWNlSWQiOiIxMjIyIiwidG9rZW5pZCI6ImRhMjFhZjI2LThkMDktNDJkYS0yOGZmLTA4ZGQyZjAzNDlkNiIsIm1lbWJlcmlkIjoiMzU4MyIsImV4cCI6MTczNjI2MjE0NSwiaXNzIjoiUGF5Zm91ckFwcFRva2VuIiwiYXVkIjoiUGF5Zm91ckFwcFNlcnZpY2UifQ.XDXyXGt6ndR4HUWtvPfAGoNjj5x5td6jH9nIZTibQNw", "transactionVolume": "15000", "transactionsNumbers": "15000", "userBirthplace": "Adama"});
 
-  const openEnQualifyActivity = async () => {
-
-    // NativeModules.EnQualifyModuleIOS.showSwiftUIView()
-    // return
+  
+  const startKyc = async () => {
 
     if (!allData) {
       return
     }
 
-    NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
+    if (Platform.OS == 'ios') {
+      NativeModules.ModuleIOS.viewDidLoadNative(JSON.stringify(allData))
+    } else {
+      NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
+    }
+
   }
 
   const getData = async () => {
@@ -94,7 +94,7 @@ const VerifyScreen = ({ navigation, route }) => {
                 <Text style={[styles.buttonTextStyle, { color: '#004F97' }]}>Vazgeç</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => openEnQualifyActivity()}
+                onPress={() => startKyc()}
                 style={[styles.buttonStyle, {}]}
                 activeOpacity={0.5}
               >
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     padding: 16,
-    paddingBottom:0,
+    paddingBottom:12,
     backgroundColor:"#efeff3"
   },
   container: {
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     height: 52,
     alignItems: 'center',
+    justifyContent:"center",
     borderRadius: 10,
-
   },
   buttonTextStyle: {
     color: '#FFFFFF',

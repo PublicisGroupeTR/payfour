@@ -25,7 +25,7 @@ const IdentityForm = ({ route, navigation }) => {
   const [alreadyConfirmAgreement, setAlreadyConfirmAgreement] = useState([]);
 
   const [formData, setFormData] = useState({
-    userTCKN: { value: "", isValid: true },
+    userTCKN: { value: "64317832464", isValid: true },
     userName: { value: user.firstName, isValid: true },
     userLastName: { value: user.lastName, isValid: true },
     userEmail: { value: user.email, isValid: true },
@@ -301,7 +301,7 @@ const IdentityForm = ({ route, navigation }) => {
             mask={['+', '9', '0', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
           />
 
-          <View style={[istyles.inputStyle, formData.userBirth.isValid === false && istyles.borderError, { paddingBottom: 0, paddingLeft: 12 }]}>
+          <View style={[istyles.inputStyle, formData.userBirth.isValid === false && istyles.borderError, Platform.OS == "ios" ? { paddingTop: 26, paddingBottom: 12 } : {paddingBottom: 0, paddingLeft: 12}]}>
             <Text style={istyles.bhirtDateText}>
               Doğum Tarihi (GG/AA/YYYY)
             </Text>

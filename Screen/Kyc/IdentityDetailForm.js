@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Image, Pressable, TouchableOpacity, Text, Dimensions, StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Image, TouchableOpacity, Text, Dimensions, StyleSheet, Platform } from 'react-native';
 import { styles } from '../Components/Styles.js';
 import KvcLayout from './KvcLayout.js';
 
@@ -139,7 +139,6 @@ const IdentityDetailForm = ({ route, navigation }) => {
     const occupationroles = await apiRequest({ url: '/loans/occupationroles' });
     const occupations = await apiRequest({ url: '/loans/occupations' });
     const incometypes = await apiRequest({ url: '/loans/incometypes' });
-
     if (educationlevels && educationlevels.data) {
       setEducationlevels(educationlevels.data)
     }
@@ -174,7 +173,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
           />
 
           {occupations && <Dropdown
-            style={[istyles.inputStyle, formData.occupation.isValid === false && istyles.borderError, { height: 66 }]}
+            style={[istyles.inputStyle, formData.occupation.isValid === false && istyles.borderError, { height: Platform.OS == "ios" ? 55 : 66 }]}
             placeholderStyle={{
               fontSize: 14,
               color: '#909EAA',
@@ -195,7 +194,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
             renderItem={renderDropdownItem}
           />}
           {educationlevels && <Dropdown
-            style={[istyles.inputStyle, formData.educationlevel.isValid === false && istyles.borderError, { height: 66 }]}
+            style={[istyles.inputStyle, formData.educationlevel.isValid === false && istyles.borderError, { height: Platform.OS == "ios" ? 55 : 66 }]}
             placeholderStyle={{
               fontSize: 14,
               color: '#909EAA',
@@ -216,7 +215,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
             renderItem={renderDropdownItem}
           />}
           {occupationroles && <Dropdown
-            style={[istyles.inputStyle, formData.occupationrole.isValid === false && istyles.borderError, { height: 66 }]}
+            style={[istyles.inputStyle, formData.occupationrole.isValid === false && istyles.borderError, { height: Platform.OS == "ios" ? 55 : 66 }]}
             placeholderStyle={{
               fontSize: 14,
               color: '#909EAA',
@@ -327,6 +326,15 @@ const istyles = StyleSheet.create({
     top: 14,
     left: 16
   },
+  buttonStyle: {
+    backgroundColor: '#004F97',
+    borderWidth: 0,
+    color: '#FFFFFF',
+    height: 52,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+
   buttonContainer: {
     width: "100%",
     flexDirection: "col",
