@@ -606,19 +606,16 @@ func idBack() {
 }
 
 func idBackCompleted() {
-   EnVerify.idDocStore()
   print("idBackCompleted")
-//  TODO KALKACAK
-  goToNextPage(page: "OcrSuccess")
+  EnVerify.idDocStore()
 }
 
 func idDocCompleted() {
-//  TODO OCR SUCCESS SAYFASI
   print("idDocCompleted")
 }
 
 func nfcVerify() {
-  print("nfcVerify")
+    print("nfcVerify")
 }
 
 func nfcVerifyCompleted() {
@@ -714,6 +711,7 @@ func idFakeDetected() {
 }
 
 func idDocStoreCompleted() {
+  goToNextPage(page: "OcrSuccess")
   print("idDocStoreCompleted")
 }
 
@@ -843,6 +841,7 @@ func roomIDSendCompleted() {
 }
 
 func idDocStoreFailure() {
+  goToNextPage(page: "OcrError")
   print("idDocStoreFailure")
 }
 
@@ -861,10 +860,6 @@ func addFaceCompleted() {
 func addFaceFailure() {
   print("addFaceFailure")
 }
-
- func requestVideoAudioPermissionsResult(_ granted: Bool) {
-   print("requestVideoAudioPermissionsResult")
- }
 
 func forceHangup() {
   print("forceHangup")
@@ -1097,8 +1092,8 @@ func goBackPage(page: String) {
     DispatchQueue.main.async {
       
       print("viewDidLoadNative")
-
-      self.setCustomerInformation()
+      
+      EnVerify.callType = "NewCustomer"
 
       if EnVerify.checkPermissions() {
         
@@ -1158,57 +1153,52 @@ func presentCameraSettings(vc: UIViewController) {
   vc.present(alertController, animated: true)
 }
 
-//func requestVideoAudioPermissionsResult(_ granted: Bool) {
-//  if !EnVerify.checkPermissions() {
-//    DispatchQueue.main.async {
-//      self.presentCameraSettings(vc: self)
-//    }
-//  }
-//}
-
-func startVerification() {
-  DispatchQueue.main.async {
-    self._startVerification()
-  }
+func requestVideoAudioPermissionsResult(_ granted: Bool) {
+ if !EnVerify.checkPermissions() {
+   DispatchQueue.main.async {
+     self.presentCameraSettings(vc: self)
+   }
+ }
 }
 
-func _startVerification() {
-  agentRequestType = .busy
-  print("_startVerification")
-  DispatchQueue.main.async {
-    print("guard")
-    guard EnVerify.selfServiceStart(self) else { return }
-  }
-}
-
-private func setCustomerInformation() {
-  // data RN tarafından beslenicek
-  EnVerify.callType = "NewCustomer"
-  EnVSession.setUserName("Nadir")
-  EnVSession.setUserSurname("Kılınç")
-  EnVerify.identityNo = "49867297574"
-  EnVerify.identityType = "T.C Kimlik Kartı"
-  EnVerify.sessionAddPhone = "5555555555"
-  EnVerify.sessionAddEmail = "enqura@enqura.com"
-}
-
-  @objc private func setSettings() {
-//    setEnverifyButtons()
+private func setSettings() {
   guard let path = Bundle.main.path(forResource: "test", ofType: "mov") else { return }
   EnVerify.agentDummyVideoPlayer = AVPlayer(url: URL(fileURLWithPath: path)) // add .mov video player
   EnVerify.agentDummyImage = UIImage(named: "imgLaunch") // add img player
 }
 
-private func getAppSettings(completionHandler: @escaping () -> Void) {
-  EnVerify.setMSPrivateKey(value: "1234567890123456789012345678901234567890")
-  EnVerify.setSSLPinning(required: true)
-  EnVerify.setShowLogs(value: true)
-  AppSettings().getConfigurations(){ bool in
-    EnVerify.getAuthTokenBeforeSDK(UserDefaults.standard.string(forKey: "apiServerUser"), UserDefaults.standard.string(forKey: "apiServer") ?? ""){(_) -> () in
-      completionHandler()
-    }
+  private func getAppSettings(completionHandler: @escaping () -> Void) {
+    EnVerify.setMSPrivateKey(value: "1234567890123456789012345678901234567890")
+    EnVerify.setSSLPinning(required: false)
+    EnVerify.setShowLogs(value: true)
+    AppSettings().getConfigurations(){ bool in
+      EnVerify.getAuthTokenBeforeSDK(UserDefaults.standard.string(forKey: "apiServerUser"), UserDefaults.standard.string(forKey: "apiServer") ?? ""){(_) -> () in
+        completionHandler()
+      }
   }}
+  
+  func startVerification() {
+     agentRequestType = .busy
+    print("_startVerification")
+    DispatchQueue.main.async {
+      print("guard")
+      guard EnVerify.selfServiceStart(self) else { return } }
+  }
+
+    func startNfc() {
+        if NFCTagReaderSession.readingAvailable {
+            let nfcStart = EnVerify.nfcStart()
+            print("nfcStart :\(nfcStart)")
+            if nfcStart != NFCStartResponseType.success.rawValue {
+                print("startNfc error 2")
+            }
+        } else {
+            print("startNfc error 1")
+        }
+    }
+
 }
+
 
 // @objc(EnQualifyModuleIOS)
 // class EnQualifyModuleIOS: BaseViewController, EnVerifyDelegate {

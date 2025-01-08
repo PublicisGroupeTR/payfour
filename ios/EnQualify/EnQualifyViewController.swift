@@ -12,7 +12,12 @@ class EnQualifyViewController: UIViewController {
     @IBAction func ocrStartButton(_ sender: UIButton) {
       ModuleIOS.shared.startVerification()
     }
-
+  
+  
+  @IBAction func nfcStartButton(_ sender: UIButton) {
+    ModuleIOS.shared.startNfc()
+  }
+  
     @IBAction func backButtonTapped(_ sender: UIButton) {
         guard let storyboardName = self.storyboard?.value(forKey: "name") as? String else {
             print("Storyboard adı alınamadı.")
