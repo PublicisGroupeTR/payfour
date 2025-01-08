@@ -1075,7 +1075,7 @@ func goBackPage(page: String) {
        do {
            // JSON verisini Swift Dictionary'e çevir
            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-               print("KYC Verisi: \(json)")
+              //  print("KYC Verisi: \(json)")
                self.kycData = json
            }
        } catch {
@@ -1169,7 +1169,7 @@ private func setSettings() {
 
   private func getAppSettings(completionHandler: @escaping () -> Void) {
     EnVerify.setMSPrivateKey(value: "1234567890123456789012345678901234567890")
-    EnVerify.setSSLPinning(required: false)
+    EnVerify.setSSLPinning(required: true)
     EnVerify.setShowLogs(value: true)
     AppSettings().getConfigurations(){ bool in
       EnVerify.getAuthTokenBeforeSDK(UserDefaults.standard.string(forKey: "apiServerUser"), UserDefaults.standard.string(forKey: "apiServer") ?? ""){(_) -> () in
