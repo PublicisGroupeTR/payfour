@@ -16,7 +16,6 @@
 		625876B32D2C333D00FE5A20 /* OcrError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B22D2C333D00FE5A20 /* OcrError.storyboard */; };
 		625876B52D2C335B00FE5A20 /* NfcSuccess.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B42D2C335B00FE5A20 /* NfcSuccess.storyboard */; };
 		625876B72D2C337300FE5A20 /* NfcRequired.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B62D2C337300FE5A20 /* NfcRequired.storyboard */; };
-		625876B92D2C337E00FE5A20 /* NfcRead.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B82D2C337E00FE5A20 /* NfcRead.storyboard */; };
 		625876BB2D2C339000FE5A20 /* NfcError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876BA2D2C339000FE5A20 /* NfcError.storyboard */; };
 		625876BD2D2C33A200FE5A20 /* NfcClosed.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876BC2D2C33A200FE5A20 /* NfcClosed.storyboard */; };
 		625876BF2D2C33AD00FE5A20 /* KycError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876BE2D2C33AD00FE5A20 /* KycError.storyboard */; };
@@ -30,6 +29,7 @@
 		625DA9532D26B4A300547914 /* EnQualifyModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 625DA9522D26B4A300547914 /* EnQualifyModuleBridge.m */; };
 		625DA9582D26D59F00547914 /* OcrInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625DA9572D26D59F00547914 /* OcrInfo.storyboard */; };
 		625DA95A2D26D5CA00547914 /* EnQualifyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625DA9592D26D5CA00547914 /* EnQualifyViewController.swift */; };
+		6268A6CD2D3001B800D18DBF /* dgfinansman.der in Resources */ = {isa = PBXBuildFile; fileRef = 6268A6CB2D3001B800D18DBF /* dgfinansman.der */; };
 		6A4A82C9ACD8B0B6F93EF557 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 967ACDD0970900FAC7AB5AF4 /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8CD3ECD07D88AE48E8851CFD /* Pods_Payfour_PayfourTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47A6B7137BE20C6A14DCEA6E /* Pods_Payfour_PayfourTests.framework */; };
@@ -69,7 +69,6 @@
 		625876B22D2C333D00FE5A20 /* OcrError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrError.storyboard; sourceTree = "<group>"; };
 		625876B42D2C335B00FE5A20 /* NfcSuccess.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcSuccess.storyboard; sourceTree = "<group>"; };
 		625876B62D2C337300FE5A20 /* NfcRequired.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcRequired.storyboard; sourceTree = "<group>"; };
-		625876B82D2C337E00FE5A20 /* NfcRead.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcRead.storyboard; sourceTree = "<group>"; };
 		625876BA2D2C339000FE5A20 /* NfcError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcError.storyboard; sourceTree = "<group>"; };
 		625876BC2D2C33A200FE5A20 /* NfcClosed.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcClosed.storyboard; sourceTree = "<group>"; };
 		625876BE2D2C33AD00FE5A20 /* KycError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = KycError.storyboard; sourceTree = "<group>"; };
@@ -84,6 +83,7 @@
 		625DA9522D26B4A300547914 /* EnQualifyModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EnQualifyModuleBridge.m; sourceTree = "<group>"; };
 		625DA9572D26D59F00547914 /* OcrInfo.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrInfo.storyboard; sourceTree = "<group>"; };
 		625DA9592D26D5CA00547914 /* EnQualifyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnQualifyViewController.swift; sourceTree = "<group>"; };
+		6268A6CB2D3001B800D18DBF /* dgfinansman.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = dgfinansman.der; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Payfour/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Payfour-PayfourTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour-PayfourTests.release.xcconfig"; path = "Target Support Files/Pods-Payfour-PayfourTests/Pods-Payfour-PayfourTests.release.xcconfig"; sourceTree = "<group>"; };
 		967ACDD0970900FAC7AB5AF4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Payfour/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -130,6 +130,7 @@
 		13B07FAE1A68108700A75B9A /* Payfour */ = {
 			isa = PBXGroup;
 			children = (
+				6268A6CC2D3001B800D18DBF /* resource */,
 				625DA9542D26D55E00547914 /* EnQualify */,
 				0BB714C42CF4C2A3007F413F /* GoogleService-Info.plist */,
 				0BFAFAEB2CE60E6600EB7864 /* PayfourRelease.entitlements */,
@@ -182,12 +183,19 @@
 				625876B62D2C337300FE5A20 /* NfcRequired.storyboard */,
 				625876BA2D2C339000FE5A20 /* NfcError.storyboard */,
 				625876BC2D2C33A200FE5A20 /* NfcClosed.storyboard */,
-				625876B82D2C337E00FE5A20 /* NfcRead.storyboard */,
 				625876B42D2C335B00FE5A20 /* NfcSuccess.storyboard */,
 				625876C02D2C33B800FE5A20 /* FaceSuccess.storyboard */,
 				625876C22D2C33C300FE5A20 /* FaceError.storyboard */,
 			);
 			path = Pages;
+			sourceTree = "<group>";
+		};
+		6268A6CC2D3001B800D18DBF /* resource */ = {
+			isa = PBXGroup;
+			children = (
+				6268A6CB2D3001B800D18DBF /* dgfinansman.der */,
+			);
+			path = resource;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -334,12 +342,12 @@
 				625876C12D2C33B800FE5A20 /* FaceSuccess.storyboard in Resources */,
 				625DA93D2D26AADD00547914 /* enqura.der in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				6268A6CD2D3001B800D18DBF /* dgfinansman.der in Resources */,
 				625876C32D2C33C300FE5A20 /* FaceError.storyboard in Resources */,
 				0BB714C52CF4C2A3007F413F /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				625876BF2D2C33AD00FE5A20 /* KycError.storyboard in Resources */,
 				625876B72D2C337300FE5A20 /* NfcRequired.storyboard in Resources */,
-				625876B92D2C337E00FE5A20 /* NfcRead.storyboard in Resources */,
 				625876BB2D2C339000FE5A20 /* NfcError.storyboard in Resources */,
 				6A4A82C9ACD8B0B6F93EF557 /* PrivacyInfo.xcprivacy in Resources */,
 				625876B12D2C059600FE5A20 /* OcrSuccess.storyboard in Resources */,
