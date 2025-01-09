@@ -1169,7 +1169,7 @@ private func setSettings() {
 
   private func getAppSettings(completionHandler: @escaping () -> Void) {
     EnVerify.setMSPrivateKey(value: "1234567890123456789012345678901234567890")
-    EnVerify.setSSLPinning(required: true)
+    EnVerify.setSSLPinning(required: false)
     EnVerify.setShowLogs(value: true)
     AppSettings().getConfigurations(){ bool in
       EnVerify.getAuthTokenBeforeSDK(UserDefaults.standard.string(forKey: "apiServerUser"), UserDefaults.standard.string(forKey: "apiServer") ?? ""){(_) -> () in

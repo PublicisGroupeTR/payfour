@@ -43,11 +43,13 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSCameraUsageDescription</key>
-	<string>Kamera kullanmak istiyorum.</string>
+	<string>Bu uygulama, fotoğraf çekme ve görüntü yakalama işlemleri için kamera erişimine ihtiyaç duymaktadır.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Mikrofon kullanmak istiyorum.</string>
+	<string>Bu uygulama, ses kaydetme ve sesli iletişim için mikrofon erişimine ihtiyaç duymaktadır.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Fotoğraflara erişmek istiyorum.</string>
+	<string>Bu uygulama, fotoğraf ve medya dosyalarınızı kaydetmek ve görüntülemek için fotoğraf kütüphanesine erişim gerektirir.</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>Bu uygulama, NFC etiketlerini taramak ve işlem yapmak için NFC okuyucu erişimine ihtiyaç duymaktadır.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
