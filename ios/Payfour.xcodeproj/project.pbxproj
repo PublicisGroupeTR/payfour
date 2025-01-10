@@ -15,9 +15,7 @@
 		625876B12D2C059600FE5A20 /* OcrSuccess.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B02D2C059600FE5A20 /* OcrSuccess.storyboard */; };
 		625876B32D2C333D00FE5A20 /* OcrError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B22D2C333D00FE5A20 /* OcrError.storyboard */; };
 		625876B52D2C335B00FE5A20 /* NfcSuccess.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B42D2C335B00FE5A20 /* NfcSuccess.storyboard */; };
-		625876B72D2C337300FE5A20 /* NfcRequired.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B62D2C337300FE5A20 /* NfcRequired.storyboard */; };
 		625876BB2D2C339000FE5A20 /* NfcError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876BA2D2C339000FE5A20 /* NfcError.storyboard */; };
-		625876BD2D2C33A200FE5A20 /* NfcClosed.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876BC2D2C33A200FE5A20 /* NfcClosed.storyboard */; };
 		625876BF2D2C33AD00FE5A20 /* KycError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876BE2D2C33AD00FE5A20 /* KycError.storyboard */; };
 		625876C12D2C33B800FE5A20 /* FaceSuccess.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876C02D2C33B800FE5A20 /* FaceSuccess.storyboard */; };
 		625876C32D2C33C300FE5A20 /* FaceError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876C22D2C33C300FE5A20 /* FaceError.storyboard */; };
@@ -68,9 +66,7 @@
 		625876B02D2C059600FE5A20 /* OcrSuccess.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrSuccess.storyboard; sourceTree = "<group>"; };
 		625876B22D2C333D00FE5A20 /* OcrError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrError.storyboard; sourceTree = "<group>"; };
 		625876B42D2C335B00FE5A20 /* NfcSuccess.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcSuccess.storyboard; sourceTree = "<group>"; };
-		625876B62D2C337300FE5A20 /* NfcRequired.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcRequired.storyboard; sourceTree = "<group>"; };
 		625876BA2D2C339000FE5A20 /* NfcError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcError.storyboard; sourceTree = "<group>"; };
-		625876BC2D2C33A200FE5A20 /* NfcClosed.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcClosed.storyboard; sourceTree = "<group>"; };
 		625876BE2D2C33AD00FE5A20 /* KycError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = KycError.storyboard; sourceTree = "<group>"; };
 		625876C02D2C33B800FE5A20 /* FaceSuccess.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = FaceSuccess.storyboard; sourceTree = "<group>"; };
 		625876C22D2C33C300FE5A20 /* FaceError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = FaceError.storyboard; sourceTree = "<group>"; };
@@ -180,9 +176,7 @@
 				625DA9572D26D59F00547914 /* OcrInfo.storyboard */,
 				625876B02D2C059600FE5A20 /* OcrSuccess.storyboard */,
 				625876B22D2C333D00FE5A20 /* OcrError.storyboard */,
-				625876B62D2C337300FE5A20 /* NfcRequired.storyboard */,
 				625876BA2D2C339000FE5A20 /* NfcError.storyboard */,
-				625876BC2D2C33A200FE5A20 /* NfcClosed.storyboard */,
 				625876B42D2C335B00FE5A20 /* NfcSuccess.storyboard */,
 				625876C02D2C33B800FE5A20 /* FaceSuccess.storyboard */,
 				625876C22D2C33C300FE5A20 /* FaceError.storyboard */,
@@ -347,12 +341,10 @@
 				0BB714C52CF4C2A3007F413F /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				625876BF2D2C33AD00FE5A20 /* KycError.storyboard in Resources */,
-				625876B72D2C337300FE5A20 /* NfcRequired.storyboard in Resources */,
 				625876BB2D2C339000FE5A20 /* NfcError.storyboard in Resources */,
 				6A4A82C9ACD8B0B6F93EF557 /* PrivacyInfo.xcprivacy in Resources */,
 				625876B12D2C059600FE5A20 /* OcrSuccess.storyboard in Resources */,
 				625DA9582D26D59F00547914 /* OcrInfo.storyboard in Resources */,
-				625876BD2D2C33A200FE5A20 /* NfcClosed.storyboard in Resources */,
 				625876B52D2C335B00FE5A20 /* NfcSuccess.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

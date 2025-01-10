@@ -117,17 +117,18 @@ import UIKit
 // }
 
 @objc(ModuleIOS)
-class ModuleIOS: UIViewController, EnVerifyDelegate {
+class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   var agentRequestType: AgentRequestType = .none
-  var isNFCRetry: Bool = false
+  var isSelfServiceStart: Bool = false
 
   static let shared = ModuleIOS()
-  private var kycData: [String: Any]?
-  
+  var kycData: [String: Any]?
+
 //  ------------------------ CallBacks Start --------------------------------
   func idSelfVerifyReady() {
     print("idSelfVerifyReady")
+    isSelfServiceStart = true
     EnVerify.idTypeCheckFrontStart()
   }
 
@@ -198,14 +199,14 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func smileDetect() {
     print("smileDetect")
-//    EnVerify.faceCompleteStart()
-    EnVerify.faceStore()
+    
   }
 
   func smileDetectCompleted() {
+    // TODO
+    // EnVerify.faceCompleteStart()
+    EnVerify.faceStore()
     print("smileDetectCompleted")
-    EnVerify.onConfirmFaceWithOutPop()
-    goToNextPage(page: "FaceSuccess")
   }
 
   func eyeClose() {
@@ -275,6 +276,7 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func noConnectionError() {
     print("noConnectionError")
+    kycError()
   }
 
   func idFakeDetected() {
@@ -295,8 +297,7 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func faceStoreCompleted() {
     print("faceStoreCompleted")
-    EnVerify.onConfirmFaceWithOutPop()
-    goToNextPage(page: "FaceSuccess")
+    addIntegration();
   }
 
   func idTypeBackCheck() {
@@ -309,6 +310,7 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func faceCompleted() {
     print("faceCompleted")
+    
     EnVerify.faceStore()
   }
 
@@ -318,18 +320,22 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func timeoutFailure() {
     print("timeoutFailure")
+    kycError()
   }
 
   func idCheckFailure() {
     print("idCheckFailure")
+    kycError()
   }
 
   func tokenFailure() {
     print("tokenFailure")
+    kycError()
   }
 
   func connectionFailure() {
     print("connectionFailure")
+    kycError()
   }
 
   func nfcFailure() {
@@ -340,10 +346,13 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func nfcBACDATAFailure() {
     print("nfcBACDATAFailure")
+    kycError()
   }
 
   func faceLivenessCheckFailure() {
     print("faceLivenessCheckFailure")
+    EnVerify.handleFail()
+    goToNextPage(page: "FaceError")
   }
 
   func idRetry() {
@@ -358,6 +367,7 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func faceRetry() {
     print("faceRetry")
+    EnVerify.faceDetectStart()
   }
 
   func hostConnected() {
@@ -371,14 +381,22 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func callConnectionFailure() {
     print("callConnectionFailure")
+    kycError()
   }
+  
+  // TODO
 
   func integrationAddCompleted() {
     print("integrationAddCompleted")
+    EnVerify.onConfirmFaceWithOutPop()
+    goToNextPage(page: "FaceSuccess")
+    EnVerify.callSessionClose(finished: true)
   }
 
   func integrationAddFailure() {
     print("integrationAddFailure")
+    kycError() 
+    // EnVerify.idTypeCheckFrontStart()
   }
 
   func resultGetCompleted(_ value: EnQualify.EnverifyVerifyCallResult?) {
@@ -387,19 +405,23 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func resultGetFailure() {
     print("resultGetFailure")
+    kycError()
   }
 
   func sessionStartFailure() {
     print("sessionStartFailure")
+    kycError()
   }
 
   func sessionStartCompleted(sessionUid: String) {
     // TODO addint
     print("sessionStartCompleted")
+//    self.addIntegration()
   }
 
   func getAuthTokenFailure() {
     print("getAuthTokenFailure")
+    kycError()
   }
 
   func getAuthTokenCompleted() {
@@ -412,10 +434,12 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func getSettingsFailure() {
     print("getSettingsFailure")
+    kycError()
   }
 
   func roomIDSendFailure() {
     print("roomIDSendFailure")
+    kycError()
   }
 
   func roomIDSendCompleted() {
@@ -429,6 +453,8 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func addChipStoreFailure() {
     print("addChipStoreFailure")
+    goToNextPage(page: "NfcError")
+    EnVerify.handleFail()
   }
 
   func addChipStoreCompleted() {
@@ -441,6 +467,7 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func addFaceFailure() {
     print("addFaceFailure")
+    kycError()
   }
 
   func forceHangup() {
@@ -475,6 +502,7 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func screenRecorderOnError(eventData: NSError?) {
     print("screenRecorderOnError")
+    kycError()
   }
 
   func screenRecorderOnAppend() {
@@ -511,10 +539,12 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
   func videoUploadFailure() {
     print("videoUploadFailure")
+    kycError()
   }
 
   func maximumCallTimeExpired() {
     print("maximumCallTimeExpired")
+    kycError()
   }
 
   func currentThermalState(state: String) {
@@ -602,8 +632,8 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
       do {
         // JSON verisini Swift Dictionary'e çevir
         if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-          //  print("KYC Verisi: \(json)")
-          self.kycData = json
+//            print("KYC Verisi: \(json)")
+          ModuleIOS.shared.kycData = json
         }
       } catch {
         print("JSON Parse Hatası: \(error.localizedDescription)")
@@ -613,6 +643,8 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
       // Geçersiz JSON string
       print("Geçersiz JSON string")
     }
+    
+    
 
     getAppSettings {
       DispatchQueue.main.async {
@@ -623,7 +655,7 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
         if EnVerify.checkPermissions() {
 
-          let referenceUUID = self.kycData?["referenceId"] as? String ?? ""
+          let referenceUUID = ModuleIOS.shared.kycData?["referenceId"] as? String ?? ""
 
           print("referenceUUID", referenceUUID)
 
@@ -719,9 +751,9 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
     DispatchQueue.main.async {
       print("guard")
       guard EnVerify.selfServiceStart(self) else { return }
-    }
+      }
   }
-
+  
   func startNfc() {
     if NFCTagReaderSession.readingAvailable {
       let nfcStart = EnVerify.nfcStart()
@@ -743,28 +775,38 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
     print("retryNfc")
     EnVerify.onRetryNFC()
   }
-  
-  func retryFace() {
-    print("retryNfc")
-    EnVerify.onRetryFace()
-  }
 
   func startFace() {
     print("startFace")
     EnVerify.faceDetectStart()
+//    EnVerify.faceUpStart()
+  }
+  
+  func retryFace() {
+    print("retryFace")
+    EnVerify.onRetryFace()
   }
 
-
   func kycError() {
-    EnVerify.onHangupCall()
-    EnVerify.onExitSelfService()
+    exitSdk()
     goToNextPage(page: "KycError")
+  }
+  
+  func sdkRetry() {
+    exitSdk()
+    returnToReactNative()
+  }
+  
+  func exitSdk (){
+    if isSelfServiceStart == true {
+      EnVerify.onExitSelfServiceWithoutPop()
+    }
   }
   
   func goToNextPage(page: String) {
     DispatchQueue.main.async {
 
-      print("goToNextPage")
+      print("goToNextPage : ", page)
 
       guard
         let rootVC = UIApplication.shared.connectedScenes
@@ -777,10 +819,10 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
 
       if let navigationController = rootVC as? UINavigationController {
         let storyboard = UIStoryboard(name: page, bundle: nil)
-        if let ocrVC = storyboard.instantiateViewController(withIdentifier: page)
+        if let vc = storyboard.instantiateViewController(withIdentifier: page)
           as? EnQualifyViewController
         {
-          navigationController.pushViewController(ocrVC, animated: true)
+          navigationController.pushViewController(vc, animated: true)
         } else {
           print("OcrController storyboard'da bulunamadı.")
         }
@@ -791,9 +833,10 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
   }
 
   func goBackPage(page: String) {
+    
+    print("goBackPage : " , page)
 
     DispatchQueue.main.async {
-
       guard
         let rootVC = UIApplication.shared.connectedScenes
           .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
@@ -803,7 +846,6 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
         return
       }
 
-      print("goBackPage")
       if let navigationController = rootVC as? UINavigationController {
         for controller in navigationController.viewControllers {
           // Hedef storyboard'u kontrol et
@@ -811,9 +853,9 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
             targetStoryboardName == page
           {  // Değiştirilecek storyboard adı
             navigationController.popToViewController(controller, animated: true)
-            return
           }
         }
+       
         print("Hedef storyboard navigation stack'te bulunamadı.")
       } else {
         print("Navigation controller bulunamadı.")
@@ -822,5 +864,119 @@ class ModuleIOS: UIViewController, EnVerifyDelegate {
     }
 
   }
+
+  func returnToReactNative() {
+        DispatchQueue.main.async {
+            guard
+                let rootVC = UIApplication.shared.connectedScenes
+                    .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+                    .first
+            else {
+                print("Root ViewController bulunamadı.")
+                return
+            }
+
+            if let navigationController = rootVC as? UINavigationController {
+                navigationController.popToRootViewController(animated: true)
+            } else {
+                print("Root ViewController bir UINavigationController değil.")
+            }
+        }
+    }
+  
+  func closePage() {
+  
+    print("closePage")
+      DispatchQueue.main.async {
+        
+          guard
+            let rootVC = UIApplication.shared.connectedScenes
+              .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+              .first
+          else {
+            print("Root ViewController bulunamadı.")
+            return
+          }
+        
+          guard let navigationController = rootVC as? UINavigationController else {
+              print("NavigationController bulunamadı.")
+              return
+          }
+          navigationController.popViewController(animated: true)
+      }
+  }
+
+  func addIntegration() {
+
+    guard let kycData = ModuleIOS.shared.kycData else {
+        print("kycData boş veya nil")
+        return
+    }
+    // Prepare JSON Data
+    var jsonData: [String: Any] = [:]
+
+    // Occupations
+    if let occupation = kycData["occupation"] as? String,
+       let occupationRole = kycData["occupationrole"] as? String,
+       let educationLevel = kycData["educationlevel"] as? String {
+
+        let occupations = [
+            ["occupationTypeId": "5d1816d2-70c7-d5f2-e053-e7b3f2e53410",
+             "occupationTypeFieldId": occupation],
+            ["occupationTypeId": "5d1aa7d4-46a6-f804-395e-2575c967ca97",
+             "occupationTypeFieldId": occupationRole],
+            ["occupationTypeId": "5d17c8ce-efc2-4cd2-55f4-c6998700dcfa",
+             "occupationTypeFieldId": educationLevel]
+        ]
+
+        jsonData["occupations"] = occupations
+    }
+
+    // Incomes
+    if let incometypesSelected = kycData["incometypesSelected"] as? [String],
+       let transactionVolume = kycData["transactionVolume"] as? String,
+       let monthlyAverage = kycData["monthlyAverage"] as? String,
+       let transactionsNumbers = kycData["transactionsNumbers"] as? String {
+
+        let incomeData: [String: Any] = [
+            "currencyNumber": "949",
+            "sourceOfIncome": incometypesSelected.compactMap { Int($0) },
+            "EstimatedTransactionVolume": Int(transactionVolume) ?? 0,
+            "monthlyAmount": Int(monthlyAverage) ?? 0,
+            "TransactionCount": Int(transactionsNumbers) ?? 0
+        ]
+
+        jsonData["incomes"] = [incomeData]
+    }
+
+    // Consents
+    if let selectedAgreements = kycData["selectedaAreements"] as? [String] {
+        jsonData["consents"] = selectedAgreements
+    }
+
+    // Partner Code
+    jsonData["PartnerCode"] = "csa"
+
+    // Serialize JSON
+    guard let serializedData = try? JSONSerialization.data(withJSONObject: jsonData, options: .prettyPrinted),
+          let jsonString = String(data: serializedData, encoding: .utf8) else {
+        print("Failed to serialize JSON")
+        return
+    }
+
+//    print("Serialized JSON: \(jsonString)")
+
+    // API Request
+    let referenceId = kycData["referenceId"] as? String ?? ""
+
+    EnVerify.integrationAdd(type: "Session", 
+                            callType: referenceId,
+                            phone: nil,
+                            email: nil, 
+                            data: jsonString, 
+                            addressRegistration: nil,
+                            iDRegistration: nil)
+}
+
 
 }

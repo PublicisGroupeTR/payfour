@@ -8,10 +8,9 @@ class EnQualifyViewController: UIViewController {
     }
   
     @IBOutlet weak var contentView: UIView!
-
-
+  
     @IBAction func sdkRetryButton(_ sender: UIButton) {
-      ModuleIOS.shared.startVerification()
+      ModuleIOS.shared.sdkRetry()
     }
 
     @IBAction func ocrStartButton(_ sender: UIButton) {
@@ -33,6 +32,10 @@ class EnQualifyViewController: UIViewController {
     @IBAction func faceStartButton(_ sender: UIButton) {
       ModuleIOS.shared.startFace()
     }
+    
+    @IBAction func faceRetryButton(_ sender: UIButton) {
+      ModuleIOS.shared.retryFace()
+    }
   
     @IBAction func backButtonTapped(_ sender: UIButton) {
         guard let storyboardName = self.storyboard?.value(forKey: "name") as? String else {
@@ -52,13 +55,18 @@ class EnQualifyViewController: UIViewController {
 
         switch storyboardName {
         case "OrcSuccesss":
-            targetPage = "OcrInfo"
+          targetPage = "OcrInfo"
         case "OcrError":
-            targetPage = "OcrInfo"
+          targetPage = "OcrInfo"
+        case "NfcSuccess":
+          targetPage = "OcrSuccess"
+        case "NfcError":
+          targetPage = "OcrSuccess"
+        case "NfcError":
+          targetPage = "NfcSuccess"
         default:
-            targetPage = "OcrInfo"
+          targetPage = "OcrInfo"
         }
-
       ModuleIOS.shared.goBackPage(page : targetPage)
   }
 }
