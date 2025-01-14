@@ -121,6 +121,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   var agentRequestType: AgentRequestType = .none
   var isSelfServiceStart: Bool = false
+  let mainSSView: String = "MainSSView"
 
   static let shared = ModuleIOS()
   var kycData: [String: Any]?
@@ -190,11 +191,12 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func faceDetect() {
     print("faceDetect")
-    EnVerify.eyeCloseIntervalStart()
   }
 
   func faceDetectCompleted() {
     print("faceDetectCompleted")
+    EnVerify.faceStore()
+    EnVerify.eyeCloseIntervalStart()
   }
 
   func smileDetect() {
@@ -204,8 +206,8 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func smileDetectCompleted() {
     // TODO
-    // EnVerify.faceCompleteStart()
-    EnVerify.faceStore()
+     EnVerify.faceCompleteStart()
+//    EnVerify.faceStore()
     print("smileDetectCompleted")
   }
 
@@ -297,6 +299,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func faceStoreCompleted() {
     print("faceStoreCompleted")
+    EnVerify.onConfirmFaceWithOutPop()
     addIntegration();
   }
 
@@ -310,8 +313,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func faceCompleted() {
     print("faceCompleted")
-    
-    EnVerify.faceStore()
+
   }
 
   func idVerifyExited() {
@@ -388,14 +390,13 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func integrationAddCompleted() {
     print("integrationAddCompleted")
-    EnVerify.onConfirmFaceWithOutPop()
     goToNextPage(page: "FaceSuccess")
     EnVerify.callSessionClose(finished: true)
   }
 
   func integrationAddFailure() {
     print("integrationAddFailure")
-    kycError() 
+    kycError()
     // EnVerify.idTypeCheckFrontStart()
   }
 
@@ -627,6 +628,8 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   
   
   @objc func viewDidLoadNative(_ kycData: String) {
+    
+    
 
     if let data = kycData.data(using: .utf8) {
       do {
@@ -643,8 +646,6 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
       // Geçersiz JSON string
       print("Geçersiz JSON string")
     }
-    
-    
 
     getAppSettings {
       DispatchQueue.main.async {
@@ -658,6 +659,8 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
           let referenceUUID = ModuleIOS.shared.kycData?["referenceId"] as? String ?? ""
 
           print("referenceUUID", referenceUUID)
+          
+          EnVerify.setFaceOverlayAngleCount(count: 3)
 
           if !EnVerify.idvSettings(
             domainName: UserDefaults.standard.string(forKey: "domainName"),
@@ -778,8 +781,11 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func startFace() {
     print("startFace")
-    EnVerify.faceDetectStart()
-//    EnVerify.faceUpStart()
+    
+    self.popFrontViewController(self.mainSSView) {
+        EnVerify.faceDetectStart()
+    }
+    
   }
   
   func retryFace() {
@@ -788,8 +794,9 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
 
   func kycError() {
-    exitSdk()
     goToNextPage(page: "KycError")
+    print("kycError")
+    exitSdk()
   }
   
   func sdkRetry() {
@@ -798,12 +805,24 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
   
   func exitSdk (){
+    print("exitSdk")
     if isSelfServiceStart == true {
+      EnVerify.callSessionClose(finished: false )
       EnVerify.onExitSelfServiceWithoutPop()
     }
   }
-  
+
   func goToNextPage(page: String) {
+    
+//    let storyboard = UIStoryboard(name: page, bundle: nil)
+//    guard let vc = storyboard.instantiateViewController(withIdentifier: page) as? EnQualifyViewController else {
+//      return
+//    }
+//    navigationController?.pushViewController(vc, animated: true)
+//    
+//    return
+    
+    
     DispatchQueue.main.async {
 
       print("goToNextPage : ", page)
@@ -886,7 +905,6 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   
   func closePage() {
   
-    print("closePage")
       DispatchQueue.main.async {
         
           guard
