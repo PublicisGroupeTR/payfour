@@ -130,7 +130,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   func idSelfVerifyReady() {
     print("idSelfVerifyReady")
     isSelfServiceStart = true
-    EnVerify.idTypeCheckFrontStart()
+   EnVerify.idTypeCheckFrontStart()
   }
 
   func callWait() {
@@ -300,7 +300,6 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   func faceStoreCompleted() {
     print("faceStoreCompleted")
     EnVerify.onConfirmFaceWithOutPop()
-    addIntegration();
   }
 
   func idTypeBackCheck() {
@@ -313,7 +312,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func faceCompleted() {
     print("faceCompleted")
-
+    addIntegration();
   }
 
   func idVerifyExited() {
@@ -373,7 +372,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
 
   func hostConnected() {
-    goToNextPage(page: "OcrInfo")
+    goToOrcInfo()
     print("hostConnected")
   }
 
@@ -390,14 +389,13 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func integrationAddCompleted() {
     print("integrationAddCompleted")
-    goToNextPage(page: "FaceSuccess")
+//    goToNextPage(page: "FaceSuccess")
     EnVerify.callSessionClose(finished: true)
   }
 
   func integrationAddFailure() {
     print("integrationAddFailure")
     kycError()
-    // EnVerify.idTypeCheckFrontStart()
   }
 
   func resultGetCompleted(_ value: EnQualify.EnverifyVerifyCallResult?) {
@@ -482,6 +480,18 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
 
   func callSessionCloseResult(status: EnQualify.EnVerifyCallSessionStatusTypeEnum) {
+    
+      
+    switch status {
+    case ._none: ()
+    case .closed:
+      completeLoanApplication()
+    case .cancelled: ()
+    case .failure: ()
+    default: ()
+    }
+    
+//    completeLoanApplication()
     print("callSessionCloseResult")
   }
 
@@ -689,7 +699,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
             EnVerify.requestVideoAudioPermissions()
           }
         } else {
-          self.presentCameraSettings(vc: self)
+//          self.presentCameraSettings(vc: self)
         }
       }
     }
@@ -717,7 +727,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   func requestVideoAudioPermissionsResult(_ granted: Bool) {
     if !EnVerify.checkPermissions() {
       DispatchQueue.main.async {
-        self.presentCameraSettings(vc: self)
+//        self.presentCameraSettings(vc: self)
       }
     }
   }
@@ -782,7 +792,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   func startFace() {
     print("startFace")
     
-    self.popFrontViewController(self.mainSSView) {
+    self.popFrontViewController("TargetViewControllerName") {
         EnVerify.faceDetectStart()
     }
     
@@ -796,36 +806,141 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   func kycError() {
     goToNextPage(page: "KycError")
     print("kycError")
-    exitSdk()
   }
   
-  func sdkRetry() {
-    exitSdk()
-    returnToReactNative()
+  func sessionClose() {
+    if isSelfServiceStart == true {
+      EnVerify.callSessionClose(finished: false )
+    }
   }
   
   func exitSdk (){
     print("exitSdk")
     if isSelfServiceStart == true {
       EnVerify.callSessionClose(finished: false )
-      EnVerify.onExitSelfServiceWithoutPop()
     }
   }
 
-  func goToNextPage(page: String) {
+  func completeLoanApplication() {
     
-    let storyboard = UIStoryboard(name: page, bundle: nil)
-    guard let vc = storyboard.instantiateViewController(withIdentifier: page) as? EnQualifyViewController else {
-      return
+    print("completeLoanApplication")
+    
+    guard let token = ModuleIOS.shared.kycData?["token"] as? String,
+          let referenceId = ModuleIOS.shared.kycData?["referenceId"] as? String else {
+        print("TEST-KYC Token or Reference ID not found")
+        goToNextPage(page: "FragmentKYCError")
+        return
     }
-    navigationController?.pushViewController(vc, animated: true)
-    
-    return
-    
-    
-    DispatchQueue.main.async {
 
-      print("goToNextPage : ", page)
+    let urlString = "https://payfourapp.test.kodegon.com/api/loans/completeloanapplication/\(referenceId)"
+    guard let url = URL(string: urlString) else {
+        print("TEST-KYC Invalid URL")
+        goToNextPage(page: "FragmentKYCError")
+        return
+    }
+
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+    request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+    request.httpBody = Data() // Boş bir body gönderiyoruz
+
+    let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        if let error = error {
+            print("TEST-KYC Request failed with error: \(error.localizedDescription)")
+            DispatchQueue.main.async {
+                self.goToNextPage(page: "KycError")
+            }
+            return
+        }
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("TEST-KYC Invalid response")
+            DispatchQueue.main.async {
+                self.goToNextPage(page: "KycError")
+            }
+            return
+        }
+
+        if httpResponse.statusCode == 200, let data = data {
+            do {
+                if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   let success = jsonResponse["success"] as? Bool {
+
+                    DispatchQueue.main.async {
+                        if success {
+                            print("TEST-KYC completeloanapplication Success: true")
+                            self.goToNextPage(page: "FaceSuccess")
+                        } else {
+                            print("TEST-KYC completeloanapplication Success: false")
+                            self.goToNextPage(page: "KycError")
+                        }
+                    }
+
+                } else {
+                    print("TEST-KYC Invalid JSON structure")
+                    DispatchQueue.main.async {
+                        self.goToNextPage(page: "KycError")
+                    }
+                }
+
+            } catch {
+                print("TEST-KYC JSON parse error: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.goToNextPage(page: "KycError")
+                }
+            }
+        } else {
+            print("TEST-KYC Request failed with code: \(httpResponse.statusCode)")
+            DispatchQueue.main.async {
+                self.goToNextPage(page: "KycError")
+            }
+        }
+    }
+
+    task.resume()
+}
+
+
+  
+  
+  func goToOrcInfo() {
+          
+    DispatchQueue.main.async {
+      guard
+        let rootVC = UIApplication.shared.connectedScenes
+          .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+          .first
+      else {
+        print("Root ViewController bulunamadı.")
+        return
+      }
+
+      if let navigationController = rootVC as? UINavigationController {
+        let storyboard = UIStoryboard(name: "OcrInfoViewController", bundle: nil)
+        if let vc = storyboard.instantiateViewController(withIdentifier: "OcrInfoViewController")
+          as? OcrInfoViewController
+        {
+          navigationController.pushViewController(vc, animated: true)
+        } else {
+          print("OcrController storyboard'da bulunamadı.")
+        }
+      } else {
+        print("Root ViewController bir UINavigationController değil.")
+      }
+    }
+    
+
+  }
+  
+  
+  
+  
+  
+  
+  func goToNextPage(page: String) {
+        
+    DispatchQueue.main.async {
 
       guard
         let rootVC = UIApplication.shared.connectedScenes

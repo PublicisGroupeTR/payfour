@@ -12,11 +12,11 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		625876B12D2C059600FE5A20 /* OcrSuccess.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B02D2C059600FE5A20 /* OcrSuccess.storyboard */; };
+		625876B12D2C059600FE5A20 /* OcrSuccessViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B02D2C059600FE5A20 /* OcrSuccessViewController.storyboard */; };
 		625876B32D2C333D00FE5A20 /* OcrError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B22D2C333D00FE5A20 /* OcrError.storyboard */; };
 		625876B52D2C335B00FE5A20 /* NfcSuccess.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B42D2C335B00FE5A20 /* NfcSuccess.storyboard */; };
 		625876BB2D2C339000FE5A20 /* NfcError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876BA2D2C339000FE5A20 /* NfcError.storyboard */; };
-		625876BF2D2C33AD00FE5A20 /* KycError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876BE2D2C33AD00FE5A20 /* KycError.storyboard */; };
+		625876BF2D2C33AD00FE5A20 /* KycErrorViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876BE2D2C33AD00FE5A20 /* KycErrorViewController.storyboard */; };
 		625876C12D2C33B800FE5A20 /* FaceSuccess.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876C02D2C33B800FE5A20 /* FaceSuccess.storyboard */; };
 		625876C32D2C33C300FE5A20 /* FaceError.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876C22D2C33C300FE5A20 /* FaceError.storyboard */; };
 		625DA94B2D26B44D00547914 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625DA94A2D26B44D00547914 /* AppDelegate.swift */; };
@@ -24,10 +24,12 @@
 		625DA94F2D26B46B00547914 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625DA94E2D26B46B00547914 /* BaseViewController.swift */; };
 		625DA9512D26B48900547914 /* EnQualifyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625DA9502D26B48900547914 /* EnQualifyModule.swift */; };
 		625DA9532D26B4A300547914 /* EnQualifyModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 625DA9522D26B4A300547914 /* EnQualifyModuleBridge.m */; };
-		625DA9582D26D59F00547914 /* OcrInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625DA9572D26D59F00547914 /* OcrInfo.storyboard */; };
+		625DA9582D26D59F00547914 /* OcrInfoViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625DA9572D26D59F00547914 /* OcrInfoViewController.storyboard */; };
 		625DA95A2D26D5CA00547914 /* EnQualifyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625DA9592D26D5CA00547914 /* EnQualifyViewController.swift */; };
 		6268A6CD2D3001B800D18DBF /* dgfinansman.der in Resources */ = {isa = PBXBuildFile; fileRef = 6268A6CB2D3001B800D18DBF /* dgfinansman.der */; };
-		6298F35A2D37A20800F31ED0 /* OcrInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6298F3592D37A20800F31ED0 /* OcrInfoController.swift */; };
+		6298F35E2D37F09E00F31ED0 /* KycErrorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6298F35D2D37F09E00F31ED0 /* KycErrorViewController.swift */; };
+		6298F3622D38018000F31ED0 /* OcrInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6298F3612D38018000F31ED0 /* OcrInfoViewController.swift */; };
+		6298F3652D38063700F31ED0 /* OcrSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6298F3642D38063700F31ED0 /* OcrSuccessViewController.swift */; };
 		6A4A82C9ACD8B0B6F93EF557 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 967ACDD0970900FAC7AB5AF4 /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8CD3ECD07D88AE48E8851CFD /* Pods_Payfour_PayfourTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47A6B7137BE20C6A14DCEA6E /* Pods_Payfour_PayfourTests.framework */; };
@@ -63,11 +65,11 @@
 		4EBC435620C6D0F47A982D10 /* Pods_Payfour.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Payfour.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5709B34CF0A7D63546082F79 /* Pods-Payfour.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour.release.xcconfig"; path = "Target Support Files/Pods-Payfour/Pods-Payfour.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Payfour-PayfourTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour-PayfourTests.debug.xcconfig"; path = "Target Support Files/Pods-Payfour-PayfourTests/Pods-Payfour-PayfourTests.debug.xcconfig"; sourceTree = "<group>"; };
-		625876B02D2C059600FE5A20 /* OcrSuccess.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrSuccess.storyboard; sourceTree = "<group>"; };
+		625876B02D2C059600FE5A20 /* OcrSuccessViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrSuccessViewController.storyboard; sourceTree = "<group>"; };
 		625876B22D2C333D00FE5A20 /* OcrError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrError.storyboard; sourceTree = "<group>"; };
 		625876B42D2C335B00FE5A20 /* NfcSuccess.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcSuccess.storyboard; sourceTree = "<group>"; };
 		625876BA2D2C339000FE5A20 /* NfcError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcError.storyboard; sourceTree = "<group>"; };
-		625876BE2D2C33AD00FE5A20 /* KycError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = KycError.storyboard; sourceTree = "<group>"; };
+		625876BE2D2C33AD00FE5A20 /* KycErrorViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = KycErrorViewController.storyboard; sourceTree = "<group>"; };
 		625876C02D2C33B800FE5A20 /* FaceSuccess.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = FaceSuccess.storyboard; sourceTree = "<group>"; };
 		625876C22D2C33C300FE5A20 /* FaceError.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = FaceError.storyboard; sourceTree = "<group>"; };
 		625DA9492D26B44D00547914 /* Payfour-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Payfour-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -76,10 +78,12 @@
 		625DA94E2D26B46B00547914 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		625DA9502D26B48900547914 /* EnQualifyModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnQualifyModule.swift; sourceTree = "<group>"; };
 		625DA9522D26B4A300547914 /* EnQualifyModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EnQualifyModuleBridge.m; sourceTree = "<group>"; };
-		625DA9572D26D59F00547914 /* OcrInfo.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrInfo.storyboard; sourceTree = "<group>"; };
+		625DA9572D26D59F00547914 /* OcrInfoViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrInfoViewController.storyboard; sourceTree = "<group>"; };
 		625DA9592D26D5CA00547914 /* EnQualifyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnQualifyViewController.swift; sourceTree = "<group>"; };
 		6268A6CB2D3001B800D18DBF /* dgfinansman.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = dgfinansman.der; sourceTree = "<group>"; };
-		6298F3592D37A20800F31ED0 /* OcrInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcrInfoController.swift; sourceTree = "<group>"; };
+		6298F35D2D37F09E00F31ED0 /* KycErrorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KycErrorViewController.swift; sourceTree = "<group>"; };
+		6298F3612D38018000F31ED0 /* OcrInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcrInfoViewController.swift; sourceTree = "<group>"; };
+		6298F3642D38063700F31ED0 /* OcrSuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcrSuccessViewController.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Payfour/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Payfour-PayfourTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour-PayfourTests.release.xcconfig"; path = "Target Support Files/Pods-Payfour-PayfourTests/Pods-Payfour-PayfourTests.release.xcconfig"; sourceTree = "<group>"; };
 		967ACDD0970900FAC7AB5AF4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Payfour/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -171,15 +175,14 @@
 		625DA9552D26D57B00547914 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
-				625876BE2D2C33AD00FE5A20 /* KycError.storyboard */,
-				625DA9572D26D59F00547914 /* OcrInfo.storyboard */,
-				625876B02D2C059600FE5A20 /* OcrSuccess.storyboard */,
+				6298F3632D38061500F31ED0 /* OcrSuccess */,
+				6298F3602D38014D00F31ED0 /* OcrInfo */,
+				6298F35F2D38006B00F31ED0 /* KycError */,
 				625876B22D2C333D00FE5A20 /* OcrError.storyboard */,
 				625876BA2D2C339000FE5A20 /* NfcError.storyboard */,
 				625876B42D2C335B00FE5A20 /* NfcSuccess.storyboard */,
 				625876C02D2C33B800FE5A20 /* FaceSuccess.storyboard */,
 				625876C22D2C33C300FE5A20 /* FaceError.storyboard */,
-				6298F3592D37A20800F31ED0 /* OcrInfoController.swift */,
 			);
 			path = Pages;
 			sourceTree = "<group>";
@@ -190,6 +193,33 @@
 				6268A6CB2D3001B800D18DBF /* dgfinansman.der */,
 			);
 			path = Resource;
+			sourceTree = "<group>";
+		};
+		6298F35F2D38006B00F31ED0 /* KycError */ = {
+			isa = PBXGroup;
+			children = (
+				6298F35D2D37F09E00F31ED0 /* KycErrorViewController.swift */,
+				625876BE2D2C33AD00FE5A20 /* KycErrorViewController.storyboard */,
+			);
+			path = KycError;
+			sourceTree = "<group>";
+		};
+		6298F3602D38014D00F31ED0 /* OcrInfo */ = {
+			isa = PBXGroup;
+			children = (
+				625DA9572D26D59F00547914 /* OcrInfoViewController.storyboard */,
+				6298F3612D38018000F31ED0 /* OcrInfoViewController.swift */,
+			);
+			path = OcrInfo;
+			sourceTree = "<group>";
+		};
+		6298F3632D38061500F31ED0 /* OcrSuccess */ = {
+			isa = PBXGroup;
+			children = (
+				625876B02D2C059600FE5A20 /* OcrSuccessViewController.storyboard */,
+				6298F3642D38063700F31ED0 /* OcrSuccessViewController.swift */,
+			);
+			path = OcrSuccess;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -339,11 +369,11 @@
 				625876C32D2C33C300FE5A20 /* FaceError.storyboard in Resources */,
 				0BB714C52CF4C2A3007F413F /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				625876BF2D2C33AD00FE5A20 /* KycError.storyboard in Resources */,
+				625876BF2D2C33AD00FE5A20 /* KycErrorViewController.storyboard in Resources */,
 				625876BB2D2C339000FE5A20 /* NfcError.storyboard in Resources */,
 				6A4A82C9ACD8B0B6F93EF557 /* PrivacyInfo.xcprivacy in Resources */,
-				625876B12D2C059600FE5A20 /* OcrSuccess.storyboard in Resources */,
-				625DA9582D26D59F00547914 /* OcrInfo.storyboard in Resources */,
+				625876B12D2C059600FE5A20 /* OcrSuccessViewController.storyboard in Resources */,
+				625DA9582D26D59F00547914 /* OcrInfoViewController.storyboard in Resources */,
 				625876B52D2C335B00FE5A20 /* NfcSuccess.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -510,11 +540,13 @@
 				625DA94F2D26B46B00547914 /* BaseViewController.swift in Sources */,
 				625DA9532D26B4A300547914 /* EnQualifyModuleBridge.m in Sources */,
 				625DA94B2D26B44D00547914 /* AppDelegate.swift in Sources */,
+				6298F3622D38018000F31ED0 /* OcrInfoViewController.swift in Sources */,
+				6298F3652D38063700F31ED0 /* OcrSuccessViewController.swift in Sources */,
 				625DA9512D26B48900547914 /* EnQualifyModule.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				625DA94D2D26B45C00547914 /* AppSettings.swift in Sources */,
 				625DA95A2D26D5CA00547914 /* EnQualifyViewController.swift in Sources */,
-				6298F35A2D37A20800F31ED0 /* OcrInfoController.swift in Sources */,
+				6298F35E2D37F09E00F31ED0 /* KycErrorViewController.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

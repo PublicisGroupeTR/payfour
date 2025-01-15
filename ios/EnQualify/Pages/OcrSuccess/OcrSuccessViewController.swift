@@ -8,7 +8,7 @@
 import UIKit
 
 class OcrSuccessViewController: UIViewController {
-
+  static let identifier = "OcrSuccessViewController"
     override func viewDidLoad() {
         super.viewDidLoad()
 

@@ -20,7 +20,13 @@ static let identifier = "KycErrorViewController"
   
   
   @IBAction func sessionCloseButton(_ sender: UIButton) {
-    ModuleIOS.shared.sessionClose()
+//    ModuleIOS.shared.sessionClose()
+    
+    let storyBoard = UIStoryboard(name: OcrSuccessViewController.identifier, bundle: nil)
+    guard let vc = storyBoard.instantiateViewController(withIdentifier: OcrSuccessViewController.identifier) as? OcrSuccessViewController else {
+      return
+    }
+    navigationController?.pushViewController(vc, animated: true)
   }
   
   func back() {

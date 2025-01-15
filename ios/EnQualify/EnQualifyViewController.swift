@@ -9,12 +9,18 @@ class EnQualifyViewController: UIViewController {
   
     @IBOutlet weak var contentView: UIView!
   
-    @IBAction func sdkRetryButton(_ sender: UIButton) {
-      ModuleIOS.shared.sdkRetry()
+    @IBAction func sessionCloseButton(_ sender: UIButton) {
+      ModuleIOS.shared.sessionClose()
     }
 
     @IBAction func ocrStartButton(_ sender: UIButton) {
-      ModuleIOS.shared.startVerification()
+      
+//      ModuleIOS.shared.startVerification()
+      let storyBoard = UIStoryboard(name: KycErrorViewController.identifier, bundle: nil)
+      guard let vc = storyBoard.instantiateViewController(withIdentifier: KycErrorViewController.identifier) as? KycErrorViewController else {
+        return
+      }
+      navigationController?.pushViewController(vc, animated: true)
     }
 
     @IBAction func ocrRetryButton(_ sender: UIButton) {
@@ -52,7 +58,7 @@ class EnQualifyViewController: UIViewController {
         }
 
         if storyboardName == "KycError"  {
-          ModuleIOS.shared.sdkRetry()
+          ModuleIOS.shared.sessionClose()
         }
       
       
