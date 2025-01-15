@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="headerStackView">
-                                <rect key="frame" x="0.0" y="48" width="414" height="50"/>
+                                <rect key="frame" x="0.0" y="92" width="414" height="50"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="spacerView">
                                         <rect key="frame" x="0.0" y="9" width="6" height="32"/>
@@ -45,10 +45,10 @@
                                 </subviews>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="redView">
-                                <rect key="frame" x="0.0" y="98" width="414" height="798"/>
+                                <rect key="frame" x="0.0" y="142" width="414" height="754"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="contentView">
-                                        <rect key="frame" x="16" y="16" width="382" height="758"/>
+                                        <rect key="frame" x="16" y="16" width="382" height="714"/>
                                         <subviews>
                                             <stackView contentMode="scaleToFill" axis="vertical" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="topStackView">
                                                 <rect key="frame" x="16" y="64" width="350" height="278"/>
@@ -75,7 +75,7 @@
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </stackView>
                                             <stackView contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="bottomStackView">
-                                                <rect key="frame" x="16" y="600" width="350" height="142"/>
+                                                <rect key="frame" x="16" y="556" width="350" height="142"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="continueButton">
                                                         <rect key="frame" x="0.0" y="0.0" width="350" height="53"/>
@@ -139,10 +139,29 @@
                             <constraint firstItem="headerStackView" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="stackViewTrailingConstraint"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="sBa-9D-QKu"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYz-tn-Ulg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1730.534351145038" y="-361.97183098591552"/>
+            <point key="canvasLocation" x="-821.73913043478262" y="-362.27678571428572"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="a5J-XI-dWY">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="0bN-3S-6S0" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="4LI-F5-0zu">
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="01J-lp-oVM" kind="relationship" relationship="rootViewController" id="qhh-Vu-ReV"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="LxS-W9-xxD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1731.8840579710147" y="-362.27678571428572"/>
         </scene>
     </scenes>
     <resources>

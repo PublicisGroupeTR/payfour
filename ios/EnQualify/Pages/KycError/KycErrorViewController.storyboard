@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--En Qualify View Controller-->
+        <!--Kyc Error View Controller-->
         <scene sceneID="EhK-az-LkJ">
             <objects>
-                <viewController storyboardIdentifier="KycError" useStoryboardIdentifierAsRestorationIdentifier="YES" id="01J-lp-oVM" customClass="EnQualifyViewController" customModule="Payfour" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="KycErrorViewController" id="01J-lp-oVM" customClass="KycErrorViewController" customModule="Payfour" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="headerStackView">
-                                <rect key="frame" x="0.0" y="59" width="393" height="50"/>
+                                <rect key="frame" x="0.0" y="103" width="393" height="50"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="spacerView">
                                         <rect key="frame" x="0.0" y="9" width="6" height="32"/>
@@ -45,10 +45,10 @@
                                 </subviews>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="redView">
-                                <rect key="frame" x="0.0" y="109" width="393" height="743"/>
+                                <rect key="frame" x="0.0" y="153" width="393" height="699"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="contentView">
-                                        <rect key="frame" x="16" y="16" width="361" height="703"/>
+                                        <rect key="frame" x="16" y="16" width="361" height="659"/>
                                         <subviews>
                                             <stackView contentMode="scaleToFill" axis="vertical" alignment="center" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="topStackView">
                                                 <rect key="frame" x="16" y="64.000000000000014" width="329" height="228.33333333333337"/>
@@ -87,7 +87,7 @@
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </stackView>
                                             <stackView contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="bottomStackView">
-                                                <rect key="frame" x="16" y="545" width="329" height="142"/>
+                                                <rect key="frame" x="16" y="501" width="329" height="142"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="continueButton">
                                                         <rect key="frame" x="0.0" y="0.0" width="329" height="53"/>
@@ -97,7 +97,7 @@
                                                             <color key="baseBackgroundColor" red="0.0" green="0.30980392156862746" blue="0.59215686274509804" alpha="1" colorSpace="calibratedRGB"/>
                                                         </buttonConfiguration>
                                                         <connections>
-                                                            <action selector="sdkRetryButton:" destination="01J-lp-oVM" eventType="touchUpInside" id="INo-fM-81k"/>
+                                                            <action selector="sessionCloseButton:" destination="01J-lp-oVM" eventType="touchUpInside" id="3Uj-xM-sJz"/>
                                                         </connections>
                                                     </button>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="dgfin_legal" translatesAutoresizingMaskIntoConstraints="NO" id="HRR-Gl-9u6">
@@ -151,8 +151,27 @@
                             <constraint firstItem="headerStackView" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="stackViewTrailingConstraint"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="QBN-1p-bEK"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYz-tn-Ulg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-803.81679389312978" y="-361.97183098591552"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="UEX-a5-6hG">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="aw4-um-PHJ" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="aG2-kI-pD0">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="01J-lp-oVM" kind="relationship" relationship="rootViewController" id="Pdl-UQ-JTG"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vVC-AP-SxA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1730.534351145038" y="-361.97183098591552"/>
         </scene>
