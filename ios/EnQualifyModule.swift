@@ -814,13 +814,13 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func goToNextPage(page: String) {
     
-//    let storyboard = UIStoryboard(name: page, bundle: nil)
-//    guard let vc = storyboard.instantiateViewController(withIdentifier: page) as? EnQualifyViewController else {
-//      return
-//    }
-//    navigationController?.pushViewController(vc, animated: true)
-//    
-//    return
+    let storyboard = UIStoryboard(name: page, bundle: nil)
+    guard let vc = storyboard.instantiateViewController(withIdentifier: page) as? EnQualifyViewController else {
+      return
+    }
+    navigationController?.pushViewController(vc, animated: true)
+    
+    return
     
     
     DispatchQueue.main.async {
@@ -925,76 +925,76 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
 
   func addIntegration() {
-
+    
     guard let kycData = ModuleIOS.shared.kycData else {
-        print("kycData boş veya nil")
-        return
+      print("kycData boş veya nil")
+      return
     }
     // Prepare JSON Data
     var jsonData: [String: Any] = [:]
-
+    
     // Occupations
     if let occupation = kycData["occupation"] as? String,
        let occupationRole = kycData["occupationrole"] as? String,
        let educationLevel = kycData["educationlevel"] as? String {
-
-        let occupations = [
-            ["occupationTypeId": "5d1816d2-70c7-d5f2-e053-e7b3f2e53410",
-             "occupationTypeFieldId": occupation],
-            ["occupationTypeId": "5d1aa7d4-46a6-f804-395e-2575c967ca97",
-             "occupationTypeFieldId": occupationRole],
-            ["occupationTypeId": "5d17c8ce-efc2-4cd2-55f4-c6998700dcfa",
-             "occupationTypeFieldId": educationLevel]
-        ]
-
-        jsonData["occupations"] = occupations
+      
+      let occupations = [
+        ["occupationTypeId": "5d1816d2-70c7-d5f2-e053-e7b3f2e53410",
+         "occupationTypeFieldId": occupation],
+        ["occupationTypeId": "5d1aa7d4-46a6-f804-395e-2575c967ca97",
+         "occupationTypeFieldId": occupationRole],
+        ["occupationTypeId": "5d17c8ce-efc2-4cd2-55f4-c6998700dcfa",
+         "occupationTypeFieldId": educationLevel]
+      ]
+      
+      jsonData["occupations"] = occupations
     }
-
+    
     // Incomes
     if let incometypesSelected = kycData["incometypesSelected"] as? [String],
        let transactionVolume = kycData["transactionVolume"] as? String,
        let monthlyAverage = kycData["monthlyAverage"] as? String,
        let transactionsNumbers = kycData["transactionsNumbers"] as? String {
-
-        let incomeData: [String: Any] = [
-            "currencyNumber": "949",
-            "sourceOfIncome": incometypesSelected.compactMap { Int($0) },
-            "EstimatedTransactionVolume": Int(transactionVolume) ?? 0,
-            "monthlyAmount": Int(monthlyAverage) ?? 0,
-            "TransactionCount": Int(transactionsNumbers) ?? 0
-        ]
-
-        jsonData["incomes"] = [incomeData]
+      
+      let incomeData: [String: Any] = [
+        "currencyNumber": "949",
+        "sourceOfIncome": incometypesSelected.compactMap { Int($0) },
+        "EstimatedTransactionVolume": Int(transactionVolume) ?? 0,
+        "monthlyAmount": Int(monthlyAverage) ?? 0,
+        "TransactionCount": Int(transactionsNumbers) ?? 0
+      ]
+      
+      jsonData["incomes"] = [incomeData]
     }
-
+    
     // Consents
     if let selectedAgreements = kycData["selectedaAreements"] as? [String] {
-        jsonData["consents"] = selectedAgreements
+      jsonData["consents"] = selectedAgreements
     }
-
+    
     // Partner Code
     jsonData["PartnerCode"] = "csa"
-
+    
     // Serialize JSON
     guard let serializedData = try? JSONSerialization.data(withJSONObject: jsonData, options: .prettyPrinted),
           let jsonString = String(data: serializedData, encoding: .utf8) else {
-        print("Failed to serialize JSON")
-        return
+      print("Failed to serialize JSON")
+      return
     }
-
-//    print("Serialized JSON: \(jsonString)")
-
+    
+    //    print("Serialized JSON: \(jsonString)")
+    
     // API Request
     let referenceId = kycData["referenceId"] as? String ?? ""
-
-    EnVerify.integrationAdd(type: "Session", 
+    
+    EnVerify.integrationAdd(type: "Session",
                             callType: referenceId,
                             phone: nil,
-                            email: nil, 
-                            data: jsonString, 
+                            email: nil,
+                            data: jsonString,
                             addressRegistration: nil,
                             iDRegistration: nil)
-}
-
+  }
+  
 
 }

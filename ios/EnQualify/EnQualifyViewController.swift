@@ -51,6 +51,11 @@ class EnQualifyViewController: UIViewController {
             return
         }
 
+        if storyboardName == "KycError"  {
+          ModuleIOS.shared.sdkRetry()
+        }
+      
+      
         var targetPage = "OcrInfo"
 
         switch storyboardName {
@@ -62,7 +67,9 @@ class EnQualifyViewController: UIViewController {
           targetPage = "OcrSuccess"
         case "NfcError":
           targetPage = "OcrSuccess"
-        case "NfcError":
+        case "FaceError":
+          targetPage = "NfcSuccess"
+        case "FaceSuccess":
           targetPage = "NfcSuccess"
         default:
           targetPage = "OcrInfo"
