@@ -32,6 +32,7 @@ import VerifyScreen from './Screen/Kyc/VerifyScreen';
 
 const Stack = createStackNavigator();
 
+
 const Auth = () => {
   useEffect(() => {
     Appearance.setColorScheme('light');
@@ -128,19 +129,23 @@ const Kyc = () => {
   and we don't want to switch back once we switch from them to the next one */
 const App = () => {
 
-  // const eventEmitter = new NativeEventEmitter(NativeModules.ModuleIOS);
+//   const { ModuleIOS } = NativeModules;
 
-  // useEffect(() => {
-  //   // Event'i dinle
-  //   const completionListener = eventEmitter.addListener('onKycProcessCompleted', (data) => {
-  //     console.log('KYC Tamamlandı:', data);
-  // });
+// if (!ModuleIOS) {
+//   console.error('ModuleIOS Native Module is not loaded.');
+// }
 
-  //   // Cleanup
-  //   return () => {
-  //     completionListener.remove();
-  //   };
-  // }, []);
+//   useEffect(() => {
+//     // Event'i dinle
+//     const completionListener = new NativeEventEmitter(NativeModules.ModuleIOS).addListener('EnQualifyResult', (data) => {
+//       console.log('KYC Tamamlandı:', data);
+//   });
+
+//     // Cleanup
+//     return () => {
+//       completionListener.remove();
+//     };
+//   }, []);
 
   useEffect(() => {
     Appearance.setColorScheme('light');

@@ -8,13 +8,16 @@
 import UIKit
 
 class OcrErrorViewController: UIViewController {
-
+  static let identifier = "OcrErrorViewController"
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
     
+  @IBAction func ocrRetryButton(_ sender: UIButton) {
+    ModuleIOS.shared.ocrRetry()
+  }
 
     /*
     // MARK: - Navigation

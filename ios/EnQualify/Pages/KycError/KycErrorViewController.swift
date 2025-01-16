@@ -12,27 +12,12 @@ static let identifier = "KycErrorViewController"
   
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
-
-  
-  
-  @IBAction func sessionCloseButton(_ sender: UIButton) {
-//    ModuleIOS.shared.sessionClose()
-    
-    let storyBoard = UIStoryboard(name: OcrSuccessViewController.identifier, bundle: nil)
-    guard let vc = storyBoard.instantiateViewController(withIdentifier: OcrSuccessViewController.identifier) as? OcrSuccessViewController else {
-      return
+    @IBAction func retryButton(_ sender: UIButton) {
+      ModuleIOS.shared.sdkCancel()
     }
-    navigationController?.pushViewController(vc, animated: true)
-  }
   
-  func back() {
-    navigationController?.popViewController(animated: true)
-  }
-
     /*
     // MARK: - Navigation
 

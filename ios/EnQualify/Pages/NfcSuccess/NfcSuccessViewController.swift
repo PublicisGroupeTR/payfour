@@ -8,13 +8,16 @@
 import UIKit
 
 class NfcSuccessViewController: UIViewController {
-
+  static let identifier = "NfcSuccessViewController"
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
     
+    @IBAction func startFaceButton(_ sender: UIButton) {
+      ModuleIOS.shared.startFace()
+    }
 
     /*
     // MARK: - Navigation

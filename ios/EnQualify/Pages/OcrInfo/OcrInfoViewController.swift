@@ -16,12 +16,7 @@ class OcrInfoViewController: UIViewController {
     }
   
   @IBAction func ocrStartButton(_ sender: UIButton) {
-//      ModuleIOS.shared.startVerification()
-    let storyBoard = UIStoryboard(name: KycErrorViewController.identifier, bundle: nil)
-    guard let vc = storyBoard.instantiateViewController(withIdentifier: KycErrorViewController.identifier) as? KycErrorViewController else {
-      return
-    }
-    navigationController?.pushViewController(vc, animated: true)
+      ModuleIOS.shared.startVerification()
   }
     
 

@@ -8,12 +8,16 @@
 import UIKit
 
 class OcrClosedViewController: UIViewController {
-
+  static let identifier = "OcrClosedViewController"
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
+  
+  @IBAction func restartSdk(_ sender: UIButton) {
+    ModuleIOS.shared.initSdk()
+  }
 
 
     /*

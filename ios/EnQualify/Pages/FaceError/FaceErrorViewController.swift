@@ -8,12 +8,21 @@
 import UIKit
 
 class FaceErrorViewController: UIViewController {
-
+  static let identifier = "FaceErrorViewController"
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
+  
+    @IBAction func retryFaceButton(_ sender: UIButton) {
+      ModuleIOS.shared.retryFace()
+    }
+  
+    @IBAction func cancelButton(_ sender: UIButton) {
+      ModuleIOS.shared.sdkCancel()
+    }
+  
     
 
     /*

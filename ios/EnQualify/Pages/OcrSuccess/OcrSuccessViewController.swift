@@ -15,6 +15,11 @@ class OcrSuccessViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+  
+  @IBAction func nfcStartButton(_ sender: UIButton) {
+    ModuleIOS.shared.startNfc()
+  }
+    
 
     /*
     // MARK: - Navigation

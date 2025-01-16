@@ -8,16 +8,16 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--En Qualify View Controller-->
+        <!--Nfc Success View Controller-->
         <scene sceneID="EhK-az-LkJ">
             <objects>
-                <viewController storyboardIdentifier="NfcSuccess" useStoryboardIdentifierAsRestorationIdentifier="YES" id="01J-lp-oVM" customClass="EnQualifyViewController" customModule="Payfour" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NfcSuccessViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="01J-lp-oVM" customClass="NfcSuccessViewController" customModule="Payfour" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="headerStackView">
-                                <rect key="frame" x="0.0" y="59" width="393" height="50"/>
+                                <rect key="frame" x="0.0" y="103" width="393" height="50"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="spacerView">
                                         <rect key="frame" x="0.0" y="9" width="6" height="32"/>
@@ -33,9 +33,6 @@
                                             <constraint firstAttribute="width" constant="32" id="buttonWidthConstraint"/>
                                         </constraints>
                                         <state key="normal" title="" image="arrow_back"/>
-                                        <connections>
-                                            <action selector="backButtonTapped:" destination="01J-lp-oVM" eventType="touchUpInside" id="ec3-3e-4om"/>
-                                        </connections>
                                     </button>
                                     <label contentMode="scaleToFill" text="Kimliğini Doğrula" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="titleLabel">
                                         <rect key="frame" x="54" y="15.333333333333327" width="339" height="19.333333333333329"/>
@@ -45,10 +42,10 @@
                                 </subviews>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="redView">
-                                <rect key="frame" x="0.0" y="109" width="393" height="743"/>
+                                <rect key="frame" x="0.0" y="153" width="393" height="699"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="contentView">
-                                        <rect key="frame" x="16" y="16" width="361" height="703"/>
+                                        <rect key="frame" x="16" y="16" width="361" height="659"/>
                                         <subviews>
                                             <stackView contentMode="scaleToFill" axis="vertical" alignment="center" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="topStackView">
                                                 <rect key="frame" x="16" y="64.000000000000014" width="329" height="241.33333333333337"/>
@@ -88,7 +85,7 @@
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </stackView>
                                             <stackView contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="bottomStackView">
-                                                <rect key="frame" x="16" y="513" width="329" height="174"/>
+                                                <rect key="frame" x="16" y="469" width="329" height="174"/>
                                                 <subviews>
                                                     <label contentMode="scaleToFill" text="Devam Et seçiminden sonra kameran açılacaktır." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" translatesAutoresizingMaskIntoConstraints="NO" id="ayU-tZ-h8o">
                                                         <rect key="frame" x="0.0" y="0.0" width="329" height="24"/>
@@ -115,7 +112,7 @@
                                                             <color key="baseBackgroundColor" red="0.0" green="0.30980392156862746" blue="0.59215686274509804" alpha="1" colorSpace="calibratedRGB"/>
                                                         </buttonConfiguration>
                                                         <connections>
-                                                            <action selector="faceStartButton:" destination="01J-lp-oVM" eventType="touchUpInside" id="Odj-GM-3DC"/>
+                                                            <action selector="startFaceButton:" destination="01J-lp-oVM" eventType="touchUpInside" id="tYr-aN-gf9"/>
                                                         </connections>
                                                     </button>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TRi-4i-iTT">
@@ -193,8 +190,27 @@
                             <constraint firstItem="headerStackView" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="stackViewTrailingConstraint"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="yfc-dJ-bFF"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYz-tn-Ulg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-803.81679389312978" y="-361.97183098591552"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="cGt-qv-xMe">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="zkf-Qb-Ore" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="AJb-1N-Sm3">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="01J-lp-oVM" kind="relationship" relationship="rootViewController" id="ckf-WC-rOC"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Cr8-9G-sxb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1730.534351145038" y="-361.97183098591552"/>
         </scene>

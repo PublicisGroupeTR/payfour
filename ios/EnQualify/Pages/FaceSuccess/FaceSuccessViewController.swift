@@ -8,7 +8,7 @@
 import UIKit
 
 class FaceSuccessViewController: UIViewController {
-
+  static let identifier = "FaceSuccessViewController"
     override func viewDidLoad() {
         super.viewDidLoad()
 
