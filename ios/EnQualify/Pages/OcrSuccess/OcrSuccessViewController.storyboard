@@ -150,6 +150,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="QVQ-dg-65Y"/>
+                    <connections>
+                        <outlet property="nfcStarButton" destination="continueButton" id="4op-zp-PDH"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYz-tn-Ulg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

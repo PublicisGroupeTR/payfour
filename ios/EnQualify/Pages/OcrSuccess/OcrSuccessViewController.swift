@@ -9,6 +9,9 @@ import UIKit
 
 class OcrSuccessViewController: UIViewController {
   static let identifier = "OcrSuccessViewController"
+  
+  @IBOutlet weak var nfcStarButton: UIButton!
+  
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -18,6 +21,7 @@ class OcrSuccessViewController: UIViewController {
   
   @IBAction func nfcStartButton(_ sender: UIButton) {
     ModuleIOS.shared.startNfc()
+    nfcStarButton.isUserInteractionEnabled = false
   }
     
 

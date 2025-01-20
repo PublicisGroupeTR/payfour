@@ -76,7 +76,7 @@ import UIKit
 //
 
 @objc(ModuleIOS)
-class ModuleIOS: RCTEventEmitter, EnVerifyDelegate {
+class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   var agentRequestType: AgentRequestType = .none
   var isSelfServiceStart: Bool = false
@@ -85,13 +85,13 @@ class ModuleIOS: RCTEventEmitter, EnVerifyDelegate {
   static let shared = ModuleIOS()
   var kycData: [String: Any]?
   
-   override func supportedEvents() -> [String]! {
-       return ["EnQualifyResult"]
-   }
-
-   func sendEventToReactNative(eventName: String, body: [String: Any]) {
-       self.sendEvent(withName: eventName, body: body)
-   }
+//   override func supportedEvents() -> [String]! {
+//       return ["EnQualifyResult"]
+//   }
+//
+//   func sendEventToReactNative(eventName: String, body: [String: Any]) {
+//       self.sendEvent(withName: eventName, body: body)
+//   }
 
   //  ------------------------ CallBacks Start --------------------------------
   func idSelfVerifyReady() {
@@ -357,7 +357,6 @@ class ModuleIOS: RCTEventEmitter, EnVerifyDelegate {
 
   func integrationAddCompleted() {
     print("integrationAddCompleted")
-    //    goToNextPage(page: "FaceSuccess")
     EnVerify.callSessionClose(finished: true)
   }
 
@@ -451,14 +450,23 @@ class ModuleIOS: RCTEventEmitter, EnVerifyDelegate {
 
   func callSessionCloseResult(status: EnQualify.EnVerifyCallSessionStatusTypeEnum) {
 
-    print("callSessionCloseResult ", status)
+    print("callSessionCloseResult", status)
 
     switch status {
-    case ._none: sdkExit()
+    case ._none:
+      print("_none")
+      sdkExit()
     case .closed:
+      print("closed")
       completeLoanApplication()
-    case .cancelled: sdkExit()
-    case .failure: sdkExit()
+    case .cancelled:
+      print("cancelled")
+      sdkExit()
+    case .failure:
+      print("failure")
+      sdkExit()
+    case .finished:
+      print("finished")
     default: ()
     }
 
@@ -641,6 +649,7 @@ class ModuleIOS: RCTEventEmitter, EnVerifyDelegate {
           print("referenceUUID", referenceUUID)
 
           EnVerify.setFaceOverlayAngleCount(count: 3)
+          EnVerify.canAutoClose = true
 
           if !EnVerify.idvSettings(
             domainName: UserDefaults.standard.string(forKey: "domainName"),
@@ -654,7 +663,7 @@ class ModuleIOS: RCTEventEmitter, EnVerifyDelegate {
             turnPassword: UserDefaults.standard.string(forKey: "turnServerKey"),
             backOfficeBasePath: UserDefaults.standard.string(forKey: "apiServer"),
             userNameForToken: UserDefaults.standard.string(forKey: "apiServerUser"),
-            referenceID: referenceUUID
+            referenceID: UUID().uuidString
           ) {
             print("Check settings")
             return
@@ -739,7 +748,7 @@ class ModuleIOS: RCTEventEmitter, EnVerifyDelegate {
 
   func startFace() {
     print("startFace")
-    BaseViewController.popFrontViewController("NfcSuccessViewController") {
+    self.popFrontViewController("MainSSView") {
       EnVerify.faceDetectStart()
     }
   }
@@ -853,403 +862,404 @@ class ModuleIOS: RCTEventEmitter, EnVerifyDelegate {
 
   func goToOrcInfo() {
     
-    DispatchQueue.main.async {
-          guard
-              let rootVC = UIApplication.shared.connectedScenes
-                  .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                  .first
-          else {
-              print("Root ViewController bulunamadı.")
-              return
-          }
+    // DispatchQueue.main.async {
+    //       guard
+    //           let rootVC = UIApplication.shared.connectedScenes
+    //               .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+    //               .first
+    //       else {
+    //           print("Root ViewController bulunamadı.")
+    //           return
+    //       }
 
-          if let navigationController = rootVC as? UINavigationController {
-              let storyboard = UIStoryboard(name:  OcrInfoViewController.identifier, bundle: nil)
-              if let vc = storyboard.instantiateViewController(withIdentifier:  OcrInfoViewController.identifier) as? OcrInfoViewController {
-                  navigationController.pushViewController(vc, animated: true)
-              } else {
-                  print("NfcSuccessViewController storyboard'da bulunamadı.")
-              }
-          } else {
-              print("Root ViewController bir UINavigationController değil.")
-          }
-        }
+    //       if let navigationController = rootVC as? UINavigationController {
+    //           let storyboard = UIStoryboard(name:  OcrInfoViewController.identifier, bundle: nil)
+    //           if let vc = storyboard.instantiateViewController(withIdentifier:  OcrInfoViewController.identifier) as? OcrInfoViewController {
+    //               navigationController.pushViewController(vc, animated: true)
+    //           } else {
+    //               print("NfcSuccessViewController storyboard'da bulunamadı.")
+    //           }
+    //       } else {
+    //           print("Root ViewController bir UINavigationController değil.")
+    //       }
+    //     }
     
          // React Native'e bir event gönder
          let data: [String: Any] = [
              "status": "finished",
          ]
     
-          self.sendEventToReactNative(eventName: "EnQualifyResult", body: data)
+    MyEventEmitter.shared?.sendCustomEvent(data)
+//          self.sendEventToReactNative(eventName: "EnQualifyResult", body: data)
           
     
-    // let storyBoard = UIStoryboard(name: OcrInfoViewController.identifier, bundle: nil)
-    // guard
-    //   let vc = storyBoard.instantiateViewController(
-    //     withIdentifier: OcrInfoViewController.identifier) as? OcrInfoViewController
-    // else {
-    //   return
-    // }
-    // guard
-    //   let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
-    //     .rootViewController as? UINavigationController
-    // else {
-    //   print("Navigation Controller bulunamadı.")
-    //   return
-    // }
-    // DispatchQueue.main.async {
-    //   navigationController.pushViewController(vc, animated: true)
-    // }
+    let storyBoard = UIStoryboard(name: OcrInfoViewController.identifier, bundle: nil)
+    guard
+      let vc = storyBoard.instantiateViewController(
+        withIdentifier: OcrInfoViewController.identifier) as? OcrInfoViewController
+    else {
+      return
+    }
+    guard
+      let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
+        .rootViewController as? UINavigationController
+    else {
+      print("Navigation Controller bulunamadı.")
+      return
+    }
+    DispatchQueue.main.async {
+      navigationController.pushViewController(vc, animated: true)
+    }
   }
 
   func goToOrcClosed() {
 
-      DispatchQueue.main.async {
-          guard
-              let rootVC = UIApplication.shared.connectedScenes
-                  .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                  .first
-          else {
-              print("Root ViewController bulunamadı.")
-              return
-          }
+      // DispatchQueue.main.async {
+      //     guard
+      //         let rootVC = UIApplication.shared.connectedScenes
+      //             .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+      //             .first
+      //     else {
+      //         print("Root ViewController bulunamadı.")
+      //         return
+      //     }
 
-          if let navigationController = rootVC as? UINavigationController {
-              let storyboard = UIStoryboard(name:  OcrClosedViewController.identifier, bundle: nil)
-              if let vc = storyboard.instantiateViewController(withIdentifier:  OcrClosedViewController.identifier) as? OcrClosedViewController {
-                  navigationController.pushViewController(vc, animated: true)
-              } else {
-                  print("NfcSuccessViewController storyboard'da bulunamadı.")
-              }
-          } else {
-              print("Root ViewController bir UINavigationController değil.")
-          }
-        }
+      //     if let navigationController = rootVC as? UINavigationController {
+      //         let storyboard = UIStoryboard(name:  OcrClosedViewController.identifier, bundle: nil)
+      //         if let vc = storyboard.instantiateViewController(withIdentifier:  OcrClosedViewController.identifier) as? OcrClosedViewController {
+      //             navigationController.pushViewController(vc, animated: true)
+      //         } else {
+      //             print("NfcSuccessViewController storyboard'da bulunamadı.")
+      //         }
+      //     } else {
+      //         print("Root ViewController bir UINavigationController değil.")
+      //     }
+      //   }
 
-    // let storyBoard = UIStoryboard(name: OcrClosedViewController.identifier, bundle: nil)
-    // guard
-    //   let vc = storyBoard.instantiateViewController(
-    //     withIdentifier: OcrClosedViewController.identifier) as? OcrClosedViewController
-    // else {
-    //   print("OcrClosedViewController yüklenemedi.")
-    //   return
-    // }
+    let storyBoard = UIStoryboard(name: OcrClosedViewController.identifier, bundle: nil)
+    guard
+      let vc = storyBoard.instantiateViewController(
+        withIdentifier: OcrClosedViewController.identifier) as? OcrClosedViewController
+    else {
+      print("OcrClosedViewController yüklenemedi.")
+      return
+    }
 
-    // guard
-    //   let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
-    //     .rootViewController as? UINavigationController
-    // else {
-    //   print("Navigation Controller bulunamadı.")
-    //   return
-    // }
+    guard
+      let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
+        .rootViewController as? UINavigationController
+    else {
+      print("Navigation Controller bulunamadı.")
+      return
+    }
 
-    // if navigationController.viewControllers.contains(where: { $0 is OcrClosedViewController }) {
-    //   print("OcrClosedViewController zaten navigation yığınında.")
-    //   return
-    // }
+    if navigationController.viewControllers.contains(where: { $0 is OcrClosedViewController }) {
+      print("OcrClosedViewController zaten navigation yığınında.")
+      return
+    }
 
-    // DispatchQueue.main.async {
-    //   navigationController.pushViewController(vc, animated: true)
-    // }
+    DispatchQueue.main.async {
+      navigationController.pushViewController(vc, animated: true)
+    }
   }
 
   func goToOcrError() {
 
-    DispatchQueue.main.async {
-          guard
-              let rootVC = UIApplication.shared.connectedScenes
-                  .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                  .first
-          else {
-              print("Root ViewController bulunamadı.")
-              return
-          }
-
-          if let navigationController = rootVC as? UINavigationController {
-              let storyboard = UIStoryboard(name:  OcrErrorViewController.identifier, bundle: nil)
-              if let vc = storyboard.instantiateViewController(withIdentifier:  OcrErrorViewController.identifier) as? OcrErrorViewController {
-                  navigationController.pushViewController(vc, animated: true)
-              } else {
-                  print("NfcSuccessViewController storyboard'da bulunamadı.")
-              }
-          } else {
-              print("Root ViewController bir UINavigationController değil.")
-          }
-        }
-
-    // let storyBoard = UIStoryboard(name: OcrErrorViewController.identifier, bundle: nil)
-    // guard
-    //   let vc = storyBoard.instantiateViewController(
-    //     withIdentifier: OcrErrorViewController.identifier) as? OcrErrorViewController
-    // else {
-    //   return
-    // }
-    // guard
-    //   let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
-    //     .rootViewController as? UINavigationController
-    // else {
-    //   print("Navigation Controller bulunamadı.")
-    //   return
-    // }
     // DispatchQueue.main.async {
-    //   navigationController.pushViewController(vc, animated: true)
-    // }
+    //       guard
+    //           let rootVC = UIApplication.shared.connectedScenes
+    //               .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+    //               .first
+    //       else {
+    //           print("Root ViewController bulunamadı.")
+    //           return
+    //       }
+
+    //       if let navigationController = rootVC as? UINavigationController {
+    //           let storyboard = UIStoryboard(name:  OcrErrorViewController.identifier, bundle: nil)
+    //           if let vc = storyboard.instantiateViewController(withIdentifier:  OcrErrorViewController.identifier) as? OcrErrorViewController {
+    //               navigationController.pushViewController(vc, animated: true)
+    //           } else {
+    //               print("NfcSuccessViewController storyboard'da bulunamadı.")
+    //           }
+    //       } else {
+    //           print("Root ViewController bir UINavigationController değil.")
+    //       }
+    //     }
+
+    let storyBoard = UIStoryboard(name: OcrErrorViewController.identifier, bundle: nil)
+    guard
+      let vc = storyBoard.instantiateViewController(
+        withIdentifier: OcrErrorViewController.identifier) as? OcrErrorViewController
+    else {
+      return
+    }
+    guard
+      let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
+        .rootViewController as? UINavigationController
+    else {
+      print("Navigation Controller bulunamadı.")
+      return
+    }
+    DispatchQueue.main.async {
+      navigationController.pushViewController(vc, animated: true)
+    }
   }
 
   func goToOcrSuccess() {
 
-    DispatchQueue.main.async {
-          guard
-              let rootVC = UIApplication.shared.connectedScenes
-                  .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                  .first
-          else {
-              print("Root ViewController bulunamadı.")
-              return
-          }
-
-          if let navigationController = rootVC as? UINavigationController {
-              let storyboard = UIStoryboard(name:  OcrSuccessViewController.identifier, bundle: nil)
-              if let vc = storyboard.instantiateViewController(withIdentifier:  OcrSuccessViewController.identifier) as? OcrSuccessViewController {
-                  navigationController.pushViewController(vc, animated: true)
-              } else {
-                  print("NfcSuccessViewController storyboard'da bulunamadı.")
-              }
-          } else {
-              print("Root ViewController bir UINavigationController değil.")
-          }
-        }
-
-    // let storyBoard = UIStoryboard(name: OcrSuccessViewController.identifier, bundle: nil)
-    // guard
-    //   let vc = storyBoard.instantiateViewController(
-    //     withIdentifier: OcrSuccessViewController.identifier) as? OcrSuccessViewController
-    // else {
-    //   return
-    // }
-    // guard
-    //   let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
-    //     .rootViewController as? UINavigationController
-    // else {
-    //   print("Navigation Controller bulunamadı.")
-    //   return
-    // }
     // DispatchQueue.main.async {
-    //   navigationController.pushViewController(vc, animated: true)
-    // }
+    //       guard
+    //           let rootVC = UIApplication.shared.connectedScenes
+    //               .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+    //               .first
+    //       else {
+    //           print("Root ViewController bulunamadı.")
+    //           return
+    //       }
+
+    //       if let navigationController = rootVC as? UINavigationController {
+    //           let storyboard = UIStoryboard(name:  OcrSuccessViewController.identifier, bundle: nil)
+    //           if let vc = storyboard.instantiateViewController(withIdentifier:  OcrSuccessViewController.identifier) as? OcrSuccessViewController {
+    //               navigationController.pushViewController(vc, animated: true)
+    //           } else {
+    //               print("NfcSuccessViewController storyboard'da bulunamadı.")
+    //           }
+    //       } else {
+    //           print("Root ViewController bir UINavigationController değil.")
+    //       }
+    //     }
+
+    let storyBoard = UIStoryboard(name: OcrSuccessViewController.identifier, bundle: nil)
+    guard
+      let vc = storyBoard.instantiateViewController(
+        withIdentifier: OcrSuccessViewController.identifier) as? OcrSuccessViewController
+    else {
+      return
+    }
+    guard
+      let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
+        .rootViewController as? UINavigationController
+    else {
+      print("Navigation Controller bulunamadı.")
+      return
+    }
+    DispatchQueue.main.async {
+      navigationController.pushViewController(vc, animated: true)
+    }
   }
 
   func goToNfcError() {
 
-    DispatchQueue.main.async {
-          guard
-              let rootVC = UIApplication.shared.connectedScenes
-                  .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                  .first
-          else {
-              print("Root ViewController bulunamadı.")
-              return
-          }
-
-          if let navigationController = rootVC as? UINavigationController {
-              let storyboard = UIStoryboard(name:  NfcErrorViewController.identifier, bundle: nil)
-              if let vc = storyboard.instantiateViewController(withIdentifier:  NfcErrorViewController.identifier) as? NfcErrorViewController {
-                  navigationController.pushViewController(vc, animated: true)
-              } else {
-                  print("NfcSuccessViewController storyboard'da bulunamadı.")
-              }
-          } else {
-              print("Root ViewController bir UINavigationController değil.")
-          }
-        }
-
-
-    // let storyBoard = UIStoryboard(name: NfcErrorViewController.identifier, bundle: nil)
-    // guard
-    //   let vc = storyBoard.instantiateViewController(
-    //     withIdentifier: NfcErrorViewController.identifier) as? NfcErrorViewController
-    // else {
-    //   return
-    // }
-    // guard
-    //   let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
-    //     .rootViewController as? UINavigationController
-    // else {
-    //   print("Navigation Controller bulunamadı.")
-    //   return
-    // }
     // DispatchQueue.main.async {
-    //   navigationController.pushViewController(vc, animated: true)
-    // }
+    //       guard
+    //           let rootVC = UIApplication.shared.connectedScenes
+    //               .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+    //               .first
+    //       else {
+    //           print("Root ViewController bulunamadı.")
+    //           return
+    //       }
+
+    //       if let navigationController = rootVC as? UINavigationController {
+    //           let storyboard = UIStoryboard(name:  NfcErrorViewController.identifier, bundle: nil)
+    //           if let vc = storyboard.instantiateViewController(withIdentifier:  NfcErrorViewController.identifier) as? NfcErrorViewController {
+    //               navigationController.pushViewController(vc, animated: true)
+    //           } else {
+    //               print("NfcSuccessViewController storyboard'da bulunamadı.")
+    //           }
+    //       } else {
+    //           print("Root ViewController bir UINavigationController değil.")
+    //       }
+    //     }
+
+
+    let storyBoard = UIStoryboard(name: NfcErrorViewController.identifier, bundle: nil)
+    guard
+      let vc = storyBoard.instantiateViewController(
+        withIdentifier: NfcErrorViewController.identifier) as? NfcErrorViewController
+    else {
+      return
+    }
+    guard
+      let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
+        .rootViewController as? UINavigationController
+    else {
+      print("Navigation Controller bulunamadı.")
+      return
+    }
+    DispatchQueue.main.async {
+      navigationController.pushViewController(vc, animated: true)
+    }
   }
 
   func goToNfcSuccess() {
 
-       DispatchQueue.main.async {
-          guard
-              let rootVC = UIApplication.shared.connectedScenes
-                  .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                  .first
-          else {
-              print("Root ViewController bulunamadı.")
-              return
-          }
+      //  DispatchQueue.main.async {
+      //     guard
+      //         let rootVC = UIApplication.shared.connectedScenes
+      //             .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+      //             .first
+      //     else {
+      //         print("Root ViewController bulunamadı.")
+      //         return
+      //     }
 
-          if let navigationController = rootVC as? UINavigationController {
-              let storyboard = UIStoryboard(name:  NfcSuccessViewController.identifier, bundle: nil)
-              if let vc = storyboard.instantiateViewController(withIdentifier:  NfcSuccessViewController.identifier) as? NfcSuccessViewController {
-                  navigationController.pushViewController(vc, animated: true)
-              } else {
-                  print("NfcSuccessViewController storyboard'da bulunamadı.")
-              }
-          } else {
-              print("Root ViewController bir UINavigationController değil.")
-          }
-        }
+      //     if let navigationController = rootVC as? UINavigationController {
+      //         let storyboard = UIStoryboard(name:  NfcSuccessViewController.identifier, bundle: nil)
+      //         if let vc = storyboard.instantiateViewController(withIdentifier:  NfcSuccessViewController.identifier) as? NfcSuccessViewController {
+      //             navigationController.pushViewController(vc, animated: true)
+      //         } else {
+      //             print("NfcSuccessViewController storyboard'da bulunamadı.")
+      //         }
+      //     } else {
+      //         print("Root ViewController bir UINavigationController değil.")
+      //     }
+      //   }
 
-    // let storyBoard = UIStoryboard(name: NfcSuccessViewController.identifier, bundle: nil)
-    // guard
-    //   let vc = storyBoard.instantiateViewController(
-    //     withIdentifier: NfcSuccessViewController.identifier) as? NfcSuccessViewController
-    // else {
-    //   return
-    // }
-    // guard
-    //   let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
-    //     .rootViewController as? UINavigationController
-    // else {
-    //   print("Navigation Controller bulunamadı.")
-    //   return
-    // }
-    // DispatchQueue.main.async {
-    //   navigationController.pushViewController(vc, animated: true)
-    // }
+    let storyBoard = UIStoryboard(name: NfcSuccessViewController.identifier, bundle: nil)
+    guard
+      let vc = storyBoard.instantiateViewController(
+        withIdentifier: NfcSuccessViewController.identifier) as? NfcSuccessViewController
+    else {
+      return
+    }
+    guard
+      let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
+        .rootViewController as? UINavigationController
+    else {
+      print("Navigation Controller bulunamadı.")
+      return
+    }
+    DispatchQueue.main.async {
+      navigationController.pushViewController(vc, animated: true)
+    }
   }
 
   func goToFaceSuccess() {
 
-    DispatchQueue.main.async {
-          guard
-              let rootVC = UIApplication.shared.connectedScenes
-                  .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                  .first
-          else {
-              print("Root ViewController bulunamadı.")
-              return
-          }
-
-          if let navigationController = rootVC as? UINavigationController {
-              let storyboard = UIStoryboard(name:  FaceSuccessViewController.identifier, bundle: nil)
-              if let vc = storyboard.instantiateViewController(withIdentifier:  FaceSuccessViewController.identifier) as? FaceSuccessViewController {
-                  navigationController.pushViewController(vc, animated: true)
-              } else {
-                  print("NfcSuccessViewController storyboard'da bulunamadı.")
-              }
-          } else {
-              print("Root ViewController bir UINavigationController değil.")
-          }
-        }
-
-    // let storyBoard = UIStoryboard(name: FaceSuccessViewController.identifier, bundle: nil)
-    // guard
-    //   let vc = storyBoard.instantiateViewController(
-    //     withIdentifier: FaceSuccessViewController.identifier) as? FaceSuccessViewController
-    // else {
-    //   return
-    // }
-    // guard
-    //   let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
-    //     .rootViewController as? UINavigationController
-    // else {
-    //   print("Navigation Controller bulunamadı.")
-    //   return
-    // }
     // DispatchQueue.main.async {
-    //   navigationController.pushViewController(vc, animated: true)
-    // }
+    //       guard
+    //           let rootVC = UIApplication.shared.connectedScenes
+    //               .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+    //               .first
+    //       else {
+    //           print("Root ViewController bulunamadı.")
+    //           return
+    //       }
+
+    //       if let navigationController = rootVC as? UINavigationController {
+    //           let storyboard = UIStoryboard(name:  FaceSuccessViewController.identifier, bundle: nil)
+    //           if let vc = storyboard.instantiateViewController(withIdentifier:  FaceSuccessViewController.identifier) as? FaceSuccessViewController {
+    //               navigationController.pushViewController(vc, animated: true)
+    //           } else {
+    //               print("NfcSuccessViewController storyboard'da bulunamadı.")
+    //           }
+    //       } else {
+    //           print("Root ViewController bir UINavigationController değil.")
+    //       }
+    //     }
+
+    let storyBoard = UIStoryboard(name: FaceSuccessViewController.identifier, bundle: nil)
+    guard
+      let vc = storyBoard.instantiateViewController(
+        withIdentifier: FaceSuccessViewController.identifier) as? FaceSuccessViewController
+    else {
+      return
+    }
+    guard
+      let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
+        .rootViewController as? UINavigationController
+    else {
+      print("Navigation Controller bulunamadı.")
+      return
+    }
+    DispatchQueue.main.async {
+      navigationController.pushViewController(vc, animated: true)
+    }
   }
 
   func goToFaceError() {
 
-     DispatchQueue.main.async {
-          guard
-              let rootVC = UIApplication.shared.connectedScenes
-                  .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                  .first
-          else {
-              print("Root ViewController bulunamadı.")
-              return
-          }
+    //  DispatchQueue.main.async {
+    //       guard
+    //           let rootVC = UIApplication.shared.connectedScenes
+    //               .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+    //               .first
+    //       else {
+    //           print("Root ViewController bulunamadı.")
+    //           return
+    //       }
 
-          if let navigationController = rootVC as? UINavigationController {
-              let storyboard = UIStoryboard(name:  FaceErrorViewController.identifier, bundle: nil)
-              if let vc = storyboard.instantiateViewController(withIdentifier:  FaceErrorViewController.identifier) as? FaceErrorViewController {
-                  navigationController.pushViewController(vc, animated: true)
-              } else {
-                  print("NfcSuccessViewController storyboard'da bulunamadı.")
-              }
-          } else {
-              print("Root ViewController bir UINavigationController değil.")
-          }
-        }
-    // let storyBoard = UIStoryboard(name: FaceErrorViewController.identifier, bundle: nil)
-    // guard
-    //   let vc = storyBoard.instantiateViewController(
-    //     withIdentifier: FaceErrorViewController.identifier) as? FaceErrorViewController
-    // else {
-    //   return
-    // }
-    // guard
-    //   let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
-    //     .rootViewController as? UINavigationController
-    // else {
-    //   print("Navigation Controller bulunamadı.")
-    //   return
-    // }
-    // DispatchQueue.main.async {
-    //   navigationController.pushViewController(vc, animated: true)
-    // }
+    //       if let navigationController = rootVC as? UINavigationController {
+    //           let storyboard = UIStoryboard(name:  FaceErrorViewController.identifier, bundle: nil)
+    //           if let vc = storyboard.instantiateViewController(withIdentifier:  FaceErrorViewController.identifier) as? FaceErrorViewController {
+    //               navigationController.pushViewController(vc, animated: true)
+    //           } else {
+    //               print("NfcSuccessViewController storyboard'da bulunamadı.")
+    //           }
+    //       } else {
+    //           print("Root ViewController bir UINavigationController değil.")
+    //       }
+    //     }
+    let storyBoard = UIStoryboard(name: FaceErrorViewController.identifier, bundle: nil)
+    guard
+      let vc = storyBoard.instantiateViewController(
+        withIdentifier: FaceErrorViewController.identifier) as? FaceErrorViewController
+    else {
+      return
+    }
+    guard
+      let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
+        .rootViewController as? UINavigationController
+    else {
+      print("Navigation Controller bulunamadı.")
+      return
+    }
+    DispatchQueue.main.async {
+      navigationController.pushViewController(vc, animated: true)
+    }
   }
 
   func gotoKycError() {
-         DispatchQueue.main.async {
-          guard
-              let rootVC = UIApplication.shared.connectedScenes
-                  .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-                  .first
-          else {
-              print("Root ViewController bulunamadı.")
-              return
-          }
+        //  DispatchQueue.main.async {
+        //   guard
+        //       let rootVC = UIApplication.shared.connectedScenes
+        //           .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
+        //           .first
+        //   else {
+        //       print("Root ViewController bulunamadı.")
+        //       return
+        //   }
 
-          if let navigationController = rootVC as? UINavigationController {
-              let storyboard = UIStoryboard(name:  KycErrorViewController.identifier, bundle: nil)
-              if let vc = storyboard.instantiateViewController(withIdentifier:  KycErrorViewController.identifier) as? KycErrorViewController {
-                  navigationController.pushViewController(vc, animated: true)
-              } else {
-                  print("NfcSuccessViewController storyboard'da bulunamadı.")
-              }
-          } else {
-              print("Root ViewController bir UINavigationController değil.")
-          }
-        }
-    // let storyBoard = UIStoryboard(name: KycErrorViewController.identifier, bundle: nil)
-    // guard
-    //   let vc = storyBoard.instantiateViewController(
-    //     withIdentifier: KycErrorViewController.identifier) as? KycErrorViewController
-    // else {
-    //   return
-    // }
-    // guard
-    //   let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
-    //     .rootViewController as? UINavigationController
-    // else {
-    //   print("Navigation Controller bulunamadı.")
-    //   return
-    // }
-    // DispatchQueue.main.async {
-    //   navigationController.pushViewController(vc, animated: true)
-    // }
+        //   if let navigationController = rootVC as? UINavigationController {
+        //       let storyboard = UIStoryboard(name:  KycErrorViewController.identifier, bundle: nil)
+        //       if let vc = storyboard.instantiateViewController(withIdentifier:  KycErrorViewController.identifier) as? KycErrorViewController {
+        //           navigationController.pushViewController(vc, animated: true)
+        //       } else {
+        //           print("NfcSuccessViewController storyboard'da bulunamadı.")
+        //       }
+        //   } else {
+        //       print("Root ViewController bir UINavigationController değil.")
+        //   }
+        // }
+    let storyBoard = UIStoryboard(name: KycErrorViewController.identifier, bundle: nil)
+    guard
+      let vc = storyBoard.instantiateViewController(
+        withIdentifier: KycErrorViewController.identifier) as? KycErrorViewController
+    else {
+      return
+    }
+    guard
+      let navigationController = self.navigationController ?? UIApplication.shared.windows.first?
+        .rootViewController as? UINavigationController
+    else {
+      print("Navigation Controller bulunamadı.")
+      return
+    }
+    DispatchQueue.main.async {
+      navigationController.pushViewController(vc, animated: true)
+    }
   }
 
   func goToNextPage(page: String) {
@@ -1428,7 +1438,7 @@ class ModuleIOS: RCTEventEmitter, EnVerifyDelegate {
 
     EnVerify.integrationAdd(
       type: "Session",
-      callType: referenceId,
+      callType: "NewCustomer",
       phone: nil,
       email: nil,
       data: jsonString,
