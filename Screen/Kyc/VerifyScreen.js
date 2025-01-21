@@ -5,22 +5,23 @@ import {
   View,
   Text,
   NativeModules,
+  NativeEventEmitter,
   TouchableOpacity,
   Image,
   Platform
 } from 'react-native';
-import { FontFamilies } from './helper/index.js';
 import { useIsFocused } from '@react-navigation/native';
 import KvcLayout from './KvcLayout.js';
+import { apiRequest, customAlert, FontFamilies } from './helper/index.js';
 
 const VerifyScreen = ({ navigation, route }) => {
 
   const isFocused = useIsFocused();
+  const { EventEmitter } = NativeModules;
   // const [allData, setAllData] = useState();
   const [allData, setAllData] = useState({"birthDate": "2001-10-10T00:00:00", "commercialElectronic": true, "crmCustomerId": "15628932", "defaultBankAccountNumber": "3594488206101", "educationlevel": "5d18065a-742c-5c06-6e45-aa7d8ae95499", "email": "", "firstName": "Mahmut Bilal", "gender": "Male", "incometypesSelected": [4, 6], "isStudent": false, "lastName": "TEKİROĞLU", "monthlyAverage": "15000", "occupation": "5d1912c0-3818-7d03-f337-9ad31752832a", "occupationrole": "18f1e288-4786-404b-a879-83272a1b96b2", "payfourId": 3583, "phone": "+905533600910", "referenceId": "01948403-3cf1-74e0-800e-de3486334b28", "referralCode": "PYF2jzBnEzjQhS7", "registrationCompleted": true, "segment": 1, "segmentInfo": {"autoRenew": false, "isAnnual": false, "segment": 1, "startDateUTC": "2024-11-19T06:54:35.5703137"}, "selectedaAreements": ["ETK", "GKS", "USAGR"], "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVtcGFudW1iZXIiOiI2ZDMwYjU1Zjg4ZGNkYTRiOTk1MjIzMGE2MTc0YjYzY2Q5YzUwMmQxZmRhMDI2Y2E1MzE1OTZjYmEzYzc4ODBkIiwiZGV2aWNlSWQiOiIxMjIyIiwidG9rZW5pZCI6ImRhMjFhZjI2LThkMDktNDJkYS0yOGZmLTA4ZGQyZjAzNDlkNiIsIm1lbWJlcmlkIjoiMzU4MyIsImV4cCI6MTczNjI2MjE0NSwiaXNzIjoiUGF5Zm91ckFwcFRva2VuIiwiYXVkIjoiUGF5Zm91ckFwcFNlcnZpY2UifQ.XDXyXGt6ndR4HUWtvPfAGoNjj5x5td6jH9nIZTibQNw", "transactionVolume": "15000", "transactionsNumbers": "15000", "userBirthplace": "Adama"});
 
   const startKyc = async () => {
-
     if (!allData) {
       return
     }
@@ -30,7 +31,6 @@ const VerifyScreen = ({ navigation, route }) => {
     } else {
       NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
     }
-
   }
 
   const getData = async () => {
@@ -61,9 +61,53 @@ const VerifyScreen = ({ navigation, route }) => {
     }
   }
 
+  const getNewReferenceId = async () => {
+
+    console.log("getNewReferenceId")
+    const response = await apiRequest({
+      url: '/loans/verifycustomer',
+      method: 'POST',
+      data: allData
+    });
+    if (response.success) {
+      navigation.navigate('Kyc', {
+        screen: 'AddressInfo', params: {
+          
+        }
+      })
+    } else {
+      customAlert({ title: "Hata", message: response.errors.message })
+    }
+  } 
+
   const goBack = () => {
     navigation.goBack()
   }
+
+  useEffect(() => {
+
+    const eventEmitter = new NativeEventEmitter(EventEmitter);
+    const subscription = eventEmitter.addListener('EnQualifyResult', (data) => { 
+      console.log(data)
+      switch(data.status) {
+        case "succeeded":
+          navigation.navigate('TabNavigationRoutes', { 
+            screen: 'discover',
+          })
+          break;
+        case "cancaled":
+          getNewReferenceId()
+          break;
+        default:
+          console.log(data)
+      }
+    });
+  
+    // Cleanup
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (isFocused) {

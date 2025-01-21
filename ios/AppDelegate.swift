@@ -7,26 +7,28 @@ import EnQualify
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var bridge: RCTBridge!
-    var jsCodeLocation: URL!
+    var jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")!
     var navigationController: UINavigationController?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
-        
-        #if DEBUG
-        if let debugURL = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index") {
-            jsCodeLocation = debugURL
-        } else {
-            fatalError("Failed to locate JavaScript bundle in DEBUG mode.")
-        }
-        #else
-        if let releaseURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle") {
-            jsCodeLocation = releaseURL
-        } else {
-            fatalError("Failed to locate JavaScript bundle in RELEASE mode.")
-        }
-        #endif
+
+      
+//        #if DEBUG
+//        if let debugURL = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index") {
+//            jsCodeLocation = debugURL
+//        } else {
+//            fatalError("Failed to locate JavaScript bundle in DEBUG mode.")
+//        }
+//        #else
+//        if let releaseURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle") {
+//            jsCodeLocation = releaseURL
+//        } else {
+//            fatalError("Failed to locate JavaScript bundle in RELEASE mode.")
+//        }
+//        #endif
+    
         
         let rootViewController = getVCFromModuleName("Payfour", nil, launchOptions)
         self.window = UIWindow(frame: UIScreen.main.bounds)

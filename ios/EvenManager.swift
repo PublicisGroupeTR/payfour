@@ -1,33 +1,60 @@
-import Foundation
-import React
+//import Foundation
+//import React
+//
+//@objc(EventEmitter)
+//class EventEmitter: RCTEventEmitter {
+//    private static var hasListeners = false
+//
+//    // Bu method, JavaScript tarafında hangi eventlerin dinlenebileceğini belirtir
+//    override func supportedEvents() -> [String]! {
+//        return ["EnQualifyResult"]
+//    }
+//
+//    // JavaScript tarafında listener varsa true yaparız
+//    override func startObserving() {
+//        EventEmitter.hasListeners = true
+//    }
+//
+//    // Listener kaldırıldığında çağrılır
+//    override func stopObserving() {
+//        EventEmitter.hasListeners = false
+//    }
+//
+//    // Swift'ten event gönderme fonksiyonu
+//    @objc func sendEventToReact(_ name: String, body: [String: Any]?) {
+//        if EventEmitter.hasListeners {
+//            self.sendEvent(withName: name, body: body)
+//        }
+//    }
+//  
+//    @objc func triggerEvent() {
+//        let eventName = "EnQualifyResult"
+//        let payload: [String: Any] = ["key": "value", "message": "Hello from Swift!"]
+//
+//        self.sendEventToReact(eventName, body: payload)
+//    }
+//}
 
-@objc(MyEventEmitter)
-class MyEventEmitter: RCTEventEmitter {
+@objc(EventEmitter)
+class EventEmitter: RCTEventEmitter {
+    static var shared: EventEmitter?
     
-  static var shared: MyEventEmitter?
-  
     override init() {
-         super.init()
-         MyEventEmitter.shared = self
-     }
- 
-    override func supportedEvents() -> [String] {
-        return ["onCustomEvent"]
+        super.init()
+        EventEmitter.shared = self
     }
- 
-    @objc func sendCustomEvent(_ data: [String: Any]) {
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-          guard let bridge = appDelegate.bridge else {
-              print("Bridge is not initialized. Event will not be sent.")
-              return
-          }
-          sendEvent(withName: "onCustomEvent", body: data)
-        print("Bridge is initialized: \(String(describing: appDelegate.bridge))")
-      }
-      
-    }
- 
+    
     override static func requiresMainQueueSetup() -> Bool {
         return true
+    }
+ 
+    override func supportedEvents() -> [String]! {
+        // React'e gönderilebilecek olayların isimlerini burada tanımlayın
+        return ["EnQualifyResult"]
+    }
+    
+    @objc func sendSampleEvent(_ name: String, body: [String: Any]?) {
+        // React'e bir olay yollama
+        sendEvent(withName: name, body: body)
     }
 }

@@ -20,7 +20,6 @@ import LoginWithPasswordScreen from './Screen/LoginWithPasswordScreen';
 import TabNavigationRoutes from './Screen/TabNavigationRoutes';
 import { ErrorProvider } from './Screen/Contexts/ErrorContext';
 import { Appearance } from 'react-native';
-import { NativeModules, NativeEventEmitter } from 'react-native';
 
 // Kyc Screens
 import KycOtp from './Screen/Kyc/Otp';
@@ -129,38 +128,10 @@ const Kyc = () => {
   and we don't want to switch back once we switch from them to the next one */
 const App = () => {
 
-//   const { ModuleIOS } = NativeModules;
-
-// if (!ModuleIOS) {
-//   console.error('ModuleIOS Native Module is not loaded.');
-// }
-
-//   useEffect(() => {
-//     // Event'i dinle
-//     const completionListener = new NativeEventEmitter(NativeModules.ModuleIOS).addListener('EnQualifyResult', (data) => {
-//       console.log('KYC Tamamlandı:', data);
-//   });
-
-//     // Cleanup
-//     return () => {
-//       completionListener.remove();
-//     };
-//   }, []);
-
   useEffect(() => {
     Appearance.setColorScheme('light');
     console.log("colorScheme");
-    console.log(Appearance.getColorScheme());
-
-    // const kycData = JSON.stringify({
-    //     userId: "67890",
-    //     userName: "Jane Doe",
-    //     email: "jane.doe@example.com",
-    //     country: "Canada"
-    // });
-
-    // NativeModules.ModuleIOS.viewDidLoadNative(kycData)
- 
+    console.log(Appearance.getColorScheme()); 
   },
   [])
   return (
