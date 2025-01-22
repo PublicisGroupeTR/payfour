@@ -23,6 +23,11 @@ class FaceErrorViewController: UIViewController {
       ModuleIOS.shared.sdkCancel()
     }
   
+    @IBAction func backButton(_ sender: UIButton) {
+      ModuleIOS.shared.sdkCancel()
+    }
+ 
+  
     
 
     /*

@@ -18,6 +18,11 @@ class OcrErrorViewController: UIViewController {
   @IBAction func ocrRetryButton(_ sender: UIButton) {
     ModuleIOS.shared.ocrRetry()
   }
+  
+  @IBAction func backButton(_ sender: UIButton) {
+    ModuleIOS.shared.sdkCancel()
+  }
+ 
 
     /*
     // MARK: - Navigation

@@ -53,28 +53,33 @@ const VerifyScreen = ({ navigation, route }) => {
       if (params.selectedaAreements) {
         data = { ...data, ...{ selectedaAreements: params.selectedaAreements } }
       }
+        if (params.tempToken) {
+        data = { ...data, ...{ tempToken: params.tempToken } }
+      }
       if (token) {
         data = { ...data, ...{ token: token } }
       }
-      // console.log(data)
       setAllData(data)
     }
   }
 
   const getNewReferenceId = async () => {
+    const data = {
+        tempToken: allData.tempToken,
+        tckn: allData.userTCKN,
+        birthDate: allData.birthDate,
+        email: allData.value,
+        isPotential: false
+    }
 
     console.log("getNewReferenceId")
     const response = await apiRequest({
       url: '/loans/verifycustomer',
       method: 'POST',
-      data: allData
+      data: data
     });
     if (response.success) {
-      navigation.navigate('Kyc', {
-        screen: 'AddressInfo', params: {
-          
-        }
-      })
+     setAllData({...allData, ...response.data})
     } else {
       customAlert({ title: "Hata", message: response.errors.message })
     }
@@ -95,7 +100,7 @@ const VerifyScreen = ({ navigation, route }) => {
             screen: 'discover',
           })
           break;
-        case "cancaled":
+        case "canceled":
           getNewReferenceId()
           break;
         default:

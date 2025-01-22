@@ -18,6 +18,11 @@ class OcrClosedViewController: UIViewController {
   @IBAction func restartSdk(_ sender: UIButton) {
     ModuleIOS.shared.initSdk()
   }
+  
+  @IBAction func backButton(_ sender: UIButton) {
+    ModuleIOS.shared.sdkCancel()
+  }
+ 
 
 
     /*

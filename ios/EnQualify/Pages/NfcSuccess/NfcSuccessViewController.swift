@@ -18,7 +18,11 @@ class NfcSuccessViewController: UIViewController {
     @IBAction func startFaceButton(_ sender: UIButton) {
       ModuleIOS.shared.startFace()
     }
-
+  
+    @IBAction func backButton(_ sender: UIButton) {
+      ModuleIOS.shared.sdkCancel()
+    }
+ 
     /*
     // MARK: - Navigation
 

@@ -10,6 +10,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   var agentRequestType: AgentRequestType = .none
   var isSelfServiceStart: Bool = false
+  var sdkSucceeded: Bool = false
   let mainSSView: String = "MainSSView"
 
   static let shared = ModuleIOS()
@@ -203,6 +204,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
 
   func idVerifyExited() {
+    isSelfServiceStart = false
     returnToReactNative()
     print("idVerifyExited")
   }
@@ -277,13 +279,12 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func integrationAddCompleted() {
     print("integrationAddCompleted")
-    EnVerify.callSessionClose(finished: true)
+    sdkSessionClose()
   }
 
   func integrationAddFailure() {
     print("integrationAddFailure")
     kycError()
-
   }
 
   func resultGetCompleted(_ value: EnQualify.EnverifyVerifyCallResult?) {
@@ -534,6 +535,8 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   //  ------------------------ Sdk Configurations --------------------------------
 
   @objc func viewDidLoadNative(_ kycData: String) {
+    sdkSucceeded = false
+    isSelfServiceStart = false
 
     if let data = kycData.data(using: .utf8) {
       do {
@@ -686,7 +689,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   func sdkCancel() {
     print("sdkCancel")
     if isSelfServiceStart == true {
-      EnVerify.callSessionClose(finished: true)
+      sdkSessionClose()
     } else {
       returnToReactNative()
     }
@@ -694,6 +697,43 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func sdkExit() {
     EnVerify.onExitSelfServiceWithoutPop()
+  }
+  
+
+  
+  func showExitAlert() {
+      let alertController = UIAlertController(title: "Uyarı", message: "Çıkmak istiyor musunuz?", preferredStyle: .alert)
+      
+      let yesAction = UIAlertAction(title: "Evet", style: .default) { _ in
+          self.performCustomAction()
+      }
+      
+      let noAction = UIAlertAction(title: "Hayır", style: .cancel, handler: nil)
+      
+      alertController.addAction(yesAction)
+      alertController.addAction(noAction)
+      
+      DispatchQueue.main.async {
+          if let rootVC = UIApplication.shared.windows.first?.rootViewController {
+              rootVC.present(alertController, animated: true, completion: nil)
+          } else {
+              print("Root ViewController bulunamadı.")
+          }
+      }
+  }
+
+
+
+      
+      func performCustomAction() {
+          // Burada özel bir işlem gerçekleştirebilirsiniz
+          print("Custom action executed!")
+          // Örneğin bir işlem tamamlandıktan sonra başka bir ekranı kapatmak veya yönlendirme yapmak
+          dismiss(animated: true, completion: nil) // Mevcut ekranı kapatır
+      }
+
+  func sdkSessionClose() {
+    EnVerify.callSessionClose(finished: true)
   }
 
   func completeLoanApplication() {
@@ -750,6 +790,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
               if success {
                 print("TEST-KYC completeloanapplication Success: true")
                 self.goToFaceSuccess()
+                self.sdkSucceeded = true
               } else {
                 print("TEST-KYC completeloanapplication Success: false")
                 self.kycError()
@@ -798,32 +839,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 //  PAGES NAVIGATION
 
   func goToOrcInfo() {
-    
-    // DispatchQueue.main.async {
-    //       guard
-    //           let rootVC = UIApplication.shared.connectedScenes
-    //               .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-    //               .first
-    //       else {
-    //           print("Root ViewController bulunamadı.")
-    //           return
-    //       }
-
-    //       if let navigationController = rootVC as? UINavigationController {
-    //           let storyboard = UIStoryboard(name:  OcrInfoViewController.identifier, bundle: nil)
-    //           if let vc = storyboard.instantiateViewController(withIdentifier:  OcrInfoViewController.identifier) as? OcrInfoViewController {
-    //               navigationController.pushViewController(vc, animated: true)
-    //           } else {
-    //               print("NfcSuccessViewController storyboard'da bulunamadı.")
-    //           }
-    //       } else {
-    //           print("Root ViewController bir UINavigationController değil.")
-    //       }
-    //     }
-    
-         // React Native'e bir event gönder
-          
-    
+        
     let storyBoard = UIStoryboard(name: OcrInfoViewController.identifier, bundle: nil)
     guard
       let vc = storyBoard.instantiateViewController(
@@ -844,28 +860,6 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
 
   func goToOrcClosed() {
-
-      // DispatchQueue.main.async {
-      //     guard
-      //         let rootVC = UIApplication.shared.connectedScenes
-      //             .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-      //             .first
-      //     else {
-      //         print("Root ViewController bulunamadı.")
-      //         return
-      //     }
-
-      //     if let navigationController = rootVC as? UINavigationController {
-      //         let storyboard = UIStoryboard(name:  OcrClosedViewController.identifier, bundle: nil)
-      //         if let vc = storyboard.instantiateViewController(withIdentifier:  OcrClosedViewController.identifier) as? OcrClosedViewController {
-      //             navigationController.pushViewController(vc, animated: true)
-      //         } else {
-      //             print("NfcSuccessViewController storyboard'da bulunamadı.")
-      //         }
-      //     } else {
-      //         print("Root ViewController bir UINavigationController değil.")
-      //     }
-      //   }
 
     let storyBoard = UIStoryboard(name: OcrClosedViewController.identifier, bundle: nil)
     guard
@@ -896,28 +890,6 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func goToOcrError() {
 
-    // DispatchQueue.main.async {
-    //       guard
-    //           let rootVC = UIApplication.shared.connectedScenes
-    //               .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-    //               .first
-    //       else {
-    //           print("Root ViewController bulunamadı.")
-    //           return
-    //       }
-
-    //       if let navigationController = rootVC as? UINavigationController {
-    //           let storyboard = UIStoryboard(name:  OcrErrorViewController.identifier, bundle: nil)
-    //           if let vc = storyboard.instantiateViewController(withIdentifier:  OcrErrorViewController.identifier) as? OcrErrorViewController {
-    //               navigationController.pushViewController(vc, animated: true)
-    //           } else {
-    //               print("NfcSuccessViewController storyboard'da bulunamadı.")
-    //           }
-    //       } else {
-    //           print("Root ViewController bir UINavigationController değil.")
-    //       }
-    //     }
-
     let storyBoard = UIStoryboard(name: OcrErrorViewController.identifier, bundle: nil)
     guard
       let vc = storyBoard.instantiateViewController(
@@ -938,28 +910,6 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
 
   func goToOcrSuccess() {
-
-    // DispatchQueue.main.async {
-    //       guard
-    //           let rootVC = UIApplication.shared.connectedScenes
-    //               .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-    //               .first
-    //       else {
-    //           print("Root ViewController bulunamadı.")
-    //           return
-    //       }
-
-    //       if let navigationController = rootVC as? UINavigationController {
-    //           let storyboard = UIStoryboard(name:  OcrSuccessViewController.identifier, bundle: nil)
-    //           if let vc = storyboard.instantiateViewController(withIdentifier:  OcrSuccessViewController.identifier) as? OcrSuccessViewController {
-    //               navigationController.pushViewController(vc, animated: true)
-    //           } else {
-    //               print("NfcSuccessViewController storyboard'da bulunamadı.")
-    //           }
-    //       } else {
-    //           print("Root ViewController bir UINavigationController değil.")
-    //       }
-    //     }
 
     let storyBoard = UIStoryboard(name: OcrSuccessViewController.identifier, bundle: nil)
     guard
@@ -1109,12 +1059,6 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
     }
   }
 
-  func goBackPage(page: String) {
-
-
-
-  }
-
   func returnToReactNative() {
     
     print("returnToReactNative")
@@ -1135,27 +1079,15 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
         print("Root ViewController bir UINavigationController değil.")
       }
     }
-  }
 
-  func closePage() {
-
-    DispatchQueue.main.async {
-
-      guard
-        let rootVC = UIApplication.shared.connectedScenes
-          .compactMap({ ($0 as? UIWindowScene)?.windows.first?.rootViewController })
-          .first
-      else {
-        print("Root ViewController bulunamadı.")
-        return
-      }
-
-      guard let navigationController = rootVC as? UINavigationController else {
-        print("NavigationController bulunamadı.")
-        return
-      }
-      navigationController.popViewController(animated: true)
+    print("sdkSucceeded", sdkSucceeded)
+    
+    if sdkSucceeded {
+      eventSdkSucess()
+    } else {
+      eventSdkCancel()
     }
+    
   }
 
   func addIntegration() {

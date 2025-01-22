@@ -14,6 +14,10 @@ class FaceSuccessViewController: UIViewController {
 
         // Do any additional setup after loading the view.
     }
+  
+  @IBAction func backHome(_ sender: UIButton) {
+    ModuleIOS.shared.sdkExit()
+  }
     
 
     /*

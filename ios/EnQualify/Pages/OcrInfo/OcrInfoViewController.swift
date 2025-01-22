@@ -18,6 +18,11 @@ class OcrInfoViewController: UIViewController {
   @IBAction func ocrStartButton(_ sender: UIButton) {
       ModuleIOS.shared.startVerification()
   }
+  
+  @IBAction func backButton(_ sender: UIButton) {
+    ModuleIOS.shared.showExitAlert()
+  }
+ 
     
 
     /*

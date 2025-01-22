@@ -23,6 +23,11 @@ class OcrSuccessViewController: UIViewController {
     ModuleIOS.shared.startNfc()
     nfcStarButton.isUserInteractionEnabled = false
   }
+  
+  @IBAction func backButton(_ sender: UIButton) {
+    ModuleIOS.shared.sdkCancel()
+  }
+ 
     
 
     /*

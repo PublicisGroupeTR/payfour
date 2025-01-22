@@ -35,6 +35,11 @@ class NfcErrorViewController: UIViewController {
 
     }
   
+    @IBAction func backButton(_ sender: UIButton) {
+      ModuleIOS.shared.sdkCancel()
+    }
+ 
+  
   
 
     /*
