@@ -170,6 +170,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="5d9-yK-Lqr"/>
+                    <connections>
+                        <outlet property="retryFaceButton" destination="continueButton" id="xFl-L2-Xt9"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYz-tn-Ulg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

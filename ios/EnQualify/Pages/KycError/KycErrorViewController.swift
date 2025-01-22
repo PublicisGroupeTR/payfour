@@ -19,7 +19,7 @@ static let identifier = "KycErrorViewController"
     }
   
     @IBAction func backButton(_ sender: UIButton) {
-      ModuleIOS.shared.sdkCancel()
+      ModuleIOS.shared.showExitAlert()
     }
  
   

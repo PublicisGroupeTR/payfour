@@ -169,6 +169,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="KdF-6B-036"/>
+                    <connections>
+                        <outlet property="nfcRetryButton" destination="qWg-4X-3TC" id="ShG-6j-o1Y"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYz-tn-Ulg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

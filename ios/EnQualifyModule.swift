@@ -699,16 +699,15 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
     EnVerify.onExitSelfServiceWithoutPop()
   }
   
-
-  
   func showExitAlert() {
-      let alertController = UIAlertController(title: "Uyarı", message: "Çıkmak istiyor musunuz?", preferredStyle: .alert)
+      let alertController = UIAlertController(title: "Uyarı", message: "Çıkmak istediğinize emin misiniz ?", preferredStyle: .alert)
       
-      let yesAction = UIAlertAction(title: "Evet", style: .default) { _ in
-          self.performCustomAction()
+      let yesAction = UIAlertAction(title: "Evet, Eminim", style: .default) { _ in
+          self.dismiss(animated: true, completion: nil)
+          self.sdkCancel()
       }
       
-      let noAction = UIAlertAction(title: "Hayır", style: .cancel, handler: nil)
+      let noAction = UIAlertAction(title: "Vazgeç", style: .cancel, handler: nil)
       
       alertController.addAction(yesAction)
       alertController.addAction(noAction)
@@ -721,16 +720,6 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
           }
       }
   }
-
-
-
-      
-      func performCustomAction() {
-          // Burada özel bir işlem gerçekleştirebilirsiniz
-          print("Custom action executed!")
-          // Örneğin bir işlem tamamlandıktan sonra başka bir ekranı kapatmak veya yönlendirme yapmak
-          dismiss(animated: true, completion: nil) // Mevcut ekranı kapatır
-      }
 
   func sdkSessionClose() {
     EnVerify.callSessionClose(finished: true)

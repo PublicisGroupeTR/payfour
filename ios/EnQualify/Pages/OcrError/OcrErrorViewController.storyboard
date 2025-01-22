@@ -152,6 +152,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="ZCX-Bl-AFR"/>
+                    <connections>
+                        <outlet property="ocrRetryButton" destination="continueButton" id="nmA-rB-4Kt"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYz-tn-Ulg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

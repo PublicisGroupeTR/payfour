@@ -14,8 +14,10 @@ class NfcErrorViewController: UIViewController {
 
         // Do any additional setup after loading the view.
     }
-    
+  @IBOutlet weak var nfcRetryButton: UIButton!
+  
     @IBAction func nfcRetryButton(_ sender: UIButton) {
+      nfcRetryButton.isUserInteractionEnabled = false
       ModuleIOS.shared.nfcRetry()
     }
   
@@ -36,7 +38,7 @@ class NfcErrorViewController: UIViewController {
     }
   
     @IBAction func backButton(_ sender: UIButton) {
-      ModuleIOS.shared.sdkCancel()
+      ModuleIOS.shared.showExitAlert()
     }
  
   

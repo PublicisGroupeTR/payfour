@@ -15,12 +15,15 @@ class OcrErrorViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+  @IBOutlet weak var ocrRetryButton: UIButton!
+  
   @IBAction func ocrRetryButton(_ sender: UIButton) {
+    ocrRetryButton.isUserInteractionEnabled = false
     ModuleIOS.shared.ocrRetry()
   }
   
   @IBAction func backButton(_ sender: UIButton) {
-    ModuleIOS.shared.sdkCancel()
+    ModuleIOS.shared.showExitAlert()
   }
  
 

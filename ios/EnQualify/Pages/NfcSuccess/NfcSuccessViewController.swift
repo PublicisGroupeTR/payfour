@@ -20,7 +20,7 @@ class NfcSuccessViewController: UIViewController {
     }
   
     @IBAction func backButton(_ sender: UIButton) {
-      ModuleIOS.shared.sdkCancel()
+      ModuleIOS.shared.showExitAlert()
     }
  
     /*

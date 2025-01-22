@@ -15,12 +15,15 @@ class OcrClosedViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
   
+  @IBOutlet weak var restartSdkButton: UIButton!
+  
   @IBAction func restartSdk(_ sender: UIButton) {
+    restartSdkButton.isUserInteractionEnabled = false
     ModuleIOS.shared.initSdk()
   }
   
   @IBAction func backButton(_ sender: UIButton) {
-    ModuleIOS.shared.sdkCancel()
+    ModuleIOS.shared.showExitAlert()
   }
  
 

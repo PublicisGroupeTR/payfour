@@ -15,8 +15,11 @@ class OcrInfoViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
   
+  @IBOutlet weak var ocrStartButton: UIButton!
+  
   @IBAction func ocrStartButton(_ sender: UIButton) {
-      ModuleIOS.shared.startVerification()
+    ocrStartButton.isUserInteractionEnabled = false
+    ModuleIOS.shared.startVerification()
   }
   
   @IBAction func backButton(_ sender: UIButton) {

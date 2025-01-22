@@ -15,7 +15,10 @@ class FaceErrorViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
   
-    @IBAction func retryFaceButton(_ sender: UIButton) {
+  @IBOutlet weak var retryFaceButton: UIButton!
+  
+  @IBAction func retryFaceButton(_ sender: UIButton) {
+      retryFaceButton.isUserInteractionEnabled = false
       ModuleIOS.shared.retryFace()
     }
   
@@ -24,7 +27,7 @@ class FaceErrorViewController: UIViewController {
     }
   
     @IBAction func backButton(_ sender: UIButton) {
-      ModuleIOS.shared.sdkCancel()
+      ModuleIOS.shared.showExitAlert()
     }
  
   

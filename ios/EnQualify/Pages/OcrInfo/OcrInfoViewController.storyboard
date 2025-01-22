@@ -140,6 +140,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="sBa-9D-QKu"/>
+                    <connections>
+                        <outlet property="ocrStartButton" destination="continueButton" id="3AR-Ee-Wxt"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYz-tn-Ulg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
