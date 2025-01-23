@@ -1,37 +1,37 @@
-/* eslint-disable react-native/no-inline-styles */
-// Example of Splash, Login and Sign Up in React Native
-// https://aboutreact.com/react-native-login-and-signup/
-
-// Import React and Component
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
   Text,
   NativeModules,
+  NativeEventEmitter,
   TouchableOpacity,
-  Image
+  Image,
+  Platform
 } from 'react-native';
-import { FontFamilies } from '../../constants/fonts.js';
 import { useIsFocused } from '@react-navigation/native';
 import KvcLayout from './KvcLayout.js';
+import { apiRequest, customAlert, FontFamilies } from './helper/index.js';
 
 const VerifyScreen = ({ navigation, route }) => {
 
   const isFocused = useIsFocused();
+  const { EventEmitter } = NativeModules;
   const [allData, setAllData] = useState();
 
-  const openEnQualifyActivity = async () => {
-
-    // NativeModules.EnQualifyModuleIOS.showSwiftUIView()
-    // return
-
+  const startKyc = async () => {
     if (!allData) {
       return
     }
 
-    NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
+    // console.log("altData", allData)
+
+    if (Platform.OS == 'ios') {
+      NativeModules.ModuleIOS.viewDidLoadNative(JSON.stringify(allData))
+    } else {
+      NativeModules.EnQualifyModuleAndroid.openNativeActivity(JSON.stringify(allData))
+    }
   }
 
   const getData = async () => {
@@ -54,17 +54,63 @@ const VerifyScreen = ({ navigation, route }) => {
       if (params.selectedaAreements) {
         data = { ...data, ...{ selectedaAreements: params.selectedaAreements } }
       }
+        if (params.tempToken) {
+        data = { ...data, ...{ tempToken: params.tempToken } }
+      }
       if (token) {
         data = { ...data, ...{ token: token } }
       }
-      // console.log(data)
+
       setAllData(data)
     }
   }
 
+  const getNewReferenceId = async () => {
+    const data = {
+        tempToken: allData?.tempToken,
+        tckn: allData?.tckn,
+        birthDate: allData?.birthDate,
+        email: allData?.email,
+        isPotential: false
+    }
+
+    const response = await apiRequest({
+      url: '/loans/verifycustomer',
+      method: 'POST',
+      data: data
+    });
+    if (response.success) {
+     setAllData({...allData, ...response.data})
+    } else {
+      customAlert({ title: "Hata", message: response.errors.message })
+    }
+  } 
+
   const goBack = () => {
     navigation.goBack()
   }
+
+  useEffect(() => {
+    const eventEmitter = new NativeEventEmitter(EventEmitter);
+    const subscription = eventEmitter.addListener('EnQualifyResult', (data) => { 
+      console.log(data)
+      switch(data.status) {
+        case "succeeded":
+          navigation.navigate('TabNavigationRoutes', { 
+            screen: 'discover',
+          })
+          break;
+        case "canceled":
+          getNewReferenceId()
+          break;
+      }
+    });
+  
+    // Cleanup
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (isFocused) {
@@ -94,7 +140,7 @@ const VerifyScreen = ({ navigation, route }) => {
                 <Text style={[styles.buttonTextStyle, { color: '#004F97' }]}>Vazgeç</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => openEnQualifyActivity()}
+                onPress={() => startKyc()}
                 style={[styles.buttonStyle, {}]}
                 activeOpacity={0.5}
               >
@@ -121,7 +167,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     padding: 16,
-    paddingBottom:0,
+    paddingBottom:8,
     backgroundColor:"#efeff3"
   },
   container: {
@@ -141,7 +187,6 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#004F97',
-    fontFamily: FontFamilies.UBUNTU.medium,
     fontWeight: '500',
     fontSize: 16,
     marginTop: 24,
@@ -149,7 +194,6 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#909EAA",
-    fontFamily: FontFamilies.UBUNTU.normal,
     fontWeight: '400',
     fontSize: 12,
     textAlign: "center"
@@ -165,8 +209,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     height: 52,
     alignItems: 'center',
+    justifyContent:"center",
     borderRadius: 10,
-
   },
   buttonTextStyle: {
     color: '#FFFFFF',

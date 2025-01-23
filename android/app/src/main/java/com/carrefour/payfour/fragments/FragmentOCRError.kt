@@ -51,6 +51,6 @@ class FragmentOCRError : Fragment() {
     }
 
     public fun backButtonClick() {
-        (activity as? EnQualifyActivity)?.backButton()
+        (activity as? EnQualifyActivity)?.exitSdk()
     }
 }

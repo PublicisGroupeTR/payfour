@@ -21,6 +21,7 @@ import com.carrefour.payfour.FragmentNFCClosed
 import com.carrefour.payfour.FragmentNFCRequired
 import com.carrefour.payfour.FragmentFaceError
 import com.carrefour.payfour.FragmentFaceSuccess
+import com.carrefour.payfour.EnQualifyModuleAndroid
 
 import com.enqura.enverify.EnVerifyApi
 import com.enqura.enverify.EnVerifyCallback
@@ -77,7 +78,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // backButton()
+
             }
         })
 
@@ -99,7 +100,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
         vSession = VSession.getInstance()
 
         Log.i("Custom", "TEST-KYC referenceId" + customDataObject.getString("referenceId"))
-
+       
         with(enVerifyApi){
             with(Constants.getEnQualifyConfigurationData()){
                 reinitialize(null)
@@ -116,7 +117,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
                 setBackOfficeBaseUrl(apiServer)
                 val aiCertificatesList: Array<String> = arrayOf(aiCertificateName)
                 val backOfficeCertificatesList: Array<String> = arrayOf(backOfficeCertificateName)
-                setIsSSLPinningRequired(false, false)
+                setIsSSLPinningRequired(true, true)
                 CoroutineScope(Dispatchers.IO).launch {
                     setCertificate(
                         aiCertificatesList,
@@ -281,15 +282,16 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
         }
     }
     
-    fun replaceReactNativeFragment(pageId: String) {
+    fun replaceReactNativeFragment() {
         val customDataObject: JSONObject = JSONObject(customData)
 
         val reactNativeFragment = CustomReactFragment.Builder()
-            .setComponentName(pageId)
-            .setLaunchOptions(getLaunchOptions(customDataObject.getString("referenceId")))  // Buradan React Native'de açılan view'a props olarak data gönderilebiliyor.
+            .setComponentName("Payfour")
+            .setLaunchOptions(getLaunchOptions(""))  // Buradan React Native'de açılan view'a props olarak data gönderilebiliyor.
             .build()
         
         enVerifyApi.replaceFragment(reactNativeFragment)
+        EnQualifyModuleAndroid.sendEvent("EnQualifyResult", "succeeded")
     }
 
     private fun getLaunchOptions(message: String): Bundle {
@@ -300,51 +302,15 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
 
     public fun exitSdk() {
         Log.i("Custom", "TEST-KYC exitSdk")
-        // TODO
-        // Hata alıp tekrar baştan deneyince burda crash veriyor
         enVerifyApi.closeSession(false)
         enVerifyApi.exitSelfService()
         enVerifyApi.destroy()
         finish()
+        EnQualifyModuleAndroid.sendEvent("EnQualifyResult", "canceled")
     }
 
-    public fun backButton() {
-        Log.i("Custom", "TEST-KYC backButton")
-
-        // Mevcut fragment'i al
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.enQualifyFragmentContainer)
-    
-        if (currentFragment != null) {
-            val currentFragmentName = currentFragment::class.java.simpleName
-
-        Log.i("Custom", "TEST-KYC currentFragmentName " + currentFragmentName)
-            
-            // Eğer mevcut fragment belirli bir türdeyse, exitSdk() çağır
-            if (currentFragmentName == "FragmentOCRInfo" || currentFragmentName == "FragmentKYCError" || currentFragmentName == "FragmentNFCRequired") {
-                exitSdk()
-            } else if ( currentFragmentName == "FragmentFaceSuccess") {
-                replaceReactNativeFragment("Payfour")
-            }else {
-                // Geçilecek bir sonraki fragment'i belirle
-                val nextFragment = when (currentFragment) {
-                    is FragmentOCRSuccess -> FragmentOCRInfo()
-                    is FragmentOCRError -> FragmentOCRInfo()
-                    is FragmentNFCSuccess -> FragmentOCRSuccess()
-                    is FragmentNFCClosed -> FragmentOCRSuccess()
-                    is FragmentNFCError -> FragmentOCRSuccess()
-                    is FragmentNFCRead -> FragmentOCRSuccess()
-                    is FragmentFaceError -> FragmentNFCSuccess()
-                    else -> FragmentOCRInfo()
-                }
-    
-                // Fragment geçişini gerçekleştir
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.enQualifyFragmentContainer, nextFragment)
-                    .commit()
-            }
-        } else {
-            exitSdk()
-        }
+    public fun sdkSucceeded() {
+        replaceReactNativeFragment()
     }
 
     override fun onFailure(p0: IDVerifyState?, p1: IDVerifyFailureCode?, p2: String?) {

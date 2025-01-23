@@ -115,9 +115,10 @@ const IdentityForm = ({ route, navigation }) => {
     if (response.success) {
       navigation.navigate('Kyc', {
         screen: 'AddressInfo', params: {
-          user: user,
+          user: {...user, tckn: formData.userTCKN.value, email:formData.userEmail.value, birthDate:formattedDate},
           data: response.data,
-          selectedaAreements: selectedaAreements
+          selectedaAreements: selectedaAreements,
+          tempToken: tempToken
         }
       })
     } else {

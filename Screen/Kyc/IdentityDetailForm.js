@@ -14,6 +14,7 @@ const IdentityDetailForm = ({ route, navigation }) => {
   const user = route.params.user
   const verifyData = route.params.data
   const selectedaAreements = route.params.selectedaAreements
+  const tempToken = route.params.tempToken
 
   const [educationlevels, setEducationlevels] = useState();
   const [occupationroles, setOccupationroles] = useState();
@@ -108,7 +109,8 @@ const IdentityDetailForm = ({ route, navigation }) => {
         selectedaAreements: selectedaAreements,
         incometypesSelected: incometypesSelected,
         data: data,
-        referenceId: verifyData.referenceId
+        referenceId: verifyData.referenceId,
+        tempToken: tempToken
       }
     })
     setLoading(false)

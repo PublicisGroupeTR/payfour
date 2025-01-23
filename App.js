@@ -127,14 +127,6 @@ const Kyc = () => {
 const App = (props) => {
   const navigationRef = React.useRef();
   
-  useEffect(() => {
-    if (props.kycResult &&  props.kycResult.length != 0) {
-      navigationRef.current?.navigate('TabNavigationRoutes', { 
-        screen: 'discover',
-      })
-    }
-  },[])
-
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator initialRouteName="SplashScreen"

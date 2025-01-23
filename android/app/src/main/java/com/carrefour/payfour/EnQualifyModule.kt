@@ -1,50 +1,62 @@
 package com.carrefour.payfour
 
 import android.content.Intent
+import android.util.Log
 import com.carrefour.payfour.ui.EnQualifyActivity
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.facebook.react.bridge.Arguments
 
 
 class EnQualifyModuleAndroid(reactContext: ReactApplicationContext?) : ReactContextBaseJavaModule(reactContext) {
 
     override fun getName() = "EnQualifyModuleAndroid"
 
+    init {
+        initialize(reactContext!!)
+    }
+
     @ReactMethod
-    public fun openNativeActivity(customData: String){
+    fun openNativeActivity(customData: String) {
         val intent = Intent(reactApplicationContext, EnQualifyActivity::class.java)
         intent.putExtra("customData", customData)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         reactApplicationContext.startActivity(intent)
     }
-    
+
     @ReactMethod
-    public fun startNFC(){
-        val activity = currentActivity as EnQualifyActivity
-        activity.startNFC();
-    }
-    
-    @ReactMethod
-    public fun startFaceDetect(){
-        val activity = currentActivity as EnQualifyActivity
-        activity.startFaceDetect();
+    fun startNFC() {
+        val activity = currentActivity as? EnQualifyActivity
+        activity?.startNFC()
     }
 
     @ReactMethod
-    public fun startIdentity(){
-        val activity = currentActivity as EnQualifyActivity
-        activity.startIdentity();
+    fun startFaceDetect() {
+        val activity = currentActivity as? EnQualifyActivity
+        activity?.startFaceDetect()
     }
 
     @ReactMethod
-    public fun finishSdk(){
-        val activity = currentActivity as EnQualifyActivity
-        activity.backButton();
+    fun startIdentity() {
+        val activity = currentActivity as? EnQualifyActivity
+        activity?.startIdentity()
     }
 
-    public fun exitSdk(){
-        val activity = currentActivity as EnQualifyActivity
-        activity.exitSdk();
+    companion object {
+        private var reactContext: ReactApplicationContext? = null
+
+        fun initialize(context: ReactApplicationContext) {
+            reactContext = context
+        }
+
+        fun sendEvent(eventName: String, status: String) {
+            val writableMap = Arguments.createMap()
+            writableMap.putString("status", status)
+
+            reactContext?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                ?.emit(eventName, writableMap)
+        }
     }
 }

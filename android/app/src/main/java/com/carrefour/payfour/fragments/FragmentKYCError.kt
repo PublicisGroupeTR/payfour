@@ -46,6 +46,6 @@ class FragmentKYCError : Fragment() {
     }
 
     public fun buttonClick() {
-        (activity as? EnQualifyActivity)?.backButton()
+        (activity as? EnQualifyActivity)?.exitSdk()
     }
 }

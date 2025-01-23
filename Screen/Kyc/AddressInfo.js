@@ -9,13 +9,15 @@ const AddressInfo = ({ route, navigation }) => {
   const user = route.params?.user
   const data = route.params?.data
   const selectedaAreements = route.params?.selectedaAreements
+  const tempToken = route.params?.tempToken
 
   const next = async () => {
     navigation.navigate('Kyc', {
       screen: 'IdentityDetailForm', params: {
         user: user,
         selectedaAreements: selectedaAreements,
-        data: data
+        data: data,
+        tempToken:tempToken
       }
     })
   }
