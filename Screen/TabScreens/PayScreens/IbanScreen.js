@@ -32,6 +32,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Dropdown} from 'react-native-element-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { apiGet } from '../../utils/api.js';
 
 const IbanScreen = ({navigation}) => { 
 
@@ -50,25 +51,19 @@ const IbanScreen = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
-          console.log(response.data);
-          console.log(response.data.data);
-          setIban(response.data.data.defaultBankAccountNumber);         
-          
-          setLoading(false);
-          //}
-        })
-        .catch(error => {
-          setLoading(false);
-          console.error("Error sending data: ", error);
-          let msg="";
-          (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-        });
+        apiGet('account/getuser', onGetUser);
+        
 
       });
     });
     });
-  
+    const onGetUser = (response)=>{
+      console.log(response.data);
+      console.log(response.data.data);
+      setIban(response.data.data.defaultBankAccountNumber);         
+      
+      setLoading(false);
+    }
 
   return(
     <SafeAreaView style={{flex: 1}}>      
@@ -192,11 +187,12 @@ style={{}}
                           position:'absolute',
                           backgroundColor:'#004F97',
                           borderRadius:8,
-                          width:65,
+                          width:75,
                           alignItems:'center',
                           justifyContent:'center',
                           padding:4,
                           top:-24,
+                          right:0,
                           display: showTooltip1 ? 'flex':'none',
                         }}>
                           <Text style={{color:'#fff', fontSize:11}}>Kopyalandı</Text>
@@ -252,11 +248,12 @@ style={{}}
                           position:'absolute',
                           backgroundColor:'#004F97',
                           borderRadius:8,
-                          width:65,
+                          width:75,
                           alignItems:'center',
                           justifyContent:'center',
                           padding:4,
                           top:-24,
+                          right:0,
                           display: showTooltip2 ? 'flex':'none',
                         }}>
                           <Text style={{color:'#fff', fontSize:11}}>Kopyalandı</Text>
@@ -312,11 +309,12 @@ style={{}}
                           position:'absolute',
                           backgroundColor:'#004F97',
                           borderRadius:8,
-                          width:65,
+                          width:75,
                           alignItems:'center',
                           justifyContent:'center',
                           padding:4,
                           top:-24,
+                          right:0,
                           display: showTooltip3 ? 'flex':'none',
                         }}>
                           <Text style={{color:'#fff', fontSize:11}}>Kopyalandı</Text>

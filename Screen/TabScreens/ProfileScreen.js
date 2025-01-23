@@ -30,6 +30,7 @@ import ProfileAccessSettings from './ProfileScreens/ProfileAccessSettings.js';
 import ProfileCampaigns from './ProfileScreens/ProfileCampaigns.js';
 import ProfileChangePassword from './ProfileScreens/ProfileChangePassword.js';
 import ProfilePlatinum from './ProfileScreens/ProfilePlatinum.js';
+import ProfilePlatinumMember from './ProfileScreens/ProfilePlatinumMember.js';
 import ProfilePlatinumSuccess from './ProfileScreens/ProfilePlatinumSuccess.js';
 import ProfileFAQ from './ProfileScreens/ProfileFAQ.js';
 import ProfileSupport from './ProfileScreens/ProfileSupport.js';
@@ -42,6 +43,7 @@ import TabHeader from '../Components/TabHeader';
 import axios from 'react-native-axios';
 import LinearGradient from 'react-native-linear-gradient';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { apiGet, apiPost } from '../utils/api.js';
 
 const Stack = createStackNavigator();
 
@@ -56,8 +58,10 @@ const Profile = ({navigation}) => {
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [eraseModalVisible, setEraseModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
-
+  const [exitModalVisible, setExitModalVisible] = useState(false);
+  
   const getProfile = ()=> {
     navigation.navigate('ProfileInfo');    
   };
@@ -85,6 +89,10 @@ const Profile = ({navigation}) => {
   const getPlatinum = ()=> {
     navigation.navigate('ProfilePlatinum');    
   };
+  const getPlatinumMember = ()=> {
+    //navigation.navigate('ProfilePlatinum');    
+    navigation.navigate('ProfilePlatinumMember');    
+  };
   const getPlatinumSuccess = ()=> {
     navigation.navigate('ProfilePlatinumSuccess');    
   };
@@ -100,37 +108,28 @@ const Profile = ({navigation}) => {
   const handleExit = () => {
     console.log('handleExit');
 
-    setModalVisible(true);
+    setExitModalVisible(true);
   };
   const logout = () => {
     console.log(navigation.getParent());
-    setModalVisible(false);
-    AsyncStorage.removeItem('uniqueMPANumber').then(()=>{
-      AsyncStorage.removeItem('phone').then(()=>{
-          AsyncStorage.removeItem('deviceId').then(()=>{
-            AsyncStorage.removeItem('biometricsKey').then(()=>{
-          //passwordInputRef.current.clear();
-          setLoading(false);
-          navigation.navigate('LoginScreen');
-          //const rnBiometrics = new ReactNativeBiometrics();
-          /*rnBiometrics.deleteKeys()
-          .then((resultObject) => {
-            const { keysDeleted } = resultObject
-
-            if (keysDeleted) {
-              console.log('Successful deletion')
-            } else {
-              console.log('Unsuccessful deletion because there were no keys to delete')
-            }
-            
-          })*/
-          
-        })
-      })
-      })
-    })
+    setExitModalVisible(false);
+    AsyncStorage.getItem('token').then(value =>{
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+      console.log("getuser");
+      apiPost('auth/logout', {}, onLogout);
+           
+      });     
+        
   };
-
+  const onLogout = (response) => {
+    setLoading(false);
+    navigation.navigate('LoginScreen');
+  }
+const deleteAccount = () => {
+  setEraseModalVisible(true);
+}
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       // do something
@@ -141,35 +140,36 @@ const Profile = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
-          console.log(response.data);
-          console.log(response.data.data);
-          console.log(response.data.data.tckn);
-          setUserData(response.data.data);
-          let u = response.data.data;
-          if(u.firstName != null && u.firstName != "" && u.lastName != null && u.lastName != ""){
-            let ch = u.firstName.charAt(0)+u.lastName.charAt(0);
-            console.log("initials");
-            console.log(ch);
-            setInitials(ch);
-          }
-          if(response.data.data.segment == 2) setIsPremium(true);
-          //setIban(response.data.data.defaultBankAccountNumber);
-          
-          setLoading(false);      
-          
-        })
-        .catch(error => {
-          setLoading(false);
-          console.error("Error sending data: ", error);
-          let msg="";
-          (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-        });
+        apiGet('account/getuser', onGetUser);
+        
 
       });
     });
     return unsubscribe;
   }, [navigation]);
+  const onGetUser = (response)=>{
+    console.log(response.data);
+    console.log(response.data.data);
+    console.log(response.data.data.tckn);
+    //setUserData(response.data.data);
+    let u = response.data.data;
+    if(u.firstName != null && u.firstName != "" && u.lastName != null && u.lastName != ""){
+      let ch = u.firstName.charAt(0)+u.lastName.charAt(0);
+      console.log("initials");
+      console.log(ch);
+      setInitials(ch);
+    }
+    let ud = response.data.data;
+    if(ud.firstName == "" || ud.lastName == ""){
+      ud.firstName = "Merhaba";
+      ud.lastName = ""
+    }
+    setUserData(ud);
+    if(response.data.data.segment == 2) setIsPremium(true);
+    //setIban(response.data.data.defaultBankAccountNumber);
+    
+    setLoading(false);
+  }
   const copyCode = ()=>{
     Clipboard.setString(userData.payfourId.toString());
     setSuccessModalVisible(true);
@@ -209,21 +209,224 @@ const Profile = ({navigation}) => {
         
         <View>
         <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
-        Payfour ID'niz başarıyla kopyalandı.
+        Payfour numaranız başarıyla kopyalandı.
         </Text>        
         </View>
         <TouchableOpacity
-          style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+          style={{                    
+            backgroundColor:'#004F97',
+            alignItems:'center',
+            justifyContent:'center',
+            borderRadius:8,
+            width:'100%',
+            height:52, 
+          }}              
           activeOpacity={0.5}
           onPress={()=>{
             console.log("close success");
             setSuccessModalVisible(false);
-            navigation.navigate('ProfileHome');
             }}>
-          <Text style={regstyles.buttonTextStyle}>Kapat</Text>
+          <Text style={{color:'#fff', fontSize:14}}>Kapat</Text>
         </TouchableOpacity>
       </View>
       </View>
+      </Modal>
+      <Modal
+            animationType="slide"
+            transparent={true}
+            visible={eraseModalVisible}
+            onRequestClose={() => {
+              setEraseModalVisible(!eraseModalVisible);
+            }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 16,
+                  paddingBottom: 16,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width: '100%',
+                }}>
+                  <View style={{
+                    flexDirection:'row',
+                    justifyContent:'flex-end',
+                  }}>
+                    <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        setEraseModalVisible(false);
+                        }}>                  
+                        <Image 
+                        source={require('../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </TouchableOpacity>
+                </View>
+                  <View style={{
+                    paddingTop:24,
+                    paddingBottom:24,
+                    alignItems:'center',
+                    justifyContent:'center',
+                  }}>
+                    <Image 
+                        source={require('../../assets/img/export/information_large.png')}
+                        style={{
+                          width: 80,
+                          height: 80,
+                          resizeMode: 'contain',
+                          marginBottom:16,
+                        }}
+                        />
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          lineHeight:20,
+                          color:'#0B1929',
+                          marginBottom:8,
+                        }}>
+                          Payfour hesabınızı silme talebiniz alınmıştır.
+                        </Text>
+                        <Text style={{
+                          fontSize:14,
+                          lineHeight:20,
+                          color:'#909EAA',
+                          paddingLeft:24,
+                          paddingRight:24,
+                          textAlign:'center',
+                        }}>
+                          Çağrı merkezimiz en kısa sürede sizinle iletişime geçecektir.
+                      </Text>
+                  </View>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                    },
+                  ]}
+                  onPress={() => setEraseModalVisible(false)}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               
+              </View>
+            </View>
+      </Modal>
+      <Modal
+            animationType="slide"
+            transparent={true}
+            visible={exitModalVisible}
+            onRequestClose={() => {
+              setExitModalVisible(!exitModalVisible);
+            }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 79, 151, 0.6)',
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 32,
+                  paddingBottom: 16,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width: '100%',
+                }}>
+                  
+                  <View style={{
+                      marginBottom:24,
+                      }}>
+                        <Text style={{
+                          fontSize:16,
+                          fontWeight:'700',
+                          color:'#004F97',
+                          marginBottom:16,
+                          textAlign:'center',
+                        }}>
+                          Payfour'dan çıkmak istediğinize emin misiniz?
+                        </Text>
+                                      
+                  </View>
+                  
+                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+
+                <TouchableOpacity
+                    style={[
+                      styles.buttonStyle,
+                      {
+                        width: '48%',
+                        height: 52,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 2,
+                        borderColor: '#004F97',
+                        backgroundColor: '#fff',
+                        padding:0,
+                      },
+                    ]}
+                    onPress={() => setExitModalVisible(false)}>
+                    <Text
+                      style={{fontSize: 14, color: '#004F97'}}>
+                      Vazgeç
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.buttonStyle,
+                      {
+                        width: '48%',
+                        height: 52,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 2,
+                        borderColor: '#004F97',
+                        backgroundColor: '#004F97',
+                        padding:0,
+                      },
+                    ]}
+                    onPress={() => logout()}>
+                    <Text
+                      style={{fontSize: 14, color: '#ffffff'}}>
+                      Çıkış Yap
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
       </Modal>
       <Loader loading={loading} />
       {/* <TabHeader routetarget="" name="Profilim" count="0" /> */}
@@ -261,11 +464,11 @@ const Profile = ({navigation}) => {
                   />}
               </View>
               <View style={{marginBottom:16}}>
-                <Text style={{color:'#0B1929', fontSize:16, fontWeight:'700', marginBottom:16}}>{userData.firstName} {userData.lastName}</Text>
+                <Text style={{paddingTop:3, color:'#0B1929', fontSize:16, fontWeight:'700', marginBottom:16}}>{userData.firstName} {userData.lastName}</Text>
                 <TouchableOpacity 
                 style={{flexDirection:'row'}}
                 onPress={()=>{copyCode();}}>
-                  <Text style={{color:'#909EAA', fontSize:14}}>Payfour ID: </Text>
+                  <Text style={{color:'#909EAA', fontSize:14}}>Payfour No: </Text>
                   <Text style={{color:'#004F97', fontSize:14, fontWeight:'700'}}>{userData.payfourId}</Text>
                   <Image
                     source={require('../../assets/img/export/copytoclipboard.png')}
@@ -290,10 +493,10 @@ const Profile = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={[profileStyles.profileHolder, {paddingTop:16, paddingBottom:16}]}>
+          {/* <View style={[profileStyles.profileHolder, {paddingTop:16, paddingBottom:16}]}>
             <View style={{}}>
               <View style={{flexDirection:'row',marginBottom:8,}}>
-                <Text style={{color:'#0B1929', fontSize:12, fontWeight:'700', marginRight:8}}>Profil Statüs</Text>
+                <Text style={{color:'#0B1929', fontSize:12, fontWeight:'700', marginRight:8}}>Profil</Text>
                 <Image
                     source={require('../../assets/img/export/information.png')}
                     style={{
@@ -311,24 +514,55 @@ const Profile = ({navigation}) => {
             <View style={{backgroundColor:'#E4E4E8', borderRadius:8, height:8, width:'100%', marginBottom:8,}}>
               <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#067FC4', '#431836']} style={{width: isPremium? '100%':'50%', height:8, borderRadius:8}}></LinearGradient>
             </View>
-            <TouchableOpacity style={{}}
-            onPress={()=> getPlatinum()}>
-              <View style={{width: Dimensions.get('window').width*0.865,
-                        height: Dimensions.get('window').width*0.128,}}>
-              <Image
-                      source={require('../../assets/img/export/item.png')}
-                      style={{
-                        width: Dimensions.get('window').width*0.865,
-                        height: Dimensions.get('window').width*0.128,
-                      }}
-                    />
-              </View>
-            </TouchableOpacity>
+            
+          </View> */}
+          <View style={{width:'100%', paddingBottom:16}}>
+            <TouchableOpacity style={{display:isPremium?'none':'flex', borderRadius:6, overflow:'hidden'}}
+              onPress={()=> getPlatinum()}>
+                <View style={{
+                  //width: Dimensions.get('window').width*0.860,
+                  width:'100%',
+                          height: Dimensions.get('window').width*0.140,}}>
+                <Image
+                        source={require('../../assets/img/export/item.png')}
+                        style={{
+                          //width: Dimensions.get('window').width*0.860,
+                          width:'100%',
+                          height: Dimensions.get('window').width*0.136,
+                        }}
+                      />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity style={{display:isPremium?'flex':'none', borderRadius:6, overflow:'hidden'}}
+                onPress={() => 
+              // navigation.navigate('campaign', { 
+              //   screen: 'CampaignList',
+              //   params: {
+              //     filters:{isAw:true, isSp:false}
+              //   }
+              // }
+              getPlatinumMember()}>
+                <View style={{
+                  //width: Dimensions.get('window').width*0.860,
+                  width:'100%',
+                          height: Dimensions.get('window').width*0.140,}}>
+                <Image
+                        source={require('../../assets/img/export/premium_discover.png')}
+                        style={{
+                          //width: Dimensions.get('window').width*0.860,
+                          width:'100%',
+                          height: Dimensions.get('window').width*0.136,
+                        }}
+                      />
+                </View>
+              </TouchableOpacity>
           </View>
-          
-
           <View style={profileStyles.profileHolder}>
-            <TouchableOpacity style={[profileStyles.profileBtn, {borderBottomWidth:0}]}>
+            <TouchableOpacity style={[profileStyles.profileBtn, {borderBottomWidth:0}]}
+            onPress={()=>{
+              console.log("map");
+              navigation.navigate('Map');
+              }}>
               <View style={profileStyles.profileLeft}>
                 <View style={profileStyles.profileIconHolder}>
                   <Image
@@ -415,7 +649,7 @@ const Profile = ({navigation}) => {
                     style={profileStyles.profileIcon}
                   />
                 </View>
-                <Text style={profileStyles.profileText}>Kupon Kodu / Davet Kodu</Text>
+                <Text style={profileStyles.profileText}>Kampanya Kodu</Text>
               </View>
               <View>
               <Image
@@ -494,7 +728,7 @@ const Profile = ({navigation}) => {
                     style={profileStyles.profileIcon}
                   />
                 </View>
-                <Text style={profileStyles.profileText}>Şifremi Değiştir</Text>
+                <Text style={profileStyles.profileText}>Şifre Değiştir</Text>
               </View>
               <View>
               <Image
@@ -562,7 +796,9 @@ const Profile = ({navigation}) => {
           
           <View style={profileStyles.profileHolder}>
             <TouchableOpacity style={[profileStyles.profileBtn, {borderBottomWidth:0}]}
-            onPress={()=> logout()}>
+            //onPress={()=> logout()}
+            onPress={()=> handleExit()}
+            >
               <View style={profileStyles.profileLeft}>
                 <View style={profileStyles.profileIconHolder}>
                   <Image
@@ -579,6 +815,24 @@ const Profile = ({navigation}) => {
                   />
               </View>
             </TouchableOpacity>
+            {/* <TouchableOpacity style={[profileStyles.profileBtn, {borderBottomWidth:0}]}
+            onPress={()=> deleteAccount()}>
+              <View style={profileStyles.profileLeft}>
+                <View style={profileStyles.profileIconHolder}>
+                  <Image
+                    source={require('../../assets/img/export/close.png')}
+                    style={profileStyles.profileIcon}
+                  />
+                </View>
+                <Text style={profileStyles.profileText}>Hesabımı Sil</Text>
+              </View>
+              <View>
+              <Image
+                    source={require('../../assets/img/export/right_arrow_blue.png')}
+                    style={profileStyles.profileArrow}
+                  />
+              </View>
+            </TouchableOpacity> */}
           </View>
 
         </View>
@@ -640,11 +894,16 @@ const EditProfile = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
-          setUserData(response.data.data);
+          let ud = response.data.data;
+          //if(ud.firstName == "" || ud.lastName == ""){
+            ud.firstName = "Merhaba";
+            ud.lastName == ""
+          //}
+          setUserData(ud);
           //setIban(response.data.data.defaultBankAccountNumber);
           
           setLoading(false);      
@@ -1783,6 +2042,11 @@ const ProfileScreen = () => {
       <Stack.Screen
         name="ProfilePlatinum"
         component={ProfilePlatinum}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ProfilePlatinumMember"
+        component={ProfilePlatinumMember}
         options={{headerShown: false}}
       />
       <Stack.Screen

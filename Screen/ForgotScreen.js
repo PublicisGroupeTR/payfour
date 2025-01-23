@@ -14,12 +14,8 @@ import {
   Keyboard,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Linking,
   Modal,
-  Pressable,
   ImageBackground,
-  Alert,
-  Dimensions
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,31 +23,30 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loader from './Components/Loader';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-import Eye from '../assets/img/svg/eye.svg';
-import Toplogo from '../assets/img/svg/toplogo.svg';
-
-import axios from 'react-native-axios';
+import { useError } from './Contexts/ErrorContext';
+import { basicPost} from './utils/api.js';
 
 const ForgotScreen = ({navigation}) => {
+  const { showError } = useError();
   const [userEmail, setUserEmail] = useState('');
-  const [userEmailError, setUserEmailError] = useState(false);
   const [userPassword, setUserPassword] = useState('');
-  const [userPasswordAgain, setUserPasswordagain] = useState('');
-  const [UserRefcode, setUserUserRefcode] = useState('');
+  const [userPasswordAgain, setUserPasswordAgain] = useState('');
   const [userPasswordError, setUserPasswordError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
   const [secureText, setSecureText] = useState(true);
+  const [secureText2, setSecureText2] = useState(true);
+  
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [userAgreement, setUserAgreement] = useState(false);
-  const [userKVKKAgreement, setUserKVKKAgreement] = useState(false);
-  const [userPaymentAgreement, setUserPaymentAgreement] = useState(false);
   const passwordInputRef = createRef();
 
   const handleSubmitPress = () => {
     setErrortext('');
-    /*if (!userPasswordAgain || !userPasswordAgain) {
+    console.log(userPassword);
+    console.log(userPasswordAgain);
+    console.log(userPassword == userPasswordAgain);
+    if (!userPassword || !userPasswordAgain) {
       if (!userPasswordAgain) {
         //alert('Please fill Email');
         setUserPasswordError(true);
@@ -61,8 +56,11 @@ const ForgotScreen = ({navigation}) => {
         setUserPasswordError(true);
       }
       return;
+    }else if(userPassword != userPasswordAgain){
+      setUserPasswordError(true);
+      return;
     }
-    setLoading(true);*/
+    /*setLoading(true);*/
 
     AsyncStorage.getAllKeys((err, keys) => {
       AsyncStorage.multiGet(keys, (err, stores) => {
@@ -113,23 +111,16 @@ setLoading(true);
 
     console.log("forgot data");
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/resetpassword', dataToSend)
-      .then(response => {
-        console.log(response.data);
-        console.log(response.data.data);
-        setLoading(false);
-        //AsyncStorage.setItem('accessToken', response.data.data.accessToken).then(() =>{
-          navigation.navigate("LoginWithPasswordScreen");
-        //})
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.log(error.response);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+
+    basicPost('auth/resetpassword', dataToSend, onResetPassword);
+    
+  }
+  const onResetPassword = (response) => {
+    console.log(response.data);
+    console.log(response.data.data);
+    setLoading(false);
+    navigation.navigate("LoginWithPasswordScreen");
+
   }
   const openLink = async link => {
     
@@ -303,14 +294,20 @@ setLoading(true);
                       zIndex: 10,
                     }}
                     onPress={() => setSecureText(!secureText)}>
-                    <Image
+                     {secureText? <Image 
+                      source={require('../assets/img/export/eye_off.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image> : 
+                      <Image 
                       source={require('../assets/img/export/eye.png')}
                       style={{
-                        width: 24,
-                        height: 24,
-                        resizeMode: 'contain',
-                      }}
-                    />
+                        width:24,
+                        height:24
+                      }}>
+                      </Image>}
                   </TouchableOpacity>
                   <TextInput
                     style={{                      
@@ -362,16 +359,21 @@ setLoading(true);
                       right: 20,
                       zIndex: 10,
                     }}
-                    onPress={() => setSecureText(!secureText)}>
-                    {/* <Eye width={22} height={12} /> */}
-                    <Image
+                    onPress={() => setSecureText2(!secureText2)}>
+                     {secureText2? <Image 
+                      source={require('../assets/img/export/eye_off.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image> : 
+                      <Image 
                       source={require('../assets/img/export/eye.png')}
                       style={{
-                        width: 24,
-                        height: 24,
-                        resizeMode: 'contain',
-                      }}
-                    />
+                        width:24,
+                        height:24
+                      }}>
+                      </Image>}
                   </TouchableOpacity>
                   <TextInput
                     style={{                      
@@ -381,14 +383,14 @@ setLoading(true);
                       color: '#015096',
                     }}
                     onFocus={() => setUserPasswordError(false)}
-                    onChangeText={UserPasswordAgain => setUserPassword(UserPasswordAgain)}
+                    onChangeText={UserPasswordAgain => setUserPasswordAgain(UserPasswordAgain)}
                     placeholder="" //12345
                     placeholderTextColor="#7E797F"
                     keyboardType="numeric"
                     ref={passwordInputRef}
                     onSubmitEditing={Keyboard.dismiss}
                     blurOnSubmit={false}
-                    secureTextEntry={secureText}
+                    secureTextEntry={secureText2}
                     underlineColorAndroid="#f000"
                     returnKeyType="next"
                   />
@@ -460,19 +462,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#1D1D25',
     borderWidth: 0,
     color: '#FFFFFF',
-    height: 65,
+    height: 52,
     alignItems: 'center',
     borderRadius: 10,
-    marginLeft: 0,
-    marginRight: 0,
     marginBottom: 25,
+    width:'100%',
   },
+  
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 20,
-    fontFamily: 'Helvetica-Bold',
-    fontWeight: 'bold',
-    fontSize: 16,
+    paddingVertical: 15,
+    fontWeight: '500',
+    fontSize: 14,
   },
   inputTitleStyle: {
     color: '#7E797F',

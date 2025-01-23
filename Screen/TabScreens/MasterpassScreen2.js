@@ -4,23 +4,24 @@
 
 // Import React and Component
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, SafeAreaView, Pressable, ScrollView, KeyboardAvoidingView, Alert, Image, Modal, FlatList, StyleSheet, Dimensions, TextInput, Keyboard, TouchableOpacity} from 'react-native';
+import {View, Text, SafeAreaView, Pressable, ScrollView, KeyboardAvoidingView, Alert, Image, Modal, FlatList, StyleSheet, Dimensions, TextInput, Keyboard, TouchableOpacity, Linking} from 'react-native';
 import {styles} from '../Components/Styles.js';
 import TabHeader from '../Components/TabHeader.js';
 import Loader from '../Components/Loader';
 import SubtabHeader from '../Components/SubtabHeader';
 import { registerStyles } from '../Components/RegisterStyles';
-
+import { useError } from '../Contexts/ErrorContext';
 //import {TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'react-native-axios';
-import {MasterPassSDK} from '@macellan/masterpass-sdk';
+//import {MasterPassSDK} from '@macellan/masterpass-sdk';
 import {RSAKey} from 'react-native-rsa'
 import { sha256, sha256Bytes } from 'react-native-sha256';
 import { WebView } from 'react-native-webview';
 import MaskInput, { createNumberMask } from 'react-native-mask-input';
 //https://test-client.bubbleads.co/Scripts/masterpass-javascript-sdk-web.min.js
 import {createStackNavigator} from '@react-navigation/stack';
+import { Modalize } from 'react-native-modalize';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +43,18 @@ const ListCards = ({navigation, route }) => {
   const [cardListType, setCardListType] = React.useState('carrefour');
   const [currentObj, setCurrentObj] = useState({"type":"", "data":{}});
   const [cardDeleteModalVisible, setCardDeleteModalVisible] = useState(false);
+  const [lastCardResetModalVisible, setLastCardResetModalVisible] = useState(false);
+  const [lastCardDeleteModalVisible, setLastCardDeleteModalVisible] = useState(false);
+  const [otpModalVisible, setOtpModalVisible] = useState(false);
+  const [verifyAccountModalVisible, setVerifyAccountModalVisible] = useState(false);
+  const [resetMasterPassModalVisible, setResetMasterPassModalVisible] = useState(false);
+  const [otpToken, setOtpToken] = useState("");
+  const [otp, setOtp] = useState("");
+  const [stopOtpTimer, setStopOtpTimer] = useState(false);
+  const [timerCount, setTimerCount] = useState(180);
+  const [timerText, setTimerText] = useState('03:00');
+  const [resetTimer, setResetTimer] = useState(false);
+  
   useEffect(() => {
     console.log(">>>>>>>> MasterPassScreen2");
     console.log(route);
@@ -65,7 +78,40 @@ const ListCards = ({navigation, route }) => {
    
     return unsubscribe;
   }, [navigation]);
-  
+  const resetOtpTimer = ()=>{
+    setResetTimer(false);
+    setTimerCount(180);
+    startOtpTimer();
+    console.log("resetotp");
+    
+  }
+  const startOtpTimer = ()=>{
+    if(!stopOtpTimer){
+      let interval = setInterval(() => {
+        setTimerCount(lastTimerCount => {
+            //console.log(lastTimerCount);
+            let tt;
+            let m = Math.floor(lastTimerCount / 60);
+            let mt = "0"+m;
+            let r = lastTimerCount - (m*60);
+            let s = r < 10 ? "0"+r : r;
+            tt = mt+":"+s;
+            //console.log(tt);
+            setTimerText(tt);
+            if (lastTimerCount == 0) {
+                //your redirection to Quit screen
+                clearInterval(interval);
+                setTimerText("00:00");
+                setResetTimer(true);
+            } else {
+                return lastTimerCount - 1
+            }
+        })
+      }, 1000) //each count lasts for a second
+      //cleanup the interval on complete
+      return () => clearInterval(interval);
+    }
+  } 
   const onMpEvent = async (data) => {
     console.log("mpevent");
     console.log(data);
@@ -102,7 +148,7 @@ const checkMasterpassToken = ()=>{
             headers: { Authorization: `Bearer ${obj.token}` }
           };
           
-          axios.get('https://payfourapp.test.kodegon.com/api/payments/generatemasterpasstoken', config)
+          axios.get('https://api-app.payfour.com/api/payments/generatemasterpasstoken', config)
           .then(response => {
             console.log(response);
             console.log(response.data);
@@ -118,6 +164,7 @@ const checkMasterpassToken = ()=>{
               user.token = response.data.data.accessToken;
               setUser(u);
               checkUser();
+              //checkMasterpass();
               /*AsyncStorage.setItem('biometricsKey', publicKey).then(()=>{
                   navigation.navigate('TabNavigationRoutes');
               });*/
@@ -237,9 +284,23 @@ const checkUser = async () => {
             //console.error("Error sending data: ", error);
             console.error("Error sending: ", error.response);
             //console.error("Error sending data: ", error.response.config);
+
             console.error("Error sending data: ", error.response.data);
             console.error("Error sending exception: ", error.response.data.exception);
             console.error("Error sending data: ", error.response.data.exception.code);
+
+            if(error.response.data.statusCode == "404"){
+              if(error.response.data.exception){
+                if(error.response.data.exception.code){
+                  if(error.response.data.exception.code == "USER_NOT_FOUND"){
+                    setResetMasterPassModalVisible(true);
+                  }else if(error.response.data.exception.code == "ACCOUNT_NOT_LINKED_TO_MERCHANT"){
+                    //setResetMasterPassModalVisible(true);
+                    checkMasterpass();                    
+                  }
+                }
+              }
+            }
             //console.log(JSON.parse(error.response));
 
             //if(error.response.data.exception.code == 'ACCOUNT_NOT_FOUND' || error.response.data.statusCode =='404') addCard();
@@ -265,7 +326,7 @@ const getCarrefourCards = () =>{
     const config = {
       headers: { Authorization: `Bearer ${value}` }
     };
-    axios.get('https://payfourapp.test.kodegon.com/api/account/getloyaltycards', config)
+    axios.get('https://api-app.payfour.com/api/account/getloyaltycards', config)
           .then(response => {
             console.log("getLoyaltyCards");
             console.log(response);
@@ -303,7 +364,7 @@ const addCard = ()=>{
       headers: { Authorization: `Bearer ${value}` }
     };
   console.log(mpToken);
-//'https://payfourapp.test.kodegon.com/api/payments/addcard'
+//'https://api-app.payfour.com/api/payments/addcard'
 //webview.current.postMessage("check;check");
 
 let tk = user.token.replace('Bearer ', '');
@@ -333,7 +394,7 @@ let dataToSend ={
   "cvv": "262",
   "accountAliasName": "bonusgold"
 }
-axios.post('https://payfourapp.test.kodegon.com/api/payments/addcard',dataToSend, config)
+axios.post('https://api-app.payfour.com/api/payments/addcard',dataToSend, config)
           .then(response => {
             console.log(response);
             console.log(response.data);
@@ -372,21 +433,22 @@ axios.post('https://payfourapp.test.kodegon.com/api/payments/addcard',dataToSend
 
         /*{"data": 
         {"url": 
-        "https://payfourapp.test.kodegon.com/masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
+        "https://api-app.payfour.com/masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
         "status": 200, 
         "success": true
         }*/
 }
 const checkMasterpass = async () => {
   // check registration
-  console.log(MasterPassSDK);
-  console.log(phone);
-  console.log(mpToken);
-  let tk = mpToken.replace('Bearer ', '');
-  let ph = phone.replace('+', '');
+  //console.log(MasterPassSDK);
+  console.log("checkMasterpass");
+  //console.log(phone);
+  //console.log(mptoken);
+  let tk = user.token.replace('Bearer ', '');
+  let ph = user.phone.replace('+', '');
   console.log(tk);
   console.log(ph);
-  console.log("checkMasterpass");
+  
   /*const listResponse = await MasterPassSDK.listCards({
     msisdn: phone, // Mobile number
     token: mpToken, // Authentication token received from your backend server    
@@ -397,6 +459,7 @@ const checkMasterpass = async () => {
   };
   axios.put('https://mp-test-sdk.masterpassturkiye.com/account/api/Account/LinkToMerchant',{"accountKey":ph, "merchantId": "347102188",}, config)
           .then(response => {
+            console.log("LinkToMerchant response")
             console.log(response);
             console.log(response.data);
             if(response.data.success){
@@ -406,16 +469,41 @@ const checkMasterpass = async () => {
               console.log(response.data.data.accessToken);
               setMptoken(response.data.data.accessToken);
               setLoading(false);
-              checkMasterpass();
+              //checkMasterpass();
               /*AsyncStorage.setItem('biometricsKey', publicKey).then(()=>{
                   navigation.navigate('TabNavigationRoutes');
               });*/
-            }else{
+            }else if(response.data.statusCode == "202"){
               setLoading(false);
-              console.log("masterpass token error")
-              console.log(response);
+              console.log("masterpass otp needed")
+              //console.log(response);
               //Alert.alert(response.data.data.errors.message);
+              if(response.data.result.responseCode == "5001" || response.data.result.responseCode == "5010"){
+                
+                if(response.data.result.responseCode == "5001"){
+                console.log("payment otp");
+                
+                //confirmPayment();
+                //setTimeout(potpMessage, 2000);
+                //setTimeout(function(){potpMessage(response.data.result.token);},3000);
+                console.log("response.data.result");
+                console.log(response.data.result);
+                setOtpToken(response.data.result.token);
+                setOtpModalVisible(true);
+                startOtpTimer();
+                //postPaymentOtp("123456",response.data.result.token);
+                //setTimeout(sendOtp, 2000);
+              }else if(response.data.result.responseCode == "5010"){
+                //Alert.alert("5010 - 3ds onayı gerekli");
+                console.log(returnUrl);
+                console.log(response.data.result.url3d+"&returnUrl="+returnUrl);
+                setUrl3d(response.data.result.url3d+"&returnUrl="+returnUrl);
+                //checkOrderCompletion(currentObj.data.orderId);
+               }
+  
+              }
             }
+            //checkUser();
           })
           .catch(error => {
             setLoading(false);
@@ -426,7 +514,7 @@ const checkMasterpass = async () => {
             let msg="";
             (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
       
-            
+            //checkUser();
             //Alert.alert("Error sending data: ", error);
           });
 };
@@ -519,14 +607,21 @@ const sendPayment = () =>{
               type:'payment',
               data:response.data.result
             });*/
+            console.log("response.data.result.responseCode");
+            console.log(response.data.result.responseCode);
             console.log("currentObj");
             console.log(currentObj);
-            if(response.data.result.responseCode == "5001"){
+            setLoading(false);
+            if(response.data.result.responseCode == "5001" || response.data.result.responseCode == "5010"){
+             if(response.data.result.responseCode == "5001"){
               console.log("payment otp");
-              setLoading(false);
+              
               confirmPayment();
               //setTimeout(otpMessage, 2000);
               //setTimeout(sendOtp, 2000);
+             }else if(response.data.result.responseCode == "5010"){
+              Alert.alert("5010 - 3ds onayı gerekli");
+             }
 
             }else{
               console.log("payment error somewhere");
@@ -601,7 +696,7 @@ const confirmPayment = () =>{
             "statusCode": 202, 
             "version": null}*/
 
-    axios.post('https://payfourapp.test.kodegon.com/api/payments/addbudgetwithcreditcard',dataToSend, config)
+    axios.post('https://api-app.payfour.com/api/payments/addbudgetwithcreditcard',dataToSend, config)
               .then(response => {
                 console.log(response);
                 console.log(response.data);
@@ -660,7 +755,18 @@ const onMessage = (message) => {
     otpMessage();
   }else if(message.nativeEvent.data == "200") {
     setCardDeleteModalVisible(false);
-    checkUser();
+    console.log("onDeleteSuccess");
+    console.log(cardData);
+    console.log(cardData.length);
+    if(cardData.length < 2){
+      setCardData([]);
+      navigation.navigate('Discover');
+    }else{
+      checkUser();
+    }
+  }else if(message.nativeEvent.data == "404") {
+    //Alert.alert("Hata:", "404")
+    setResetMasterPassModalVisible(true);
   }
 }
 const testPayment = () =>{
@@ -687,19 +793,143 @@ const otpMessage = () =>{
   console.log("otpMessage");
   if(webview.current) webview.current.postMessage("otp;123456");
 }
+const postLinkingOtp = (otp, ptoken)=>{
+  console.log("postLinkingOtp");
+  console.log(otp);
+  console.log(ptoken);
+
+  //'https://mp-test-sdk.masterpassturkiye.com/user-authorization/api/Payment/verify'
+  let tk = user.token.replace('Bearer ', '');
+  const config = {
+    headers: { Authorization: `Bearer ${tk}` }
+  };
+  let dataToSend = {
+    "otpCode": "123456",
+    "token": ptoken
+  }
+  console.log("currentObj before send");
+  console.log(currentObj);
+  setCurrentObj({
+    type:'payment',
+    data:dataToSend
+  });
+  setLoading(true);
+  console.log(dataToSend);
+  console.log(">>>>>>>>>>>>>>>");
+  console.log("postLinkingOtp : "+'https://mp-test-sdk.masterpassturkiye.com/user-authorization/api/LinkAccount/verify')
+  /*curl --location 'https://mp-test-sdk.masterpassturkiye.com/user-authorization/api/LinkAccount/verify' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJNZXJjaGFudElkIjoiMzQ3MTAyMTEwIiwiQWNjb3VudEtleSI6IjkwNTQ0NjU2NTQ2MCIsIklzTXNpc2RuVmFsaWRhdGVkIjoiRmFsc2UiLCJBdXRoZW50aWNhdGlvbk1ldGhvZCI6Ik5vdERlZmluZWQiLCJTZWN1cmUzZFR5cGUiOiJOb3REZWZpbmVkIiwiSXNPdHBWYWxpZGF0ZWQiOiJGYWxzZSIsIklzQ3VzdG9tIjoiRmFsc2UiLCJDdXJyZW5jeUNvZGUiOiJOT05FIiwiSGFzaCI6ImlwbDd2YWg5OWdSUlA3d1pxU3RUeG83T2t6akM2eG1wWGJ2dFZqOW1PSnpmZ2JiU3lrMWxzPSIsIlVzZXJJZCI6IllRaVZWai9ZWXRseGx3RWgweDhkSVE9PSIsImV4cCI6MTcxMDkzODk3NSwiaXNzIjoiaHR0cHM6Ly9tcC10ZXN0Lm1hc3RlcnBhc3N0dXJraXllLmNvbS9vYXV0aC9yZWFsbXMvbWVyY2hhbnQtYXBpLXJlYWxtIiwiYXVkIjoiTWVyY2hhbnRBdWRpZW5jZSJ9.I2ClXwYKX4Rhb2yG6b5nxPkq3PlQC7AbP0BUq29fOPB8xjf8behVbqKPzcoM1sQom8u9oC_QvPh_KMxHY7GBDg' \
+--header 'Content-Type: application/json' \
+--data '{
+    "token": "9011c15a693a4de5b9e439d0355842a6",
+    "otpCode": "123456"
+}'*/
+  
+   axios.post('https://mp-test-sdk.masterpassturkiye.com/user-authorization/api/LinkAccount/verify',dataToSend, config)
+           .then(response => {
+             console.log(response);
+             console.log(response.data);
+             console.log("currentObj after result");
+             console.log(currentObj);
+               console.log("payment otp");
+               setLoading(false);
+               console.log("response.data.result");
+               console.log(response.data.result);
+               //confirmPayment(response.data.result.token);
+               setOtpModalVisible(false);
+               setVerifyAccountModalVisible(true);
+              checkUser();
+           })
+           .catch(error => {
+             setLoading(false);
+             //setOtpModalVisible(false);
+
+             console.error("Error sending data: ", error);
+             console.error("Error sending data: ", error.response);
+             console.error("Error sending data: ", error.response.data.errors.message);
+             //console.log(JSON.parse(error.response));
+             let msg="";
+             (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+             showError(msg);
+            
+             //Alert.alert("Error sending data: ", error);
+           });
+}
 const deleteCreditCard = (cardAlias) =>{
   console.log("deleteCreditCard");
+  console.log(cardData);
+    console.log(cardData.length);
+
   let ph = user.phone.replace('+', '');
   setDeleteData({
     cardAlias : cardAlias,
     accountKey: ph,
   });
-  setCardDeleteModalVisible(true);
+  if(cardData.length < 2){
+    //setLastCardDeleteModalVisible(true);
+    setLastCardResetModalVisible(true);
+  }else{
+    setCardDeleteModalVisible(true);
+  }
 }
 const confirmDeleteCard = () =>{
 
   let postData = JSON.stringify(deleteData);
   if(webview.current) webview.current.postMessage("delete;"+postData);
+}
+const confirmUnlinkAccount = () =>{
+  console.log("confirmUnlinkAccount");
+//   curl --location 'https://mp-test-backend.masterpassturkiye.com/account/api/Account/Unlink' \
+// --header 'Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJNZXJjaGFudElkIjoiMzQ3MTAyMTEwIiwiQWNjb3VudEtleSI6IjkwNTQ0NjU2NTQ2MCIsIklzTXNpc2RuVmFsaWRhdGVkIjoiRmFsc2UiLCJBdXRoZW50aWNhdGlvbk1ldGhvZCI6Ik5vdERlZmluZWQiLCJTZWN1cmUzZFR5cGUiOiJOb3REZWZpbmVkIiwiSXNPdHBWYWxpZGF0ZWQiOiJGYWxzZSIsIklzQ3VzdG9tIjoiRmFsc2UiLCJDdXJyZW5jeUNvZGUiOiJOT05FIiwiSGFzaCI6ImlwbDd2YWg5OWdSUlA3d1pxU3RUeG83T2t6akM2eG1wWGJ2dFZqOW1PSnpmZ2JiU3lrMWxzPSIsIlVzZXJJZCI6IllRaVZWai9ZWXRseGx3RWgweDhkSVE9PSIsImV4cCI6MTcxMDkzODk3NSwiaXNzIjoiaHR0cHM6Ly9tcC10ZXN0Lm1hc3RlcnBhc3N0dXJraXllLmNvbS9vYXV0aC9yZWFsbXMvbWVyY2hhbnQtYXBpLXJlYWxtIiwiYXVkIjoiTWVyY2hhbnRBdWRpZW5jZSJ9.I2ClXwYKX4Rhb2yG6b5nxPkq3PlQC7AbP0BUq29fOPB8xjf8behVbqKPzcoM1sQom8u9oC_QvPh_KMxHY7GBDg' \
+// --header 'Content-Type: application/json' \
+// --data '{
+//     "merchantId": "34704277",
+//     "accountKey":  "905388113551"
+// }'
+  
+  let dataToSend = {
+    "merchantId": "347102188",
+    "accountKey": user.phone.replace('+', '')
+  }
+  let tk = user.token.replace('Bearer ', '');
+  const config = {
+    headers: { Authorization: `Bearer ${tk}` }
+  };
+  console.log(dataToSend);
+  AsyncStorage.getItem('token').then(value =>{
+      
+    const config = {
+      headers: { Authorization: `Bearer ${value}` }
+    };
+  //axios.post('https://mp-test-backend.masterpassturkiye.com/account/api/Account/Unlink',dataToSend, config)
+  axios.post('https://api-app.payfour.com/api/payments/unlink',{}, config)
+           .then(response => {
+             console.log(response);
+             console.log(response.data);             
+               setLoading(false);
+               console.log("response.data.result");
+               console.log(response.data.result);
+               //confirmPayment(response.data.result.token);
+               setCardData([]);
+               setCardDeleteModalVisible(false);
+               //setVerifyAccountModalVisible(true);
+               navigation.navigate('Discover');
+           })
+           .catch(error => {
+             setLoading(false);
+             //setOtpModalVisible(false);
+
+             console.error("Error sending data: ", error);
+             console.error("Error sending data: ", error.response);
+             console.error("Error sending data: ", error.response.data.errors.message);
+             //console.log(JSON.parse(error.response));
+             let msg="";
+             (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+             showError(msg);
+            
+             //Alert.alert("Error sending data: ", error);
+           });
+  });
 }
 const Item = ({id, cardAlias, maskedCardNumber, issuer, logo}) => (
   <View 
@@ -937,6 +1167,137 @@ const renderCards = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <Modal
+            animationType="slide"
+            transparent={true}
+            visible={otpModalVisible}
+            onRequestClose={() => {
+              setOtpModalVisible(!otpModalVisible);
+            }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 16,
+                  paddingBottom: 16,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width: '100%',
+                }}>
+                  
+                  <View style={{
+                    paddingTop:24,
+                    paddingBottom:24,
+                    alignItems:'center',
+                    justifyContent:'center',
+                  }}>
+                    <Image 
+                        source={require('../../assets/img/export/masterpass_logo.png')}
+                        style={{
+                          width: 209,
+                          height: 36,
+                          resizeMode: 'contain',
+                          marginBottom:24,
+                        }}
+                        />
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          lineHeight:20,
+                          color:'#0B1929',
+                          marginBottom:8,
+                        }}>
+                          Masterpass'e kayıtlı kartlarınız var
+                        </Text>
+                        <Text style={{
+                          fontSize:14,
+                          lineHeight:20,
+                          color:'#909EAA',
+                          paddingLeft:24,
+                          paddingRight:24,
+                          textAlign:'center',
+                        }}>
+                          Kartlarınızı Payfour’da görüntüleyebilmek için bankanız tarafından gönderilen tek seferlik doğrulama kodunu giriniz.
+                      </Text>
+                  </View>
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
+                    <TextInput
+                      style={{                      
+                        fontSize: 14,
+                        lineHeight:8, 
+                        padding:0,
+                        color: '#909EAA',
+                      }}
+                      onChangeText={Otp => setOtp(Otp)}
+                      placeholder="Doğrulama Kodu" //12345
+                      placeholderTextColor="#909EAA"
+                      keyboardType="numeric"
+                      onSubmitEditing={Keyboard.dismiss}
+                      blurOnSubmit={false}
+                      underlineColorAndroid="#f000"
+                      returnKeyType="next"
+                    />
+                    
+                  </View>
+                  <Text style={{color:'#0B1929',  fontSize:14, lineHeight:24, textAlign:'center',marginBottom:24}}>Kalan Süre : {timerText}</Text>
+                  
+                  <View style={{flexDirection:'row'}}>
+                  <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '50%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#fff',
+                      backgroundColor: '#fff',
+                      padding:0,
+                    },
+                  ]}
+                  //onPress={() => otpMessage()}
+                  onPress={() => postLinkingOtp(otp, otpToken)}>
+                  <Text
+                    style={{fontSize: 14, color: '#004F97'}}>
+                    Tekrar Gönder
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '50%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                    },
+                  ]}
+                  //onPress={() => otpMessage()}
+                  onPress={() => postLinkingOtp(otp, otpToken)}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Doğrula
+                  </Text>
+                </TouchableOpacity>
+               </View>
+              </View>
+            </View>
+      </Modal>
+      <Modal
           animationType="slide"
           transparent={true}
           visible={cardDeleteModalVisible}
@@ -963,7 +1324,165 @@ const renderCards = () => {
         paddingRight:16,
         position:'absolute',
         bottom:0,
-        width:'100%'
+        width:'100%',
+        alignItems:'center',
+      }}>
+        <Image 
+          source={require('../../assets/img/export/masterpass_logo.png')}
+          style={{
+            width: 209,
+            height: 36,
+            resizeMode: 'contain',
+            marginBottom:24,
+          }}
+          />
+        
+        <View>
+        <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
+        {deleteData.cardAlias} kartınızı Masterpass altyapısından silmek istediğinize emin misiniz?
+        </Text>        
+        </View>
+        <View style={{flexDirection:'row'}}>
+          <TouchableOpacity
+          // style={{                    
+          //   backgroundColor:'#004F97',
+          //   alignItems:'center',
+          //   justifyContent:'center',
+          //   borderRadius:8,
+          //   width:'100%',
+          //   height:52, 
+          // marginBottom: 24}}
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              setCardDeleteModalVisible(false);
+              //navigation.navigate('ListCards');
+              console.log("send delete");
+              confirmDeleteCard();
+              }}>
+            <Text style={{color:'#fff', fontSize:14}}>Evet</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              console.log("close success");
+              setCardDeleteModalVisible(false);
+              }}>
+            <Text style={{fontSize:14,color: '#004F97'}}>Hayır</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      </View>
+      </Modal>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={lastCardResetModalVisible}
+          onRequestClose={() => {
+            setLastCardResetModalVisible(!lastCardResetModalVisible);
+          }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+          
+      
+      
+      <View style={{
+        borderTopLeftRadius:24,
+        borderTopRightRadius:24,
+        backgroundColor:'#fff',
+        paddingTop:32,
+        paddingBottom:32,
+        paddingLeft:16,
+        paddingRight:16,
+        position:'absolute',
+        bottom:0,
+        width:'100%',
+        alignItems:'center',
+      }}>
+        <Image 
+          source={require('../../assets/img/export/masterpass_logo.png')}
+          style={{
+            width: 209,
+            height: 36,
+            resizeMode: 'contain',
+            marginBottom:24,
+          }}
+          />
+        
+        <View>
+        <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
+        Son kartınızı sildiğinizde Masterpass'teki tüm bağlantılarınız sıfırlanacaktır. Bunun yerine Payfour ile olan bağlantınızı kaldırmak ister misiniz?
+        </Text>        
+        </View>
+        <View style={{flexDirection:'row'}}>
+          <TouchableOpacity
+          // style={{                    
+          //   backgroundColor:'#004F97',
+          //   alignItems:'center',
+          //   justifyContent:'center',
+          //   borderRadius:8,
+          //   width:'100%',
+          //   height:52, 
+          // marginBottom: 24}}
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              setLastCardResetModalVisible(false);
+              //navigation.navigate('ListCards');
+              console.log("send delete");
+              confirmUnlinkAccount();
+              }}>
+            <Text style={{color:'#fff', fontSize:14}}>Evet</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              console.log("close success");
+              setLastCardResetModalVisible(false);
+              setLastCardDeleteModalVisible(true);
+              }}>
+            <Text style={{fontSize:14,color: '#004F97'}}>Hayır</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      </View>
+      </Modal>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={lastCardDeleteModalVisible}
+          onRequestClose={() => {
+            setLastCardDeleteModalVisible(!lastCardDeleteModalVisible);
+          }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+          
+      
+      
+      <View style={{
+        borderTopLeftRadius:24,
+        borderTopRightRadius:24,
+        backgroundColor:'#fff',
+        paddingTop:32,
+        paddingBottom:32,
+        paddingLeft:16,
+        paddingRight:16,
+        position:'absolute',
+        bottom:0,
+        width:'100%',
+        alignItems:'center',
 
       }}>
         <Image 
@@ -978,36 +1497,187 @@ const renderCards = () => {
         
         <View>
         <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
-        Paracard Bonus kartınızı Masterpass altyapısından silmek istediğinize emin misiniz?
+        Son kartınızın silinmesi ile birlikte Masterpass hesabınız da silinecektir. Onaylıyor musunuz?
         </Text>        
         </View>
         <View style={{flexDirection:'row'}}>
           <TouchableOpacity
-            style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
+          // style={{                    
+          //   backgroundColor:'#004F97',
+          //   alignItems:'center',
+          //   justifyContent:'center',
+          //   borderRadius:8,
+          //   width:'100%',
+          //   height:52, 
+          // marginBottom: 24}}
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
             activeOpacity={0.5}
             onPress={()=>{
-              setCardDeleteModalVisible(false);
+              setLastCardDeleteModalVisible(false);
               //navigation.navigate('ListCards');
               console.log("send delete");
               confirmDeleteCard();
               }}>
-            <Text style={regstyles.buttonTextStyle}>Evet</Text>
+            <Text style={{color:'#fff', fontSize:14}}>Evet</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
             activeOpacity={0.5}
             onPress={()=>{
               console.log("close success");
-              setCardDeleteModalVisible(false);
+              setLastCardDeleteModalVisible(false);
               }}>
-            <Text style={[regstyles.buttonTextStyle,{color: '#004F97'}]}>Hayır</Text>
+            <Text style={{fontSize:14,color: '#004F97'}}>Hayır</Text>
           </TouchableOpacity>
         </View>
       </View>
       </View>
       </Modal>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={resetMasterPassModalVisible}
+          onRequestClose={() => {
+            setResetMasterPassModalVisible(!resetMasterPassModalVisible);
+          }}>                     
+            
+          <View
+            style={{
+              flex: 1,                
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              backgroundColor: 'rgba(0, 79, 151, 0.6)',
+            }}>
+            <View
+              style={{
+                backgroundColor:'#fff',
+                borderTopLeftRadius: 24,
+                borderTopRightRadius: 24,
+                paddingTop: 32,
+                paddingBottom: 16,
+                paddingLeft: 16,
+                paddingRight: 16,
+                width: '100%',
+              }}>
+                
+                <View style={{
+                    marginBottom:24,
+                    }}>
+                      <Text style={{
+                        fontSize:16,
+                        fontWeight:'700',
+                        color:'#004F97',
+                        marginBottom:16,
+                        textAlign:'center',
+                      }}>
+                        Masterpass hesabınızı <Text style={{textDecorationLine:'underline'}}>linkten</Text> sıfırlayabilirsiniz.
+                      </Text>
+                                    
+                </View>
+                
+              <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                    },
+                  ]}
+                  onPress={() => setResetMasterPassModalVisible(false)}>
+                  <Text
+                    style={{fontSize: 14, color: '#fff'}}>
+                    Tamam
+                  </Text>
+                </TouchableOpacity>                  
+              
+            </View>
+          </View>
+    </Modal>
+    <Modal
+          animationType="slide"
+          transparent={true}
+          visible={verifyAccountModalVisible}
+          onRequestClose={() => {
+            setVerifyAccountModalVisible(!verifyAccountModalVisible);
+          }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+          
+      
+      
+      <View style={{
+        borderTopLeftRadius:24,
+        borderTopRightRadius:24,
+        backgroundColor:'#fff',
+        paddingTop:32,
+        paddingBottom:32,
+        paddingLeft:16,
+        paddingRight:16,
+        position:'absolute',
+        bottom:0,
+        width:'100%',
+        alignItems:'center',
+
+      }}>
+        <Image 
+          source={require('../../assets/img/export/masterpass_logo.png')}
+          style={{
+            width: 209,
+            height: 36,
+            resizeMode: 'contain',
+            marginBottom:24,
+          }}
+          />
+        <View style={{alignItems:'center', marginBottom:16}}>
+          <Image
+              source={require('../../assets/img/export/success_checkmark.png')}
+              style={{
+                width: 80,
+                height: 80,
+                resizeMode:'contain',
+              }}
+          />
+        </View>
+        <View>
+        <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:16}}>
+          Hesabınız başarılı bir şekilde doğrulandı
+        </Text>
+        <Text style={{fontSize:14, color:'#909EAA', textAlign:'center', marginBottom:48}}>
+        Kayıtlı kartlarınızla güvenli bir şekilde ödeme yapabilirsiniz.
+        </Text>        
+        </View>
+        <TouchableOpacity
+          style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, width:'100%', marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+          activeOpacity={0.5}
+          onPress={()=>{
+            console.log("close success");
+            setVerifyAccountModalVisible(false);
+            navigation.navigate('ListCards');
+            }}>
+          <Text style={regstyles.buttonTextStyle}>Kapat</Text>
+        </TouchableOpacity>
+      </View>
+      </View>
+      </Modal>
       <Loader loading={loading} />
-      <SubtabHeader routetarget="Discover" name="Kartlarım" count="0" />
+      {
+        route.params && route.params.prev ? 
+        <SubtabHeader routetarget="Profile" name="Kartlarım" count="0" />
+        :
+        <SubtabHeader routetarget="Discover" name="Kartlarım" count="0" />      
+      }
       <View style={{padding:16, backgroundColor: '#EAEAEA'}}>
         <View style={{borderRadius:16}}>
             
@@ -1041,7 +1711,7 @@ const renderCards = () => {
                   color: cardType==='carrefour'? '#004F97':'#909EAA',
                 }}
                 >
-                  CarrefourSa Kartlarım
+                  CarrefourSA Kartlarım
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity 
@@ -1117,9 +1787,9 @@ const renderCards = () => {
         {renderCarrefourCards()} 
         </View>
         <View style={{display:cardListType == 'bank'? 'flex' : 'none'}}>
-          <Text style={{color:'#004F97', fontSize:14, marginBottom:8, fontWeight:'500'}}>
+          {/* <Text style={{color:'#004F97', fontSize:14, marginBottom:8, fontWeight:'500'}}>
             Kredi Kartlarım
-          </Text>
+          </Text> */}
           {renderCards()} 
           <View style={{
             alignItems:'center'
@@ -1135,7 +1805,8 @@ const renderCards = () => {
             />
           <Text style={{color:'#0B1929', fontSize:12, textAlign:'center'}}>
           Kart bilgileriniz Mastercard’ın dijital ödeme altyapısı olan <Text style={{color:'#004F97'}}> </Text>
-          <Text style={{color:'#004F97', fontWeight:500, textDecorationLine:'underline'}}>Masterpass</Text>’te güvenle saklanmaktadır.
+          <Text style={{color:'#004F97', fontWeight:500, textDecorationLine:'underline'}}
+          onPress={()=>Linking.openURL('https://www.mastercard.com.tr/tr-tr.html')}>Masterpass</Text>’te güvenle saklanmaktadır.
           </Text>
           <View style={{paddingTop:40, paddingBottom:40,width:'100%'}}>
           <TouchableOpacity style={{width:'100%', height:64, padding:16, borderRadius:12, backgroundColor:'#fff',
@@ -1145,7 +1816,7 @@ const renderCards = () => {
               navigation.navigate('AddCards')
             }}>
               <Text style={{fontSize:14, color:'#004F97'}}>
-              Yeni Kart Ekle
+              Banka / Kredi Kartı Ekle
               </Text>
               <Image 
             source={require('../../assets/img/export/add_iban.png')}
@@ -1171,13 +1842,19 @@ const AddCards = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [cardSuccessModalVisible, setCardSuccessModalVisible] = useState(false);
+  const [cardAlreadyAddedModalVisible, setCardAlreadyAddedModalVisible] = useState(false);
+  const [validName, setValidName] = useState(true);
   const [validNumber, setValidNumber] = useState(true);
   const [validCvc, setValidCvc] = useState(true);
+  const [validDate, setValidDate] = useState(true);
+  const [validNick, setValidNick] = useState(true);
+  
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cardDate, setCardDate] = useState('');
   const [cardCVC, setCardCVC] = useState('');
   const [cardNick, setCardNick] = useState('');
+  
   const addwebview = useRef();
   const [phone, setPhone] = useState('');
   const [mpToken, setMptoken] = useState('');
@@ -1192,7 +1869,10 @@ const AddCards = ({navigation}) => {
   const [timerCount, setTimerCount] = useState(180);
   const [timerText, setTimerText] = useState('03:00');
   const [resetTimer, setResetTimer] = useState(false);
+  const [resetMasterPassModalVisible, setResetMasterPassModalVisible] = useState(false);
 
+  const rulesModalizeRef = useRef(null);
+  
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => { 
 
@@ -1223,7 +1903,7 @@ const AddCards = ({navigation}) => {
             headers: { Authorization: `Bearer ${obj.token}` }
           };
           
-          axios.get('https://payfourapp.test.kodegon.com/api/payments/generatemasterpasstoken', config)
+          axios.get('https://api-app.payfour.com/api/payments/generatemasterpasstoken', config)
           .then(response => {
             console.log(response);
             console.log(response.data);
@@ -1311,6 +1991,17 @@ const AddCards = ({navigation}) => {
     }
   }
   const addCard = ()=>{
+    let err = false;
+    if(cardName.length < 5){setValidName(false); err = true;}
+    if(!checkValidCard(cardNumber)) err = true;
+    if(cardDate.length <4){setValidDate(false); err = true;}
+    if(!checkValidCVC(cardCVC)) err = true;
+    if(!mpSave) err = true;
+    if(cardNick.length < 3){setValidNick(false); err = true;}
+
+    if(err) return;
+
+    if(user)
     console.log("addCard");
     AsyncStorage.getItem('token').then(value =>{
         
@@ -1318,7 +2009,7 @@ const AddCards = ({navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
     console.log(mpToken);
-  //'https://payfourapp.test.kodegon.com/api/payments/addcard'
+  //'https://api-app.payfour.com/api/payments/addcard'
   //webview.current.postMessage("check;check");
   
   let tk = user.token.replace('Bearer ', '');
@@ -1350,7 +2041,7 @@ const AddCards = ({navigation}) => {
     "accountAliasName": cardNick
   }
   console.log(dataToSend);
-  axios.post('https://payfourapp.test.kodegon.com/api/payments/addcard',dataToSend, config)
+  axios.post('https://api-app.payfour.com/api/payments/addcard',dataToSend, config)
             .then(response => {
               console.log(response);
               console.log(response.data);
@@ -1389,7 +2080,7 @@ const AddCards = ({navigation}) => {
   
           /*{"data": 
           {"url": 
-          "https://payfourapp.test.kodegon.com/masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
+          "https://api-app.payfour.com/masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
           "status": 200, 
           "success": true
           }*/
@@ -1420,11 +2111,19 @@ const AddCards = ({navigation}) => {
       //otpMessage();
       setModalVisible(true);
       resetOtpTimer();
-    }else if(message.nativeEvent.data == "400") {
+    }else if(message.nativeEvent.data == "200" ) {
       setModalVisible(false);
       resetOtpTimer();
       //navigation.navigate('ListCards');
       setCardSuccessModalVisible(true);
+    }else if (message.nativeEvent.data == "400"){
+      setModalVisible(false);
+      resetOtpTimer();
+      //navigation.navigate('ListCards');
+      setCardAlreadyAddedModalVisible(true);
+    }else if(message.nativeEvent.data == "404") {
+      //Alert.alert("Hata:", "404")
+      setResetMasterPassModalVisible(true);
     }
   }
   
@@ -1487,6 +2186,7 @@ const AddCards = ({navigation}) => {
     //return bResult;
     setValidNumber(bResult);
     console.log(validNumber);
+    return bResult;
   };
 };
 const checkValidCVC = (cvc) =>{
@@ -1494,6 +2194,7 @@ const checkValidCVC = (cvc) =>{
   cvc.length < 3? bResult = false : bResult=true;
   setValidCvc(bResult);
     console.log(validCvc);
+    return bResult;
 }
   const otpMessage = () =>{
     console.log("otpMessage");
@@ -1581,7 +2282,7 @@ const checkValidCVC = (cvc) =>{
                     />
                     
                   </View>
-                  <Text style={{color:'#0B1929',  fontSize:14, lineHeight:24, textAlign:'center',marginBottom:24}}>Kalan Süre : {timerText}</Text>
+                  <Text style={{color:'#0B1929',  fontSize:14, lineHeight:28, textAlign:'center',marginBottom:24}}>Kalan Süre : {timerText}</Text>
                   
                   <View style={{flexDirection:'row'}}>
                   <TouchableOpacity
@@ -1657,7 +2358,8 @@ const checkValidCVC = (cvc) =>{
         paddingRight:16,
         position:'absolute',
         bottom:0,
-        width:'100%'
+        width:'100%',
+        alignItems:'center',
 
       }}>
         <Image 
@@ -1697,15 +2399,302 @@ const checkValidCVC = (cvc) =>{
       </View>
       </View>
       </Modal>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={cardAlreadyAddedModalVisible}
+          onRequestClose={() => {
+            setCardAlreadyAddedModalVisible(!cardAlreadyAddedModalVisible);
+          }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+          
+      
+      
+      <View style={{
+        borderTopLeftRadius:24,
+        borderTopRightRadius:24,
+        backgroundColor:'#fff',
+        paddingTop:32,
+        paddingBottom:32,
+        paddingLeft:16,
+        paddingRight:16,
+        position:'absolute',
+        bottom:0,
+        width:'100%',
+        alignItems:'center',
+
+      }}>
+        <Image 
+          source={require('../../assets/img/export/masterpass_logo.png')}
+          style={{
+            width: 209,
+            height: 36,
+            resizeMode: 'contain',
+            marginBottom:24,
+          }}
+          />
+        <View style={{alignItems:'center', marginBottom:16}}>
+          <Image
+              source={require('../../assets/img/export/success_checkmark.png')}
+              style={{
+                width: 80,
+                height: 80,
+                resizeMode:'contain',
+              }}
+          />
+        </View>
+        <View>
+        <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
+        Kartınız zaten ekli, seçerek devam edebilirsiniz.
+        </Text>        
+        </View>
+        <TouchableOpacity
+          style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+          activeOpacity={0.5}
+          onPress={()=>{
+            console.log("close success");
+            setCardAlreadyAddedModalVisible(false);
+            navigation.navigate('ListCards');
+            }}>
+          <Text style={regstyles.buttonTextStyle}>Kapat</Text>
+        </TouchableOpacity>
+      </View>
+      </View>
+      </Modal>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={resetMasterPassModalVisible}
+          onRequestClose={() => {
+            setResetMasterPassModalVisible(!resetMasterPassModalVisible);
+          }}>                     
+            
+          <View
+            style={{
+              flex: 1,                
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              backgroundColor: 'rgba(0, 79, 151, 0.6)',
+            }}>
+            <View
+              style={{
+                backgroundColor:'#fff',
+                borderTopLeftRadius: 24,
+                borderTopRightRadius: 24,
+                paddingTop: 32,
+                paddingBottom: 16,
+                paddingLeft: 16,
+                paddingRight: 16,
+                width: '100%',
+              }}>
+                
+                <View style={{
+                    marginBottom:24,
+                    }}>
+                      <Text style={{
+                        fontSize:16,
+                        fontWeight:'700',
+                        color:'#004F97',
+                        marginBottom:16,
+                        textAlign:'center',
+                      }}>
+                        Masterpass hesabınızı <Text style={{textDecorationLine:'underline'}}>linkten</Text> sıfırlayabilirsiniz.
+                      </Text>
+                                    
+                </View>
+                
+              <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                    },
+                  ]}
+                  onPress={() => setResetMasterPassModalVisible(false)}>
+                  <Text
+                    style={{fontSize: 14, color: '#fff'}}>
+                    Tamam
+                  </Text>
+                </TouchableOpacity>                  
+              
+            </View>
+          </View>
+    </Modal>
+
+      <Modalize ref={rulesModalizeRef}
+      snapPoint={0}
+      modalStyle={{backgroundColor:(0,0,0,0)}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          Kullanım Koşulları
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        rulesModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      <View style={{marginBottom:24}}>
+                        <Text style={{
+                          fontSize:12,
+                          color:'#909EAA',
+                          marginBottom:8,
+                        }}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
+
+Enim ut tellus elementum sagittis vitae. 
+In massa tempor nec feugiat nisl pretium fusce id velit. 
+Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
+Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
+Fermentum posuere urna nec tincidunt praesent semper feugiat.
+
+Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
+                        </Text>
+                        <Text style={{
+                          fontSize:12,
+                          color:'#909EAA',
+                          marginBottom:8,
+                        }}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
+
+Enim ut tellus elementum sagittis vitae. 
+In massa tempor nec feugiat nisl pretium fusce id velit. 
+Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
+Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
+Fermentum posuere urna nec tincidunt praesent semper feugiat.
+
+Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
+                        </Text>
+                        <Text style={{
+                          fontSize:12,
+                          color:'#909EAA',
+                          marginBottom:8,
+                        }}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet dictum. Vitae sapien pellentesque habitant morbi. Ac odio tempor orci dapibus ultrices. 
+
+Enim ut tellus elementum sagittis vitae. 
+In massa tempor nec feugiat nisl pretium fusce id velit. 
+Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam. 
+Netus et malesuada fames ac turpis egestas sed tempus urna. Turpis massa tincidunt dui ut.
+Fermentum posuere urna nec tincidunt praesent semper feugiat.
+
+Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit adipiscing bibendum est. Tempus imperdiet nulla malesuada pellentesque elit. Fringilla urna porttitor rhoncus dolor purus. Nec feugiat nisl pretium fusce id. Egestas pretium aenean pharetra magna ac. Arcu ac tortor dignissim convallis aenean. Nisi quis eleifend quam adipiscing vitae proin. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Enim eu turpis egestas pretium. Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. At urna condimentum mattis pellentesque id nibh tortor. Mattis pellentesque id nibh tortor id aliquet. Cras sed felis eget velit aliquet.
+                        </Text>
+                       
+               
+                      </View>
+                  </View>
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:16,
+                  paddingRight:16,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => rulesModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+      </Modalize>
     <Loader loading={loading} />
-    <SubtabHeader routetarget="ListCards" name="Kredi / Banka Kartı Ekle" count="0" />
-    <ScrollView
+    <SubtabHeader routetarget="ListCards" name="Banka / Kredi Kartı ile Yükle" count="0" />
+    {/* <ScrollView 
 keyboardShouldPersistTaps="handled"
-style={registerStyles.scrollView}>
-<KeyboardAvoidingView enabled>
+style={[registerStyles.scrollView]}>
+<KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}> */}
+  <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, {paddingBottom:32}]}>
+        <KeyboardAvoidingView enabled>
     <View style={{paddingTop: 16,
-      paddingBottom: 16,
-      paddingLeft: 16,
+      paddingBottom: 116,
+      paddingLeft: 16, 
       paddingRight: 16,}}>
           <View
               style={{
@@ -1737,22 +2726,37 @@ style={registerStyles.scrollView}>
                         </Text>
                         
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0}]}>                     
+                  <View style={[regstyles.registerInputStyle, {borderColor: validName ? '#EBEBEB': '#ff0000',paddingBottom:0}]}>                     
                     <Text style={{                                           
                         fontSize: 12,
-                        lineHeight:12, 
+                        lineHeight:14, 
                         padding:0,
                         color: '#909EAA', 
                         position:'absolute',
-                        top:14,                     
+                        top:12,                     
                         left:16,
                         pointerEvents:"none",
+                        //fontFamily:'UbuntuRegular'
                     }}>
                       Kart Üzerindeki İsim
                     </Text>
                     <TextInput
+                    style={{                      
+                      fontSize: 14,
+                      lineHeight:18, 
+                      
+                      color: '#0B1929',
+                    }}
+                    //style={{fontFamily:'UbuntuRegular'}}
                         value={cardName}
-                        onChangeText={UserName => setCardName(UserName)}
+                        //onChangeText={UserName => setCardName(UserName)}
+                        onChangeText={UserName => {
+                          let isValid = /^[A-Za-zğüşöçİĞÜŞÖÇ ]*$/.test(UserName);
+                          console.log(UserName);
+                          console.log(isValid);
+                          if(isValid)setCardName(UserName);
+                          (UserName.length > 4)?setValidName(true) : setValidName(false);
+                        }}
                         placeholder="Ad Soyad" //12345
                         placeholderTextColor="#909EAA"
                         keyboardType="default"
@@ -1775,11 +2779,23 @@ style={registerStyles.scrollView}>
                       }}>
                         Kart Numarası
                       </Text>          
-                    <TextInput                      
-                      onChangeText={CardNumber => {
-                        setCardNumber(CardNumber);
-                        checkValidCard(CardNumber);
+                    <TextInput 
+                    style={{                      
+                      fontSize: 14,
+                      lineHeight:18, 
+                      
+                      color: '#0B1929',
+                    }}
+                      value={cardNumber}                     
+                      onChangeText={CardNumber =>{
+                        let cn = CardNumber.replace(/[^0-9]/g, '');
+                        setCardNumber(cn);
+                        //checkValidCard(cn);
                       }}
+                      onBlur={()=>{
+                        checkValidCard(cardNumber);
+                      }}
+                      maxLength={16}
                       placeholder="Kart No." //12345
                       placeholderTextColor="#909EAA"
                       keyboardType="numeric"
@@ -1793,20 +2809,22 @@ style={registerStyles.scrollView}>
                     flexDirection:'row',
                     justifyContent:'space-between'
                   }}>
-                    <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',width:'48%'}]}> 
+                    <View style={[regstyles.registerInputStyle, {borderColor: validDate ? '#EBEBEB': '#ff0000',width:'48%'}]}> 
                     <MaskInput
                         style={{                      
                           fontSize: 14,
                         lineHeight:14, 
                           padding:0,
-                          color: '#909EAA',
+                          color: '#0B1929',
                         }}
                         value={cardDate}
                         keyboardType="numeric"
                         placeholder="AA/YY"
+                        placeholderTextColor="#909EAA"
                         onChangeText={(masked, unmasked) => {
                           //setUserPhone(masked); // you can use the unmasked value as well
-                          setCardDate(masked)
+                          setCardDate(masked);
+                          (unmasked.length > 3)?setValidDate(true) : setValidDate(false);
                           // assuming you typed "9" all the way:
                           console.log(masked); // (99) 99999-9999
                           console.log(unmasked); // 99999999999
@@ -1838,14 +2856,16 @@ style={registerStyles.scrollView}>
                       <TextInput
                         style={{                      
                           fontSize: 14,
-                          lineHeight:8, 
+                          lineHeight:18, 
                           padding:0,
-                          color: '#909EAA',
+                          color: '#0B1929',
                         }}
+                        value={cardCVC}
                         maxLength={3}
                         onChangeText={CardCVC => {
-                          setCardCVC(CardCVC)
-                          checkValidCVC(CardCVC);
+                          let cn = CardCVC.replace(/[^0-9]/g, '');
+                          setCardCVC(cn);
+                          checkValidCVC(cn);
                         }}
                         placeholder="CVV" //12345
                         placeholderTextColor="#909EAA"
@@ -1882,24 +2902,30 @@ style={registerStyles.scrollView}>
                   </Pressable>
                   </View>
                   <View style={{ flex: 1, flexDirection: "row", alignItems: "center", marginLeft: 8 }}>
-                    <Text style={{fontSize:12}}>
+                    <Text style={{fontSize:12,color:'#0B1929',}}>
                       <Text style={{ color:'#004F97', fontWeight:'700', textDecorationLine: "underline" }}
-                            onPress={() => console.log("kullanım koşulları")}>
+                            //onPress={() => rulesModalizeRef.current?.open()}
+                            onPress={() => Linking.openURL('https://www.masterpassturkiye.com/terms-and-conditions')}
+                            >
                         Kullanım Koşulları'nı
                       </Text> okudum, kartımı Masterpass’e kaydetmek istiyorum.
                     </Text>
                   </View>
 
                 </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
+                  <View style={[regstyles.registerInputStyle, {borderColor: validNick ? '#EBEBEB': '#ff0000',}]}>            
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:8, 
+                        lineHeight:18, 
                         padding:0,
-                        color: '#909EAA',
+                        color: '#0B1929',
                       }}
-                      onChangeText={CardNick => setCardNick(CardNick)}
+                      value={cardNick}
+                      onChangeText={CardNick => {
+                        (CardNick.length > 2)?setValidNick(true) : setValidNick(false);
+                        setCardNick(CardNick);
+                      }}
                       placeholder="Karta İsim Verin ( kişisel, iş vb.)" //12345
                       placeholderTextColor="#909EAA"
                       keyboardType="default"
@@ -1924,7 +2950,8 @@ style={registerStyles.scrollView}>
             />
           <Text style={{color:'#0B1929', fontSize:12, textAlign:'center'}}>
           Kart bilgileriniz Mastercard’ın dijital ödeme altyapısı olan <Text style={{color:'#004F97'}}> </Text>
-          <Text style={{color:'#004F97', fontWeight:500, textDecorationLine:'underline'}}>Masterpass</Text>’te güvenle saklanmaktadır.
+          <Text style={{color:'#004F97', fontWeight:500, textDecorationLine:'underline'}}
+          onPress={()=>Linking.openURL('https://www.mastercard.com.tr/tr-tr.html')}>Masterpass</Text>’te güvenle saklanmaktadır.
           </Text>
           
           
@@ -1944,7 +2971,10 @@ style={registerStyles.scrollView}>
                       padding:0,
                     },
                   ]}
-                  onPress={() => addCard()}>
+                  onPress={() => {
+                    if(validName&&validNumber&&validDate&&validCvc&&validNick)
+                    addCard();
+                    }}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
                     Kart Ekle
@@ -2002,6 +3032,7 @@ const Payment = ({route, navigation}) => {
   const [mpToken, setMptoken] = useState('');
   const [iframeUrl, setIframeUrl] = useState('');
   const [payfourId, setPayfourId] = useState('');
+  const [url3d, setUrl3d] = useState('');
   const [user, setUser] = useState({token:'', phone:'', payfourId:''});
   const scrollRef = useRef();
   const [cardData, setCardData] = React.useState([]);
@@ -2013,7 +3044,7 @@ const Payment = ({route, navigation}) => {
   const [timerCount, setTimerCount] = useState(180);
   const [timerText, setTimerText] = useState('03:00');
   const [resetTimer, setResetTimer] = useState(false);
-
+const { showError } = useError();
   const { id, cardAlias, maskedCardNumber, issuer, logo } = route.params;
   useEffect(() => {   
     console.log(route.params);
@@ -2046,7 +3077,7 @@ const Payment = ({route, navigation}) => {
             headers: { Authorization: `Bearer ${obj.token}` }
           };
           
-          axios.get('https://payfourapp.test.kodegon.com/api/payments/generatemasterpasstoken', config)
+          axios.get('https://api-app.payfour.com/api/payments/generatemasterpasstoken', config)
           .then(response => {
             console.log(response);
             console.log(response.data);
@@ -2100,6 +3131,7 @@ const Payment = ({route, navigation}) => {
    
     return unsubscribe;
   }, [navigation]);
+  
   const addCard = ()=>{
     console.log("addCard");
     AsyncStorage.getItem('token').then(value =>{
@@ -2108,7 +3140,7 @@ const Payment = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
     console.log(mpToken);
-  //'https://payfourapp.test.kodegon.com/api/payments/addcard'
+  //'https://api-app.payfour.com/api/payments/addcard'
   //webview.current.postMessage("check;check");
   
   let tk = user.token.replace('Bearer ', '');
@@ -2138,7 +3170,7 @@ const Payment = ({route, navigation}) => {
     "cvv": "262",
     "accountAliasName": "bonusgold"
   }
-  axios.post('https://payfourapp.test.kodegon.com/api/payments/addcard',dataToSend, config)
+  axios.post('https://api-app.payfour.com/api/payments/addcard',dataToSend, config)
             .then(response => {
               console.log(response);
               console.log(response.data);
@@ -2176,11 +3208,12 @@ const Payment = ({route, navigation}) => {
   
           /*{"data": 
           {"url": 
-          "https://payfourapp.test.kodegon.com/masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
+          "https://api-app.payfour.com/masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
           "status": 200, 
           "success": true
           }*/
   }
+
   const resetOtpTimer = ()=>{
     setResetTimer(false);
     setTimerCount(180);
@@ -2216,30 +3249,88 @@ const Payment = ({route, navigation}) => {
     }
   }
   const sendPayment = () =>{
+    //let tk = user.token.replace('Bearer ', '');
+    if(amount < 50){
+      //Alert.alert("minimum");
+      showError('Lütfen 50 TL ve üzeri bir tutar yükleyiniz.');
+    }else{
+    let am = amount+"00";
+    let dataToSend = {      
+      "isDirectPayment": false,
+      "amount": am     
+    }
+    AsyncStorage.getItem('token').then(value =>{
+        
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+    
+    console.log(config);
+    setLoading(true);
+    axios.post('https://api-app.payfour.com/api/payments/generatemasterpassorder',dataToSend, config)
+            .then(response => {
+              console.log(response);
+              console.log(response.data);
+              /*{"data": {
+              "orderId": "53e73d23-ec6f-488d-85a8-07476bc2095e", 
+              "returnUrl": "https://api-app.payfour.com/masterpass/completepayment"}, 
+              "status": 200, 
+              "success": true}*/
+              sendPaymentToMasterPass(response.data.data.orderId, response.data.data.returnUrl);
+            })
+            .catch(error => {
+              setLoading(false);
+              console.error("Error sending data: ", error);
+              console.error("Error sending data: ", error.response);
+              console.error("Error sending data: ", error.response.data.errors.message);
+              //console.log(JSON.parse(error.response));
+              let msg="";
+              (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        
+              
+              //Alert.alert("Error sending data: ", error);
+            });   
+      });   
+    }
+  }
+  const sendPaymentToMasterPass = (orderId, returnUrl) =>{
     let tk = user.token.replace('Bearer ', '');
     let ph = user.phone.replace('+', '');
   
     let refNo = Math.floor(Math.random() * (999999 - 111111 + 1) + 111111)
     let orderNo = Math.floor(Math.random() * (999999 - 111111 + 1) + 111111)
+    
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>");
+    let am = amount+"00";
+    console.log(amount);
+    console.log(am);
+    console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
     let dataToSend = {
       "MerchantId": "347102188",
       "RequestReferenceNo":refNo,
       "AccountKey":ph,
-      "Amount": amount,
+      "Amount": am,
       "terminalGroupId": "102188638556903343042785",
       "AuthenticationMethod":"otp",
       "CardAlias": cardAlias,
       "SourceChannel": "Android",
       "CurrencyCode": "TRY",
-      "OrderNo": orderNo,
+      "OrderNo": orderId,
     }
     console.log(dataToSend);
-    console.log("currentObj before send");
-    console.log(currentObj);
-    setCurrentObj({
+    /*console.log("currentObj before send");
+    console.log(currentObj);*/
+    
+    console.log("currentobj after orderid");
+    //console.log(currentObj);
+    /*setCurrentObj({
       type:'payment',
       data:dataToSend
-    });
+    });*/
+    currentObj.type = 'payment';
+    currentObj.data = dataToSend;
+    currentObj.data.orderId = orderId;
     console.log(currentObj);
     console.log(">>>>>>>>>>>>>>>");
     console.log("SendPayment : "+'https://mp-test-sdk.masterpassturkiye.com/payment/api/Payment/request')
@@ -2274,18 +3365,23 @@ const Payment = ({route, navigation}) => {
               d.type="payment";
               d.data.token = response.data.result.token;
               d.data.cardNumber = response.data.result.maskedNumber;
-              d.data.orderId = orderNo;
+              //d.data.orderId = orderNo;
               d.data.amount = amount;
               setCurrentObj(d);
               /*setCurrentObj({
                 type:'payment',
                 data:response.data.result
               });*/
+              console.log("response.data.result.responseCode");
+            console.log(response.data.result.responseCode);
               console.log("currentObj");
               console.log(currentObj);
-              if(response.data.result.responseCode == "5001"){
+              setLoading(false);
+              if(response.data.result.responseCode == "5001" || response.data.result.responseCode == "5010"){
+                
+                if(response.data.result.responseCode == "5001"){
                 console.log("payment otp");
-                setLoading(false);
+                
                 //confirmPayment();
                 //setTimeout(potpMessage, 2000);
                 //setTimeout(function(){potpMessage(response.data.result.token);},3000);
@@ -2296,6 +3392,13 @@ const Payment = ({route, navigation}) => {
                 startOtpTimer();
                 //postPaymentOtp("123456",response.data.result.token);
                 //setTimeout(sendOtp, 2000);
+              }else if(response.data.result.responseCode == "5010"){
+                //Alert.alert("5010 - 3ds onayı gerekli");
+                console.log(returnUrl);
+                console.log(response.data.result.url3d+"&returnUrl="+returnUrl);
+                setUrl3d(response.data.result.url3d+"&returnUrl="+returnUrl);
+                //checkOrderCompletion(currentObj.data.orderId);
+               }
   
               }else{
                 console.log("payment error somewhere");
@@ -2326,6 +3429,36 @@ const Payment = ({route, navigation}) => {
               
               //Alert.alert("Error sending data: ", error);
             });
+  }
+  const checkOrderCompletion = (orderId)=>{
+    setTimeout(function(){
+      AsyncStorage.getItem('token').then(value =>{
+        
+        const config = {
+          headers: { Authorization: `Bearer ${value}` }
+        };
+      
+      //setLoading(true);
+      axios.get('https://api-app.payfour.com/api/payments/getmasterpassorder/'+orderId, config)
+      .then(response => {
+        console.log(response);
+        console.log(response.data);
+        if(!response.data.data(isCompleted))checkOrderCompletion(orderId);
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error("Error sending data: ", error);
+        console.error("Error sending data: ", error.response);
+        console.error("Error sending data: ", error.response.data.errors.message);
+        //console.log(JSON.parse(error.response));
+        let msg="";
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+  
+        
+        //Alert.alert("Error sending data: ", error);
+      });
+    },3000)
+    });
   }
   const postPaymentOtp = (otp, ptoken)=>{
     console.log("postpaymentotp");
@@ -2404,12 +3537,13 @@ const Payment = ({route, navigation}) => {
       //   "cvv": "889",
       //   "accountAliasName": "sanal"
       // }
+      let am = currentObj.data.amount+"00";
       let dataToSend ={
         "masterpassUserToken":user.token.replace('Bearer ', ''),
         "paymentToken": ptoken,
         "orderId": currentObj.data.orderId,
         "cardNumber": currentObj.data.cardNumber,
-        "amount": currentObj.data.amount,
+        "amount": am,
         "isDirectPayment": false
       }
       console.log(dataToSend);
@@ -2432,7 +3566,7 @@ const Payment = ({route, navigation}) => {
               "statusCode": 202, 
               "version": null}*/
   
-      axios.post('https://payfourapp.test.kodegon.com/api/payments/addbudgetwithcreditcard',dataToSend, config)
+      axios.post('https://api-app.payfour.com/api/payments/addbudgetwithcreditcard',dataToSend, config)
                 .then(response => {
                   console.log(response);
                   console.log(response.data);
@@ -2501,17 +3635,44 @@ const Payment = ({route, navigation}) => {
       resetOtpTimer();
     }
   }
+  const on3dMessage = (message) => {
+    console.log("on3dmessage");
+    console.log(message);    
+    console.log(message.nativeEvent.data);  
+    console.log(message.nativeEvent.data.isSuccess);  
+    let res = JSON.parse(message.nativeEvent.data);
+    console.log("res");
+    console.log(res);
+    console.log(res.isSuccess);
+    console.log(res.errorMessage);
+    if(res.isSuccess == true){
+      console.log("3d success");
+      setUrl3d("");
+      setSuccessModalVisible(true);
+    }else{
+      console.log("3d fail");
+      setUrl3d("");
+      Alert.alert(res.errorMessage);
+    }
+    
+  }
   const potpMessage = (token) =>{
     console.log("potpMessage");
     console.log(token);
     let m = "potp;"+token+";123456";
     if(payWebview.current) payWebview.current.postMessage(m);
   }
+  // const tlMask = createNumberMask({
+  //   prefix: [''],
+  //   delimiter: '.',
+  //   separator: ',',
+  //   precision: 2,
+  // })
   const tlMask = createNumberMask({
     prefix: [''],
     delimiter: '.',
-    separator: ',',
-    precision: 2,
+    separator: '',
+    precision: 0,
   })
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: '#efeff3'}}>
@@ -2673,7 +3834,8 @@ const Payment = ({route, navigation}) => {
         paddingRight:16,
         position:'absolute',
         bottom:0,
-        width:'100%'
+        width:'100%',
+        alignItems:'center',
 
       }}>
         <Image 
@@ -2714,11 +3876,11 @@ const Payment = ({route, navigation}) => {
       </View>
       </Modal>
     <Loader loading={loading} />
-    <SubtabHeader routetarget="ListCards" name="Kredi Kartı ile Öde" count="0" />
+    <SubtabHeader routetarget="ListCards" name="Banka / Kredi Kartı ile Yükle" count="0" />
     <ScrollView
 keyboardShouldPersistTaps="handled"
 style={registerStyles.scrollView}>
-<KeyboardAvoidingView enabled>
+<KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
     <View style={{paddingTop: 16,
       paddingBottom: 16,
       paddingLeft: 16,
@@ -2909,6 +4071,45 @@ style={registerStyles.scrollView}>
               </View>
               </KeyboardAvoidingView>
               </ScrollView>
+              { 
+                (url3d != "") ? 
+                <View style={{
+                  position:'absolute',
+                  top:0,
+                  left:0,
+                  width:Dimensions.get('window').width,
+                  height:Dimensions.get('window').height,
+                }}>
+                  <WebView 
+                source={{ uri: url3d }} 
+                javaScriptEnabled={true}
+                
+                //ref={payWebview}
+                onLoadEnd={(syntheticEvent) => {
+                  // update component to be aware of loading status
+                  //const { nativeEvent } = syntheticEvent;
+                  //this.isLoading = nativeEvent.loading;
+                  //addcardMessage();
+                  console.log("3d iframe loaded");
+                }}
+                onMessage={(event)=>{
+                  console.log("on3dMessage");
+                  console.log(event);
+                  let message  = event.nativeEvent.data;
+                  on3dMessage(event);
+                            
+                }}
+                style={{ 
+                  flex:1,
+                  //backgroundColor:'#0000ff',
+                }} 
+                />
+                </View>
+                :
+                <View>
+
+                </View>
+              }
               </SafeAreaView>
   )
 }
@@ -2979,19 +4180,19 @@ const regstyles = StyleSheet.create({
     backgroundColor: '#1D1D25',
     borderWidth: 0,
     color: '#FFFFFF',
-    height: 65,
+    height: 52,
     alignItems: 'center',
     borderRadius: 10,
     marginLeft: 35,
     marginRight: 35,
     marginBottom: 25,
   },
+  
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 20,
-    fontFamily: 'Helvetica-Bold',
-    fontWeight: 'bold',
-    fontSize: 16,
+    paddingVertical: 15,
+    fontWeight: '500',
+    fontSize: 14,
   },
   inputTitleStyle: {
     color: '#7E797F',

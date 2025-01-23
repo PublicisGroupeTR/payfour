@@ -3,7 +3,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, { useState, createRef } from "react";
+import React, { useState, createRef, useRef } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -20,6 +20,7 @@ import {
   ImageBackground,
   Platform,
   Alert,
+  Dimensions
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -30,6 +31,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Eye from "../assets/img/svg/eye.svg";
 import Toplogo from "../assets/img/svg/toplogo.svg";
 import { registerStyles } from "./Components/RegisterStyles";
+import PayfourUyelikVeKullaniciSozlesmesi from './Legals/PayfourUyelikVeKullaniciSozlesmesi.js';
+import PazarlamaAydinlatmaMetni from './Legals/PazarlamaAydinlatmaMetni.js';
+import CarrefoursaIletisimIzni from './Legals/CarrefoursaIletisimIzni.js';
+import CarrefoursaKartUyelikSozlesmesi from './Legals/CarrefoursaKartUyelikSozlesmesi.js';
+import CarrefoursaKartUyelikKVKKAydinlatmaMetni from './Legals/CarrefoursaKartUyelikKVKKAydinlatmaMetni.js';
+import { Modalize } from 'react-native-modalize';
 import axios from "react-native-axios";
 
 const RegisterScreen = ({ navigation }) => {
@@ -44,43 +51,79 @@ const RegisterScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState("");
   const [secureText, setSecureText] = useState(true);
+  const [secureText2, setSecureText2] = useState(true);
+
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [userAgreement, setUserAgreement] = useState(false);
   const [userKVKKAgreement, setUserKVKKAgreement] = useState(false);
   const [userPaymentAgreement, setUserPaymentAgreement] = useState(false);
+  const [userInfo, setUserInfo] = useState(false);
+  const [marketingInfo, setMarketingInfo] = useState(false); 
+  const [carrefourUserInfo, setCarrefourUserInfo] = useState(false);
+  
   const passwordInputRef = createRef();
 
+  const userAgreementModalizeRef = useRef(null);
+  const userInfoModalizeRef = useRef(null);
+  const marketingInfoModalizeRef = useRef(null);
+  const marketingAgreementModalizeRef = useRef(null);
+  const carrefourUserAgreementModalizeRef = useRef(null);
+  const carrefourUserInfoModalizeRef = useRef(null);
+
+  const [userAgreement, setUserAgreement] = useState(false);
+  const [marketingAgreement, setMarketingAgreement] = useState(false);
+  const [carrefourUserAgreement, setCarrefourUserAgreement] = useState(false);
+
+  const [userAgreementError, setUserAgreementError] = useState(false);
+  const [userMarketingError, setUserMarketingError] = useState(false);
+  const [carrefourUserAgreementError, setCarrefourUserAgreementError] = useState(false);
+  
+
   const handleSubmitPress = () => {
-    setErrortext("");
-    /*if (!userPasswordAgain || !userPasswordAgain) {
-if (!userPasswordAgain) {
-//alert('Please fill Email');
-setUserPasswordError(true);
-}
-if (!userPassword) {
-//alert('Please fill Password');
-setUserPasswordError(true);
-}
-return;
-}
-setLoading(true);*/
-
-    AsyncStorage.getAllKeys((err, keys) => {
-      AsyncStorage.multiGet(keys, (err, stores) => {
-        let obj = {};
-        stores.map((result, i, store) => {
-          // get at each store's key/value so you can work with it
-          let key = store[i][0];
-          let value = store[i][1];
-          obj[key] = value;
+    setErrortext("");  
+    let err = false;  
+    console.log(userPassword);
+    console.log(userPasswordAgain);
+    if(userPassword.length < 6){
+      err = true;
+      setUserPasswordError(true);
+    }
+    if(userPasswordAgain.length < 6){
+      err = true;
+      setUserPasswordError(true);
+    }
+    if(userPassword != userPasswordAgain){
+      err = true;
+      setUserPasswordError(true);
+    }
+    if(!userAgreement){
+      err = true;
+      setUserAgreementError(true);
+    }
+    /*if(!marketingAgreement){
+      err = true;
+      setUserMarketingError(true);
+    }*/
+    if(!carrefourUserAgreement){
+      err = true;
+      setCarrefourUserAgreementError(true);
+    }
+    if(!err){
+      AsyncStorage.getAllKeys((err, keys) => {
+        AsyncStorage.multiGet(keys, (err, stores) => {
+          let obj = {};
+          stores.map((result, i, store) => {
+            // get at each store's key/value so you can work with it
+            let key = store[i][0];
+            let value = store[i][1];
+            obj[key] = value;
+          });
+          console.log("storage");
+          console.log(obj);
+          sendData(obj);
         });
-        console.log("storage");
-        console.log(obj);
-        sendData(obj);
       });
-    });
-
+    }
     /*{
 "tempToken": "string",
 "deviceId": 0,
@@ -130,10 +173,10 @@ setLoading(true);*/
 
     console.log("register data");
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
     axios
       .post(
-        "https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic",
+        "https://api-app.payfour.com/api/auth/addcustomerbasic",
         dataToSend
       )
       .then((response) => {
@@ -306,6 +349,535 @@ setLoading(true);*/
               </View>
             </View>
           </Modal>
+          <Modalize ref={userAgreementModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CARREFOURSA PAYFOUR ÜYELİK VE KULLANICI SÖZLEŞMESİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        userAgreementModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <PayfourUyelikVeKullaniciSozlesmesi /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => {
+                    setUAgreement(true);
+                    userAgreementModalizeRef.current?.close();
+                    }}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Okudum, onaylıyorum
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+          <Modalize ref={marketingInfoModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CARREFOURSA PAZARLAMA AYDINLATMA METNİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        marketingInfoModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <PazarlamaAydinlatmaMetni /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => marketingInfoModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Okudum, onaylıyorum
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+          <Modalize ref={marketingAgreementModalizeRef}
+      snapPoint={0}
+      modalStyle={{
+        flex: 1,  
+        flexDirection:'column',           
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',}}>
+        <View
+              style={{
+                flex: 1,     
+                flexDirection:'column',           
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CARREFOURSA İLETİŞİM İZNİ METNİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        marketingAgreementModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <CarrefoursaIletisimIzni /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => {
+                    setMarketingAgreement(true);
+                    marketingAgreementModalizeRef.current?.close();
+                  }}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Okudum, onaylıyorum
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+          <Modalize ref={carrefourUserAgreementModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CARREFOURSA KART ÜYELİK SÖZLEŞMESİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        carrefourUserAgreementModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <CarrefoursaKartUyelikSozlesmesi /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => {
+                    setCarrefourUserAgreement(true);
+                    carrefourUserAgreementModalizeRef.current?.close();
+                    }}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Okudum, onaylıyorum
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+          <Modalize ref={carrefourUserInfoModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CARREFOURSA KART ÜYELİĞİ KİŞİSEL VERİLERİN KORUNMASI AYDINLATMA METNİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        carrefourUserInfoModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <CarrefoursaKartUyelikKVKKAydinlatmaMetni /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:0,
+                  paddingRight:0,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => carrefourUserInfoModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Okudum, onaylıyorum
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
           <Loader loading={loading} />
 
           <ScrollView
@@ -313,7 +885,7 @@ setLoading(true);*/
             style={registerStyles.scrollView}
           >
             <KeyboardAvoidingView enabled>
-              <View>
+              <View style={{padding:0}}>
                 <Text
                   style={{
                     color: "#1D1E32",
@@ -333,29 +905,34 @@ setLoading(true);*/
                   justifyContent: "space-between",
                   paddingTop: 16,
                   paddingBottom: 30,
+                  paddingLeft:24,
+                  paddingRight:24,
                 }}
               >
                 <View>
                   <Text
                     style={{
-                      fontFamily: "Helvetica",
                       fontSize: 14,
-                      marginBottom: 14,
                       color: "#1D1E32",
-                      textAlign: "center",
-                      paddingLeft: 16,
-                      paddingRight: 16,
+                      textAlign: "left",
+                      maxWidth:300,
                     }}
                   >
-                    Bilgilerinizi doldurarak{" "}
-                    <Text style={{ fontWeight: "700" }}>PayFour </Text>
-                    ayrıcalıkları ile tanışın!
+                    Bilgilerinizi doldurarak 
+                  
+                  
+                    <Text style={{ fontWeight: "700" }}> Payfour </Text>
+                    üyeliğinizi tamamlayınız.
                   </Text>
-                  <View style={registerStyles.sectionStyle}>
+                  <View style={[registerStyles.sectionStyle, {marginLeft:0, marginRight:0}]}>
                     <View
                       style={[
                         registerStyles.registerInputStyle,
                         {
+                          height:56,
+                          paddingTop:8,
+                          paddingBottom:8,
+                          minHeight:56,
                           marginBottom: 4,
                           borderColor: userPasswordError
                             ? "#ff0000"
@@ -369,6 +946,7 @@ setLoading(true);*/
                           {
                             fontSize: 12,
                             //marginBottom: 14,
+                            lineHeight:14,
                             marginBottom: 0,
                             color: "#909EAA",
                           },
@@ -379,26 +957,44 @@ setLoading(true);*/
                       <TouchableOpacity
                         style={{
                           position: "absolute",
-                          top: 20,
+                          top: 16,
                           right: 20,
                           zIndex: 10,
                         }}
                         onPress={() => setSecureText(!secureText)}
                       >
-                        <Image
+                        {secureText? <Image 
+                              source={require('../assets/img/export/eye_off.png')}
+                              style={{
+                                width:24,
+                                height:24
+                              }}>
+                              </Image> : 
+                              <Image 
+                              source={require('../assets/img/export/eye.png')}
+                              style={{
+                                width:24,
+                                height:24
+                              }}>
+                              </Image>}
+                        {/* <Image
                           source={require("../assets/img/export/eye.png")}
                           style={{
                             width: 24,
                             height: 24,
                             resizeMode: "contain",
                           }}
-                        />
+                        /> */}
                       </TouchableOpacity>
                       <TextInput
-                        style={
+                        style={[
                           Platform.OS == "ios"
                             ? registerStyles.inputIos
-                            : registerStyles.inputAndroid
+                            : registerStyles.inputAndroid,
+                            {
+                              fontSize:14,
+                            
+                            }]
                         }
                         onFocus={() => setUserPasswordError(false)}
                         onChangeText={(UserPassword) =>
@@ -413,6 +1009,7 @@ setLoading(true);*/
                         secureTextEntry={secureText}
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
+                        maxLength={6}
                       />
                       {errortext !== "" ? (
                         <Text style={registerStyles.errorTextStyle}>
@@ -446,6 +1043,11 @@ setLoading(true);*/
                       style={[
                         registerStyles.registerInputStyle,
                         {
+                          height:56,
+                          paddingTop:8,
+                          paddingBottom:8,
+                          minHeight:56,
+                          marginBottom: 16,
                           borderColor: userPasswordError
                             ? "#ff0000"
                             : "#015096",
@@ -458,6 +1060,7 @@ setLoading(true);*/
                           {
                             fontSize: 12,
                             //marginBottom: 14,
+                            lineHeight:14,
                             marginBottom: 0,
                             color: "#909EAA",
                           },
@@ -468,32 +1071,48 @@ setLoading(true);*/
                       <TouchableOpacity
                         style={{
                           position: "absolute",
-                          top: 20,
+                          top: 16,
                           right: 20,
                           zIndex: 10,
                         }}
-                        onPress={() => setSecureText(!secureText)}
+                        onPress={() => setSecureText2(!secureText2)}
                       >
+                        {secureText2? <Image 
+                              source={require('../assets/img/export/eye_off.png')}
+                              style={{
+                                width:24,
+                                height:24
+                              }}>
+                              </Image> : 
+                              <Image 
+                              source={require('../assets/img/export/eye.png')}
+                              style={{
+                                width:24,
+                                height:24
+                              }}>
+                              </Image>}
                         {/* <Eye width={22} height={12} /> */}
-                        <Image
+                        {/* <Image
                           source={require("../assets/img/export/eye.png")}
                           style={{
                             width: 24,
                             height: 24,
                             resizeMode: "contain",
                           }}
-                        />
+                        /> */}
                       </TouchableOpacity>
                       <TextInput
                         style={[
                           Platform.OS == "ios"
                             ? registerStyles.inputIos
                             : registerStyles.inputAndroid,
-                          {},
-                        ]}
+                            {
+                              fontSize:14,
+                            
+                            }]}
                         onFocus={() => setUserPasswordError(false)}
                         onChangeText={(UserPasswordAgain) =>
-                          setUserPassword(UserPasswordAgain)
+                          setUserPasswordagain(UserPasswordAgain)
                         }
                         placeholder="" //12345
                         placeholderTextColor="#7E797F"
@@ -501,9 +1120,10 @@ setLoading(true);*/
                         ref={passwordInputRef}
                         onSubmitEditing={Keyboard.dismiss}
                         blurOnSubmit={false}
-                        secureTextEntry={secureText}
+                        secureTextEntry={secureText2}
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
+                        maxLength={11}
                       />
                       {errortext !== "" ? (
                         <Text style={registerStyles.errorTextStyle}>
@@ -515,29 +1135,48 @@ setLoading(true);*/
                     <View
                       style={[
                         registerStyles.registerInputStyle,
-                        { borderColor: "#EBEBEB" },
+                        { height:56,
+                          paddingTop:8,
+                          paddingBottom:8,
+                          minHeight:56,
+                          marginBottom: 16,
+                          borderColor: "#EBEBEB" },
                       ]}
                     >
                       <Text
                         style={[
                           registerStyles.inputTitleStyle,
                           {
+                            
                             fontSize: 12,
                             //marginBottom: 14,
-                            marginBottom: 8,
+                            lineHeight:14,
+                            marginBottom: 4,
                             color: "#909EAA",
                           },
                         ]}
                       >
-                        Ad ( İsteğe Bağlı )
+                        Ad (İsteğe Bağlı)
                       </Text>
                       <TextInput
-                        style={
+                        style={[
                           Platform.OS == "ios"
                             ? registerStyles.inputIos
-                            : registerStyles.inputAndroid
+                            : registerStyles.inputAndroid,
+                            {
+                              fontSize:14,
+                              color:'#1D1E32'
+                            
+                            }]
                         }
-                        onChangeText={(UserName) => setUserName(UserName)}
+                        //onChangeText={(UserName) => setUserName(UserName)}
+                        value={userName}
+                        onChangeText={UserName => {
+                          let isValid = /^[A-Za-zğüşöçİĞÜŞÖÇ ]*$/.test(UserName);
+                          console.log(UserName);
+                          console.log(isValid);
+                          if(isValid)setUserName(UserName);
+                        }}
                         placeholder=""
                         placeholderTextColor="#7E797F"
                         onSubmitEditing={Keyboard.dismiss}
@@ -549,31 +1188,49 @@ setLoading(true);*/
                     <View
                       style={[
                         registerStyles.registerInputStyle,
-                        { borderColor: "#EBEBEB" },
+                        { height:56,
+                          paddingTop:8,
+                          paddingBottom:8,
+                          minHeight:56,
+                          marginBottom: 16,
+                          borderColor: "#EBEBEB" },
                       ]}
                     >
                       <Text
                         style={[
                           registerStyles.inputTitleStyle,
                           {
+                            
                             fontSize: 12,
                             //marginBottom: 14,
-                            marginBottom: 8,
+                            lineHeight:14,
+                            marginBottom: 4,
                             color: "#909EAA",
                           },
                         ]}
                       >
-                        Soyad ( İsteğe Bağlı )
+                        Soyad (İsteğe Bağlı)
                       </Text>
                       <TextInput
-                        style={
+                        style={[
                           Platform.OS == "ios"
                             ? registerStyles.inputIos
-                            : registerStyles.inputAndroid
+                            : registerStyles.inputAndroid,
+                            {
+                              fontSize:14,
+                              color:'#1D1E32'
+                            }]
                         }
-                        onChangeText={(UserSurname) =>
-                          setUserSurname(UserSurname)
-                        }
+                        // onChangeText={(UserSurname) =>
+                        //   setUserSurname(UserSurname)
+                        // }
+                        value={userSurname}
+                        onChangeText={UserSurname => {
+                          let isValid = /^[A-Za-zğüşöçİĞÜŞÖÇ ]*$/.test(UserSurname);
+                          console.log(UserSurname);
+                          console.log(isValid);
+                          if(isValid)setUserSurname(UserSurname);
+                        }}
                         placeholder=""
                         placeholderTextColor="#7E797F"
                         onSubmitEditing={Keyboard.dismiss}
@@ -585,7 +1242,12 @@ setLoading(true);*/
                     <View
                       style={[
                         registerStyles.registerInputStyle,
-                        { borderColor: "#EBEBEB" },
+                        { height:56,
+                          paddingTop:8,
+                          paddingBottom:8,
+                          minHeight:56,
+                          marginBottom: 16,
+                          borderColor: "#EBEBEB" },
                       ]}
                     >
                       <Text
@@ -594,18 +1256,23 @@ setLoading(true);*/
                           {
                             fontSize: 12,
                             //marginBottom: 14,
-                            marginBottom: 8,
+                            lineHeight:14,
+                            marginBottom: 0,
                             color: "#909EAA",
                           },
                         ]}
                       >
-                        E-posta ( İsteğe Bağlı )
+                        E-posta (İsteğe Bağlı)
                       </Text>
                       <TextInput
-                        style={
+                        style={[
                           Platform.OS == "ios"
                             ? registerStyles.inputIos
-                            : registerStyles.inputAndroid
+                            : registerStyles.inputAndroid,
+                            {
+                              fontSize:14,
+                              color:'#1D1E32'
+                            }]
                         }
                         onChangeText={(UserEmail) => setUserEmail(UserEmail)}
                         placeholder=""
@@ -620,7 +1287,12 @@ setLoading(true);*/
                     <View
                       style={[
                         registerStyles.registerInputStyle,
-                        { borderColor: "#EBEBEB" },
+                        { height:56,
+                          paddingTop:8,
+                          paddingBottom:8,
+                          minHeight:56,
+                          marginBottom: 16,
+                          borderColor: "#EBEBEB" },
                       ]}
                     >
                       <Text
@@ -629,18 +1301,23 @@ setLoading(true);*/
                           {
                             fontSize: 12,
                             //marginBottom: 14,
+                            lineHeight:14,
                             marginBottom: 0,
                             color: "#909EAA",
                           },
                         ]}
                       >
-                        Referans Kodu ( İsteğe Bağlı )
+                        Referans Kodu (İsteğe Bağlı)
                       </Text>
                       <TextInput
-                        style={
+                        style={[
                           Platform.OS == "ios"
                             ? registerStyles.inputIos
-                            : registerStyles.inputAndroid
+                            : registerStyles.inputAndroid,
+                            {
+                              fontSize:14,
+                              color:'#1D1E32'
+                            }]
                         }
                         onChangeText={(UserRefcode) =>
                           setUserUserRefcode(UserRefcode)
@@ -654,6 +1331,8 @@ setLoading(true);*/
                         returnKeyType="next"
                       />
                     </View>
+
+                    
                     <View
                       style={{
                         marginBottom: 22,
@@ -661,31 +1340,52 @@ setLoading(true);*/
                         flexDirection: "row",
                       }}
                     >
-                      <Image
-                        source={require("../assets/img/export/information.png")}
+                      <Pressable
                         style={{
                           width: 20,
                           height: 20,
                           marginRight: 8,
+                          borderRadius: 5,
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
-                      />
-                      <Text
+                      >
+                        <Image
+                    source={require('../assets/img/export/information.png')}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      resizeMode:'contain'
+                    }}
+                  />
+                      </Pressable>
+                      <TouchableOpacity
                         style={{
                           fontWeight: "300",
                           color: "#1E242F",
                           fontSize: 12,
+                          flexDirection:'row',
                         }}
+                        onPress={() => marketingInfoModalizeRef.current?.open()}
                       >
-                        Kişisel verilerin korunması ve işlenmesi hakkında{" "}
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}>
                         <Text
                           style={{
+                            fontWeight: "400",
                             color: "#015096",
                             textDecorationLine: "underline",
+                            fontSize: 12,
                           }}
                         >
-                          Aydınlatma Metni.
+                          Payfour Üyelik Aydınlatma Metni
                         </Text>
-                      </Text>
+                        'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
                     </View>
                     <View
                       style={{
@@ -705,8 +1405,13 @@ setLoading(true);*/
                           borderRadius: 5,
                           alignItems: "center",
                           justifyContent: "center",
+                          borderWidth:1,
+                          borderColor:userAgreementError ? '#ff0000' : 'transparent',
                         }}
-                        onPress={() => setUAgreement(!userAgreement)}
+                        onPress={() => {
+                          setUserAgreementError(false);
+                          setUAgreement(!userAgreement);}
+                        }
                       >
                         <Image
                           source={require("../assets/img/export/check.png")}
@@ -717,17 +1422,152 @@ setLoading(true);*/
                           }}
                         />
                       </Pressable>
-                      <Text
+                      <TouchableOpacity
+                        style={{
+                          fontWeight: "300",
+                          color: userAgreementError ? '#ff0000' : "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}
+                        onPress={()=>{userAgreementModalizeRef.current?.open()}}
+                      >
+                         <Text style={{
+                          fontWeight: "300",
+                          color: userAgreementError ? '#ff0000' : "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}>
+                        <Text
+                          style={{
+                            fontWeight: "400",
+                            color: userAgreementError ? '#ff0000' : "#015096",
+                            textDecorationLine: "underline",
+                            fontSize: 12,
+                          }}
+                        >
+                          Payfour Üyelik ve Kullanıcı Sözleşmesi
+                        </Text>
+                        'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{
+                        marginBottom: 22,
+                        alignItems: "center",
+                        flexDirection: "row",
+                        paddingRight:20
+                      }}
+                    >
+                      <Pressable
+                        style={{
+                          width: 20,
+                          height: 20,
+                          marginRight: 8,
+                          borderRadius: 5,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Image
+                    source={require('../assets/img/export/information.png')}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      resizeMode:'contain'
+                    }}
+                  />
+                      </Pressable>
+                      <TouchableOpacity
                         style={{
                           fontWeight: "300",
                           color: "#1E242F",
                           fontSize: 12,
+                          flexDirection:'row',
                         }}
+                        onPress={() => carrefourUserInfoModalizeRef.current?.open()}
                       >
-                        CarrefourSA şirketinin tarafıma ticari elektronik ileti
-                        göndermesini kabul ediyorum.
-                      </Text>
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                        }}>
+                        <Text
+                          style={{
+                            fontWeight: "400",
+                            color: "#015096",
+                            textDecorationLine: "underline",
+                            fontSize: 12,
+                          }}
+                        >
+                          CarrefourSA Kart Üyelik Aydınlatma Metni
+                        </Text>
+                          'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
                     </View>
+                    <View
+                      style={{
+                        marginBottom: 22,
+                        alignItems: "center",
+                        flexDirection: "row",
+                        paddingRight:20
+                      }}
+                    >
+                      <Pressable
+                        style={{
+                          width: 20,
+                          height: 20,
+                          marginRight: 8,
+                          backgroundColor: carrefourUserAgreement
+                            ? "#015096"
+                            : "#dadee7",
+                          borderRadius: 5,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderWidth:1,
+                          borderColor:carrefourUserAgreementError ? '#ff0000' : 'transparent',
+                          
+                        }}
+                        onPress={() => {
+                          setCarrefourUserAgreementError(false);
+                          setCarrefourUserAgreement(!carrefourUserAgreement)}}
+                      >
+                        <Image
+                          source={require("../assets/img/export/check.png")}
+                          style={{
+                            width: carrefourUserAgreement ? 14 : 0,
+                            height: carrefourUserAgreement ? 10 : 0,
+                            resizeMode: "contain",
+                          }}
+                        />
+                      </Pressable>
+                      <TouchableOpacity
+                        style={{
+                          fontWeight: "300",
+                          color: carrefourUserAgreementError ? '#ff0000' :"#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}
+                        onPress={() => carrefourUserAgreementModalizeRef.current?.open()}
+                      >
+                         <Text style={{
+                          fontWeight: "300",
+                          color: carrefourUserAgreementError ? '#ff0000' :"#1E242F",
+                          fontSize: 12,
+                        }}>
+                        <Text
+                          style={{
+                            fontWeight: "400",
+                            color: carrefourUserAgreementError ? '#ff0000' :"#015096",
+                            textDecorationLine: "underline",
+                            fontSize: 12,
+                          }}
+                        >
+                          CarrefourSA Kart Üyelik Sözleşmesi
+                        </Text>
+                          'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
+                    </View>
+
                     <View
                       style={{
                         marginBottom: 22,
@@ -740,49 +1580,54 @@ setLoading(true);*/
                           width: 20,
                           height: 20,
                           marginRight: 8,
-                          backgroundColor: userKVKKAgreement
-                            ? "#015096"
-                            : "#dadee7",
                           borderRadius: 5,
                           alignItems: "center",
                           justifyContent: "center",
                         }}
-                        onPress={() => setKAgreement(!userKVKKAgreement)}
                       >
                         <Image
-                          source={require("../assets/img/export/check.png")}
-                          style={{
-                            width: userKVKKAgreement ? 14 : 0,
-                            height: userKVKKAgreement ? 10 : 0,
-                            resizeMode: "contain",
-                          }}
-                        />
+                    source={require('../assets/img/export/information.png')}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      resizeMode:'contain'
+                    }}
+                  />
                       </Pressable>
-                      <Text
+                      <TouchableOpacity
                         style={{
                           fontWeight: "300",
                           color: "#1E242F",
                           fontSize: 12,
+                          flexDirection:'row',
                         }}
+                        onPress={() => marketingInfoModalizeRef.current?.open()}
                       >
-                        Kişisel verilerin korunması, işlenmesi ve aktarılmasına
-                        ilişkin{" "}
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                          flexDirection:'row',
+                        }}>
                         <Text
                           style={{
+                            fontWeight: "400",
                             color: "#015096",
                             textDecorationLine: "underline",
+                            fontSize: 12,
                           }}
                         >
-                          Açık Rıza Formu’nu
-                        </Text>{" "}
-                        onaylıyorum.
-                      </Text>
+                          Pazarlama Aydınlatma Metni
+                        </Text>
+                        'ni onaylıyorum.</Text>
+                      </TouchableOpacity>
                     </View>
                     <View
                       style={{
                         marginBottom: 22,
                         alignItems: "center",
                         flexDirection: "row",
+                        paddingRight:20
                       }}
                     >
                       <Pressable
@@ -790,51 +1635,67 @@ setLoading(true);*/
                           width: 20,
                           height: 20,
                           marginRight: 8,
-                          backgroundColor: userPaymentAgreement
+                          backgroundColor: marketingAgreement
                             ? "#015096"
                             : "#dadee7",
                           borderRadius: 5,
                           alignItems: "center",
                           justifyContent: "center",
+                          borderWidth:1,
+                          borderColor:userMarketingError ? '#ff0000' : 'transparent',
                         }}
-                        onPress={() => setPAgreement(!userPaymentAgreement)}
+                        onPress={() => {
+                          setUserMarketingError(false);
+                          setMarketingAgreement(!marketingAgreement);
+                        }}
                       >
                         <Image
                           source={require("../assets/img/export/check.png")}
                           style={{
-                            width: userPaymentAgreement ? 14 : 0,
-                            height: userPaymentAgreement ? 10 : 0,
+                            width: marketingAgreement ? 14 : 0,
+                            height: marketingAgreement ? 10 : 0,
                             resizeMode: "contain",
                           }}
                         />
                       </Pressable>
-                      <Text
+                      <TouchableOpacity
                         style={{
                           fontWeight: "300",
                           color: "#1E242F",
                           fontSize: 12,
+                          flexDirection:'row',
                         }}
+                        onPress={() => marketingAgreementModalizeRef.current?.open()}
                       >
+                         <Text style={{
+                          fontWeight: "300",
+                          color: "#1E242F",
+                          fontSize: 12,
+                        }}>
                         <Text
                           style={{
+                            fontWeight: "400",
                             color: "#015096",
                             textDecorationLine: "underline",
+                            fontSize: 12,
                           }}
                         >
-                          Çerçeve Ödeme Hizmetleri Sözleşmesi’ni
-                        </Text>{" "}
-                        okudum kabul ediyorum.
-                      </Text>
+                          İletişim İzni
+                        </Text>
+                         {" "}kapsamında CarrefourSA tarafından pazarlama amaçlı ileti almak istiyorum.</Text>
+                      </TouchableOpacity>
                     </View>
+                    
+                    
                     <TouchableOpacity
                       style={[
-                        registerStyles.buttonStyle,
-                        { marginBottom: 40, backgroundColor: "#004F97" },
+                        styles.buttonStyle,
+                        { marginBottom: 40, backgroundColor: "#004F97", width:'100%', paddingLeft:0, marginLeft:0, },
                       ]}
                       activeOpacity={0.5}
                       onPress={handleSubmitPress}
                     >
-                      <Text style={registerStyles.buttonTextStyle}>
+                      <Text style={styles.buttonTextStyle}>
                         Hesap Oluştur
                       </Text>
                     </TouchableOpacity>
@@ -886,22 +1747,22 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   buttonStyle: {
-    backgroundColor: "#1D1D25",
+    backgroundColor: '#1D1D25',
     borderWidth: 0,
-    color: "#FFFFFF",
-    height: 65,
-    alignItems: "center",
+    color: '#FFFFFF',
+    height: 52,
+    alignItems: 'center',
     borderRadius: 10,
     marginLeft: 35,
     marginRight: 35,
     marginBottom: 25,
   },
+  
   buttonTextStyle: {
-    color: "#FFFFFF",
-    paddingVertical: 20,
-    fontFamily: "Helvetica-Bold",
-    fontWeight: "bold",
-    fontSize: 16,
+    color: '#FFFFFF',
+    paddingVertical: 15,
+    fontWeight: '500',
+    fontSize: 14,
   },
   inputTitleStyle: {
     color: "#7E797F",

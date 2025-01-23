@@ -30,6 +30,7 @@ import TabHeader from './Components/TabHeader';
 import { OtpInput } from "react-native-otp-entry";
 import axios from 'react-native-axios';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
+import { useError } from './Contexts/ErrorContext';
 
 const LoginWithPasswordScreen = ({navigation}) => {
   const [userEmail, setUserEmail] = useState('');
@@ -56,6 +57,8 @@ const LoginWithPasswordScreen = ({navigation}) => {
   const [biometricKey, setBiometricKey] = useState(false);
 
   const passwordInputRef = useRef();
+  const { showError } = useError();
+
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => { 
       //AsyncStorage.removeItem('biometricsKey');
@@ -97,7 +100,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
             checkRecordedBiometrics(true);
           }{
             console.log('no biometrics supported');
-            Alert.alert('no biometrics supported');
+            //Alert.alert('no biometrics supported');
           }
         }else{
         if (available && biometryType === BiometryTypes.TouchID) {
@@ -116,7 +119,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
           
         } else{
           console.log('no biometrics');
-          Alert.alert('no biometrics supported');
+          //Alert.alert('no biometrics supported');
         }
       }
         
@@ -133,7 +136,10 @@ const LoginWithPasswordScreen = ({navigation}) => {
       console.log(value);
 
       if(value === null){
-        if(!first) Alert.alert('Uyarı', 'Biometrik girişiniz şifreyle giriş yaptıktan sonra etkinleştirilecektir.');
+        if(!first) {
+          //Alert.alert('Uyarı', 'Biometrik girişiniz şifreyle giriş yaptıktan sonra etkinleştirilecektir.');
+          showError('Biometrik girişiniz şifreyle giriş yaptıktan sonra etkinleştirilecektir.');
+        }
       } else {
         //AsyncStorage.getItem('deviceId').then(value =>{
           //setDeviceId(value); 
@@ -202,12 +208,14 @@ const LoginWithPasswordScreen = ({navigation}) => {
         })*/
         return true;
       } else {
-        Alert.alert('Authentication failed', 'Biometric authentication failed');
+        //Alert.alert('Authentication failed', 'Biometric authentication failed');
+        showError('Biometric authentication failed');
         return false;
       }
     } catch (error) {
       console.error('[handleBiometricAuth] Error:', error);
-      Alert.alert('Error', 'Biometric authentication failed from device');
+      //Alert.alert('Error', 'Biometric authentication failed from device');
+      showError('Biometric authentication failed from device');
       return false;
     }
   
@@ -239,7 +247,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
       let dataToSend ={
         "key": publicKey
       }
-      axios.post('https://payfourapp.test.kodegon.com/api/account/setfingerprint', dataToSend, config)
+      axios.post('https://api-app.payfour.com/api/account/setfingerprint', dataToSend, config)
       .then(response => {
         console.log(response);
         console.log(response.data);
@@ -254,7 +262,8 @@ const LoginWithPasswordScreen = ({navigation}) => {
           setLoading(false);
           console.log("fingerprint error")
           console.log(response);
-          Alert.alert(response.data.data.errors.message);
+          //Alert.alert(response.data.data.errors.message);
+          showError(response.data.data.errors.message);
         }
       })
       .catch(error => {
@@ -264,13 +273,15 @@ const LoginWithPasswordScreen = ({navigation}) => {
         console.error("Error sending data: ", error.response.data.errors.message);
         //console.log(JSON.parse(error.response));
         let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
+        //Alert.alert(msg);
+        showError(msg);
 
         
         //Alert.alert("Error sending data: ", error);
       });
     });
-    //'https://payfourapp.test.kodegon.com/api/account/setfingerprint'
+    //'https://api-app.payfour.com/api/account/setfingerprint'
     /*{
       "key": "string"
     }*/
@@ -304,7 +315,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
             }
             console.log("fingerprint login data");
             console.log(dataToSend);
-            axios.post('https://payfourapp.test.kodegon.com/api/auth/loginwithfingerprint', dataToSend)
+            axios.post('https://api-app.payfour.com/api/auth/loginwithfingerprint', dataToSend)
           .then(response => {
             
             setLoading(false);
@@ -314,7 +325,8 @@ const LoginWithPasswordScreen = ({navigation}) => {
                 console.log("invalid found");
                 resetUser();
               }else{
-                Alert.alert(response.data.error.message);
+                //Alert.alert(response.data.error.message);
+                showError(response.data.error.message);
                 
               }
             }else{
@@ -357,7 +369,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
     "phone": "string",
     "fingerPrintKey": "string"
 }*/
-    //'https://payfourapp.test.kodegon.com/api/account/setfingerprint'
+    //'https://api-app.payfour.com/api/account/setfingerprint'
     /*{
       "key": "string"
       }*/
@@ -395,13 +407,15 @@ const LoginWithPasswordScreen = ({navigation}) => {
   }
   const sendForgot = (dataToSend) => {
     setLoading(true);
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/forgotpassword', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);        
       if(response.data.error){
-        Alert.alert(response.data.error.message);
-        Alert.alert(response.data.error.message);
+        //Alert.alert(response.data.error.message);
+        //Alert.alert(response.data.error.message);
+        showError(response.data.error.message);
+
         if(response.data.error.message.search('valid') >-1){
           console.log("invalid found");
           resetUser();
@@ -492,13 +506,16 @@ const LoginWithPasswordScreen = ({navigation}) => {
     console.log("datatosend");
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/loginwithpassword', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/loginwithpassword', dataToSend)
     .then(response => {
       
       setLoading(false);
         console.log(response.data);        
       if(response.data.error){
-        Alert.alert(response.data.error.message);
+        passwordInputRef.current.clear();
+        //Alert.alert(response.data.error.message);
+        showError(response.data.error.message);
+
         if(response.data.error.message.search('valid') >-1){
           console.log("invalid found");
           resetUser();
@@ -527,19 +544,22 @@ const LoginWithPasswordScreen = ({navigation}) => {
       let msg="";
       (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Giriş hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
       //Alert.alert(msg);
+      passwordInputRef.current.clear();
       let reset=false;
       if(msg.search('valid') >-1){
         console.log("invalid found error");
         reset = true;
       }
-      Alert.alert(
-        msg,
-        '', // <- this part is optional, you can pass an empty string
-        [
-          {text: 'OK', onPress: () => {resetUser()}},
-        ],
-        {cancelable: false},
-      );
+      showError(msg);
+
+      // Alert.alert(
+      //   msg,
+      //   '', // <- this part is optional, you can pass an empty string
+      //   [
+      //     {text: 'OK', onPress: () => {resetUser()}},
+      //   ],
+      //   {cancelable: false},
+      // );
       
     });     
     
@@ -720,7 +740,9 @@ const LoginWithPasswordScreen = ({navigation}) => {
                         backgroundColor:'#fff',
                         borderColor: otpError? '#E42932':'#DADEE7'
                       },
-                      pinCodeTextStyle: styles.pinCodeText,
+                      pinCodeTextStyle: {
+                        color:"#0B1929"
+                      },
                       focusStickStyle: styles.focusStick,
                       focusedPinCodeContainerStyle: {
                         borderColor:"#015096"
@@ -852,19 +874,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#1D1D25',
     borderWidth: 0,
     color: '#FFFFFF',
-    height: 65,
+    height: 52,
     alignItems: 'center',
     borderRadius: 10,
     marginLeft: 35,
     marginRight: 35,
     marginBottom: 25,
   },
+  
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 20,
-    fontFamily: 'Helvetica-Bold',
-    fontWeight: 'bold',
-    fontSize: 16,
+    paddingVertical: 15,
+    fontWeight: '500',
+    fontSize: 14,
   },
   inputTitleStyle: {
     color: '#7E797F',

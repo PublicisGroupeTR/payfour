@@ -4,15 +4,15 @@ import {
 } from 'react-native';
 const registerStyles = StyleSheet.create({
   registerInputStyle:{
-  backgroundColor:'#fff',
-  paddingTop:10,
-  paddingBottom:8,
+  backgroundColor:'#fff',  
   paddingLeft:12,
   paddingRight:12,
   borderWidth: 1,
   borderRadius: 10,
   marginBottom:16,
-  minHeight:60
+  paddingTop:12,
+  paddingBottom:12,
+  minHeight:56
   },
   mainBody: {
   flex: 1,
@@ -74,13 +74,13 @@ const registerStyles = StyleSheet.create({
   opacity: 1,
   },
   inputAndroid:{
-  fontSize: 16,
+  fontSize: 14,
   lineHeight:8,
   padding:0,
   color: '#015096',
   },
   inputIos:{
-  fontSize: 16,
+  fontSize: 14,
   lineHeight:18,
   padding:0,
   paddingTop:24,

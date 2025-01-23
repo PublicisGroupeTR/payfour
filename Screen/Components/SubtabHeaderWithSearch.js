@@ -10,7 +10,7 @@ import Bildirim from '../../assets/img/svg/bildirim.svg';
 import { TextInput } from 'react-native-gesture-handler';
 
 const SubtabHeaderWithSearch = props => {
-  const {routetarget, name, count, mode, inputCallback, searchCallback, openCallback, closeCallback, eraseCallback,  ...attributes} = props;
+  const {routetarget, name, count, mode, inputCallback, searchCallback, openCallback, closeCallback, eraseCallback, userSrch,setUserSrch, ...attributes} = props;
 
   const navigation = useNavigation();
   const [showInput, setShowInput] = useState(false); 
@@ -51,6 +51,7 @@ const SubtabHeaderWithSearch = props => {
             }}>
             <Text style={{
               color: props.mode === 'dark'? '#fff' : '#0B1929',
+              fontWeight:'700',
               fontSize:16,
             }}>
               {name}
@@ -91,8 +92,10 @@ const SubtabHeaderWithSearch = props => {
           ]}
           onPress={() => {
             setUserSearch('');
-            eraseCallback('');            
+            eraseCallback('');   
+            Keyboard.dismiss();         
             searchInput.current.clear();
+            //setUserSearch(UserSearch);
             setShowInput(false);
             searchCallback('');
             //closeCallback();
@@ -127,10 +130,18 @@ const SubtabHeaderWithSearch = props => {
           console.log(UserSearch);
           inputCallback(UserSearch);
         }}
+        defaultValue={userSrch} 
+        onChange={(e)=>{
+          console.log("onsrch");
+          console.log(e.target.value);
+          setUserSrch(e.target.value)}}
         ref={searchInput}
         placeholder="Kampanya, marka, kategori..." //12345
         placeholderTextColor="#909EAA"
-        onSubmitEditing={Keyboard.dismiss}
+        onSubmitEditing={()=>{
+          console.log("onsubmit");
+          //Keyboard.dismiss
+        }}
         blurOnSubmit={false}
         underlineColorAndroid="#f000"
         returnKeyType="next">

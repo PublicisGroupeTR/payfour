@@ -3,7 +3,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useMemo} from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,8 @@ import {
   Dimensions,
   Keyboard,
   Alert,
+  ImageBackground,
+  ScrollView,
 } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -27,12 +29,15 @@ import {Dropdown} from 'react-native-element-dropdown';
 import Loader from '../Components/Loader.js';
 import TabHeader from '../Components/TabHeader.js';
 import ProfileScreen from './ProfileScreen.js';
+import NotificationScreen from './NotificationScreen.js';
 import CheckWaitingScreen from './PayScreens/CheckWaitingScreen.js';
 import PayScreen from './PayScreens/PayScreen.js';
 import PayOptionsScreen from './PayScreens/PayOptionsScreen.js';
+import PayOptionsScreen2 from './PayScreens/PayOptionsScreen2.js';
+import MapScreen from './MapScreen.js';
 import IbanScreen from './PayScreens/IbanScreen.js';
 import CashScreen from './PayScreens/CashScreen.js';
-import {ScrollView} from 'react-native-gesture-handler';
+//import {ScrollView} from 'react-native-gesture-handler';
 //import Clipboard from '@react-native-clipboard/clipboard';
 import {styles} from '../Components/Styles.js';
 import Linkwhite from '../../assets/img/svg/linkwhite.svg';
@@ -45,14 +50,23 @@ import axios from 'react-native-axios';
 import MaskInput from 'react-native-mask-input';
 import Clipboard from '@react-native-clipboard/clipboard';
 import messaging from '@react-native-firebase/messaging';
+import Carousel, {useOnPressConfig} from '@timotismjntk/react-native-carousel';
+
+import { useFocusEffect } from '@react-navigation/native';
+import { BackHandler } from 'react-native';
+import Swiper from 'react-native-swiper';
+
+import { apiGet, apiPost } from '../utils/api.js';
+//const { showError } = useError();
 
 const Stack = createStackNavigator();
 const Discover = ({route, navigation}) => {
-  const [selected, setSelected] = React.useState('');
-  const [secureBalance, setSecureBalance] = React.useState(false);
-  const [data, setData] = React.useState([]);
-  const [slData, setSlData] = React.useState([]);
-  const [pslData, setPslData] = React.useState([]);
+  const onPressConfig = useOnPressConfig();
+  const [selected, setSelected] = useState('');
+  const [unreadcount, setUnreadCount] = useState(0);
+  const [secureBalance, setSecureBalance] = useState(false);
+  const [data, setData] = useState([]);
+  
 
   const [offerLink, setOfferLink] = useState('');
   const [campaignDetailData, setCampaignDetailData] = useState({title:'', longDescription:'', imageUrl:'https://reimg-carrefour.mncdn.com/bannerimage/Carre4433_0_MC/8862580539442.jpg', time:'', barLines:[], targetAward:0, memberCurrentCount:0});
@@ -66,17 +80,22 @@ const Discover = ({route, navigation}) => {
   const [payfourId, setPayfourId] = useState('');
   const [isPremium, setIsPremium] = useState(false);
 
-  const [transactions, setTransactions] = useState({ type: "Bulunamadı", amount: "", date:"Bulunamadı" });
+  const [transactions, setTransactions] = useState({ type: "İşlem bulunmamaktadır.", amount: "", date:"İşlem bulunmamaktadır." });
   const [userData, setUserData] = useState({ });
   const [userLinkError, setUserLinkError] = useState(false);
   const [userBrandError, setUserBrandError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState('0,00');
+  const [bonus, setBonus] = useState('0,00');
+  const [available, setAvailable] = useState('0,00');
   const [errortext, setErrortext] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('Marka Seçiniz');
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [numberOfLines, setNumberOfLines] = useState(2);
+  const [numberOfLines2, setNumberOfLines2] = useState(2);
 
   const [payModalVisible, setPayModalVisible] = useState(false);
   const [ibanModalVisible, setIbanModalVisible] = useState(false);
@@ -92,6 +111,11 @@ const Discover = ({route, navigation}) => {
   const [carrefourCardData, setCarrefourCardData] = useState([]);
   //const [payfourId, setPayfourId] = useState('');
   //const [ibanModalVisible, setIbanModalVisible] = useState(false);
+  const [slData, setSlData] = useState([]);
+  const [pslData, setPslData] = useState([]);
+  
+  const [creditStatus, setCreditStatus] = useState(0);
+  //const [payStatus, setPayStatus] = useState(3);
 
   const dw = Dimensions.get('window').width;
   const sw = Dimensions.get('window').width*0.437;
@@ -103,6 +127,22 @@ const Discover = ({route, navigation}) => {
       perView: 2,
       spacing: 15,
     },
+    touchStartForcePreventDefault: false, // Prevents default behavior only when necessary
+    rubberband: false, // Disables rubberband effect for smoother gesture propagation
+    vertical: false, // Ensures only horizontal gestures are processed by the slider
+    /*dragStarted:(sl) =>{
+      console.log("dragStarted");
+      console.log(sl.track);
+    },
+    dragEnded: (sl) =>{
+      console.log("dragEnded");
+      console.log(sl.track);
+      //console.log(sl);
+      if(slider.track.velocity() === 0){
+        console.log("velocity 0");
+        //onPress();
+      
+    }}*/
   })
   const slider2 = useKeenSliderNative({
     slides: {
@@ -110,13 +150,38 @@ const Discover = ({route, navigation}) => {
      perView: 2,
      spacing: 15,
    },
+   touchStartForcePreventDefault: false, // Prevents default behavior only when necessary
+    rubberband: false, // Disables rubberband effect for smoother gesture propagation
+    vertical: false, // Ensures only horizontal gestures are processed by the slider
  })
+ const slider3 = useKeenSliderNative({
+  slides: {
+   number: slides,
+   perView: 2,
+   spacing: 15,
+ },
+ touchStartForcePreventDefault: false, // Prevents default behavior only when necessary
+    rubberband: false, // Disables rubberband effect for smoother gesture propagation
+    vertical: false, // Ensures only horizontal gestures are processed by the slider
+})
   const slimages = [
     require('../../assets/img/export/Campaignv3_dummy1.png'),
     require('../../assets/img/export/Campaignv3_dummy2.png'),
     require('../../assets/img/export/Campaignv3_dummy1.png'),
   ]
   const colors = ['#407CFE', '#FF6540', '#6AFC52', '#3FD2FA', '#FF3E5E', '#8A45FF']
+  
+  useFocusEffect(
+    React.useCallback(() => {
+        const onBackPress = () => {
+        // Return true to disable the default back button behavior
+        return true;
+        };
+        BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+    );
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => {
       // do something
@@ -131,33 +196,48 @@ const Discover = ({route, navigation}) => {
             headers: { Authorization: `Bearer ${value}` }
           };
           console.log("getbalance");
-          axios.get('http://payfourapp.test.kodegon.com/api/account/getbalance', config).then(response => {
-            console.log(response.data);
-            console.log(response.data.data);
-            if(response.data.data.balance != null){
-              let b = parseFloat(response.data.data.balance).toFixed(2);
-              //let b = parseFloat("1890").toFixed(2);
-              let f = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
-                  b,
-                )
-              let fr= f.replace('TRY', '').trim();              
-              setBalance(fr);
-            }
-            setLoading(false);
-            checkPremiumCampaigns();
-           //checkCampaigns();
-          })
-          .catch(error => {
-            console.error("Error sending data: ", error);
-            let msg="";
-            (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-          });
+          apiGet('account/getbalance', onGetBalance);
+          
 
         });
       });
     });
     return unsubscribe;
   }, [navigation]);
+  const onGetBalance= (response) => {
+    console.log(response.data);
+    console.log(response.data.data);
+    if(response.data.data.balance != null){
+      let b = parseFloat(response.data.data.balance).toFixed(2);
+      //let b = parseFloat("1890").toFixed(2);
+      let f = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+          b,
+        )
+      let fr= f.replace('TRY', '').trim();              
+      //setBalance("150.000,00");
+      setBalance(fr);
+    }
+    setLoading(false);
+    checkNotificationCount();
+  }
+  const checkNotificationCount= () => {
+    setLoading(true);
+    AsyncStorage.getItem('token').then(value =>{
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+      console.log("checkNotificationCount");
+      apiGet('notifications/unreadcount', onUnreadCount);
+      
+
+    });
+  }
+  const onUnreadCount= (response) => {
+    console.log(response.data);
+    console.log(response.data.data);
+    setUnreadCount(response.data.data);
+    checkPremiumCampaigns();
+  }
   const checkCurrency = data =>{
     if(parseInt(data) < 1000){
       let arr= data.toString().split(".");
@@ -207,11 +287,16 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("premiumcampaigns");
-      axios.get('http://payfourapp.test.kodegon.com/api/campaigns/premiumcampaigns', config).then(response => {
-        console.log(response.data);
+      apiGet('campaigns?page=1&pageSize=4&isPremium=true&sort=DateDescending', onPremiumCampaigns);
+      
+
+    });
+  }
+  const onPremiumCampaigns= useMemo(()=> (response) => {
+    console.log(response.data);
         console.log(response.data.data);
         console.log(response.data.data.items);
-        let sl = response.data.data;
+        let sl = response.data.data.items;
         for(var i=0; i < sl.length;i++){
           //sl[i].key = sl[i].campaignCode;
           let th = sl[i].thumbnailUrl;
@@ -220,6 +305,7 @@ const Discover = ({route, navigation}) => {
           let dt = new Date(sl[i].expireDate);
           let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
           sl[i].time = t;
+          //if(i == 0) sl[i].title = sl[i].title +" test text length test text length test text length"
         }
         if(sl.length < 2){
           sl.push({...sl[0]});
@@ -232,7 +318,7 @@ const Discover = ({route, navigation}) => {
           sl.push({...sl[0]});
         }
         for(var i=0; i < sl.length;i++){
-          sl[i].uid = "premium"+(10+i);
+          sl[i].uid = Date.now()+"premium"+(10+i);
         }
         console.log("psl");
         console.log(sl.length);
@@ -240,15 +326,7 @@ const Discover = ({route, navigation}) => {
         setPslData(sl);
         setLoading(false);
         checkCampaigns();
-      })
-      .catch(error => {
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
-
-    });
-  }
+  }, [pslData]);
   const checkCampaigns= () => {
     setLoading(true);
     AsyncStorage.getItem('token').then(value =>{
@@ -256,11 +334,19 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("campaigns");
-      axios.get('http://payfourapp.test.kodegon.com/api/campaigns?page=1&pageSize=4', config).then(response => {
-        console.log(response.data);
+      apiGet('campaigns?page=1&pageSize=4&isSpecial=true&sort=DateDescending', onCampaigns);
+
+      
+
+    });
+  }
+  const onCampaigns = useMemo(()=> (response) => {
+    console.log(response.data);
         console.log(response.data.data);
         console.log(response.data.data.items);
         let sl = response.data.data.items;
+        //let sl=[];
+        if(sl.length > 0){
         for(var i=0; i < sl.length;i++){
           //sl[i].key = sl[i].campaignCode;
           let th = sl[i].thumbnailUrl;
@@ -268,6 +354,8 @@ const Discover = ({route, navigation}) => {
           let dt = new Date(sl[i].expireDate);
           let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
           sl[i].time = t;
+          //if(i == 0) sl[i].title = sl[i].title +" test text length test text length test text length test text length"
+          //if(dt.getTime() < new Date().getTime()) sl.push(sd[i]);
         }
         if(sl.length < 2){
           sl.push({...sl[0]});
@@ -280,23 +368,16 @@ const Discover = ({route, navigation}) => {
           sl.push({...sl[0]});
         }
         for(var i=0; i < sl.length;i++){
-          sl[i].uid = "campaign"+(10+i);
+          sl[i].uid = Date.now()+"campaign"+(10+i);
         }
-        console.log("psl");
+      }
+        console.log("sl");
         console.log(sl.length);
         console.log(sl);
         setSlData(sl);
         setLoading(false);
         checkTransactions();
-      })
-      .catch(error => {
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
-
-    });
-  }
+  }, [slData]);
   const checkTransactions = () => {
     setLoading(true);
     AsyncStorage.getItem('token').then(value =>{
@@ -314,45 +395,36 @@ const Discover = ({route, navigation}) => {
       let endDate =
           date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
           console.log("gettransactions");
-      axios.get('http://payfourapp.test.kodegon.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&pageSize=12', config).then(response => {
-        console.log(response.data);
-        console.log(response.data.data);
-        /*if(response.data.data.balance != null){
-          let b = parseFloat(response.data.data.balance).toFixed(2).replace('.', ',');
-          setBalance(b);
-        }
-        setLoading(false);
-        checkPayment();*/
-        let d = response.data.data.items;
-        if(d.length > 0){
-          let dObj = {}
-          let date = new Date(d[0].dateTime);
-          dObj.type=d[0].txnName;
-          let f = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
-            d[0].amount,
-          )
-        let fr= f.replace('TRY', '').trim();
-          dObj.amount=fr;
-          let day = date.getDate()<10?"0"+date.getDate() : date.getDate();
-          let month = (date.getMonth() + 1)<10?"0"+(date.getMonth() + 1) : (date.getMonth() + 1);
-
-          dObj.date = day+'.'+month+'.'+date.getFullYear();
-          console.log("transactionObj");
-          console.log(dObj);
-          setTransactions(dObj);
-        }
-        setLoading(false);
-        //checkPayment();
-        //checkMainCampaign();
-        getCarrefourCards();
-      })
-      .catch(error => {
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+          apiGet('account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&pageSize=12', onGetTransactions);
+      
 
     });
+  }
+  const onGetTransactions = (response) =>{
+    console.log(response.data);
+    console.log(response.data.data);
+    let d = response.data.data.items;
+    if(d.length > 0){
+      let dObj = {}
+      let date = new Date(d[0].dateTime);
+      dObj.type=d[0].txnName;
+      let f = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+        d[0].amount,
+      )
+    let fr= f.replace('TRY', '').trim();
+      dObj.amount=fr;
+      let day = date.getDate()<10?"0"+date.getDate() : date.getDate();
+      let month = (date.getMonth() + 1)<10?"0"+(date.getMonth() + 1) : (date.getMonth() + 1);
+
+      dObj.date = day+'.'+month+'.'+date.getFullYear();
+      console.log("transactionObj");
+      console.log(dObj);
+      setTransactions(dObj);
+    }
+    setLoading(false);
+    //checkPayment();
+    //checkMainCampaign();
+    getCarrefourCards();
   }
   const getCarrefourCards = () =>{
     setLoading(true);
@@ -361,52 +433,64 @@ const Discover = ({route, navigation}) => {
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-      axios.get('https://payfourapp.test.kodegon.com/api/account/getloyaltycards', config)
-            .then(response => {
-              console.log("getLoyaltyCards");
-              console.log(response);
-              console.log(response.data);
-              
-              if(response.data){
-                if(response.data.data){
-                  let arr = response.data.data;
-                  for(var i=0; i < arr.length;i++){
-                    arr[i].logo = require('../../assets/img/export/carrefour_bireysel.png');
-                  }
-                  console.log(arr);
-                  setCarrefourCardData(arr);
-                }
-              }
-              setLoading(false);
-              checkMainCampaign();
-            }).catch(error => {
-              setLoading(false);
-              console.error("Error sending data: ", error);
-              console.error("Error sending data: ", error.response);
-              console.error("Error sending data: ", error.response.data.errors.message);
-              //console.log(JSON.parse(error.response));
-              let msg="";
-              (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-        
-              
-              //Alert.alert("Error sending data: ", error);
-            });
+      apiGet('account/getloyaltycards', onLoyaltyCards);
+      
           
           });
+  }
+  const onLoyaltyCards = (response) =>{
+    console.log("getLoyaltyCards");
+    console.log(response);
+    console.log(response.data);
+    
+    if(response.data){
+      if(response.data.data){
+        let bonus = 0;
+        let arr = response.data.data;
+        for(var i=0; i < arr.length;i++){
+          arr[i].logo = require('../../assets/img/export/carrefour_bireysel.png');
+          bonus+=arr[i].netBonus;
+          let num = arr[i].cardNumber;
+
+          arr[i].formattedNumber = arr[i].cardNumber.substring(0,4)+" "+arr[i].cardNumber.substring(4,8)+" "+arr[i].cardNumber.substring(8,12)+" "+arr[i].cardNumber.substring(12,16);
+          console.log(arr[i].formattedNumber);
+        }
+        console.log("formattedNumber");
+
+        console.log(arr);
+        setCarrefourCardData(arr);
+        if(bonus > 0){
+          let f = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+            bonus,
+          )
+        let fr= f.replace('TRY', '').trim();
+        setBonus(fr);
+        }
+      }
+    }
+    setLoading(false);
+    checkMainCampaign();
   }
   const checkMainCampaign = () =>{
 
     console.log("checkMainCampaign");
-    //http://payfourapp.test.kodegon.com/api/campaigns/maincampaign
+    //https://api-app.payfour.com/api/campaigns/maincampaign
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-      axios.get('http://payfourapp.test.kodegon.com/api/campaigns/maincampaign', config).then(response => {
-        console.log(response);
+      apiGet('campaigns/maincampaign',onMainCampaign);
+      
+    });
+  }
+  const onMainCampaign = (response) =>{
+    console.log(">> onMainCampaign");
+    console.log(response);
         console.log(response.data);
         console.log(response.data.data);
+        //console.log(response.data.data.targetCount);
        /*{"id": 56, "memberCurrentCount": 0, "targetAward": 100, "targetCount": 4}*/
+       if(response.data.data && response.data.data.targetCount){
         let sl = response.data.data;
         console.log("targetCount");
         console.log(sl.targetCount);
@@ -415,7 +499,7 @@ const Discover = ({route, navigation}) => {
 
         for(var i=0; i < parseInt(sl.targetCount)+1; i++){
           console.log(i);
-          sl.barLines.push({point: i, key:"barLine"+i});
+          sl.barLines.push({point: i, key:"barLine"+Date.now()+i});
         }
         //sl.barLines = lineArr;
         //setBarLines(lineArr);
@@ -423,17 +507,11 @@ const Discover = ({route, navigation}) => {
         console.log("sl.barLines");
         console.log(sl.barLines);
         setCampaignDetailData(sl);
+      }
         setLoading(false);
         //checkPayment();
         //checkFirebaseToken();
         requestUserPermission();
-      })
-      .catch(error => {
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
-    });
   }
   async function requestUserPermission() {
     const authorizationStatus = await messaging().requestPermission();
@@ -463,25 +541,31 @@ const Discover = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("setFirebaseToken");
-      axios.post('http://payfourapp.test.kodegon.com/api/devices/setfcmtoken', { "fcmToken": fcmToken },config).then(response => {
-        console.log(response.data);
-        console.log(response.data.data);
-        checkPayment();
-       //checkCampaigns();
-      })
-      .catch(error => {
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-        checkPayment();
-      });
+      let dataToSend = { "fcmToken": fcmToken };
+      //apiPost('devices/setfcmtoken', dataToSend, onFcmTokenSet);
+      axios.post('https://api-app.payfour.com/api/devices/setfcmtoken', dataToSend, config).then(response => {
+         console.log(response.data);
+         console.log(response.data.data);
+         checkPayment();
+        //checkCampaigns();
+       })
+       .catch(error => {
+         console.error("Error sending data: ", error);
+         let msg="";
+         (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+         checkPayment();
+       });
 
     });
   }else{
     checkPayment();
   }
   }
-
+  const onFcmTokenSet = (response) =>{
+    console.log(response.data);
+    console.log(response.data.data);
+    checkPayment();
+  }
   const checkPayment = () =>{
     console.log("checkpayment");
     console.log("route.name");
@@ -501,53 +585,144 @@ const Discover = ({route, navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
-          console.log(response.data);
-          console.log(response.data.data);
-          console.log(response.data.data.tckn);
-          setUserData(response.data.data);
-          setIban(response.data.data.defaultBankAccountNumber);
-          if(response.data.data.segment == 2) setIsPremium(true);
-          let u = response.data.data;
-          if(u.firstName != null && u.firstName != "" && u.lastName != null && u.lastName != ""){
-            let ch = u.firstName.charAt(0)+u.lastName.charAt(0);
-            console.log("initials");
-            console.log(ch);
-            setInitials(ch);
-          }
-          /*if(response.data.data.registrationCompleted == null || response.data.data.registrationCompleted == "undefined" || !response.data.data.registrationCompleted){
-            console.log("show full register");
-            setModalVisible(true);
-          }else{*/
-          setLoading(false);
-            getWaiting();
-          //}
-        })
-        .catch(error => {
-          setLoading(false);
-          console.error("Error sending data: ", error);
-          let msg="";
-          (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-        });
-
+        apiGet('account/getuser', onGetUser);        
       });
       
     //}
   }
-  const getWaiting = () =>{
-    setLoading(true);
+  const onGetUser = (response) => {
+    console.log(response.data);
+    console.log(response.data.data);
+    console.log(response.data.data.tckn);
+    setUserData(response.data.data);
+    setIban(response.data.data.defaultBankAccountNumber);
+    if(response.data.data.segment == 2) setIsPremium(true);
+    let u = response.data.data;
+    if(u.firstName != null && u.firstName != "" && u.lastName != null && u.lastName != ""){
+      let ch = u.firstName.charAt(0)+u.lastName.charAt(0);
+      console.log("initials");
+      console.log(ch);
+      setInitials(ch);
+    }
+    
+    /*if(response.data.data.registrationCompleted == null || response.data.data.registrationCompleted == "undefined" || !response.data.data.registrationCompleted){
+      console.log("show full register");
+      setModalVisible(true);
+    }else{*/
+    setLoading(false);
+    //checkCurrentLimit();
+    checkCurrentLimit(u.loanApplication, u.potentialLimit);
+  }
+  const checkCurrentLimit = (userCreditData, userLimitData) => {
+    console.log("checkCurrentLimit");
+    console.log("-------");
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-      console.log("getwaitings");
-      axios.get('http://payfourapp.test.kodegon.com/api/payments/getwaitings', config).then(response => {
-        console.log("getwaitings");
+
+      //apiGet('loans/getavailablecreditlimit', onAvailableCreditLimit);
+      axios.get('https://api-app.payfour.com/api/loans/getavailablecreditlimit', config).then(response => {
+         console.log("getavailablecreditlimit");
+         console.log(response.data);
+         console.log(response.data.data);
+         if(response.data.data.availableAllotmentAmount){
+           setAvailable(new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+             response.data.data.availableAllotmentAmount,
+           ).replace('TRY', '').trim())
+         }
+
+         //checkUserCreditStatus(userCreditData, userLimitData, response.data.data);
+         checkUserCreditStatus(userCreditData, userLimitData, response.data.data);
+        
+       })
+       .catch(error => {
+      //   console.error("Error sending data: ", error);
+      //   let msg="";
+      //   (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+      //   getWaiting();
+       });
+
+    });
+  }
+  const onAvailableCreditLimit= (response) =>{
+    console.log("getavailablecreditlimit");
+    console.log(response.data);
+    console.log(response.data.data);
+    if(response.data.data.availableAllotmentAmount){
+      setAvailable(new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+        response.data.data.availableAllotmentAmount,
+      ).replace('TRY', '').trim())
+    }
+
+    //checkUserCreditStatus(userCreditData, userLimitData, response.data.data);
+    checkUserCreditStatus(userCreditData, userLimitData, response.data.data);
+  }
+  const checkUserCreditStatus= (userCreditData, userLimitData) =>{
+    console.log("checkUserCreditStatus");
+    console.log(userCreditData);
+    console.log(userLimitData);
+    console.log("-------");
+    /*userLimitData = 1000;
+    userCreditData = null;
+    availableLimit.availableAllotmentAmount = 5;*/
+    let hasCredit = (userCreditData != null && userCreditData != undefined && userCreditData != "undefined");
+    let hasActiveCredit = hasCredit && userCreditData.status == 2;
+    let hasLimit = (userLimitData != null && userLimitData != undefined && userLimitData != "undefined");
+
+    console.log(hasLimit);
+    console.log(hasCredit);
+    console.log(hasActiveCredit);
+
+    if((!hasLimit && !hasCredit)){
+      console.log("cs1");
+      //setCreditStatus(1);
+      getWaiting(1);    
+    }else if(hasLimit && !hasCredit){
+      console.log("cs3");
+      //setCreditStatus(2);
+      getWaiting(3);
+    }else if(hasCredit){ 
+      console.log("cs2");
+      //setCreditStatus(3);
+      getWaiting(2);
+    }
+    // console.log("CREDITSTATE");
+    // console.log(creditState);
+    //getWaiting();
+
+  }
+  const getWaiting = (cs) =>{
+    console.log("getWaiting "+cs);
+    setLoading(true);
+    setCreditStatus(cs);
+    //setCreditStatus(1);
+    AsyncStorage.getItem('token').then(value =>{
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+      apiGet('payments/getwaitings', onGetWaitings, cs);
+      
+
+    });
+  }
+  const onGetWaitings = (response, cs) =>{
+    console.log("getwaitings");
         console.log(response.data);
         console.log(response.data.data.length);
         console.log("balance ? ");
         console.log(balance);
         setLoading(false);
+        console.log("cs");
+        console.log(cs);
+        //setCreditStatus(cs);
+        console.log("CREDITSTATE2");
+        console.log(creditStatus);
+        /*response.data.data = [
+          {"amount": 220, "channelTypeId": 6, "dateUTC": "2024-12-06T13:01:58.7072503", "paymentId": 1696, "storeCode": "1014", "storeName": " CarrefourSA İstanbul Merter"}, 
+          {"amount": 22, "channelTypeId": 6, "dateUTC": "2024-12-06T13:02:08.4449536", "paymentId": 1697, "storeCode": "1012", "storeName": " CarrefourSA İstanbul Acıbadem"}, 
+          {"amount": 10, "channelTypeId": 6, "dateUTC": "2024-12-06T13:02:16.8198694", "paymentId": 1698, "storeCode": "1015"}
+          ];*/
         if(response.data.data.length > 0){
           let pObj = response.data.data[0];
           pObj.balance = balance;
@@ -559,15 +734,6 @@ const Discover = ({route, navigation}) => {
         }else{
           if(route.name == "payment") setPayModalVisible(true);
         }
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
-
-    });
   }
   const setRegistration = () =>{
     setLoading(true);
@@ -613,24 +779,17 @@ const Discover = ({route, navigation}) => {
         }
       }*/
         console.log("completeregistration");
-      axios.post('http://payfourapp.test.kodegon.com/api/account/completeregistration', dataToSend, config).then(response => {
-        console.log(response.data);
-        setUserData(response.data.data);
-        setLoading(false);
-        setModalVisible(false);
-        setPayModalVisible(true);
-      })
-      .catch(error => {
-        console.error("Error sending data: ", error);
-        console.error("Error sending data: ", error.response);
-        console.error("Error sending data: ", error.response.data);
-        console.error("Error sending data: ", error.response.data.errors);
-        setLoading(false);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+        apiPost('account/completeregistration', dataToSend, onCompleteRegistration);
+      
 
     });
+  }
+  const onCompleteRegistration = (response) =>{
+    console.log(response.data);
+    setUserData(response.data.data);
+    setLoading(false);
+    setModalVisible(false);
+    setPayModalVisible(true);
   }
   const renderItem = item => {
     return (
@@ -650,6 +809,407 @@ const Discover = ({route, navigation}) => {
       </View>
     );
   };
+  const renderCurrentStatus = () => {
+    return(
+    <View style={[styles.sectionStyle,{marginBottom:16,
+      height:(Dimensions.get('window').width)*0.5418,
+      shadowColor:'#909EAA',
+      shadowOffset:{
+        width:20,
+        height:20,
+      },
+      shadowOpacity:0.5,
+      shadowRadius:10,
+      elevation:10,
+      
+      }]}>
+     <View style={{
+      backgroundColor:'#004F97',
+      
+      borderTopLeftRadius:20,
+      borderTopRightRadius:20,
+      paddingTop:12,
+      paddingBottom:12,
+      paddingLeft:16,
+      paddingRight:16,
+      flexDirection:'row',
+      justifyContent:'space-between',
+      alignItems:'center',
+      display: available=="0,00"? 'none' : 'flex',
+      }}>
+        <Text style={{color:'#fff', fontSize:12}}>
+        Hazır Limitiniz 
+        </Text>
+        <Text style={{color:'#fff', fontSize:16, fontWeight:'700'}}>
+          {available} TL
+        </Text>
+    </View>
+    <TouchableOpacity 
+                  onPress={() => navigation.navigate('wallet', { screen: 'CreditScreen',params: {
+                        screen: 'IntroHazirLimit', }})}
+                  style={{
+                    flexDirection:'row',
+                    alignItems:'center',
+                    width:'100%',
+                  }}>
+    <View style={{
+      backgroundColor:'#004F97',
+      borderTopLeftRadius:20,
+      borderTopRightRadius:20,
+      paddingTop:12,
+      paddingBottom:12,
+      paddingLeft:16,
+      paddingRight:16,
+      flexDirection:'row',
+      justifyContent:'space-between',
+      alignItems:'center',
+      width:'100%',
+      display: available=="0,00"? 'flex' : 'none',
+      }}>
+        <Text style={{color:'#fff', fontSize:12}}>
+        Hazır Limitiniz Bulunmuyor 
+        </Text>
+        <View style={{flexDirection:'row'}}>
+          <Text style={{fontSize:12, color:'#fff', marginRight:4}}>
+          Hemen Öğren
+          </Text>
+          <Image 
+            source={require('../../assets/img/export/right_arrow_white.png')}
+            style={{
+              resizeMode:'contain',
+              width:16,
+              height:16,
+            }}>
+          </Image>
+        </View>
+                  
+        {/* <Text style={{color:'#fff', fontSize:16, fontWeight:'700'}}>
+        Hemen Öğren
+        </Text> */}
+    </View>
+    </TouchableOpacity>
+    <View style={{
+      backgroundColor:'#fff',
+      // borderTopLeftRadius: available=="0,00"? 20 : 0,
+      // borderTopRightRadius:available=="0,00"? 20 : 0,
+      borderTopLeftRadius:0,
+      borderTopRightRadius:0,
+      borderBottomLeftRadius:20,
+      borderBottomRightRadius:20,
+      paddingTop:Dimensions.get('window').width > 360?16:12,
+      paddingBottom:Dimensions.get('window').width > 360?16:12,
+      paddingLeft:16,
+      paddingRight:16,
+      flexGrow:1,
+      justifyContent:'space-between',
+      }}>
+        <View style={{flexDirection:'row',
+      justifyContent:'space-between',
+      alignItems:'flex-start',}}>
+          <View style={{width:Dimensions.get('screen').width-212,flexDirection:'column', alignItems:'flex-start', justifyContent:'space-between'}}>
+            <View style={{width:Dimensions.get('screen').width-212,}}>
+              <Text style={{color:'#909EAA', fontSize:12}}>
+                Güncel Bakiye
+              </Text>
+              <View style={{flexDirection:'row',alignItems:'flex-end',}}>
+                <Text 
+                //editable={false}
+                numberOfLines={1}
+                adjustsFontSizeToFit={true}
+                //secureTextEntry={secureBalance}                        
+                style={{color:'#0B1929',
+                  //backgroundColor:'#ff0000',
+                //fontSize: Dimensions.get('window').width > 375 ?32: ((Dimensions.get('window').width > 360)?28:24), 
+                fontSize:32,
+                width:Dimensions.get('screen').width-212,
+                fontWeight:'700',
+                }}>
+                  {secureBalance ? '*'.repeat(balance.length) : balance}
+                  {(!secureBalance)?
+                  <Text style={{color:'#0B1929', fontSize:16, fontWeight:'700', verticalAlign:'sub'}}>
+                    TL
+                  </Text>
+                  :
+                  <Text style={{color:'#0B1929', fontSize:16, fontWeight:'700', verticalAlign:'sub'}}>                            
+                  </Text>
+                  }
+                </Text>
+                
+              </View>
+            </View>
+            
+          </View>
+          <View style={{alignItems:'flex-end'}}>
+            <TouchableOpacity 
+              style={{width:32, height:32, backgroundColor:'#F2F4F6', borderRadius:32, alignItems:'center', justifyContent:'center', marginBottom:15}}
+              onPress={()=> setSecureBalance(!secureBalance)}>
+                
+                {secureBalance? <Image 
+              source={require('../../assets/img/export/eye_off.png')}
+              style={{
+                width:16,
+                height:16
+              }}>
+              </Image> : 
+              <Image 
+              source={require('../../assets/img/export/eye.png')}
+              style={{
+                width:16,
+                height:16
+              }}>
+              </Image>}
+            </TouchableOpacity>
+            <TouchableOpacity
+            style={{
+              width:145,
+              height:Dimensions.get('window').width > 360? 40 : 34,
+              borderRadius:5,
+              backgroundColor:'#005BAA',
+              alignItems:'center',
+              alignContent:'center',
+              justifyContent:'center',
+              marginBottom:16,
+            }}
+            onPress={() => {setAddModalVisible(true);}}
+            
+              // onPress={() => navigation.navigate('wallet', { 
+              //   screen: 'Waiting',
+              //   params: null
+              // })}
+            >
+              <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                <Image 
+              source={require('../../assets/img/export/account_summary_plus.png')}
+              style={{
+                width:16,
+                height:16,
+                marginRight:5
+              }}>
+              </Image>
+              <Text style={{fontSize:14, color:'#fff'}}>
+                Para Yükle
+              </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{
+              borderTopWidth:1,
+              borderColor:'#E4E4E8',
+              paddingTop:12,
+              flexDirection:'row',
+              alignItems:'center',
+              justifyContent:'space-between',
+            }}>
+              <View style={{
+                flexDirection:'row',
+                alignItems:'center',
+              }}>
+              <Image 
+                source={require('../../assets/img/export/icon_card.png')}
+                style={{
+                  width:16,
+                  resizeMode:'contain',
+                  height:16,
+                  marginRight:4,
+                }}></Image>
+              <Text style={{fontSize:14, color:'#004F97'}}>CarrefourSA Puan:</Text>
+              </View>
+              <View style={{
+                flexDirection:'row',
+                alignItems:'center',
+                
+              }}>
+              
+              <Text style={{fontSize:12, color:'#004F97', fontWeight:'700'}}>{bonus} TL</Text>
+              {/* <Image 
+                source={require('../../assets/img/export/information.png')}
+                style={{
+                  width:16,
+                  resizeMode:'contain',
+                  height:16,
+                  marginLeft:2,
+                }}></Image> */}
+              </View>
+        </View>                
+    </View>
+    </View>
+    )
+  }
+  const renderCarrefourCard = () =>{
+return(
+  <View style={[styles.sectionStyle,{marginBottom:16,
+    shadowColor:'#909EAA',
+    shadowOffset:{
+      width:20,
+      height:20,
+    },
+    shadowOpacity:0.5,
+    shadowRadius:10,
+    elevation:10,
+    paddingRight:16,
+    }]}>
+  <View style={{ width:Dimensions.get('window').width-32, height:(Dimensions.get('window').width)*0.5418}}>
+              <ImageBackground
+                     style={[styles.bgimg, {flex:1}]}
+                     resizeMode="cover"
+                     source={require('../../assets/img/export/carrefour_card.png')}>
+                      <Text style={{color:'#fff', fontSize:12, position:'absolute', top:'4.5%', left:'4.5%',fontFamily:'UbuntuRegular'}}>CarrefourSA Kart</Text>
+                      <Text style={{color:'#fff', fontSize:18, position:'absolute', top:'35%', left:'4.5%',fontFamily:'UbuntuRegular'}}>{carrefourCardData[0].formattedNumber}</Text>
+                      <View style={{position:'absolute', 
+                        top:'71%', 
+                        left:'4.5%'}}>
+                        <Text style={{
+                          color:'#fff',
+                        fontSize:12,
+                        lineHeight:12,
+                        fontFamily:'UbuntuRegular',
+                        marginBottom:6,
+                        }}>Toplam Puan</Text>
+                      <Text 
+                        //editable={false}
+                        numberOfLines={1}                     
+                        style={{color:'#fff',
+                        fontSize:32,
+                        lineHeight:32,
+                        fontWeight:'700',
+                        fontFamily:'UbuntuBold'
+                        }}>
+                          {bonus+" "}
+                          <Text style={{color:'#fff', fontSize:16, fontWeight:'700', verticalAlign:'sub',fontFamily:'UbuntuRegular'}}>
+                            TL
+                          </Text>                          
+                        </Text>
+                        </View>
+              </ImageBackground>
+              
+
+            </View>
+            </View>
+)
+  }
+  const renderSwiper = () =>{
+    return(
+      <Swiper 
+              style={[styles.wrapper, {height:(Dimensions.get('window').width)*0.7218, paddingBottom:0}]}
+              
+              loop={false}
+              onMomentumScrollEnd={(e, state, context) =>{
+                /*console.log('index:', state.index);
+                console.log('total:', state.total);
+                let end = (state.index+1) == state.total;
+                console.log("end? "+end);*/
+                //console.log(sliderRef.current.);
+              }}
+              onIndexChanged={(index) =>{
+                //console.log('index:', index);                
+              }}
+              dot={
+                <View
+                  style={{
+                    backgroundColor: "#fff",
+                    width: 6,
+                    height: 6,
+                    borderRadius: 4,
+                    marginLeft: 6,
+                    marginRight: 6,
+                    marginTop: 3,
+                    marginBottom: 3
+                  }}
+                />
+              }
+              activeDot={
+                <View
+                  style={{
+                    backgroundColor: '#004F97',
+                    width: 6,
+                    height: 6,
+                    borderRadius: 6,
+                    marginLeft: 6,
+                    marginRight: 6,
+                    marginTop: 3,
+                    marginBottom: 3
+                  }}
+                />
+              }>
+                {renderCurrentStatus()}
+                {renderCarrefourCard()}
+              </Swiper>
+    )
+  }
+
+  const getCampaignStatusText = () =>{
+    
+    console.log("getCampaignStatusText ");
+    console.log(campaignDetailData.targetCount);
+    console.log(campaignDetailData.memberCurrentCount);
+    let len = (campaignDetailData.targetCount - campaignDetailData.memberCurrentCount);
+
+    return(        
+      <Text style={{
+        fontSize:14,
+        lineHeight:16,
+        color:'#0B1929',
+        textAlign:'center',
+        marginBottom:12,
+      }}>
+        Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile {len} alışveriş yapın, 100 TL Puan kazanın
+      </Text>        
+  );
+
+    // if(len == 0){
+    //   return(        
+    //       <Text style={{
+    //         fontSize:14,
+    //         lineHeight:16,
+    //         color:'#0B1929',
+    //         textAlign:'center',
+    //         marginBottom:12,
+    //       }}>
+    //         Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile 4 alışveriş yapın, 100 TL Puan kazanın
+    //       </Text>        
+    //   );
+    // }else if(len == 1){
+    //   return(        
+    //     <Text style={{
+    //       fontSize:14,
+    //       lineHeight:16,
+    //       color:'#0B1929',
+    //       textAlign:'center',
+    //       marginBottom:12,
+    //     }}>
+    //       Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile 3 alışveriş daha yapın, 100 TL Puan kazanın
+    //     </Text>        
+    //   );
+    // }else if(len == 2){
+    //   return(        
+    //     <Text style={{
+    //       fontSize:14,
+    //       lineHeight:16,
+    //       color:'#0B1929',
+    //       textAlign:'center',
+    //       marginBottom:12,
+    //     }}>
+    //       Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile 2 alışveriş daha yapın, 100 TL Puan kazanın
+          
+    //     </Text>        
+    //   );
+    // }else if(len == 3){
+    //   return(        
+    //     <Text style={{
+    //       fontSize:14,
+    //       lineHeight:16,
+    //       color:'#0B1929',
+    //       textAlign:'center',
+    //       marginBottom:12,
+    //     }}>
+    //       Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile 1 alışveriş daha yapın, 100 TL Puan kazanın
+          
+    //     </Text>        
+    //   );
+    // }  
+    
+  }
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#e2eaf3',paddingBottom:60,}}>
       <Modal
@@ -657,115 +1217,119 @@ const Discover = ({route, navigation}) => {
             transparent={true}
             visible={payModalVisible}
             onRequestClose={() => {
-              setModalVisible(!payModalVisible);
+              setPayModalVisible(!payModalVisible);
             }}>
-            <View
+            <TouchableOpacity
               style={{
                 flex: 1,                
                 justifyContent: 'flex-end',
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(0, 79, 151, 0.6)',
-              }}>
-              <View
-                style={{
-                  backgroundColor:'#fff',
-                  borderTopLeftRadius: 24,
-                  borderTopRightRadius: 24,
-                  paddingTop: 16,
-                  paddingBottom: 16,
-                  paddingLeft: 16,
-                  paddingRight: 16,
-                  width: '100%',
-                }}>
-                  
-                  <View style={{
-                    paddingTop:24,
-                    paddingBottom:24,
-                    alignItems:'center',
-                    justifyContent:'center',
-                  }}>
-                    <Image 
-                        source={require('../../assets/img/export/payfourid_icon.png')}
-                        style={{
-                          width: 93,
-                          height: 93,
-                          resizeMode: 'contain',
-                          marginBottom:14,
-                        }}
-                        />
-                  </View>
-                  <View style={{
-                      marginBottom:24,
-                      }}>
-                        <Text style={{
-                          fontSize:20,
-                          fontWeight:'700',
-                          color:'#004F97',
-                          marginBottom:16,
-                          textAlign:'center',
-                        }}>
-                          Payfour ile online ya da 
-                          kasada ödeme yapabilirsiniz!
-                        </Text>
-                        <Text style={{
-                          fontSize:16,
-                          lineHeight:20,
-                          color:'#004F97',
-                          paddingLeft:24,
-                          paddingRight:24,
-                          textAlign:'center',
-                          marginBottom:26,
-                        }}>
-                          Mağazalarımızdan veya CarrefourSa'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
-                      </Text>
-                      <View style={{
-                        padding:16,
-                        borderRadius:8,
-                        backgroundColor:'#F2F4F6',
-                        flexDirection:'row',
-                        alignItems:'center',
-                        justifyContent:'center',
-                      }}>
-                        <Text style={{
-                          fontSize:16,
-                          color:'#0B1929',
-                        }}>
-                          Payfour ID:
-                        </Text>
-                        <Text style={{
-                          fontSize:16,
-                          color:'#004F97',
-                        }}>
-                          {payfourId}
-                        </Text>
-                      </View>
-                  </View>
-                  
-                
-                <TouchableOpacity
-                  style={[
-                    styles.buttonStyle,
-                    {
-                      width: '100%',
-                      height: 52,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 2,
-                      borderColor: '#004F97',
-                      backgroundColor: '#004F97',
-                      padding:0,
-                    },
-                  ]}
-                  onPress={() => setPayModalVisible(false)}>
-                  <Text
-                    style={{fontSize: 14, color: '#ffffff'}}>
-                    Kapat
-                  </Text>
-                </TouchableOpacity>
-               
-              </View>
-            </View>
+              }}
+              onPress={() => setPayModalVisible(false)}>
+                <View
+                                style={{
+                                  backgroundColor:'#fff',
+                                  borderTopLeftRadius: 24,
+                                  borderTopRightRadius: 24,
+                                  paddingTop: 16,
+                                  paddingBottom: 100,
+                                  paddingLeft: 16,
+                                  paddingRight: 16,
+                                  width: '100%',
+                                }}>
+                                  
+                                  <View style={{
+                                    paddingTop:24,
+                                    paddingBottom:24,
+                                    alignItems:'center',
+                                    justifyContent:'center',
+                                  }}>
+                                    <Image 
+                                        source={require('../../assets/img/export/payfourid_icon2.png')}
+                                        style={{
+                                          width: 93,
+                                          height: 93,
+                                          resizeMode: 'contain',
+                                          marginBottom:14,
+                                        }}
+                                        />
+                                  </View>
+                                  <View style={{
+                                      marginBottom:24,
+                                      }}>
+                                        <Text style={{
+                                          fontSize:20,
+                                          fontWeight:'700',
+                                          color:'#004F97',
+                                          marginBottom:16,
+                                          textAlign:'center',
+                                        }}>
+                                          Kasadaki görevliyle aşağıdaki bilgilerinizi
+                                          veya telefon numaranızı paylaşınız
+                                        </Text>
+                                        <Text style={{
+                                          fontSize:12,
+                                          lineHeight:20,
+                                          color:'#909EAA',
+                                          paddingLeft:24,
+                                          paddingRight:24,
+                                          textAlign:'center',
+                                          marginBottom:26,
+                                        }}>
+                                          Payfour hesabınıza para yükleyin, keyifle kullanın!
+                                      </Text>
+                                      <View style={{
+                                        padding:16,
+                                        borderRadius:8,
+                                        backgroundColor:'#F2F4F6',
+                                        flexDirection:'row',
+                                        alignItems:'center',
+                                        justifyContent:'center',
+                                      }}>
+                                        <Text style={{
+                                          fontSize:16,
+                                          color:'#0B1929',
+                                        }}>
+                                          Payfour No:
+                                        </Text>
+                                        <Text style={{
+                                          fontSize:16,
+                                          color:'#004F97',
+                                        }}>
+                                          {payfourId}
+                                        </Text>
+                                      </View>
+                                  </View>
+                                  
+                                
+                                <TouchableOpacity
+                                  style={[
+                                    styles.buttonStyle,
+                                    {
+                                      width: '100%',
+                                      height: 52,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      borderWidth: 2,
+                                      borderColor: '#004F97',
+                                      backgroundColor: '#004F97',
+                                      padding:0,
+                                    },
+                                  ]}
+                                  
+                                onPress={() => setPayModalVisible(false)}>
+
+                                  <Text
+                                    style={{fontSize: 14, color: '#ffffff'}}>
+                                    Kapat
+                                  </Text>
+                                </TouchableOpacity>
+                               
+                              </View>
+              
+            </TouchableOpacity>
       </Modal>
       <Modal
             animationType="slide"
@@ -861,7 +1425,7 @@ const Discover = ({route, navigation}) => {
                               fontSize:14,
                               color:'#004F97',
                             }}>
-                              Kredi Kartı ile Öde
+                              Banka / Kredi Kartı ile Yükle
                             </Text>
                           </View>
                           
@@ -875,7 +1439,7 @@ const Discover = ({route, navigation}) => {
                               />
                           
                       </View>
-                      </TouchableOpacity>
+                      
                         <Text style={{
                           fontSize:14,
                           color:'#909eaa',
@@ -885,6 +1449,7 @@ const Discover = ({route, navigation}) => {
                         }}>
                           Masterpass’e kayıtlı kredi ya da banka kartı bilgilerin ile hızlıca para yükleyebilirsiniz.
                         </Text>
+                        </TouchableOpacity>
                       </View>
                       
                       <View style={{
@@ -938,7 +1503,7 @@ const Discover = ({route, navigation}) => {
                               />
                           
                       </View>
-                      </TouchableOpacity>
+                      
                         <Text style={{
                           fontSize:14,
                           color:'#909eaa',
@@ -946,8 +1511,9 @@ const Discover = ({route, navigation}) => {
                           borderTopColor:'#E4E4E8',
                           paddingTop:8,
                         }}>
-                          Belirtilen IBAN numarasına EFT\Havale yoluyla para göndererek para yükleyebilirsiniz.
+                          Belirtilen IBAN numarasına Havale / EFT yoluyla para göndererek para yükleyebilirsiniz.
                         </Text>
+                        </TouchableOpacity>
                       </View>
                       <View style={{
                         padding:16,
@@ -996,7 +1562,7 @@ const Discover = ({route, navigation}) => {
                               />
                           
                       </View>
-                      </TouchableOpacity>
+                      
                         <Text style={{
                           fontSize:14,
                           color:'#909eaa',
@@ -1006,6 +1572,7 @@ const Discover = ({route, navigation}) => {
                         }}>
                           Kasadan para yüklemek için kasadaki görevliye payfour bilgilerinizi veriniz.
                         </Text>
+                        </TouchableOpacity>
                       </View>
                   </View>
                   
@@ -1042,113 +1609,116 @@ const Discover = ({route, navigation}) => {
             onRequestClose={() => {
               setCashModalVisible(!cashModalVisible);
             }}>
-            <View
+            <TouchableOpacity
               style={{
                 flex: 1,                
                 justifyContent: 'flex-end',
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(0, 79, 151, 0.6)',
-              }}>
+              }}
+              onPress={() => setCashModalVisible(false)}>
               <View
-                style={{
-                  backgroundColor:'#fff',
-                  borderTopLeftRadius: 24,
-                  borderTopRightRadius: 24,
-                  paddingTop: 16,
-                  paddingBottom: 16,
-                  paddingLeft: 16,
-                  paddingRight: 16,
-                  width: '100%',
-                }}>
-                  
-                  <View style={{
-                    paddingTop:24,
-                    paddingBottom:24,
-                    alignItems:'center',
-                    justifyContent:'center',
-                  }}>
-                    <Image 
-                        source={require('../../assets/img/export/payfourid_icon.png')}
-                        style={{
-                          width: 93,
-                          height: 93,
-                          resizeMode: 'contain',
-                          marginBottom:14,
-                        }}
-                        />
-                  </View>
-                  <View style={{
-                      marginBottom:24,
-                      }}>
-                        <Text style={{
-                          fontSize:20,
-                          fontWeight:'700',
-                          color:'#004F97',
-                          marginBottom:16,
-                          textAlign:'center',
-                        }}>
-                          Payfour ile online ya da 
-                          kasada ödeme yapabilirsiniz!
-                        </Text>
-                        <Text style={{
-                          fontSize:16,
-                          lineHeight:20,
-                          color:'#004F97',
-                          paddingLeft:24,
-                          paddingRight:24,
-                          textAlign:'center',
-                          marginBottom:26,
-                        }}>
-                          Mağazalarımızdan veya CarrefourSa'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
-                      </Text>
-                      <View style={{
-                        padding:16,
-                        borderRadius:8,
-                        backgroundColor:'#F2F4F6',
-                        flexDirection:'row',
-                        alignItems:'center',
-                        justifyContent:'center',
-                      }}>
-                        <Text style={{
-                          fontSize:16,
-                          color:'#0B1929',
-                        }}>
-                          Payfour ID:
-                        </Text>
-                        <Text style={{
-                          fontSize:16,
-                          color:'#004F97',
-                        }}>
-                          {payfourId}
-                        </Text>
-                      </View>
-                  </View>
-                  
-                
-                <TouchableOpacity
-                  style={[
-                    styles.buttonStyle,
-                    {
-                      width: '100%',
-                      height: 52,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 2,
-                      borderColor: '#004F97',
-                      backgroundColor: '#004F97',
-                      padding:0,
-                    },
-                  ]}
-                  onPress={() => setCashModalVisible(false)}>
-                  <Text
-                    style={{fontSize: 14, color: '#ffffff'}}>
-                    Kapat
-                  </Text>
-                </TouchableOpacity>
-               
-              </View>
-            </View>
+                                style={{
+                                  backgroundColor:'#fff',
+                                  borderTopLeftRadius: 24,
+                                  borderTopRightRadius: 24,
+                                  paddingTop: 16,
+                                  paddingBottom: 100,
+                                  paddingLeft: 16,
+                                  paddingRight: 16,
+                                  width: '100%',
+                                }}>
+                                  
+                                  <View style={{
+                                    paddingTop:24,
+                                    paddingBottom:24,
+                                    alignItems:'center',
+                                    justifyContent:'center',
+                                  }}>
+                                    <Image 
+                                        source={require('../../assets/img/export/payfourid_icon2.png')}
+                                        style={{
+                                          width: 93,
+                                          height: 93,
+                                          resizeMode: 'contain',
+                                          marginBottom:14,
+                                        }}
+                                        />
+                                  </View>
+                                  <View style={{
+                                      marginBottom:24,
+                                      }}>
+                                        <Text style={{
+                                          fontSize:20,
+                                          fontWeight:'700',
+                                          color:'#004F97',
+                                          marginBottom:16,
+                                          textAlign:'center',
+                                        }}>
+                                          Kasadaki görevliyle aşağıdaki bilgilerinizi
+                                          veya telefon numaranızı paylaşınız
+                                        </Text>
+                                        <Text style={{
+                                          fontSize:12,
+                                          lineHeight:20,
+                                          color:'#909EAA',
+                                          paddingLeft:24,
+                                          paddingRight:24,
+                                          textAlign:'center',
+                                          marginBottom:26,
+                                        }}>
+                                          Payfour hesabınıza para yükleyin, keyifle kullanın!
+                                      </Text>
+                                      <View style={{
+                                        padding:16,
+                                        borderRadius:8,
+                                        backgroundColor:'#F2F4F6',
+                                        flexDirection:'row',
+                                        alignItems:'center',
+                                        justifyContent:'center',
+                                      }}>
+                                        <Text style={{
+                                          fontSize:16,
+                                          color:'#0B1929',
+                                        }}>
+                                          Payfour No:
+                                        </Text>
+                                        <Text style={{
+                                          fontSize:16,
+                                          color:'#004F97',
+                                        }}>
+                                          {payfourId}
+                                        </Text>
+                                      </View>
+                                  </View>
+                                  
+                                
+                                <TouchableOpacity
+                                  style={[
+                                    styles.buttonStyle,
+                                    {
+                                      width: '100%',
+                                      height: 52,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      borderWidth: 2,
+                                      borderColor: '#004F97',
+                                      backgroundColor: '#004F97',
+                                      padding:0,
+                                    },
+                                  ]}
+                                  
+                                onPress={() => setCashModalVisible(false)}>
+
+                                  <Text
+                                    style={{fontSize: 14, color: '#ffffff'}}>
+                                    Kapat
+                                  </Text>
+                                </TouchableOpacity>
+                               
+                              </View>
+            </TouchableOpacity>
       </Modal>
       <Modal
             animationType="slide"
@@ -1264,11 +1834,12 @@ const Discover = ({route, navigation}) => {
                           position:'absolute',
                           backgroundColor:'#004F97',
                           borderRadius:8,
-                          width:65,
+                          width:75,
                           alignItems:'center',
                           justifyContent:'center',
                           padding:4,
                           top:-24,
+                          right:0,
                           display: showTooltip1 ? 'flex':'none',
                         }}>
                           <Text style={{color:'#fff', fontSize:11}}>Kopyalandı</Text>
@@ -1324,11 +1895,12 @@ const Discover = ({route, navigation}) => {
                           position:'absolute',
                           backgroundColor:'#004F97',
                           borderRadius:8,
-                          width:65,
+                          width:75,
                           alignItems:'center',
                           justifyContent:'center',
                           padding:4,
                           top:-24,
+                          right:0,
                           display: showTooltip2 ? 'flex':'none',
                         }}>
                           <Text style={{color:'#fff', fontSize:11}}>Kopyalandı</Text>
@@ -1384,11 +1956,12 @@ const Discover = ({route, navigation}) => {
                           position:'absolute',
                           backgroundColor:'#004F97',
                           borderRadius:8,
-                          width:65,
+                          width:75,
                           alignItems:'center',
                           justifyContent:'center',
                           padding:4,
                           top:-24,
+                          right:0,
                           display: showTooltip3 ? 'flex':'none',
                         }}>
                           <Text style={{color:'#fff', fontSize:11}}>Kopyalandı</Text>
@@ -1688,20 +2261,31 @@ const Discover = ({route, navigation}) => {
                   flexDirection:'row',
                   alignItems:'center'}}>
             <TouchableOpacity style={{width: 24,
-                  height: 24,marginRight:8}}>
+                  height: 24,marginRight:8}}
+                  onPress={()=> navigation.navigate('Notification')}>
+              {unreadcount > 0 ? 
               <Image
                 source={require('../../assets/img/export/notification.png')}
                 style={{
                   width: 24,
                   height: 24,
                   resizeMode: 'contain',
-                }}
+                }}              
+              />:
+              <Image
+                source={require('../../assets/img/export/notification_none.png')}
+                style={{
+                  width: 24,
+                  height: 24,
+                  resizeMode: 'contain',
+                }}              
               />
+                }
             </TouchableOpacity>
             <TouchableOpacity 
             onPress={() => {navigation.navigate('Profile')}}
             style={{width:30, height:30,}}>
-              <View style={{backgroundColor:'#004F97', width:30, height:30, borderRadius:30, alignItems:'center', justifyContent:'center'}}>
+              <View style={{backgroundColor:'#004F97', width:30, height:30, borderRadius:30,alignItems:'center', justifyContent:'center'}}>
               {initials != '' ? <Text style={{color:'#fff', fontSize:16}}>{initials}</Text> :
                 <Image
                     source={require('../../assets/img/export/avatar.png')}
@@ -1718,176 +2302,117 @@ const Discover = ({route, navigation}) => {
       <Loader loading={loading} />
       <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, {paddingBottom:120}]}>
         <View style={ {paddingTop: 20}}>
-          <View style={[styles.sectionStyle,{marginBottom:16,
-              shadowColor:'#909EAA',
-              shadowOffset:{
-                width:20,
-                height:20,
-              },
-              shadowOpacity:0.5,
-              shadowRadius:10,
-              elevation:10,
-              }]}>
-             {/* <View style={{
-              backgroundColor:'#004F97',
-              borderTopLeftRadius:20,
-              borderTopRightRadius:20,
-              paddingTop:12,
-              paddingBottom:12,
-              paddingLeft:16,
-              paddingRight:16,
-              flexDirection:'row',
-              justifyContent:'space-between',
-              alignItems:'center',
-              }}>
-                <Text style={{color:'#fff', fontSize:12}}>
-                  Ön Onaylı Alışveriş Kredisi 
-                </Text>
-                <Text style={{color:'#fff', fontSize:16, fontWeight:'700'}}>
-                  0,00 TL
-                </Text>
-            </View>  */}
-            <View style={{
-              backgroundColor:'#fff',
-              borderTopLeftRadius:20,
-              borderTopRightRadius:20,
-              borderBottomLeftRadius:20,
-              borderBottomRightRadius:20,
-              paddingTop:16,
-              paddingBottom:16,
-              paddingLeft:16,
-              paddingRight:16,
-              
-              }}>
-                <View style={{flexDirection:'row',
-              justifyContent:'space-between',
-              alignItems:'center',}}>
-                  <View style={{flexDirection:'column', alignItems:'flex-start', justifyContent:'space-between'}}>
-                    <View>
-                      <Text style={{color:'#909EAA', fontSize:12}}>
-                        Güncel Bakiye
-                      </Text>
-                      <View style={{flexDirection:'row',alignItems:'flex-end',}}>
-                        <TextInput 
-                        secureTextEntry={secureBalance}                        
-                        style={{color:'#0B1929',fontSize: Dimensions.get('window').width > 375 ?32: ((Dimensions.get('window').width > 360)?28:24), fontWeight:'700'}}>
-                          {balance}
-                          <Text style={{color:'#0B1929', fontSize:16, fontWeight:'700', verticalAlign:'sub'}}>
-                            TL
-                          </Text>
-                        </TextInput>
-                        
-                      </View>
-                    </View>
-                    
-                  </View>
-                  <View style={{alignItems:'flex-end'}}>
-                    <TouchableOpacity 
-                      style={{width:32, height:32, backgroundColor:'#F2F4F6', borderRadius:32, alignItems:'center', justifyContent:'center', marginBottom:8}}
-                      onPress={()=> setSecureBalance(!secureBalance)}>
-                      <Image 
-                      source={require('../../assets/img/export/eye.png')}
-                      style={{
-                        width:16,
-                        height:16
-                      }}>
-                      </Image>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    style={{
-                      width:145,
-                      height:40,
-                      borderRadius:5,
-                      backgroundColor:'#005BAA',
-                      alignItems:'center',
-                      alignContent:'center',
-                      justifyContent:'center',
-                      marginBottom:16,
-                    }}
-                    onPress={() => setAddModalVisible(true)}
-                    >
-                      <View style={{flexDirection:'row', justifyContent:'center'}}>
-                        <Image 
-                      source={require('../../assets/img/export/account_summary_plus.png')}
-                      style={{
-                        width:16,
-                        height:16,
-                        marginRight:5
-                      }}>
-                      </Image>
-                      <Text style={{fontSize:14, color:'#fff'}}>
-                        Para Yükle
-                      </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={{flexDirection:'row',
-              justifyContent:'space-between',
-              alignItems:'center',}}>
-                  <View>
-                      <View style={{flexDirection:'row',}}>
-                        <Image 
-                        source={require('../../assets/img/export/account_summary_chart.png')}
-                        style={{
-                          width:16,
-                          height:16,
-                          marginRight:6
-                        }}>
-                        </Image>
-                        <Text style={{color:'#909EAA', fontSize:14}}>
-                          Son İşlemler
-                        </Text>
-                      </View>
-                      <Text style={{color:'#909EAA', fontSize:12}}>
-                        {transactions.type} {transactions.amount}TL
-                      </Text>
-                  </View>
-                  <View>
-                    <TouchableOpacity
-                    onPress={() => navigation.navigate('wallet', { screen: 'Balance' })}>
-                      <Text style={{color:'#004F97', fontSize:12, textAlign:'right'}}>
-                        Tümünü Gör
-                      </Text>
-                    </TouchableOpacity>
-                    <Text style={{color:'#909EAA', fontSize:12, textAlign:'right'}}>
-                      {transactions.date}
-                      </Text>
-                  </View>
-              </View>
-            </View>
-          </View>
+          {/* {renderCurrentStatus()} */}
+          {carrefourCardData.length > 0?
+            renderSwiper()
+          :renderCurrentStatus()}
+          
           <View style={
-            [styles.sectionStyle,{marginBottom:24, flexDirection:'row'}]
+            [styles.sectionStyle,{marginTop:-10, marginBottom:24, flexDirection:'row', justifyContent:'center', display:creditStatus != 1 && creditStatus != 3? 'none' : 'flex'}]
           }>
             <TouchableOpacity 
-            style={{width:'49%', marginRight:'2%'}}
+            style={{width:'49%', marginRight:'2%', display:creditStatus == 1? 'flex' : 'none'}}
             onPress={() => navigation.navigate('wallet', { screen: 'CreditScreen',params: {
               screen: 'IntroHazirLimit', }})}
             >
-              <Image 
+              <LinearGradient 
+                          start={{x: 0.0, y: 0.0}} end={{x: 1.0, y: 0.0}}
+                          locations={[0,1]}
+                          colors={['#0681C6', '#C02460']} 
+                          style={{
+                            width:'100%',
+                            height:52,
+                            borderRadius:8,
+                            alignItems:'center',
+                            justifyContent:'space-between',
+                            flexDirection:'row',
+                            paddingLeft:12,
+                            paddingRight:12,
+                          }}>
+                            <Image 
+                            source={require('../../assets/img/export/icon_hazirlimit.png')}
+                            style={{
+                              width:20,
+                              resizeMode:'contain',
+                              height:20
+                            }}>
+                            </Image>
+                            <Text style={{
+                              fontSize:12,
+                              color:'#ffffff',
+                              textAlign:'center',
+                            }}>
+                              Hazır Limit
+                            </Text>
+                            <Image 
+                            source={require('../../assets/img/export/arrow_right.png')}
+                            style={{
+                              width:16,
+                              resizeMode:'contain',
+                              height:16
+                            }}></Image>
+                          </LinearGradient>
+              {/* <Image 
               source={require('../../assets/img/export/button_limit.png')}
               style={{
                 width:'100%',
                 resizeMode:'contain',
                 height:52
               }}>
-              </Image>
+              </Image> */}
             </TouchableOpacity>
-            <TouchableOpacity style={{width:'49%'}}
+            <TouchableOpacity style={{width:creditStatus == 3? '100%':'49%', display:creditStatus == 1 || creditStatus == 3? 'flex' : 'none'}}
             onPress={() => navigation.navigate('wallet', { screen: 'CreditScreen',params: {
               screen: 'IntroSonraOde', }})}>
-              <Image 
+                <LinearGradient 
+                          start={{x: 0.0, y: 0.0}} end={{x: 1.0, y: 0.0}}
+                          locations={[0,1]}
+                          colors={['#469FAB', '#266EAF']} 
+                          style={{
+                            width:'100%',
+                            height:52,
+                            borderRadius:8,
+                            alignItems:'center',
+                            justifyContent:'space-between',
+                            flexDirection:'row',
+                            paddingLeft:12,
+                            paddingRight:12,
+                          }}>
+                            <Image 
+                            source={require('../../assets/img/export/icon_sonraode.png')}
+                            style={{
+                              width:20,
+                              resizeMode:'contain',
+                              height:20
+                            }}>
+                            </Image>
+                            <Text style={{
+                              fontSize:12,
+                              color:'#ffffff',
+                              textAlign:'center',
+                              maxWidth:'50%',
+                            }}>
+                              Şimdi Al, 
+                              Sonra Öde
+                            </Text>
+                            <Image 
+                            source={require('../../assets/img/export/arrow_right.png')}
+                            style={{
+                              width:16,
+                              resizeMode:'contain',
+                              height:16
+                            }}></Image>
+                          </LinearGradient>
+              {/* <Image 
               source={require('../../assets/img/export/button_later.png')}
               style={{
                 width:'100%',
                 resizeMode:'contain',
                 height:52
               }}>
-              </Image>
+              </Image> */}
             </TouchableOpacity>
           </View>
-          
           <View style={{
             backgroundColor:'#F8F8F8',
             paddingTop:20,
@@ -1895,19 +2420,9 @@ const Discover = ({route, navigation}) => {
             borderTopRightRadius:20, 
             paddingBottom:40     
           }}>
-            {/* <View style={{flex:1, marginBottom:16}}>
-              <Image 
-                source={require('../../assets/img/export/awards.png')}
-                style={{
-                  resizeMode:'contain',
-                  width:(Dimensions.get('window').width - 32),
-                  height:(Dimensions.get('window').width - 32)*0.218,
-                  left:16
-                }}>
-                </Image>
-                
-            </View> */}
-            <TouchableOpacity style={{}}
+            
+            
+            <TouchableOpacity style={{display:campaignDetailData.targetCount ? 'flex':'none'}}
             onPress={()=> {
               console.log('maincampaign');
               console.log(campaignDetailData);
@@ -1929,9 +2444,20 @@ const Discover = ({route, navigation}) => {
                   borderRadius:6, 
                   backgroundColor:'#e3ecf4'
                 }}>
+                  
                 <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
                   <View style={{width:Dimensions.get('window').width - 120}}>
-                    <Text style={{
+                  <Text style={{
+                    fontSize:14,
+                    lineHeight:16,
+                    color:'#0B1929',
+                    textAlign:'center',
+                    marginBottom:12,
+                  }}>
+                    Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} alışveriş yapın, 100 TL Puan kazanın
+                  </Text>
+                    {/* {getCampaignStatusText()} */}
+                    {/* <Text style={{
                       fontSize:14,
                       lineHeight:16,
                       color:'#0B1929',
@@ -1940,7 +2466,7 @@ const Discover = ({route, navigation}) => {
                     }}>
                       
                       Ödemenizi <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile yaparak puan kazanın.
-                    </Text>
+                    </Text> */}
                     <View style={{paddingBottom:20}}>
                       <View style={{
                         width:'100%',
@@ -1966,6 +2492,7 @@ const Discover = ({route, navigation}) => {
                           colors={['#7EBEF5', '#005BAA', '#ED1C67']} 
                           style={{
                             width:campaignDetailData.barLines.length > 0 ? (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.memberCurrentCount :0,
+                            //width:'50%',
                             height:8,
                             borderTopLeftRadius:12,
                             borderBottomLeftRadius:12,
@@ -1991,64 +2518,26 @@ const Discover = ({route, navigation}) => {
                             console.log("key "+key);
                             console.log(campaignDetailData.barLines[key].key);*/
                           return (
-                            campaignDetailData.barLines.length > 0 && key != 0? 
-                            <View key={Date.now()+campaignDetailData.barLines[key].key}
+                            campaignDetailData.barLines.length > 0 && key != 0 && key !=campaignDetailData.barLines.length-1? 
+                            <View key={campaignDetailData.barLines[key].key}
                             style={{
                               position:'absolute',
                               top:0,
                               //left:20 * campaignDetailData.barLines[key].point,
                               left: campaignDetailData.barLines.length > 0 ? (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point : 0,
                               height:8,
-                              width:1,
-                              backgroundColor: '#fff'
+                              width:2,
+                              backgroundColor: campaignDetailData.memberCurrentCount > 0 ? '#fff' : '#e3ecf4'
                             }}>
-                              <Text>{campaignDetailData.barLines[key].point}</Text>
+                              {/* <Text style={{textAlign:'center'}}>{campaignDetailData.barLines[key].point}</Text> */}
                             </View>
-                            : <View></View>
+                            : <View key={campaignDetailData.barLines[key].key}></View>
                           )
                         })
                         }
                           
                         </View>
-                        <View style={{
-                          width:'100%',
-                          height:8,
-                          position:'absolute',
-                          top:0,
-                          left:0,
-                          borderRadius:12
-                        }}>
-                          {/* barlines */}
-                          {
-                          [...Array(campaignDetailData.barLines.length).keys()].map(key => {
-                            /*console.log("barLines ");
-                            console.log(campaignDetailData.barLines);
-                            console.log("barLines "+campaignDetailData.barLines.length);
-                            console.log("key "+key);
-                            console.log(campaignDetailData.barLines[key].key);*/
-                          return (
-                            campaignDetailData.barLines.length > 0 && key != 0? 
-                            <View key={Date.now()+campaignDetailData.barLines[key].key}
-                            style={{
-                              position:'absolute',
-                              top:0,
-                              //left:20 * campaignDetailData.barLines[key].point,
-                              left: (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
-                              height:8,
-                              width:1,
-                              backgroundColor: '#fff'
-                            }}>
-                              <Text style={{
-                                fontSize:10,
-                                color:'#004F97',
-                              }}>{campaignDetailData.barLines[key].point}</Text>
-                            </View>
-                            : <View></View>
-                          )
-                        })
-                        }
-                          
-                        </View>
+                        
                         <View style={{
                           width:'100%',
                           height:8,
@@ -2065,13 +2554,14 @@ const Discover = ({route, navigation}) => {
                             console.log("key "+key);
                             console.log(campaignDetailData.barLines[key].key);*/
                           return (
-                            campaignDetailData.barLines.length > 0? 
-                            <View key={Date.now()+campaignDetailData.barLines[key].key}
+                            campaignDetailData.barLines.length > 0 && campaignDetailData.barLines[key].point != "0"? 
+                            <View key={"b"+campaignDetailData.barLines[key].key}
                             style={{
                               position:'absolute',
                               top:20,
                               //left:20 * campaignDetailData.barLines[key].point,
-                              left: (Dimensions.get('window').width - 132) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
+                              //left: (Dimensions.get('window').width - 132) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
+                              left: campaignDetailData.barLines.length > 0 ? ((Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length - 1) * campaignDetailData.barLines[key].point)-5 : 0,
                               height:16,
                               width:12,
                             }}>
@@ -2081,7 +2571,7 @@ const Discover = ({route, navigation}) => {
                                 textAlign:'center',
                               }}>{campaignDetailData.barLines[key].point}</Text>
                             </View>
-                            : <View></View>
+                            : <View key={"b"+campaignDetailData.barLines[key].key}></View>
                           )
                         })
                         }
@@ -2113,7 +2603,11 @@ const Discover = ({route, navigation}) => {
                 </View>
               </View>
             </TouchableOpacity>
-            <LinearGradient colors={['#067FC4', '#431836']} style={styles.linearGradient}>
+            
+            
+              
+             
+            <LinearGradient colors={['#067FC4', '#431836']} style={[styles.linearGradient, {display:pslData.length > 0 ? 'flex' : 'none'}]}>
               <View style={{paddingLeft:16, paddingRight:16, paddingTop:16, paddingBottom:16}}>
                 <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:8}}>
                   <Text style={[styles.titleText, {color:'#fff', fontWeight:'700'}]}>
@@ -2122,6 +2616,9 @@ const Discover = ({route, navigation}) => {
                   <TouchableOpacity 
                   onPress={() => navigation.navigate('campaign', { 
                     screen: 'CampaignList',
+                    params: {
+                      filters:{isAw:true, isSp:false}
+                    }
                   })}
                   style={{
                     flexDirection:'row',
@@ -2141,24 +2638,40 @@ const Discover = ({route, navigation}) => {
                   </TouchableOpacity>
                 
                 </View>
-                <View style={[slstyles.slider, {marginBottom:16,paddingBottom:40, overflow:'visible'}]} {...slider.containerProps}>
+                
+                <View style={[slstyles.slider, {marginBottom:30,paddingBottom:40, overflow:'visible', height: numberOfLines>2?Dimensions.get('window').width*0.5+18:Dimensions.get('window').width*0.5,}]} {...slider.containerProps}>
                 {
                   [...Array(slides).keys()].map(key => {
                     /*console.log("psldata "+pslData.length);
                     console.log("key "+key);*/
                   return (
                     pslData.length > 0 ? 
-                    <View key={Date.now()+pslData[key].uid} {...slider.slidesProps[key]}>
-                      <View style={{...slstyles.slide}}>
-                      <TouchableOpacity onPress={() => {
-                        let sid= pslData[key].id;
-                        //console.log("sliderid "+sid);
-                        let navObj = {
-                          screen: 'CampaignDetail',
-                            params: {id: sid, source:'discover'}
+                    <View key={pslData[key].uid} {...slider.slidesProps[key]}>
+                      <View style={{...slstyles.slide}} 
+                      {...onPressConfig(() => {
+                        console.log("onPress");
+                        console.log(pslData[key])
+                        //Alert.alert(pslData[key].id);
+                        try {
+                          //if (item?.img) {
+                            //Linking.openURL(item.img);
+                            let sid= pslData[key].id;
+                            let navObj = {
+                              screen: 'CampaignDetail',
+                                params: {id: sid, source:'discover'}
+                            }
+                            //console.log(navObj);
+                            navigation.navigate('campaign', navObj)
+                          //}
+                        } catch (error) {
+                          console.log(error)
                         }
-                        //console.log(navObj);
-                        navigation.navigate('campaign', navObj)}}>
+                      })}
+                      
+                      >
+                        
+                        
+                      <View >
                         <Image 
                           // source={slimages[key]}
                           source={{
@@ -2168,42 +2681,20 @@ const Discover = ({route, navigation}) => {
                             resizeMode: 'cover',
                           }]}
                         />
-                        </TouchableOpacity>
-                          {/* <View style={{
-                            flexDirection:'row',
-                            alignItems:'center',
-                            justifyContent:'space-between',
-                            marginBottom:8,
-                          }}>
-                            <View style={{
-                              width:32,
-                              height:32, 
-                              borderRadius:32,
-                              borderWidth:1,
-                              borderColor:'#F2F4F6',
-                            }}></View>
-                            <View style={{
-                              borderRadius:4,
-                              backgroundColor:'rgba(26,167,63,0.2)',
-                              paddingLeft:8,
-                              paddingRight:8,
-                              paddingTop:4,
-                              paddingBottom:4,
-                            }}>
-                              <Text style={{
-                                color:'#1AA73F',
-                                fontSize:10,
-                              }}>
-                                Akaryakıt
-                              </Text>
-                            </View>
-                          </View> */}
+                        </View>                          
                           <Text style={{
                             fontSize:12,
                             lineHeight:18,
                             color:'#0B1929',
                             marginBottom:8,
-                            minHeight:36,
+                            //minHeight:36,
+                            minHeight: numberOfLines > 2? 54:36,
+                          }}
+                          onTextLayout={(event) => {
+                            const { lines } = event.nativeEvent;
+                            //console.log("lines : "+lines?.length);
+                            if(lines?.length > numberOfLines) setNumberOfLines(lines?.length);
+                            //console.log("numberOfLines : "+numberOfLines)
                           }}>
                             {pslData[key].title}
                           </Text>
@@ -2232,12 +2723,13 @@ const Discover = ({route, navigation}) => {
                       
                       </View>
                     </View>
-                    : <View key={Date.now()+"Premium_empty"+key}></View>
+                    : <View key={"Premium_empty"+key}></View>
                   )
                 })
                 }
               </View>
-                <TouchableOpacity style={{ flex:1, flexDirection:'row', display:isPremium?'none':'flex'}}
+              
+                {/* <TouchableOpacity style={{ flex:1, flexDirection:'row', display:isPremium?'none':'flex'}}
                 onPress={()=>{
                   navigation.navigate('Profile', { 
                     screen: 'ProfilePlatinum',
@@ -2253,18 +2745,44 @@ const Discover = ({route, navigation}) => {
                   height:(Dimensions.get('window').width - 32)*0.139,
                 }}>
                 </Image>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                <TouchableOpacity style={{display:isPremium?'none':'flex'}}
+                onPress={()=> navigation.navigate('Profile', { 
+                  screen: 'ProfilePlatinum',
+                  //screen: 'MasterpassScreen2',
+                  //screen: 'MasterPassExample',
+                })}>
+                <View style={{
+                  //width:(Dimensions.get('window').width - 32),
+                  width:'100%',
+                  height:(Dimensions.get('window').width - 32)*0.15,
+                }}>
+                <Image
+                        source={require('../../assets/img/export/item.png')}
+                        style={{
+                          resizeMode:'contain',
+                    //width:(Dimensions.get('window').width - 32),
+                  width:'100%',
+                    height:(Dimensions.get('window').width - 32)*0.15,
+                        }}
+                    />
+              </View>
+              </TouchableOpacity>
                 
               </View>
             </LinearGradient>
-            <View style={{paddingLeft:16, paddingRight:16, paddingTop:16, paddingBottom:16}}>
+            
+            <View style={{paddingLeft:16, paddingRight:16, paddingTop:16, paddingBottom:16, display:slData.length > 0 ? 'flex' : 'none'}}>
               <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:8}}>
-                <Text style={[styles.titleText, {fontWeight:'700'}]}>
+                <Text style={[styles.titleText, {color:'#0B1929', fontWeight:'700'}]}>
                   Sana Özel Kampanyalar
                 </Text>
                 <TouchableOpacity 
                   onPress={() => navigation.navigate('campaign', { 
                     screen: 'CampaignList',
+                    params: {
+                      filters:{isAw:false, isSp:true}
+                    }
                   })}
                   style={{
                     flexDirection:'row',
@@ -2284,7 +2802,8 @@ const Discover = ({route, navigation}) => {
                 </TouchableOpacity>
               </View>
               <View style={{paddingBottom:20}}>
-                <View style={[slstyles.slider, {paddingBottom:40, overflow:'visible'}]} {...slider2.containerProps}>
+                
+                <View style={[slstyles.slider, {paddingBottom:40, overflow:'visible', height: numberOfLines2>2?Dimensions.get('window').width*0.5+18:Dimensions.get('window').width*0.5,}]} {...slider2.containerProps}>
                 {
                     [...Array(slides).keys()].map(key => {
                       /*console.log("sldata "+slData.length);
@@ -2294,9 +2813,29 @@ const Discover = ({route, navigation}) => {
                       console.log("key "+key);*/
                     return (
                       slData.length > 0 ? 
-                      <View key={Date.now()+slData[key].uid} {...slider2.slidesProps[key]}>
-                        <View style={{...slstyles.slide}}>
-                        <TouchableOpacity onPress={() => {
+                      <View key={slData[key].uid} {...slider2.slidesProps[key]}>
+                        <View style={{...slstyles.slide}} 
+                        {...onPressConfig(() => {
+                          console.log("onPress");
+                          console.log(slData[key])
+                        //Alert.alert(slData[key].id);
+
+                          try {
+                            //if (item?.img) {
+                              //Linking.openURL(item.img);
+                              console.log("slider2 onPress");
+                              let sid= slData[key].id;
+                              let navObj = {
+                                screen: 'CampaignDetail',
+                                  params: {id: sid, source:'discover'}
+                              }
+                              //console.log(navObj);
+                              navigation.navigate('campaign', navObj)
+                            //}
+                          } catch (error) {}
+                        })}
+                        >
+                          <View onPress={() => {
                         let sid= slData[key].id;
                         //console.log("sliderid "+sid);
                         let navObj = {
@@ -2314,7 +2853,7 @@ const Discover = ({route, navigation}) => {
                               resizeMode: 'cover',
                             }]}
                           />
-                          </TouchableOpacity>
+                          </View>
                             {/* <View style={{
                               flexDirection:'row',
                               alignItems:'center',
@@ -2349,6 +2888,13 @@ const Discover = ({route, navigation}) => {
                               lineHeight:18,
                               color:'#0B1929',
                               marginBottom:8,
+                              minHeight: numberOfLines2 > 2? 54:36,
+                            }}
+                            onTextLayout={(event) => {
+                              const { lines } = event.nativeEvent;
+                              //console.log("lines : "+lines?.length);
+                              if(lines?.length > numberOfLines2) setNumberOfLines2(lines?.length);
+                              //console.log("numberOfLines2 : "+numberOfLines2)
                             }}>
                               {slData[key].title}
                             </Text>
@@ -2377,14 +2923,17 @@ const Discover = ({route, navigation}) => {
                         
                         </View>
                       </View>
-                      : <View key={Date.now()+"Foryou_empty"+key}></View>
+                      : <View key={"Foryou_empty"+key}></View>
                     )
                   })
                   }
                 </View>
               </View>
             </View>
-            <TouchableOpacity style={{flex:1, paddingLeft:16, paddingRight:16, marginBottom:16}}>
+            <TouchableOpacity style={{flex:1, paddingLeft:16, paddingRight:16, marginBottom:16, marginTop:16}}
+            onPress={()=>{
+              console.log("map");
+              navigation.navigate('Map')}}>
               <Image 
                 source={require('../../assets/img/export/nearest.png')}
                 style={{
@@ -2439,6 +2988,22 @@ const DiscoverScreen = ({navigation}) => {
         component={PayOptionsScreen}
         //options={{headerShown: false}}
         options={{ headerShown: false, presentation: 'transparentModal' }}
+      />
+      <Stack.Screen
+        name="PayOptionsScreen2"
+        component={PayOptionsScreen2}
+        //options={{headerShown: false}}
+        options={{ headerShown: false, presentation: 'transparentModal' }}
+      />
+      <Stack.Screen
+        name="Notification"
+        component={NotificationScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Map"
+        component={MapScreen}
+        options={{headerShown: false}}
       />
       {/* <Stack.Screen
         name="IbanScreen"
@@ -2547,11 +3112,9 @@ const slstyles = {
     backgroundColor: 'transparent',
     overflow: 'hidden',
     width: '100%',
-    //height: Dimensions.get('window').width*0.392,
-    minHeight: Dimensions.get('window').width*0.392,
+    height: Dimensions.get('window').width*0.5,
+    //minHeight: Dimensions.get('window').width*0.5,
     //height:'100%',
-    flexGrow:1,
-    paddingBottom:100
   },
   slide: {
     width: (Dimensions.get('window').width*0.437),
@@ -2570,12 +3133,13 @@ const slstyles = {
     backgroundColor:'#fff',
     borderRadius:8,
     marginBottom:20,
-    height:'140%'
+    //height:'140%'
     
   },
   slideImg:{
     width: Dimensions.get('window').width*0.394,
-    height:Dimensions.get('window').width*0.186,
+    //height:Dimensions.get('window').width*0.186,
+    height:Dimensions.get('window').width*0.32,
     borderRadius:4,
     marginBottom:8,
   },

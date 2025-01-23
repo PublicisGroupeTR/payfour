@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
     alignContent: 'center',    
     borderColor: '#EBEBEB',
     position: 'relative',
-    backgroundColor:'#fff'
+    backgroundColor:'#fff',
+    zIndex:2,
   },
   buttonClose: {
     

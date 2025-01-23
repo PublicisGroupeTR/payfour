@@ -25,15 +25,16 @@ import { registerStyles } from '../../Components/RegisterStyles';
 import {styles} from '../../Components/Styles.js';
 import Loader from '../../Components/Loader.js';
 import SubtabHeader from '../../Components/SubtabHeader.js';
-
+import { useError } from '../../Contexts/ErrorContext';
 import axios from 'react-native-axios';
 import MaskInput from 'react-native-mask-input';
 import LinearGradient from 'react-native-linear-gradient';
 import {Dropdown} from 'react-native-element-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiPost } from '../../utils/api.js';
 
 const ProfileCoupon = ({navigation}) => { 
-
+  const { showError } = useError();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,39 +59,28 @@ const ProfileCoupon = ({navigation}) => {
   let dataToSend ={
     "code": code,
   }
-  axios.post('https://payfourapp.test.kodegon.com/api/account/redeemcode',dataToSend, config)
-            .then(response => {
-              console.log(response);
-              console.log(response.data);
-              if(response.data.success){
-                console.log("coupon success")
-                //navigation.navigate('Success');
-                setSuccessModalVisible(true);
-              }else{
-                setLoading(false);
-                console.log("coupon error")
-              }
-            })
-            .catch(error => {
-              setLoading(false);
-              console.error("Error sending data: ", error);
-              console.error("Error sending data: ", error.response);
-              console.error("Error sending data: ", error.response.data.errors.message);
-              //console.log(JSON.parse(error.response));
-              let msg="";
-              (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; 
-              (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
-              Alert.alert(msg);
-        
-              
-              //Alert.alert("Error sending data: ", error);
-            });
+  apiPost('account/redeemcode',dataToSend,onRedeemCode, onRedeemError);
+  
           
-          });
+           });
   };
 
-  
-
+  const onRedeemCode = (response) => {
+    console.log(response);
+    console.log(response.data);
+    if(response.data.success){
+      setLoading(false);
+      console.log("coupon success")
+      //navigation.navigate('Success');
+      setSuccessModalVisible(true);
+    }else{
+      setLoading(false);
+      console.log("coupon error")
+    }
+  }
+const onRedeemError= () => {
+  setLoading(false);
+}
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>      
       <Modal
@@ -143,7 +133,7 @@ const ProfileCoupon = ({navigation}) => {
       </View>
       </Modal>
     <Loader loading={loading} />
-    <SubtabHeader routetarget="ProfileHome" name="Kupon Kodu / Davet Kodu" count="0" />
+    <SubtabHeader routetarget="ProfileHome" name="Kampanya Kodu" count="0" />
     <ScrollView
 keyboardShouldPersistTaps="handled"
 style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
@@ -177,7 +167,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                           marginBottom:12,
                           textAlign:'left'
                         }}>
-                          Kupon Kodunu Giriniz
+                          Kampanya Kodunu Giriniz
                         </Text>
                         {/* <Text style={{fontSize:12, color:'#909EAA',marginBottom:12,}}>
                         Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
@@ -187,8 +177,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   </View>
 
 
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0}]}>                     
-                    <Text style={{                                           
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, paddingTop:0}]}>                     
+                    {/* <Text style={{                                           
                         fontSize: 12,
                         lineHeight:12, 
                         padding:0,
@@ -199,8 +189,11 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         pointerEvents:"none",
                     }}>
                       Kupon Kodu / Davet Kodu
-                    </Text>
+                    </Text> */}
                     <TextInput
+                        style={{ 
+                          color: '#0B1929',
+                        }}
                         value={code}
                         onChangeText={Code => setCode(Code)}
                         placeholder="Kodu Giriniz" //12345
@@ -216,9 +209,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   
                 
                 
-               
-              </View>
-              <TouchableOpacity
+               <TouchableOpacity
+                  disabled= {code==''}
                   style={[
                     styles.buttonStyle,
                     {
@@ -228,17 +220,19 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       alignItems: 'center',
                       justifyContent: 'center',
                       borderWidth: 2,
-                      borderColor: '#004F97',
-                      backgroundColor: '#004F97',
+                      borderColor: code=='' ? '#ababab' : '#004F97',
+                      backgroundColor: code=='' ? '#ababab' : '#004F97',
                       padding:0,
                     },
                   ]}
                   onPress={() => sendCode(code)}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
-                    Kupon Kodu Ekle
+                    Ekle
                   </Text>
                 </TouchableOpacity>
+              </View>
+              
               </View>
               </KeyboardAvoidingView>
               </ScrollView>

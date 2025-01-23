@@ -79,7 +79,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                     borderBottomColor:'#F2F4F6',
                     marginBottom:8,
                   }}
-                  onPress={() => { Linking.openURL(`tel:00904441000`) }}>
+                  onPress={() => { Linking.openURL(`tel:4441000`) }}>
                       <View style={{flexDirection:'row', alignItems:'center'}}>
                         <Image
                           source={require('../../../assets/img/export/icon_phone.png')}
@@ -91,13 +91,21 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                           }}
                         />
                         <View>
-                          <Text style={{
+                        <Text style={{
+                            fontSize:14,
+                            fontWeight:'700',
+                            lineHeight:20,
+                            color:'#0B1929',
+                            textAlign:'left',
+                          }}>Payfour / CarrefourSA Destek Hattı
+                          </Text>
+                          {/* <Text style={{
                             fontSize:12,
                             color:'#0B1929',
                             textAlign:'left',
                             width:120
                           }}>
-                            Payfour Destek Hattı
+                            Payfour / CarrefourSA Destek Hattı
                           </Text>
                           <Text style={{
                             fontSize:14,
@@ -108,7 +116,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             width:120
                           }}>
                             444 10 00
-                          </Text>
+                          </Text> */}
                         </View>
                       </View>
                       <Image
@@ -130,7 +138,8 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                     borderBottomWidth:1,
                     borderBottomColor:'#F2F4F6',
                     marginBottom:8,
-                  }}>
+                  }}
+                  onPress={() => { Linking.openURL(`whatsapp://send?phone=4441000`) }}>
                       <View style={{flexDirection:'row', alignItems:'center'}}>
                         <Image
                           source={require('../../../assets/img/export/icon_whatsapp.png')}
@@ -207,12 +216,12 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       />  
                   </TouchableOpacity>
                   
-                  <View style={{paddingTop:8, paddingBottom:8}}>
+                  {/* <View style={{paddingTop:8, paddingBottom:8}}>
                     <Text style={{color:'#909EAA', fontSize:12}}>
                     Nunc mattis enim ut tellus. Orci ac auctor augue mauris augue neque. Consequat interdum varius sit amet mattis vulputate. 
                     <Text style={{fontWeight:'700'}}>At urna condimentum mattis pellentesque id nibh tortor.</Text> 
                     </Text>
-                  </View>                
+                  </View>                 */}
               </View>
               </View>
               </KeyboardAvoidingView>

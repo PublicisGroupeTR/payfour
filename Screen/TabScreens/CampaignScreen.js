@@ -20,7 +20,8 @@ import {
   Pressable,
   Platform,
   Keyboard,
-  Alert
+  Alert,
+  Share
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -28,6 +29,7 @@ import {SelectList} from 'react-native-dropdown-select-list';
 import {registerStyles} from '../Components/RegisterStyles.js';
 import {styles} from '../Components/Styles.js';
 import Loader from '../Components/Loader.js';
+import { legalStyles } from "../Components/LegalStyles";
 import TabHeader from '../Components/TabHeader.js';
 import SubtabHeader from '../Components/SubtabHeader.js';
 import SubtabHeaderWithSearch from '../Components/SubtabHeaderWithSearch.js';
@@ -37,10 +39,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import HTMLView from 'react-native-htmlview';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Modalize } from 'react-native-modalize';
-
+import { useError } from '../Contexts/ErrorContext';
+import { basicPost, apiGet, apiPost } from '../utils/api.js';
+//const { showError } = useError();
 const Stack = createStackNavigator();
 
-const CampaignList = ({navigation}) => {
+const CampaignList = ({navigation, route}) => {
   const [loading, setLoading] = useState(false);
   const [campaignData, setCampaignData] = useState(false);
   const scrollRef = useRef();
@@ -51,6 +55,7 @@ const CampaignList = ({navigation}) => {
   const [popularSearches, setPopularSearches] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   
+  const [isAll, setIsAll] = useState(false);
   const [isSpecial, setIsSpecial] = useState(false);
   const [isCashback, setIsCashback] = useState(false);
   const [isPartnership, setIsPartnership] = useState(false);
@@ -60,21 +65,51 @@ const CampaignList = ({navigation}) => {
 
   const [filterType, setFilterType] = React.useState('');
 
+  const [userSrch,setUserSrch]=useState("");
+
+  const { showError } = useError();
   useEffect(() => {   
-    const unsubscribe = navigation.addListener('focus', () => {
+    //const unsubscribe = navigation.addListener('focus', () => {
       // do something
-        getCampaigns(false)
-    });
-    return unsubscribe;
-  }, [navigation]);
-  const setFilterData = () =>{
+      console.log("route")
+      console.log(route)
+      console.log("params")
+      console.log(route.params);
+      let isSp=false;
+      let isAw = false;
+      let isPr = false;
+      if(route && route.params && route.params.filters){
+        /*(route.params.filters.isSp && route.params.filters.isSp === true)? setIsSpecial(true) : setIsSpecial(false);
+        (route.params.filters.isAw && route.params.filters.isAw === true)? setIsAward(true) : setIsAward(false);*/
+        if(route.params.filters.isSp && route.params.filters.isSp === true) isSp=true;
+        if(route.params.filters.isAw && route.params.filters.isAw === true) isAw=true;
+        if(route.params.filters.isPr && route.params.filters.isPr === true) isPr=true;
+      }
+      console.log(">>>>");
+      console.log(isSpecial);
+      console.log(isAward);
+        //getCampaigns(false);
+        //setIsSpecial(isSp);
+        //setIsAward(isAw);
+        setFilterData(isSp, isAw, isPr);
+        
+    //});
+    //return unsubscribe;
+  }, [route]);
+//});
+
+  const setFilterData = (isSp, isAw, isPr) =>{
+    //setIsSpecial(isSp);
+    //setIsAward(isAw);
     setFilterModalVisible(false);
     setOrderModalVisible(false);
     let filter = "";
-    if(isSpecial) filter+="&isSpecial=true";
+    //if(isSpecial || isSp) filter+="&isSpecial=true";
+    if(isAw) filter+="&isPremium=true";
+    if(isSpecial|| isSp) filter+="&isSpecial=true";
     if(isCashback) filter+="&isCashback=true";
     if(isPartnership) filter+="&isPartnership=true";
-    if(isAward) filter+="&isAward=true";
+    if(isAward ) filter+="&isAward=true";
     if(isPaymentOfEase) filter+="&isPaymentOfEase=true";
     filter+='&sort='+orderType;
     console.log("filter ? ");
@@ -88,40 +123,38 @@ const CampaignList = ({navigation}) => {
       };
       let searchParams = '?page=1&pageSize=12';
       if(search) searchParams+='&keyword='+search;
-      let path = 'https://payfourapp.test.kodegon.com/api/campaigns'+searchParams;
+      let path = 'campaigns'+searchParams;
       if(isPayfour) path+="&isPayfourCampaign=true";
       if(filterList) path+=filterList;
       console.log("campaign params");
       console.log(path);
-      axios.get(path, config).then(response => {
-        console.log(response.data);
-        console.log(response.data.data);
-        console.log(response.data.data.items);
-        let sl = response.data.data.items;
-        for(var i=0; i < sl.length;i++){
-          sl[i].key = sl[i].campaignCode;
-          let dt = new Date(sl[i].expireDate);
-          let tdt = new Date();
-          console.log(dt.getTime());
-          console.log(tdt.getTime());
-          console.log(dt.getTime() < tdt.getTime());
-          sl[i].expired = (dt.getTime() < tdt.getTime());
-          let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
-          sl[i].time = t;
-          
-        }
-        console.log(sl);
-        setCampaignData(sl);
-        setLoading(false);
-        scrollRef.current?.scrollToOffset({ animated: true, offset: 0 });
-      })
-      .catch(error => {
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+      apiGet(path, onCampaigns);
+
+      
 
     });
+  }
+  const onCampaigns = (response)=>{
+    console.log(response.data);
+    console.log(response.data.data);
+    console.log(response.data.data.items);
+    let sl = response.data.data.items;
+    for(var i=0; i < sl.length;i++){
+      sl[i].key = sl[i].campaignCode;
+      let dt = new Date(sl[i].expireDate);
+      let tdt = new Date();
+      console.log(dt.getTime());
+      console.log(tdt.getTime());
+      console.log(dt.getTime() < tdt.getTime());
+      sl[i].expired = (dt.getTime() < tdt.getTime());
+      let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
+      sl[i].time = t;
+      
+    }
+    console.log(sl);
+    setCampaignData(sl);
+    setLoading(false);
+    scrollRef.current?.scrollToOffset({ animated: true, offset: 0 });
   }
 const Item = ({time, title, refno, img, key, refid, expired}) => (
   <View key={key} style={{...slstyles.slide}}> 
@@ -200,7 +233,7 @@ const renderSuggestionItems = () =>{
       <FlatList
       data={suggestions}
       renderItem={(item) => 
-        <SuggestionItem key={item.item} title={item.item}/>
+        <SuggestionItem item={item.item}/>
       }
       keyExtractor={item => item.key}
       style={{ width:'100%'}}
@@ -210,8 +243,9 @@ const renderSuggestionItems = () =>{
 
   )
 }
-  const SuggestionItem = ({key, title}) => (
-    <View key={key} style={{width:'100%',
+  const SuggestionItem = ({item}) => (
+    
+    <View key={item.key} style={{width:'100%',
       height:50,
       borderBottomWidth:1,
       borderBottomColor:'#EFF1F5',
@@ -225,14 +259,24 @@ const renderSuggestionItems = () =>{
       }}
       onPress={() => {   
           console.log("suggestion click"); 
-          onSearch(title);       
+          console.log("SuggestionItem ");
+          console.log(item);
+          onSearchClose(item.title);
+          //onErase();
+          setUserSrch(item.title);
+          navigation.navigate('campaign', { 
+            screen: 'CampaignDetail',
+            params: {id: item.id}
+          });
+        
+          //onSearch(title);       
       }}>    
         <Text style={{
           fontSize:12,
           lineHeight:18,
           color:'#0B1929',
         }}>
-            {title}
+            {item.title}
         </Text>       
       </TouchableOpacity>
     </View>
@@ -252,7 +296,7 @@ const renderSuggestionItems = () =>{
             ref={scrollRef}
             renderItem={({item}) => (
               //time, title, refno, img
-              <Item time={item.time} title={item.title} img = {item.thumbnailUrl} refno={item.campaignCode}  refid={item.id} expired={item.expired}/>
+              <Item time={item.time} title={item.title} img = {item.imageUrl} refno={item.campaignCode}  refid={item.id} expired={item.expired}/>
             )}
             keyExtractor={item => item.id+Math.random()}
             style={{paddingLeft: 30,
@@ -272,6 +316,7 @@ const renderSuggestionItems = () =>{
           <Text
             style={{
               fontSize: 16,
+              lineHeight:20,
               color: '#0B1929',
               fontWeight: '700',
               paddingLeft: 20,
@@ -288,38 +333,46 @@ const renderSuggestionItems = () =>{
         const config = {
           headers: { Authorization: `Bearer ${value}` }
         };
-        axios.get('https://payfourapp.test.kodegon.com/api/campaigns/popularsearches', config).then(response => {
-          console.log(response.data);
-          console.log(response.data.data);
-          console.log(response.data.data.items);
-          let sl = response.data.data;
-          setPopularSearches(sl);
-          setShowSearch(true);
-        })
+        apiGet('campaigns/popularsearches', onPopularSearches);
+        
     })
+  }
+  const onPopularSearches = (response) => {
+    console.log('onPopularSearches');
+    console.log(response.data);
+    console.log(response.data.data);
+    console.log(response.data.data.items);
+    let sl = response.data.data;
+    setPopularSearches(sl);
+    setShowSearch(true);
   }
   const onInput = (data) => {
     console.log("onInput", data);
-      setLoading(true);
+      //setLoading(true);
       AsyncStorage.getItem('token').then(value =>{
         const config = {
           headers: { Authorization: `Bearer ${value}` }
         };
-        axios.get('https://payfourapp.test.kodegon.com/api/campaigns/suggest?keyword='+data, config).then(response => {
-          console.log(response.data);
-          console.log(response.data.data);
-          console.log(response.data.data.items);
-          let sl = response.data.data;
-          // setPopularSearches(sl);
-          // setShowSearch(true);
-          setSuggestions(response.data.data);
-          setLoading(false);
-        })
+        apiGet('campaigns/suggest?keyword='+data, onSuggestions);
+
+       
   
       });
   }
+  const onSuggestions = (response) => {
+    console.log("onSuggestions");
+    console.log(response.data);
+    console.log(response.data.data);
+    console.log(response.data.data.items);
+    let sl = response.data.data;
+    // setPopularSearches(sl);
+    // setShowSearch(true);
+    setSuggestions(response.data.data);
+    setLoading(false);
+  }
   const onSearch = (data) => {
     console.log("onSearchSubmit", data);
+    setUserSrch(data);
     searchKeyword(data);
   }
   const onSearchClose = (data) => {
@@ -332,6 +385,7 @@ const renderSuggestionItems = () =>{
   }
   const searchKeyword = (data) => {
     console.log("searchKeyword", data);
+    setUserSrch(data);
     setShowSearch(false);
     getCampaigns(null, null, data);
   }
@@ -412,185 +466,201 @@ const renderSuggestionItems = () =>{
                     }}>
                       Payfour'a özel
                     </Text>
+                    <Pressable
+                    onPress={()=> {
+                      let all = isAll;
+                      setIsAll(!all);
+                      setIsSpecial(!all);
+                      setIsCashback(!all);
+                      setIsPartnership(!all);
+                      setIsAward(!all);
+                      setIsPaymentOfEase(!all);
+                      }}>
                     <Text style={{
                       fontSize:14,
                       lineHeight:16,
-                      color:'#909EAA',
+                      color: isAll ? '#004F97' : '#909EAA',
                     }}>
                       Tümü
                     </Text>
-                    
+                    </Pressable>
                   </View>
-                  <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
-                    }}>
-                      <Pressable
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsSpecial(!isSpecial)
+                    }>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isSpecial ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isSpecial ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isSpecial ? 14 : 0,
+                          height: isSpecial ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsSpecial(!isSpecial)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isSpecial ? 14 : 0,
-                            height: isSpecial ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      Sana Özel
-                      </Text>
+                      />
                     </View>
-                    <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
                     }}>
-                      <Pressable
+                    Sana Özel
+                    </Text>
+                  </Pressable>
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsCashback(!isCashback)}>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isCashback ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isCashback ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isCashback ? 14 : 0,
+                          height: isCashback ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsCashback(!isCashback)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isCashback ? 14 : 0,
-                            height: isCashback ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      Cashback Kampanyaları
-                      </Text>
+                      />
                     </View>
-                    <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
                     }}>
-                      <Pressable
+                    Nakit İade Kampanyaları
+                    </Text>
+                  </Pressable>
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsPartnership(!isPartnership)}>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isPartnership ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isPartnership ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isPartnership ? 14 : 0,
+                          height: isPartnership ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsPartnership(!isPartnership)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isPartnership ? 14 : 0,
-                            height: isPartnership ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      İş Birlikleri
-                      </Text>
+                      />
                     </View>
-                    <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
                     }}>
-                      <Pressable
+                    İş Birlikleri
+                    </Text>
+                  </Pressable>
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsAward(!isAward)}>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isAward ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isAward ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isAward ? 14 : 0,
+                          height: isAward ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsAward(!isAward)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isAward ? 14 : 0,
-                            height: isAward ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      Puan Kampanyaları
-                      </Text>
+                      />
                     </View>
-                    <View style={{
-                      marginBottom:24,
-                      alignItems:'center',
-                      flexDirection:'row'
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
                     }}>
-                      <Pressable
+                    Puan Kampanyaları
+                    </Text>
+                  </Pressable>
+                  <Pressable style={{
+                    marginBottom:24,
+                    alignItems:'center',
+                    flexDirection:'row'
+                  }}
+                  onPress={()=> setIsPaymentOfEase(!isPaymentOfEase)}>
+                    <View
+                      style={{
+                        width:24,
+                        height:24,
+                        marginRight:8,
+                        backgroundColor:isPaymentOfEase ? '#015096':'#fff',
+                        borderWidth:1, 
+                        borderColor:'#DADEE7',
+                        borderRadius:5,
+                        alignItems:'center',
+                        justifyContent:'center'
+                      }}
+                      >
+                      <Image
+                        source={require('../../assets/img/export/check.png')}
                         style={{
-                          width:24,
-                          height:24,
-                          marginRight:8,
-                          backgroundColor:isPaymentOfEase ? '#015096':'#fff',
-                          borderWidth:1, 
-                          borderColor:'#DADEE7',
-                          borderRadius:5,
-                          alignItems:'center',
-                          justifyContent:'center'
+                          width: isPaymentOfEase ? 14 : 0,
+                          height: isPaymentOfEase ? 10 : 0,
+                          resizeMode: 'contain',
                         }}
-                        onPress={()=> setIsPaymentOfEase(!isPaymentOfEase)}>
-                        <Image
-                          source={require('../../assets/img/export/check.png')}
-                          style={{
-                            width: isPaymentOfEase ? 14 : 0,
-                            height: isPaymentOfEase ? 10 : 0,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </Pressable>
-                      
-                      <Text style={{
-                        fontSize:14, color:'#0B1929', marginBottom:4
-                      }}>
-                      Ödeme Kolaylığı Kampanyaları
-                      </Text>
+                      />
                     </View>
+                    
+                    <Text style={{
+                      fontSize:14, color:'#0B1929'
+                    }}>
+                    Ödeme Kolaylığı Kampanyaları
+                    </Text>
+                  </Pressable>
                   
                   <TouchableOpacity
                     style={[
@@ -705,7 +775,7 @@ const renderSuggestionItems = () =>{
                         display: orderType === 'DateDescending' ? 'flex' : 'none'}}></View>
                     </View>
                       <Text style={{
-                        fontSize:16,fontWeight:'700', color:'#004F97', marginBottom:4
+                        fontSize:16,fontWeight:'500', color:'#004F97', marginBottom:4
                       }}>
                       Tarihe göre en yeni
                       </Text>
@@ -742,13 +812,13 @@ const renderSuggestionItems = () =>{
                         display: orderType === 'DateAscending' ? 'flex' : 'none'}}></View>
                     </View>
                       <Text style={{
-                        fontSize:16,fontWeight:'700', color:'#004F97', marginBottom:4
+                        fontSize:16,fontWeight:'500', color:'#004F97', marginBottom:4
                       }}>
                       Tarihe göre en eski
                       </Text>
                       
                   </TouchableOpacity>
-                  <TouchableOpacity style={{
+                  {/* <TouchableOpacity style={{
                     flexDirection:'row',
                     alignItems:'center',
                     paddingTop:8,
@@ -774,7 +844,7 @@ const renderSuggestionItems = () =>{
                         display: orderType === 'BrandAscending' ? 'flex' : 'none'}}></View>
                     </View>
                       <Text style={{
-                        fontSize:16,fontWeight:'700', color:'#004F97', marginBottom:4
+                        fontSize:16,fontWeight:'500', color:'#004F97', marginBottom:4
                       }}>
                       Markalara göre A-Z
                       </Text>
@@ -806,12 +876,12 @@ const renderSuggestionItems = () =>{
                         display: orderType === 'BrandDescending' ? 'flex' : 'none'}}></View>
                     </View>
                       <Text style={{
-                        fontSize:16,fontWeight:'700', color:'#004F97', marginBottom:4
+                        fontSize:16,fontWeight:'500', color:'#004F97', marginBottom:4
                       }}>
                       Markalara göre Z-A
                       </Text>
                       
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                   
                   <TouchableOpacity
                     style={[
@@ -840,7 +910,18 @@ const renderSuggestionItems = () =>{
             </View>
       </Modal>    
       <Loader loading={loading} />
-      <SubtabHeaderWithSearch routetarget={"Discover"} name="Kampanyalar" count="0" openCallback={onSearchPress} inputCallback={onInput} searchCallback={onSearch} closeCallback={onSearchClose} eraseCallback={onErase}/>
+      <SubtabHeaderWithSearch 
+      routetarget={"Discover"} 
+      name="Kampanyalar" 
+      count="0" 
+      openCallback={onSearchPress} 
+      inputCallback={onInput} 
+      searchCallback={onSearch} 
+      closeCallback={onSearchClose} 
+      eraseCallback={onErase}
+      userSrch={userSrch} 
+      setUserSrch={setUserSrch}
+      />
       <LinearGradient colors={['#fcfcfd', '#fbfbfd']} 
       style={{
         position:'absolute',
@@ -1091,7 +1172,7 @@ const CampaignDetail = ({navigation, route}) => {
   const [campaignCode, setCampaignCode] = useState('');
   const [copyCampaignCode, setCopyCampaignCode] = useState('');
   const rulesModalizeRef = useRef(null);
-
+  const { showError } = useError();
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => {
       // do something
@@ -1101,74 +1182,70 @@ const CampaignDetail = ({navigation, route}) => {
       console.log(route.params);
       console.log(route.params.id);
       //console.log(Dimensions.get('window').width);
-      console.log('https://payfourapp.test.kodegon.com/api/campaigns/'+route.params.id)
+      console.log('https://api-app.payfour.com/api/campaigns/'+route.params.id)
       setLoading(true);
         AsyncStorage.getItem('token').then(value =>{
           const config = {
             headers: { Authorization: `Bearer ${value}` }
-          }          
-          axios.get('https://payfourapp.test.kodegon.com/api/campaigns/'+route.params.id, config).then(response => {
-            //console.log(response.data);
-            console.log(response.data.data);
-            
-            setShowMore(false);
-            let sl = response.data.data;
-            let dt = new Date(sl.expireDate);
-            let tdt = new Date();
-            let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
-            sl.time = t;
-            const diffInMs   = new Date(sl.expireDate) - new Date();
-            const diffInDays = parseInt(diffInMs / (1000 * 60 * 60 * 24));            
-            console.log("diffindays");
-            console.log(diffInDays);
-            console.log("title :" +sl.title);
-            sl.diff = diffInDays;
-            sl.expired = (dt.getTime() < tdt.getTime());
-            const re = /<p>/gi;
-            const re2 = /<\/p>/gi;
-            sl.longDescription = sl.longDescription.replace(re, "<div>");
-            sl.longDescription = sl.longDescription.replace(re2, "</div>");
-            sl.howTo = sl.howTo.replace(re, "<div>");
-            sl.howTo = sl.howTo.replace(re2, "</div>");
-            sl.terms = sl.terms.replace(re, "<div>");
-            sl.terms = sl.terms.replace(re2, "</div>");
-            console.log(sl.longDescription);
-            console.log(sl.howTo);
-            console.log(sl.terms);
-            console.log("targetCount");
-            console.log(sl.targetCount);
-            sl.barLines = [];
-            let lineArr = [];
-
-            for(var i=0; i < parseInt(sl.targetCount)+1; i++){
-              console.log(i);
-              sl.barLines.push({point: i, key:"barLine"+i});
-            }
-            //sl.barLines = lineArr;
-            //setBarLines(lineArr);
-            console.log("sl.barLines");
-            console.log(sl.barLines);
-            setCampaignDetailData(sl);
-            setIsAllStores(sl.isAllStores);
-
-            setLoading(false);
-            /*if(response.data.data.balance != null){
-              let b = parseFloat(response.data.data.balance).toFixed(2).replace('.', ',');
-              setBalance(b);
-            }
-            setLoading(false);
-            checkCampaigns();*/
-          })
-          .catch(error => {
-            console.error("Error sending data: ", error);
-            let msg="";
-            (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-          })        });
+          }       
+          apiGet('campaigns/'+route.params.id, onCampaignDetails);  
+                
+        });
       
     });
     return unsubscribe;
   }, [route.params?.id]);
 
+  const onCampaignDetails = (response)=>{
+    console.log(response.data.data);
+            
+    setShowMore(false);
+    let sl = response.data.data;
+    let dt = new Date(sl.expireDate);
+    let tdt = new Date();
+    let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
+    sl.time = t;
+    const diffInMs   = new Date(sl.expireDate) - new Date();
+    const diffInDays = parseInt(diffInMs / (1000 * 60 * 60 * 24));            
+    console.log("diffindays");
+    console.log(diffInDays);
+    console.log("title :" +sl.title);
+    sl.diff = diffInDays;
+    sl.expired = (dt.getTime() < tdt.getTime());
+    const re = /<p>/gi;
+    const re2 = /<\/p>/gi;
+    sl.longDescription = sl.longDescription.replace(re, "<div>");
+    sl.longDescription = sl.longDescription.replace(re2, "</div>");
+    sl.howTo = sl.howTo.replace(re, "<div>");
+    sl.howTo = sl.howTo.replace(re2, "</div>");
+    if(sl.terms){
+      sl.terms = sl.terms.replace(re, "<div>");
+      sl.terms = sl.terms.replace(re2, "</div>");
+    }else{
+      sl.terms = "";
+    }
+    console.log(sl.longDescription);
+    console.log(sl.howTo);
+    console.log(sl.terms);
+    console.log("sl.hasJoinedCampaign");
+    console.log(sl.hasJoinedCampaign);
+    setJoined(sl.hasJoinedCampaign);
+    console.log("targetCount");
+    console.log(sl.targetCount);
+    sl.barLines = [];
+    let lineArr = [];
+
+    for(var i=0; i < parseInt(sl.targetCount)+1; i++){
+      console.log(i);
+      sl.barLines.push({point: i, key:"barLine"+i});
+    }
+    console.log("sl.barLines");
+    console.log(sl.barLines);
+    setCampaignDetailData(sl);
+    setIsAllStores(sl.isAllStores);
+
+    setLoading(false);
+  }
   // const renderBarlines  = campaignDetailData.barLines.map(line => 
   //   <View key={line.point}
   //   style={{
@@ -1194,25 +1271,16 @@ const CampaignDetail = ({navigation, route}) => {
       };    
 
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/campaigns/participate', dataToSend, config)
-      .then(response => {
-        console.log(response.data);
-        console.log(response.data.data);
-        setLoading(false);
-        setJoined(true);
-        //AsyncStorage.setItem('accessToken', response.data.data.accessToken).then(() =>{
-          //navigation.navigate("LoginWithPasswordScreen");
-        //})
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.log(error.response);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    apiPost('campaigns/participate', dataToSend, onJoinCampaign);
+    
     });
+  }
+  const onJoinCampaign = (response)=>{
+    console.log(response.data);
+    console.log(response.data.data);
+    setLoading(false);
+    setJoined(true);
   }
   const getCampaignCode = ()=>{
     console.log("getCampaignCode");
@@ -1227,33 +1295,28 @@ const CampaignDetail = ({navigation, route}) => {
       };    
 
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/campaigns/participate', dataToSend, config)
-      .then(response => {
-        console.log(response.data);
-        console.log(response.data.data);
-        setLoading(false);
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    apiPost('campaigns/participate', dataToSend, onCampaignCode, onCampaignCodeError);
 
-        setCopyCampaignCode(response.data.data.voucherCode);
-        setCopyModalVisible(true);
-        //setJoined(true);
-        //AsyncStorage.setItem('accessToken', response.data.data.accessToken).then(() =>{
-          //navigation.navigate("LoginWithPasswordScreen");
-        //})
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.log(error.response);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+    
     });
+  }
+  const onCampaignCode = (response)=>{
+    console.log(response.data);
+    console.log(response.data.data);
+    setLoading(false);
+
+    setCopyCampaignCode(response.data.data.voucherCode);
+    setCopyModalVisible(true);
+  }
+  const onCampaignCodeError = ()=>{
+    setLoading(false);
   }
   const copyCode = ()=>{
     Clipboard.setString(referral);
     setSuccessModalVisible(true);
   }
+  
   const sendCode = ()=>{
     setCodeModalVisible(false);
     setLoading(true);
@@ -1272,25 +1335,37 @@ const CampaignDetail = ({navigation, route}) => {
 
     console.log("send campaign code");
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/campaigns/participate', dataToSend, config)
-      .then(response => {
-        console.log(response.data);
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    apiPost('campaigns/participate', dataToSend, onCampaignCodeSend, onCampaignCodeError);
+
+    
+    });
+  }
+  const onCampaignCodeSend = (response)=>{
+    console.log(response.data);
         console.log(response.data.data);
         setLoading(false);
         setJoined(true);
-        //AsyncStorage.setItem('accessToken', response.data.data.accessToken).then(() =>{
-          //navigation.navigate("LoginWithPasswordScreen");
-        //})
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.log(error.response);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+  }
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+        "payfour://campaign?Id="+route.params.id,
       });
-    });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      //Alert.alert(error.message);
+      showError(error.message);
+    }
   }
   const renderBarNums = () =>{
     
@@ -1652,6 +1727,141 @@ const CampaignDetail = ({navigation, route}) => {
       </Modal>
       <Modalize ref={rulesModalizeRef}
       snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          Kampanya Kuralları
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        rulesModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                       <ScrollView style={legalStyles.container}>
+                       <View style={legalStyles.section}>
+                       <View style={{marginBottom:24}}>
+                          <Text style={{
+                            fontSize:12,
+                            fontWeight:'700',
+                            color:'#004F97',
+                            marginBottom:8,
+                          }}>
+                            Nasıl Katılırım ?
+                          </Text>
+                          <HTMLView
+                          value={campaignDetailData.howTo}
+                          stylesheet={htmlStyles}
+                        />     
+                
+                  </View>
+                  <View style={{paddingBottom:18}}>
+                          <Text style={{
+                            fontSize:12,
+                            fontWeight:'700',
+                            color:'#004F97',
+                            marginBottom:8
+                          }}>
+                            Ne Kazanırım ?
+                          </Text>
+                          <HTMLView
+                            value={campaignDetailData.terms}
+                            stylesheet={htmlStyles}
+                          />   
+                  </View>
+                        </View>
+                        </ScrollView>
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:16,
+                  paddingRight:16,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => rulesModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
+      {/* <Modalize ref={rulesModalizeRef}
+      snapPoint={0}
       modalStyle={{backgroundColor:(0,0,0,0)}}>
         <View
               style={{
@@ -1706,36 +1916,36 @@ const CampaignDetail = ({navigation, route}) => {
                         }}
                       />
                     </TouchableOpacity>
-                       </View> 
-                <View style={{marginBottom:24}}>
-                        <Text style={{
-                          fontSize:12,
-                          fontWeight:'700',
-                          color:'#004F97',
-                          marginBottom:8,
-                        }}>
-                          Nasıl Katılırım ?
-                        </Text>
-                        <HTMLView
-                        value={campaignDetailData.howTo}
-                        stylesheet={htmlStyles}
-                      />     
-               
-                      </View>
-                      <View style={{paddingBottom:18}}>
-                        <Text style={{
-                          fontSize:12,
-                          fontWeight:'700',
-                          color:'#004F97',
-                          marginBottom:8
-                        }}>
-                          Ne Kazanırım ?
-                        </Text>
-                        <HTMLView
-                          value={campaignDetailData.terms}
+                  </View> 
+                  <View style={{marginBottom:24}}>
+                          <Text style={{
+                            fontSize:12,
+                            fontWeight:'700',
+                            color:'#004F97',
+                            marginBottom:8,
+                          }}>
+                            Nasıl Katılırım ?
+                          </Text>
+                          <HTMLView
+                          value={campaignDetailData.howTo}
                           stylesheet={htmlStyles}
-                        />   
-                      </View>
+                        />     
+                
+                  </View>
+                  <View style={{paddingBottom:18}}>
+                          <Text style={{
+                            fontSize:12,
+                            fontWeight:'700',
+                            color:'#004F97',
+                            marginBottom:8
+                          }}>
+                            Ne Kazanırım ?
+                          </Text>
+                          <HTMLView
+                            value={campaignDetailData.terms}
+                            stylesheet={htmlStyles}
+                          />   
+                  </View>
                   </View>
                   
                
@@ -1782,7 +1992,7 @@ const CampaignDetail = ({navigation, route}) => {
                 </TouchableOpacity>
                </View>
             </View>
-      </Modalize>
+      </Modalize> */}
       {/* <Modal
             animationType="slide"
             transparent={true}
@@ -1944,7 +2154,8 @@ const CampaignDetail = ({navigation, route}) => {
               source={{uri: campaignDetailData =={} ? '' : campaignDetailData.imageUrl}}
               style={{
                 width: '100%',
-                height:Dimensions.get('window').width*0.466
+                //height:Dimensions.get('window').width*0.466,
+                height:Dimensions.get('window').width*0.8,
               }}
               resizeMode={'cover'}
             />
@@ -1961,15 +2172,33 @@ const CampaignDetail = ({navigation, route}) => {
           }}>
             <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
               <View style={{width:Dimensions.get('window').width - 120}}>
-                <Text style={{
+                {/* <Text style={{
+                  fontSize:14,
+                  lineHeight:16,
+                  color:'#0B1929',
+                  textAlign:'center',
+                  marginBottom:12,
+                }}>
+                  Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} 
+                </Text> */}
+                {/* <Text style={{
                   fontSize:12,
                   lineHeight:16,
                   color:'#0B1929',
                   textAlign:'center',
                   marginBottom:12,
                 }}>
-                  Kampaya kapsamında {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} alışveriş daha yapın toplam 
+                  Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} alışveriş daha yapın toplam 
                   <Text style={{fontWeight:700, color:'#004F97'}}>{campaignDetailData.targetAward} TL CarrefourSA Puan</Text> kazanın.
+                </Text> */}
+                <Text style={{
+                  fontSize:14,
+                  lineHeight:16,
+                  color:'#0B1929',
+                  textAlign:'center',
+                  marginBottom:12,
+                }}>
+                  Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} alışveriş yapın, {campaignDetailData.targetAward} TL Puan kazanın
                 </Text>
                 <View style={{paddingBottom:20}}>
                 
@@ -1988,7 +2217,8 @@ const CampaignDetail = ({navigation, route}) => {
                       top:0,
                       left:0,
                       zIndex:5,
-                      borderRadius:12
+                      borderRadius:12,
+                      overflow:'hidden'
                     }}>
                       {/* barfill */}
                       
@@ -1998,6 +2228,7 @@ const CampaignDetail = ({navigation, route}) => {
                       colors={['#7EBEF5', '#005BAA', '#ED1C67']} 
                       style={{
                         width:campaignDetailData.barLines.length > 0 ? (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.memberCurrentCount :0,
+                        //width:'100%',
                         height:8,
                         borderTopLeftRadius:12,
                         borderBottomLeftRadius:12,
@@ -2023,7 +2254,7 @@ const CampaignDetail = ({navigation, route}) => {
                         console.log("key "+key);
                         console.log(campaignDetailData.barLines[key].key);
                       return (
-                        campaignDetailData.barLines.length > 0 && key != 0? 
+                        campaignDetailData.barLines.length > 0 && key != 0 && key !=campaignDetailData.barLines.length-1? 
                         <View key={campaignDetailData.barLines[key].key}
                         style={{
                           position:'absolute',
@@ -2031,10 +2262,10 @@ const CampaignDetail = ({navigation, route}) => {
                           //left:20 * campaignDetailData.barLines[key].point,
                           left: campaignDetailData.barLines.length > 0 ? (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point : 0,
                           height:8,
-                          width:1,
-                          backgroundColor: '#fff'
+                          width:2,
+                          backgroundColor: campaignDetailData.memberCurrentCount > 0 ? '#fff' : '#F2F4F6'
                         }}>
-                          <Text>{campaignDetailData.barLines[key].point}</Text>
+                          {/* <Text>{campaignDetailData.barLines[key].point}</Text> */}
                         </View>
                         : <View></View>
                       )
@@ -2042,46 +2273,7 @@ const CampaignDetail = ({navigation, route}) => {
                     }
                       
                     </View>
-                    <View style={{
-                      width:'100%',
-                      height:8,
-                      position:'absolute',
-                      top:0,
-                      left:0,
-                      borderRadius:12
-                    }}>
-                      {/* barlines */}
-                      {
-                      [...Array(campaignDetailData.barLines.length).keys()].map(key => {
-                        console.log("barLines ");
-                        console.log(campaignDetailData.barLines);
-                        console.log("barLines "+campaignDetailData.barLines.length);
-                        console.log("key "+key);
-                        console.log(campaignDetailData.barLines[key].key);
-                      return (
-                        campaignDetailData.barLines.length > 0 && key != 0? 
-                        <View key={campaignDetailData.barLines[key].key}
-                        style={{
-                          position:'absolute',
-                          top:0,
-                          //left:20 * campaignDetailData.barLines[key].point,
-                          left: (Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
-                          height:8,
-                          width:1,
-                          backgroundColor: '#fff'
-                        }}>
-                          <Text style={{
-                            fontSize:10,
-                            color:'#004F97',
-                            
-                          }}>{campaignDetailData.barLines[key].point}</Text>
-                        </View>
-                        : <View></View>
-                      )
-                    })
-                    }
-                      
-                    </View>
+                    
                     <View style={{
                       width:'100%',
                       height:8,
@@ -2098,13 +2290,14 @@ const CampaignDetail = ({navigation, route}) => {
                         console.log("key "+key);
                         console.log(campaignDetailData.barLines[key].key);
                       return (
-                        campaignDetailData.barLines.length > 0? 
+                        campaignDetailData.barLines.length > 0 && campaignDetailData.barLines[key].point != "0"? 
                         <View key={campaignDetailData.barLines[key].key}
                         style={{
                           position:'absolute',
                           top:20,
                           //left:20 * campaignDetailData.barLines[key].point,
-                          left: (Dimensions.get('window').width - 128) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
+                          //left: (Dimensions.get('window').width - 128) / (campaignDetailData.barLines.length-1) * campaignDetailData.barLines[key].point,
+                          left: campaignDetailData.barLines.length > 0 ? ((Dimensions.get('window').width - 120) / (campaignDetailData.barLines.length - 1) * campaignDetailData.barLines[key].point)-5 : 0,
                           height:16,
                           width:12,
                         }}>
@@ -2170,8 +2363,10 @@ const CampaignDetail = ({navigation, route}) => {
                 color:'#28303F',
                 paddingRight:16,
                 textAlign:'left',
+                width:Dimensions.get('window').width - 80,
               }}>{campaignDetailData.title}</Text>
-                <TouchableOpacity style={{}}>
+                {/* <TouchableOpacity style={{}}
+                onPress={()=> onShare}>
                   <Image
                     source={require('../../assets/img/export/campaign_detail_icon2.png')}
                     style={{
@@ -2179,7 +2374,7 @@ const CampaignDetail = ({navigation, route}) => {
                       height:32
                     }}
                 />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
             <View style={{
                 display:'flex',
@@ -2211,13 +2406,22 @@ const CampaignDetail = ({navigation, route}) => {
                   alignItems:'center',
                   justifyContent:'center',
                   backgroundColor:'#FFF4CD',
-                  display :campaignDetailData.diff > 20? 'none' : 'flex'}}>
+                  display :campaignDetailData.diff > 20 ? 'none' : 'flex'}}>
+                    {parseInt(campaignDetailData.diff)> 0 ?
                   <Text style={{
                     fontSize:12, 
                     fontWeight:500, 
                     color:'#FFA908',
                     
                     }}>Son {parseInt(campaignDetailData.diff)} Gün</Text>
+                    :
+                    <Text style={{
+                      fontSize:12, 
+                      fontWeight:500, 
+                      color:'#FFA908',
+                      
+                      }}>Sona erdi</Text>
+                    }
                 </View>
               </View>
             <View style={{marginBottom:12}}>
@@ -2302,6 +2506,7 @@ const CampaignDetail = ({navigation, route}) => {
               backgroundColor: joined? '#004F97' : '#fff',
               display: campaignDetailData.campaignContentType == 2 ? 'flex' : 'none',
             }}
+            disabled={joined}
           onPress={()=> joinCampaign()}>
             <Image
               source={require('../../assets/img/export/checkmark.png')}
@@ -2460,7 +2665,8 @@ const slstyles = {
   },
   slideImg:{
     width: '100%',
-    height:Dimensions.get('window').width*0.5,
+    //height:Dimensions.get('window').width*0.5,
+    height:Dimensions.get('window').width*0.69,
     borderRadius:4,
     marginBottom:16,
   },

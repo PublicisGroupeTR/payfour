@@ -36,10 +36,16 @@ import {CountryPicker} from "react-native-country-codes-picker";
 import MaskInput from 'react-native-mask-input';
 import axios from 'react-native-axios';
 import { useKeenSliderNative } from "keen-slider-extended/react-native"
+import Carousel, {useOnPressConfig} from '@timotismjntk/react-native-carousel';
+
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import Swiper from 'react-native-swiper';
+import { useError } from './Contexts/ErrorContext';
+import { basicGet, basicPost } from './utils/api.js';
 
 const LoginScreen = ({navigation}) => {
+  const { showError } = useError();
+  const onPressConfig = useOnPressConfig();
   const [uniqueMPANumber, setUniqueMPANumber] = useState(null);
   const [fingerprint, setFingerprint] = useState(null);
   const [deviceId, setDeviceId] = useState(null);
@@ -48,8 +54,10 @@ const LoginScreen = ({navigation}) => {
   const [userAgreement, setUserAgreement] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
+  const [numberOfLines, setNumberOfLines] = useState(2);
   const [countryCode, setCountryCode] = useState('+90');
   const [modalVisible, setModalVisible] = useState(false);
+  const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [show, setShow] = useState(false);
 
   const passwordInputRef = createRef();
@@ -69,45 +77,43 @@ const LoginScreen = ({navigation}) => {
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => {      
       console.log('Hello World!'); 
-      setLoading(true);       
-      axios.get('https://payfourapp.test.kodegon.com/api/campaigns/getcampaignsforanonymusers?pageSize=4').then(response => {
-        console.log(response.data);
-        console.log(response.data.data);
-        //console.log(response.data.data.items);
-        let sl = response.data.data;
-        for(var i=0; i < sl.length;i++){
-          sl[i].key = sl[i].campaignCode;
-          let dt = new Date(sl[i].expireDate);
-          let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
-          sl[i].time = t;
-        }
-        if(sl.length < 2){
-          sl.push({...sl[0]});
-          sl.push({...sl[0]});
-          sl.push({...sl[0]});
-        }else if(sl.length < 3){
-          sl.push({...sl[0]});
-          sl.push({...sl[1]});
-        }else if(sl.length < 4){
-          sl.push({...sl[0]});
-        }
-        for(var i=0; i < sl.length;i++){
-          sl[i].uid = "open"+(10+i);
-        }
-        console.log(sl);
-        setSlData(sl);
-        setLoading(false);
-          })
-      .catch(error => {
-        setLoading(false);
-        //console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+      setLoading(true); 
+            
+      basicGet('campaigns/getcampaignsforanonymusers?pageSize=4', onLoginSlider)
+      
     });
     return unsubscribe;
   }, [navigation]);
 
+  const onLoginSlider = (response) => {
+    console.log(response.data);
+    console.log(response.data.data);
+    //console.log(response.data.data.items);
+    let sl = response.data.data;
+    for(var i=0; i < sl.length;i++){
+      sl[i].key = sl[i].campaignCode;
+      let dt = new Date(sl[i].expireDate);
+      let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
+      sl[i].time = t;
+      //if(i == 0) sl[i].title = sl[i].title +" test text length test text length"
+    }
+    if(sl.length < 2){
+      sl.push({...sl[0]});
+      sl.push({...sl[0]});
+      sl.push({...sl[0]});
+    }else if(sl.length < 3){
+      sl.push({...sl[0]});
+      sl.push({...sl[1]});
+    }else if(sl.length < 4){
+      sl.push({...sl[0]});
+    }
+    for(var i=0; i < sl.length;i++){
+      sl[i].uid = "open"+(10+i);
+    }
+    console.log(sl);
+    setSlData(sl);
+    setLoading(false);
+  }
   const resetUser = () => {
     setLoading(true);
     AsyncStorage.removeItem('uniqueMPANumber').then(()=>{
@@ -220,60 +226,28 @@ const LoginScreen = ({navigation}) => {
         }
         console.log("dataToSend");
         console.log(dataToSend);
-
-            axios.post('https://payfourapp.test.kodegon.com/api/auth/init', dataToSend)
-            .then(response => {
-              console.log(response.data);
-              console.log(response.data.data);
-              setLoading(false);
-              setDeviceId(response.data.data.deviceId);
-              setLogin(response.data.data.deviceId, value);
-            })
-            .catch(error => {
-              setLoading(false);
-              console.error("Error sending data: ", error);
-              console.log("Error sending data: ", error.response.data.errors.message);
-              let msg="";
-              (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-            });
-        /*fetch('https://payfourapp.test.kodegon.com/api/auth/init', {
-          method: 'POST',
-          body: {
-            "fingerPrint": "4e8a1a0d25086770445106345030fbdaf020d9ceac3fe4797df48c81161a55ff",
-            "uniqueMPANumber": "2edbac61d141eeea479a9f4e9507d8839c39480204597e1f3ca11818e842e0c5"
-          },
-          headers: {
-            //Header Defination
-            'accept':'text/plain',
-            'Content-type': 'application/*+json',
-          },
-        })
-          .then(response => response.json())
-          .then(responseJson => {
-            //Hide Loader
-            setLoading(false);
-            console.log(responseJson);
-            console.log(responseJson.error);
-            setDeviceId(response.data.deviceId);
-            setLogin();
+        basicPost('auth/init', dataToSend, onInit, null, value);
             
-          })
-          .catch(error => {
-            //Hide Loader
-            setLoading(false);
-            console.error(error);
-          });*/
+      
       });
   }  
-
+  const onInit = (response, value) =>{
+    console.log(response.data);
+    console.log(response.data.data);
+    setLoading(false);
+    setDeviceId(response.data.data.deviceId);
+    setLogin(response.data.data.deviceId, value);
+  }
   function randomIntFromInterval(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
-  const checkPhone = () =>{
+  const checkPhone = (val) =>{
     console.log("checkPhone");
-    console.log(countryCode.length);
-    console.log(userPhone.length);
-    (countryCode.length > 0 && userPhone.length > 13)? setToggleSubmit(true) : setToggleSubmit(false);
+    console.log(val);
+    //const re = "/ /gi";
+    //console.log(userPhone.replace(re,""));
+    console.log(val.length);
+    (countryCode.length > 0 && val.length > 9)? setToggleSubmit(true) : setToggleSubmit(false);
   }
   const setAgreement = (val) =>{
     setUserAgreement(val);
@@ -292,65 +266,99 @@ const LoginScreen = ({navigation}) => {
       "dgpaysAgreements": true
     }
     console.log("datatosend");
-    console.log(dataToSend)
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
-    .then(response => {
-      setLoading(false);
-        console.log(response.data);
-        //setLogin();
-        let dds = dId.toString();
-        console.log("dds", dds)
-        AsyncStorage.setItem('deviceId', dds).then(() =>{
-          var ph = (countryCode+userPhone).replace('(', "").replace(")", "").replace(/ /g, '');
-          console.log("set phone", ph);
-          AsyncStorage.setItem('phone', ph).then(() =>{
-            console.log("navigate to otp");
-            navigation.navigate("OtpScreen", {
-              phone: ph,
-            });
-          });
-        });
-    })
-    .catch(error => {
-      setLoading(false);
-      console.error("Error sending data: ", error);
-      console.log(error.response);
-      let msg="";
-      (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-    });
-    /*fetch('https://payfourapp.test.kodegon.com/api/auth/begin', {
-      method: 'POST',
-      body: dataToSend,
-      headers: {
-        //Header Defination
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-    })
-      .then(response => response.json())
-      .then(responseJson => {
-        //Hide Loader
-        setLoading(false);
-        console.log(responseJson);
-        console.log(responseJson.error);
-        //setLogin();
-        AsyncStorage.setItem('deviceId', deviceId).then(() =>{
-          AsyncStorage.setItem('phone', countryCode+userPhone).then(() =>{
-            navigation.navigate("OtpScreen");
-          });
-        });
-        
-      })
-      .catch(error => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
-      });*/
-  };
+    console.log(dataToSend);
+    basicPost('auth/begin', dataToSend, onBegin, null, dId);
 
+    
+  };
+  const onBegin = (response, dId) =>{
+    setLoading(false);
+    console.log(response.data);
+    //setLogin();
+    let dds = dId.toString();
+    console.log("dds", dds)
+    AsyncStorage.setItem('deviceId', dds).then(() =>{
+      var ph = (countryCode+userPhone).replace('(', "").replace(")", "").replace(/ /g, '');
+      console.log("set phone", ph);
+      AsyncStorage.setItem('phone', ph).then(() =>{
+        console.log("navigate to otp");
+        navigation.navigate("OtpScreen", {
+          phone: ph,
+        });
+      });
+    });
+  }
   
   return (
   
     <View style={styles.mainBody}>
+      <Modal
+            animationType="slide"
+            transparent={true}
+            visible={loginModalVisible}
+            onRequestClose={() => {
+              setLoginModalVisible(!loginModalVisible);
+            }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 79, 151, 0.6)',
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 32,
+                  paddingBottom: 16,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width: '100%',
+                }}>
+                  
+                  <View style={{
+                      marginBottom:24,
+                      }}>
+                        <Text style={{
+                          fontSize:16,
+                          fontWeight:'700',
+                          color:'#004F97',
+                          marginBottom:16,
+                          textAlign:'center',
+                        }}>
+                          Kampanya detaylarını görüntülemek için lütfen giriş yapın.
+                        </Text>
+                                      
+                  </View>
+                  
+                
+                  <TouchableOpacity
+                    style={[
+                      styles.buttonStyle,
+                      {
+                        
+                        height: 52,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 2,
+                        borderColor: '#004F97',
+                        backgroundColor: '#004F97',
+                        padding:0,
+                      },
+                    ]}
+                    onPress={() => setLoginModalVisible(false)}>
+                    <Text
+                      style={{fontSize: 14, color: '#ffffff'}}>
+                      Giriş Yap / Üye Ol
+                    </Text>
+                  </TouchableOpacity>
+                
+              </View>
+            </View>
+      </Modal>
       <ImageBackground
        style={styles.bgimg}
        resizeMode="cover"
@@ -362,7 +370,7 @@ const LoginScreen = ({navigation}) => {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
+              //Alert.alert('Modal has been closed.');
               setModalVisible(!modalVisible);
             }}>
             <View
@@ -463,6 +471,7 @@ const LoginScreen = ({navigation}) => {
             </View>
           </Modal>
           <Loader loading={loading} />
+          {/* <Api /> */}
           <ScrollView
             keyboardShouldPersistTaps="handled"
             style={{flexGrow:1}}>
@@ -612,7 +621,7 @@ const LoginScreen = ({navigation}) => {
                           // assuming you typed "9" all the way:
                           console.log(masked); // (99) 99999-9999
                           console.log(unmasked); // 99999999999
-                          checkPhone();
+                          checkPhone(unmasked);
                         }}
                         mask={['(', /\d/, /\d/, /\d/,')', ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, ' ', /\d/, /\d/]}
                       />
@@ -707,7 +716,7 @@ const LoginScreen = ({navigation}) => {
                   <Text style={{color:'#0B1929', fontSize:14, fontWeight:'700'}}>
                   Kampanyalar
                   </Text>
-                 <View style={[slstyles.slider, {marginBottom:16, marginTop:8, minheight:300,left:-8, marginRight:-8, paddingRight:-8}]} {...slider.containerProps}>
+                 <View style={[slstyles.slider, {paddingBottom:40, overflow:'visible',marginBottom:16, marginTop:8, minheight:300,left:-8, marginRight:-8, paddingRight:-8}]} {...slider.containerProps}>
                   {
                     [...Array(slides).keys()].map(key => {
                       console.log("sldata "+slData.length);
@@ -715,50 +724,75 @@ const LoginScreen = ({navigation}) => {
                     return (
                       slData.length > 0 ? 
                       <View key={slData[key].id} {...slider.slidesProps[key]} style={{padding:10}}>
-                      <View style={{width:'100%', height:'100%'}}>
-                        <View style={{...slstyles.slide}}>
-                        
-                          <Image 
-                            // source={slimages[key]}
-                            source={{
-                              uri: slData[key].thumbnailUrl,
-                            }}
-                            style={[slstyles.slideImg, {
-                              resizeMode: 'cover',
-                            }]}
-                          />
+                      <View style={{flexGrow:1}}>
+                        <View style={{...slstyles.slide}}
+                        {...onPressConfig(() => {
+                          console.log("onPress");
                           
-                            
-                            <Text style={{
-                              fontSize:12,
-                              lineHeight:18,
-                              color:'#0B1929',
-                              marginBottom:8,
-                            }}>
-                              {slData[key].title}
-                            </Text>
-                            <View style={{
-                              flexDirection:'row',
-                              alignItems:'center',
-                              justifyContent:'flex-start',
-                            }}>
+                          try {
+                            //if (item?.img) {
+                              //Linking.openURL(item.img);
+                              setLoginModalVisible(!loginModalVisible);
+                            //}
+                          } catch (error) {
+                            console.log(error)
+                          }
+                        })}
+                        >
+                          <View style={{}}
+                            onPress={()=>{
+                              console.log("thumb");
+                              setLoginModalVisible(!loginModalVisible);}}
+                              >
                             <Image 
-                            source={require('../assets/img/export/time-oclock.png')}
-                            style={{
-                              resizeMode:'contain',
-                              width:10,
-                              height:10,
-                              marginRight:4,
-                              tintColor: '#28303F',
+                              // source={slimages[key]}
+                              source={{
+                                uri: slData[key].thumbnailUrl,
+                              }}
+                              style={[slstyles.slideImg, {
+                                resizeMode: 'cover',
+                              }]}
+                              
+                            />
+                          </View>
+                              
+                          <Text style={{
+                            fontSize:12,
+                            lineHeight:18,
+                            color:'#0B1929',
+                            marginBottom:8,
+                            minHeight: numberOfLines > 2? 54:36,
+                          }}
+                          onTextLayout={(event) => {
+                            const { lines } = event.nativeEvent;
+                            console.log("lines : "+lines?.length);
+                            if(lines?.length > numberOfLines) setNumberOfLines(lines?.length);
+                            console.log("numberOfLines : "+numberOfLines)
+                          }}>
+                            {slData[key].title}
+                          </Text>
+                          <View style={{
+                            flexDirection:'row',
+                            alignItems:'center',
+                            justifyContent:'flex-start',
+                          }}>
+                          <Image 
+                          source={require('../assets/img/export/time-oclock.png')}
+                          style={{
+                            resizeMode:'contain',
+                            width:10,
+                            height:10,
+                            marginRight:4,
+                            tintColor: '#28303F',
+                          }}>
+                          </Image>
+                            <Text style={{
+                              fontSize:10,
+                              color:'#909EAA',
                             }}>
-                            </Image>
-                              <Text style={{
-                                fontSize:10,
-                                color:'#909EAA',
-                              }}>
-                              Son gün {slData[key].time}
-                              </Text>
-                            </View>
+                            Son gün {slData[key].time}
+                            </Text>
+                          </View>
                         </View>
                       </View>
                       </View>
@@ -918,7 +952,6 @@ const styles = StyleSheet.create({
   buttonTextStyle: {
     color: '#FFFFFF',
     paddingVertical: 15,
-    fontFamily: 'Ubuntu-Bold',
     fontWeight: '500',
     fontSize: 14,
   },
@@ -957,26 +990,64 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+// const slstyles = {
+//   slider: {
+//     paddingLeft:24,
+//     paddingRight:0,
+//     backgroundColor: 'transparent',
+//     overflow: 'hidden',
+//     width: '100%',
+//     //height: Dimensions.get('window').width*0.392,
+//     minHeight: 185,
+//     paddingBottom:10,
+//     //height:'100%',
+//     flexGrow:1,
+//   },
+//   slide: {
+//     width: (Dimensions.get('window').width*0.437),
+//     minHeight:165,
+//     padding:8,
+//     // alignItems: 'center',
+//     // justifyContent: 'center',
+
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 1,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     elevation: 2,
+//     backgroundColor:'#fff',
+//     borderRadius:8,
+//   },
+//   slideImg:{
+//     width: Dimensions.get('window').width*0.394,
+//     //height:Dimensions.get('window').width*0.186,
+//     height:Dimensions.get('window').width*0.32,
+//     borderRadius:4,
+//     marginBottom:8,
+//   },
+//   text: {
+//     color: 'white',
+//     fontSize: 30,
+//   },
+// }
 const slstyles = {
   slider: {
-    paddingLeft:24,
-    paddingRight:0,
     backgroundColor: 'transparent',
-    overflow: 'hidden',
+    overflow: 'hidden',flex: 1,
     width: '100%',
-    //height: Dimensions.get('window').width*0.392,
-    minHeight: 185,
-    paddingBottom:10,
+    height: Dimensions.get('window').width*0.5,
+    //minHeight: Dimensions.get('window').width*0.5,
     //height:'100%',
-    flexGrow:1,
   },
   slide: {
     width: (Dimensions.get('window').width*0.437),
-    minHeight:165,
     padding:8,
     // alignItems: 'center',
     // justifyContent: 'center',
-
+    overflow:'visible',
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -987,10 +1058,14 @@ const slstyles = {
     elevation: 2,
     backgroundColor:'#fff',
     borderRadius:8,
+    marginBottom:20,
+    //height:'140%'
+    
   },
   slideImg:{
     width: Dimensions.get('window').width*0.394,
-    height:Dimensions.get('window').width*0.186,
+    //height:Dimensions.get('window').width*0.186,
+    height:Dimensions.get('window').width*0.32,
     borderRadius:4,
     marginBottom:8,
   },

@@ -31,6 +31,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Dropdown} from 'react-native-element-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { apiGet, apiPost } from '../../utils/api.js';
+
 const ProfileNotificationSettings = ({navigation}) => { 
 
   const [code, setCode] = useState('');
@@ -99,36 +101,24 @@ const ProfileNotificationSettings = ({navigation}) => {
   let dataToSend ={
     "code": code,
   }
-  axios.post('https://payfourapp.test.kodegon.com/api/account/redeemcode',dataToSend, config)
-            .then(response => {
-              console.log(response);
-              console.log(response.data);
-              if(response.data.success){
-                console.log("coupon success")
-                //navigation.navigate('Success');
-                setSuccessModalVisible(true);
-              }else{
-                setLoading(false);
-                console.log("coupon error")
-              }
-            })
-            .catch(error => {
-              setLoading(false);
-              console.error("Error sending data: ", error);
-              console.error("Error sending data: ", error.response);
-              console.error("Error sending data: ", error.response.data.errors.message);
-              //console.log(JSON.parse(error.response));
-              let msg="";
-              (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-        
-              
-              //Alert.alert("Error sending data: ", error);
-            });
+  apiPost('account/redeemcode',dataToSend,onRedeemCode);
+  
           
           });
   };
 
-  
+  const onRedeemCode = (response) => {
+    console.log(response);
+    console.log(response.data);
+    if(response.data.success){
+      console.log("coupon success")
+      //navigation.navigate('Success');
+      setSuccessModalVisible(true);
+    }else{
+      setLoading(false);
+      console.log("coupon error")
+    }
+  }
 
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>      
@@ -174,7 +164,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                           lineHeight:20,
                           color:'#0B1929',
                           textAlign:'left',
-                          width:100
+                          width:140
                         }}>
                           Kampanyalar
                         </Text>

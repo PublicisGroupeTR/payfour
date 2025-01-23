@@ -67,7 +67,7 @@ style={{}}
 <KeyboardAvoidingView enabled>
 
 
-<View
+<TouchableOpacity
               style={{
                 flex: 1,                
                 justifyContent: 'flex-end',
@@ -75,7 +75,8 @@ style={{}}
                 backgroundColor: 'rgba(0, 79, 151, 0.6)',
                 width:Dimensions.get('window').width,
               
-              }}>
+              }}
+              onPress={() => navigation.navigate('Discover')}>
               <View
                 style={{
                   backgroundColor:'#fff',
@@ -126,7 +127,7 @@ style={{}}
                           textAlign:'center',
                           marginBottom:26,
                         }}>
-                          Mağazalarımızdan veya CarrefourSa'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
+                          Mağazalarımızdan veya CarrefourSA'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
                       </Text>
                       <View style={{
                         padding:16,
@@ -140,7 +141,7 @@ style={{}}
                           fontSize:16,
                           color:'#0B1929',
                         }}>
-                          Payfour ID:
+                          Payfour No:
                         </Text>
                         <Text style={{
                           fontSize:16,
@@ -175,7 +176,7 @@ style={{}}
                 </TouchableOpacity>
                
               </View>
-            </View>
+            </TouchableOpacity>
 
               </KeyboardAvoidingView>
               </ScrollView>

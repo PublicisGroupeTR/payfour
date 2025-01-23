@@ -31,6 +31,7 @@ import MaskInput from 'react-native-mask-input';
 import LinearGradient from 'react-native-linear-gradient';
 import {Dropdown} from 'react-native-element-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiGet } from '../../utils/api.js';
 
 const PayScreen = ({navigation}) => { 
 
@@ -58,37 +59,23 @@ const PayScreen = ({navigation}) => {
   let dataToSend ={
     "code": code,
   }
-  axios.post('https://payfourapp.test.kodegon.com/api/account/redeemcode',dataToSend, config)
-            .then(response => {
-              console.log(response);
-              console.log(response.data);
-              if(response.data.success){
-                console.log("coupon success")
-                //navigation.navigate('Success');
-                setSuccessModalVisible(true);
-              }else{
-                setLoading(false);
-                console.log("coupon error")
-              }
-            })
-            .catch(error => {
-              setLoading(false);
-              console.error("Error sending data: ", error);
-              console.error("Error sending data: ", error.response);
-              console.error("Error sending data: ", error.response.data.errors.message);
-              //console.log(JSON.parse(error.response));
-              let msg="";
-              (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; 
-              (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
-              Alert.alert(msg);
-        
-              
-              //Alert.alert("Error sending data: ", error);
-            });
+  apiPost('account/redeemcode',dataToSend,onRedeemCode)
+  
           
           });
   };
-
+  const onRedeemCode = (response) => {
+    console.log(response);
+    console.log(response.data);
+    if(response.data.success){
+      console.log("coupon success")
+      //navigation.navigate('Success');
+      setSuccessModalVisible(true);
+    }else{
+      setLoading(false);
+      console.log("coupon error")
+    }
+  }
   
 
   return(
@@ -261,7 +248,7 @@ style={{}}
                           borderTopColor:'#E4E4E8',
                           paddingTop:8,
                         }}>
-                          Belirtilen IBAN numarasına EFT\Havale yoluyla para göndererek para yükleyebilirsiniz.
+                          Belirtilen IBAN numarasına Havale / EFT yoluyla para göndererek para yükleyebilirsiniz.
                         </Text>
                       </View>
                       <View style={{

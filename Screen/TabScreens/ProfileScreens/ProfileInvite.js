@@ -18,6 +18,8 @@ import {
   Modal,
   Dimensions,
   StyleSheet,
+  Share,
+  Alert,
 } from 'react-native';
 import { registerStyles } from '../../Components/RegisterStyles';
 
@@ -28,14 +30,20 @@ import SubtabHeader from '../../Components/SubtabHeader.js';
 import axios from 'react-native-axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { apiGet } from '../../utils/api.js';
+import { Modalize } from 'react-native-modalize';
+import DavetKurallari from '../../Legals/DavetKurallari.js';
 
 const ProfileInvite = ({navigation}) => { 
 
   const [referral, setReferral] = useState('');
   const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [inviteModalVisible, setInviteModalVisible] = useState(false);
+  const [winModalVisible, setWinModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   
+  const rulesModalizeRef = useRef(null);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       // do something
@@ -46,44 +54,147 @@ const ProfileInvite = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
-          console.log(response.data);
-          console.log(response.data.data);
-          console.log(response.data.data.tckn);
-          setReferral(response.data.data.referralCode)
-          //setUserData(response.data.data);
-          //setIban(response.data.data.defaultBankAccountNumber);
-          
-          setLoading(false);      
-          
-        })
-        .catch(error => {
-          setLoading(false);
-          console.error("Error sending data: ", error);
-          let msg="";
-          (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-        });
+        apiGet('account/getuser', onGetUser);
+        
 
       });
     });
     return unsubscribe;
   }, [navigation]);
+  const onGetUser = (response)=>{
+    console.log(response.data);
+    console.log(response.data.data);
+    console.log(response.data.data.tckn);
+    setReferral(response.data.data.referralCode)
+    //setUserData(response.data.data);
+    //setIban(response.data.data.defaultBankAccountNumber);
+    
+    setLoading(false);
+  }
 
   const copyCode = ()=>{
     Clipboard.setString(referral);
     setSuccessModalVisible(true);
   }
-
-  
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+        referral+" davet kodum ile sen de Payfour’a üye ol, 10 TL Puan kazan. Kod 31.12.2025 tarihine kadar geçerlidir. Payfour’u indir: link",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  }
 
   return(
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>      
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}> 
+    <Modal
+          animationType="slide"
+          transparent={true}
+          visible={inviteModalVisible}
+          onRequestClose={() => {
+            setInviteModalVisible(!inviteModalVisible);
+          }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}
+              >
+          
+      
+      
+          <View style={{
+            borderTopLeftRadius:24,
+            borderTopRightRadius:24,
+            backgroundColor:'#fff',
+            paddingTop:32,
+            paddingBottom:32,
+            paddingLeft:16,
+            paddingRight:16,
+            position:'absolute',
+            bottom:0,
+            width:'100%'
+
+          }}>       
+            <View style={{
+                  flexDirection:'row',
+                  justifyContent:'flex-end',
+                }}>
+                  <TouchableOpacity 
+                    style={{
+                      width:24,
+                      height:24,
+                    }}
+                    onPress={() => {
+                      console.log('close');
+                      setInviteModalVisible(false);
+                      }}>                  
+                      <Image 
+                      source={require('../../../assets/img/export/close.png')}
+                      style={{
+                        width: 24,
+                        height: 24,
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </TouchableOpacity>
+              </View>
+            <View>
+            <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
+            Davet kodunuzu kopyalayarak davet etmek istediğiniz arkadaşlarınızla ve sevdiklerinizle paylaşabilirsiniz.
+            </Text>        
+            </View>
+            {/* <TouchableOpacity
+              style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+              activeOpacity={0.5}
+              onPress={()=>{
+                console.log("close success");
+                setSuccessModalVisible(false);
+                //navigation.navigate('ProfileHome');
+                onShare();
+                }}>
+              <Text style={regstyles.buttonTextStyle}>Paylaş</Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity style={{                            
+              backgroundColor:'#004F97',
+              alignItems:'center',
+              justifyContent:'center',
+              borderRadius:8,
+              width:'100%',
+              height:52, 
+            }}
+            //onPress={()=>{navigation.navigate('ProfileHome', { filter:'platinum' })}}
+            activeOpacity={0.5}
+            onPress={()=>{
+              console.log("close success");
+              setInviteModalVisible(false);
+              }}>
+              <Text style={{color:'#fff', fontSize:14}}>
+              Kapat
+              </Text>
+            </TouchableOpacity>
+          </View>
+      </View>
+      </Modal> 
       <Modal
           animationType="slide"
           transparent={true}
-          visible={successModalVisible}
+          visible={winModalVisible}
           onRequestClose={() => {
-            setSuccessModalVisible(!successModalVisible);
+            setWinModalVisible(!winModalVisible);
           }}>
             <View
               style={{
@@ -108,30 +219,268 @@ const ProfileInvite = ({navigation}) => {
         width:'100%'
 
       }}>       
-        
+        <View style={{
+              flexDirection:'row',
+              justifyContent:'flex-end',
+            }}>
+              <TouchableOpacity 
+                style={{
+                  width:24,
+                  height:24,
+                }}
+                onPress={() => {
+                  console.log('close');
+                  setWinModalVisible(false);
+                  }}>                  
+                  <Image 
+                  source={require('../../../assets/img/export/close.png')}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    resizeMode: 'contain',
+                  }}
+                />
+              </TouchableOpacity>
+          </View>
         <View>
         <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
-        Kodunuz başarıyla kopyalandı.
+        Kodu paylaştığınız arkadaşınızın Payfour’a ilk defa üye olması ve üye olurken "Referans Kodu" alanına ilettiğiniz davet kodunu girmesi yeterli olacaktır.
         </Text>        
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
           activeOpacity={0.5}
           onPress={()=>{
             console.log("close success");
             setSuccessModalVisible(false);
-            navigation.navigate('ProfileHome');
+            //navigation.navigate('ProfileHome');
+            onShare();
             }}>
-          <Text style={regstyles.buttonTextStyle}>Kapat</Text>
+          <Text style={regstyles.buttonTextStyle}>Paylaş</Text>
+        </TouchableOpacity> */}
+        <TouchableOpacity style={{                            
+          backgroundColor:'#004F97',
+          alignItems:'center',
+          justifyContent:'center',
+          borderRadius:8,
+          width:'100%',
+          height:52, 
+        }}
+        //onPress={()=>{navigation.navigate('ProfileHome', { filter:'platinum' })}}
+        activeOpacity={0.5}
+        onPress={()=>{
+          console.log("close success");
+          setWinModalVisible(false);
+          }}>
+          <Text style={{color:'#fff', fontSize:14}}>
+          Kapat
+          </Text>
         </TouchableOpacity>
       </View>
       </View>
+      </Modal>    
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={successModalVisible}
+          onRequestClose={() => {
+            setSuccessModalVisible(!successModalVisible);
+          }}>
+            <TouchableOpacity
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}
+              onPress={()=> setSuccessModalVisible(false)}>
+          
+      
+      
+        <View style={{
+          borderTopLeftRadius:24,
+          borderTopRightRadius:24,
+          backgroundColor:'#fff',
+          paddingTop:32,
+          paddingBottom:32,
+          paddingLeft:16,
+          paddingRight:16,
+          position:'absolute',
+          bottom:0,
+          width:'100%'
+
+        }}>       
+          <View style={{
+                flexDirection:'row',
+                justifyContent:'flex-end',
+              }}>
+                <TouchableOpacity 
+                  style={{
+                    width:24,
+                    height:24,
+                  }}
+                  onPress={() => {
+                    console.log('close');
+                    setSuccessModalVisible(false);
+                    }}>                  
+                    <Image 
+                    source={require('../../../assets/img/export/close.png')}
+                    style={{
+                      width: 24,
+                      height: 24,
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </TouchableOpacity>
+            </View>
+          <View>
+          <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
+          Kodunuz başarıyla kopyalandı.
+          </Text>        
+          </View>
+          {/* <TouchableOpacity
+            style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              console.log("close success");
+              setSuccessModalVisible(false);
+              //navigation.navigate('ProfileHome');
+              onShare();
+              }}>
+            <Text style={regstyles.buttonTextStyle}>Paylaş</Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity style={{                            
+            backgroundColor:'#004F97',
+            alignItems:'center',
+            justifyContent:'center',
+            borderRadius:8,
+            width:'100%',
+            height:52, 
+          }}
+          //onPress={()=>{navigation.navigate('ProfileHome', { filter:'platinum' })}}
+          activeOpacity={0.5}
+          onPress={()=>{
+            console.log("close success");
+            setSuccessModalVisible(false);
+            //navigation.navigate('ProfileHome');
+            onShare();
+            }}>
+            <Text style={{color:'#fff', fontSize:14}}>
+            Paylaş
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
       </Modal>
+      <Modalize ref={rulesModalizeRef}
+      snapPoint={0}
+      modalStyle={{}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          Payfour’a Arkadaşını Davet Et, toplamda 100 TL Puan Kazan!
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,                      
+                        color: '#0B1929',
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        rulesModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      
+                     <DavetKurallari /> 
+                  </View> 
+                  
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:16,
+                  paddingRight:16,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => rulesModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+          </Modalize>
     <Loader loading={loading} />
     <SubtabHeader routetarget="ProfileHome" name="Arkadaşını Davet Et" count="0" />
     <ScrollView
 keyboardShouldPersistTaps="handled"
-style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
+style={[registerStyles.scrollView, {backgroundColor: '#F2F9FF'}]}>
 <KeyboardAvoidingView enabled>
     <View style={{paddingTop: 16,
       paddingBottom: 16,
@@ -193,15 +542,11 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                         />
                       </TouchableOpacity>
                   </View>
-                  <TouchableOpacity style={{}}>
-                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700, textDecorationLine:'underline'}}>
-                    Nasıl Davet Edeceğim?
-                    </Text>
-                  </TouchableOpacity>
+                  
                 
                 
                
-              </View>
+              {/* </View>
               <View
               style={{
                 backgroundColor:'#fff',
@@ -215,24 +560,41 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                 paddingBottom:24,
                 marginBottom:16,
                 width: '100%',
-              }}>
+              }}> */}
                   
 
                   <Text style={{color:'#004F97', fontSize:12, fontWeight:700, marginBottom:8}}>
-                  Arkadaşını Davet Et Her Ay 300TL’ye Kadar Kazan!
+                  Arkadaşınızı davet edin, 100 TL Puan kazanın!
                   </Text>
                   <Text style={{color:'#909EAA', fontSize:12, marginBottom:16}}>
-                  QR Kodunu davet edeceğin kişi cep telefonu kamerasıyla okutabilir veya kodunu ve linkini onunla paylaşabilirsin.
+                  Arkadaşınızı Payfour’a davet edin, sizin davet kodunuzla üye olsun, hem siz hem de arkadaşınız 10 TL Puan kazansın!
                   </Text>
-                  <TouchableOpacity style={{}}>
-                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700, textDecorationLine:'underline'}}>
-                    Nasıl Kazanacağım ?
-                    </Text>
-                  </TouchableOpacity>
+
+                  
                 
                 
                
               </View>
+              <View style={{flexDirection:'row', justifyContent:'space-between', marginBottom:16}}>
+                <TouchableOpacity style={{height:40, alignItems:'center', justifyContent:'center', backgroundColor:'#DFF0FF', borderRadius:6, width:'48%'}}
+                onPress={()=>setInviteModalVisible(true)}>
+                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700}}>
+                    Nasıl Davet Edeceğim?
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{height:40, alignItems:'center', justifyContent:'center', backgroundColor:'#DFF0FF', borderRadius:6, width:'48%'}}
+                  onPress={()=>setWinModalVisible(true)}>
+                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700}}>
+                    Nasıl Kazanacağım?
+                    </Text>
+                  </TouchableOpacity>
+              </View>
+              <TouchableOpacity style={{height:40, alignItems:'center', justifyContent:'center', borderWidth:1, borderColor:'#004F97',borderRadius:6, width:'100%'}}
+                  onPress={()=>rulesModalizeRef.current?.open()}>
+                    <Text style={{color:'#004F97', fontSize:12, fontWeight:700}}>
+                    Kampanya Koşulları
+                    </Text>
+                  </TouchableOpacity>
               {/* <TouchableOpacity
                   style={[
                     styles.buttonStyle,

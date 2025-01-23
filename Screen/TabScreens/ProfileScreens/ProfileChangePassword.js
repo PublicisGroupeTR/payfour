@@ -19,7 +19,8 @@ import {
   Pressable,
   ImageBackground,
   Alert,
-  Dimensions
+  Dimensions,
+  
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -31,6 +32,7 @@ import SubtabHeader from '../../Components/SubtabHeader.js';
 
 
 import axios from 'react-native-axios';
+import { apiPost } from '../../utils/api.js';
 
 const ProfileChangePassword = ({navigation}) => {
   const [userEmail, setUserEmail] = useState('');
@@ -43,6 +45,8 @@ const ProfileChangePassword = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
   const [secureText, setSecureText] = useState(true);
+  const [secureText2, setSecureText2] = useState(true);
+  const [secureText3, setSecureText3] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [userAgreement, setUserAgreement] = useState(false);
@@ -52,7 +56,13 @@ const ProfileChangePassword = ({navigation}) => {
 
   const handleSubmitPress = () => {
     setErrortext(''); 
-    sendData();   
+    if(userCurrentPassword == "" || userPassword == "" || userPasswordAgain == ""){
+      setUserPasswordError(true);
+    }else if(userPassword != userPasswordAgain){
+      setUserPasswordError(true);
+    }else{
+      sendData();   
+    }
   };
   const sendData = () =>{
     /*{
@@ -71,26 +81,18 @@ const ProfileChangePassword = ({navigation}) => {
 
     console.log("forgot data");
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/changepassword', dataToSend, config)
-      .then(response => {
-        console.log(response.data);
-        console.log(response.data.data);
-        setLoading(false);
-        //AsyncStorage.setItem('accessToken', response.data.data.accessToken).then(() =>{
-          navigation.navigate("LoginWithPasswordScreen");
-        //})
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.log(error.response);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    apiPost('auth/changepassword', dataToSend, onChangePassword);
+   
     });
   }
-  
+  const onChangePassword = (response) =>{
+    console.log(response.data);
+    console.log(response.data.data);
+    setLoading(false);
+    navigation.navigate("LoginWithPasswordScreen");
+        
+  }
   return (
 
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}> 
@@ -138,7 +140,7 @@ const ProfileChangePassword = ({navigation}) => {
                       ]}>
                       Mevcut Şifre
                     </Text>
-                    <TouchableOpacity
+                    <Pressable
                       style={{
                         position: 'absolute',
                         top: 20,
@@ -146,15 +148,29 @@ const ProfileChangePassword = ({navigation}) => {
                         zIndex: 10,
                       }}
                       onPress={() => setSecureText(!secureText)}>
-                      <Image
+                        {secureText? <Image 
+                      source={require('../../../assets/img/export/eye_off.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image> : 
+                      <Image 
+                      source={require('../../../assets/img/export/eye.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image>}
+                      {/* <Image
                         source={require('../../../assets/img/export/eye.png')}
                         style={{
                           width: 24,
                           height: 24,
                           resizeMode: 'contain',
                         }}
-                      />
-                    </TouchableOpacity>
+                      /> */}
+                    </Pressable>
                     <TextInput
                       style={{                      
                         fontSize: 16,
@@ -162,6 +178,7 @@ const ProfileChangePassword = ({navigation}) => {
                         padding:0,
                         color: '#015096',
                       }}
+                      maxLength={6}
                       onFocus={() => setUserPasswordError(false)}
                       onChangeText={UserCurrentPassword => setUserCurrentPassword(UserCurrentPassword)}
                       placeholder="" //12345
@@ -191,23 +208,37 @@ const ProfileChangePassword = ({navigation}) => {
                       ]}>
                       Yeni Şifre
                     </Text>
-                    <TouchableOpacity
+                    <Pressable
                       style={{
                         position: 'absolute',
                         top: 20,
                         right: 20,
                         zIndex: 10,
                       }}
-                      onPress={() => setSecureText(!secureText)}>
-                      <Image
+                      onPress={() => setSecureText2(!secureText2)}>
+                        {secureText2? <Image 
+                      source={require('../../../assets/img/export/eye_off.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image> : 
+                      <Image 
+                      source={require('../../../assets/img/export/eye.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image>}
+                      {/* <Image
                         source={require('../../../assets/img/export/eye.png')}
                         style={{
                           width: 24,
                           height: 24,
                           resizeMode: 'contain',
                         }}
-                      />
-                    </TouchableOpacity>
+                      /> */}
+                    </Pressable>
                     <TextInput
                       style={{                      
                         fontSize: 16,
@@ -215,6 +246,7 @@ const ProfileChangePassword = ({navigation}) => {
                         padding:0,
                         color: '#015096',
                       }}
+                      maxLength={6}
                       onFocus={() => setUserPasswordError(false)}
                       onChangeText={UserPassword => setUserPassword(UserPassword)}
                       placeholder="" //12345
@@ -223,7 +255,7 @@ const ProfileChangePassword = ({navigation}) => {
                       ref={passwordInputRef}
                       onSubmitEditing={Keyboard.dismiss}
                       blurOnSubmit={false}
-                      secureTextEntry={secureText}
+                      secureTextEntry={secureText2}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
                     />
@@ -246,24 +278,38 @@ const ProfileChangePassword = ({navigation}) => {
                       ]}>
                       Yeni Şifre Tekrar
                     </Text>
-                    <TouchableOpacity
+                    <Pressable
                       style={{
                         position: 'absolute',
                         top: 20,
                         right: 20,
                         zIndex: 10,
                       }}
-                      onPress={() => setSecureText(!secureText)}>
+                      onPress={() => setSecureText3(!secureText3)}>
                       {/* <Eye width={22} height={12} /> */}
-                      <Image
+                      {secureText3? <Image 
+                      source={require('../../../assets/img/export/eye_off.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image> : 
+                      <Image 
+                      source={require('../../../assets/img/export/eye.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image>}
+                      {/* <Image
                         source={require('../../../assets/img/export/eye.png')}
                         style={{
                           width: 24,
                           height: 24,
                           resizeMode: 'contain',
                         }}
-                      />
-                    </TouchableOpacity>
+                      /> */}
+                    </Pressable>
                     <TextInput
                       style={{                      
                         fontSize: 16,
@@ -271,15 +317,16 @@ const ProfileChangePassword = ({navigation}) => {
                         padding:0,
                         color: '#015096',
                       }}
+                      maxLength={6}
                       onFocus={() => setUserPasswordError(false)}
-                      onChangeText={UserPasswordAgain => setUserPassword(UserPasswordAgain)}
+                      onChangeText={UserPasswordAgain => setUserPasswordAgain(UserPasswordAgain)}
                       placeholder="" //12345
                       placeholderTextColor="#7E797F"
                       keyboardType="numeric"
                       ref={passwordInputRef}
                       onSubmitEditing={Keyboard.dismiss}
                       blurOnSubmit={false}
-                      secureTextEntry={secureText}
+                      secureTextEntry={secureText3}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
                     />
@@ -289,12 +336,28 @@ const ProfileChangePassword = ({navigation}) => {
                     </View>
                     
                     
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                     style={[styles.buttonStyle, {marginBottom: 60, backgroundColor: '#004F97'}]}
                     
                     activeOpacity={0.5}
                     onPress={handleSubmitPress}>
                       <Text style={styles.buttonTextStyle}>Onayla</Text>
+                    </TouchableOpacity> */}
+                    <TouchableOpacity style={{                                                
+                      backgroundColor:'#004F97',
+                      alignItems:'center',
+                      justifyContent:'center',
+                      borderRadius:8,
+                      width:'100%',
+                      height:52, 
+                      marginBottom: 60,
+                    }}
+                    //onPress={()=>{navigation.navigate('ProfileHome', { filter:'platinum' })}}
+                    activeOpacity={0.5}
+                    onPress={handleSubmitPress}>
+                      <Text style={{color:'#fff', fontSize:14}}>
+                      Onayla
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>

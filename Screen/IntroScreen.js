@@ -23,31 +23,34 @@ const IntroScreen = ({navigation}) => {
   }, [navigation]);
 
   const skipIntro = ()=>{
-    AsyncStorage.getAllKeys((err, keys) => {
-      AsyncStorage.multiGet(keys, (err, stores) => {
-        let obj = {};
-        stores.map((result, i, store) => {
-          // get at each store's key/value so you can work with it
-          
-          let key = store[i][0];
-          let value = store[i][1];
-          obj[key] = value;          
-        });
+    AsyncStorage.setItem('tutorial', "true").then(() =>{    
+    
+      AsyncStorage.getAllKeys((err, keys) => {
+        AsyncStorage.multiGet(keys, (err, stores) => {
+          let obj = {};
+          stores.map((result, i, store) => {
+            // get at each store's key/value so you can work with it
+            
+            let key = store[i][0];
+            let value = store[i][1];
+            obj[key] = value;          
+          });
 
-        console.log("storage");
-        console.log(obj);
-        console.log(obj.uniqueMPANumber);
-        console.log(obj.phone);
-        if (obj.phone !== 'null' && obj.uniqueMPANumber !== 'null' && obj.phone !== undefined && obj.uniqueMPANumber !== undefined &&obj.phone !== 'undefined' && obj.uniqueMPANumber !== 'undefined'){
-          //navigation.replace('LoginWithPasswordScreen')
-          navigation.navigate('Auth', { screen: 'LoginWithPasswordScreen' })
-          //navigation.navigate('Auth', { screen: 'RegisterScreen' })
-          //navigation.navigate('Auth', { screen: 'BiometricsScreen' })
-        }else{
-          navigation.navigate('Auth', { screen: 'LoginScreen' });
-        }
+          console.log("storage");
+          console.log(obj);
+          console.log(obj.uniqueMPANumber);
+          console.log(obj.phone);
+          if (obj.phone !== 'null' && obj.uniqueMPANumber !== 'null' && obj.phone !== undefined && obj.uniqueMPANumber !== undefined &&obj.phone !== 'undefined' && obj.uniqueMPANumber !== 'undefined'){
+            //navigation.replace('LoginWithPasswordScreen')
+            navigation.navigate('Auth', { screen: 'LoginWithPasswordScreen' })
+            //navigation.navigate('Auth', { screen: 'RegisterScreen' })
+            //navigation.navigate('Auth', { screen: 'BiometricsScreen' })
+          }else{
+            navigation.navigate('Auth', { screen: 'LoginScreen' });
+          }
+        })
       })
-    })
+    });
   }
   return (
     <View style={styles.container}>
@@ -65,7 +68,7 @@ const IntroScreen = ({navigation}) => {
           source={require('../assets/img/export/payfour_logo.png')}
           style={{width: 113, height:40, resizeMode: 'contain', margin: 30}}
         />
-        <TouchableOpacity style={{
+        {/* <TouchableOpacity style={{
           width:57,
           height:28,
           backgroundColor:'#dce9f3',
@@ -75,7 +78,7 @@ const IntroScreen = ({navigation}) => {
         }}
         onPress={skipIntro}>
           <Text style={{fontSize:14, color:'#004F97'}}>Atla</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         </View>
         <Swiper 
         style={styles.wrapper}
@@ -90,7 +93,7 @@ const IntroScreen = ({navigation}) => {
         }}
         onIndexChanged={(index) =>{
           console.log('index:', index);
-          let end =  index ==3;
+          let end =  index ==2;
           console.log("end? "+end);
           setSlideEnd(end);
         }}
@@ -135,12 +138,12 @@ const IntroScreen = ({navigation}) => {
             resizeMode: 'contain'}}
           /> 
           <View style={styles.bottomTextHolder}>
-            <Text style={[styles.bottomText, {fontSize:18}]}>
+            <Text style={[styles.bottomText, {marginTop:4}]}>
             Artık <Text style={{fontWeight:'700'}}>CarrefourSA </Text>alışverişleriniz size özel kampanyalar ve finansal çözümler ile hem daha eğlenceli hem de daha kazançlı olacak.
             </Text>
           </View>
           </View>
-          <View style={styles.slide2}>
+          {/* <View style={styles.slide2}>
             <View style={styles.header}>
               <Text style={styles.text}>%10 Nakit İade 
               Avantajı!</Text>
@@ -158,7 +161,7 @@ const IntroScreen = ({navigation}) => {
             Üstelik Payfour Platin üyelerine özel <Text style={{fontWeight:'700'}}>%10 nakit </Text>iade sizleri bekliyor!
             </Text>
           </View>
-          </View>
+          </View> */}
           <View style={styles.slide3}>
             <View style={styles.header}>
               <Text style={styles.text}>CarrefourSA Puan
@@ -184,7 +187,7 @@ const IntroScreen = ({navigation}) => {
               Ödemesini Sonra Yap</Text>
             </View>
             <Image
-          source={require('../assets/img/export/tut4.png')}
+          source={require('../assets/img/export/tut2.png')}
           style={{
             width: Dimensions.get('window').height*0.461, 
             height:Dimensions.get('window').height * 0.418, 
@@ -287,6 +290,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#004F97',
     fontSize: Dimensions.get('window').height*0.039,
+    lineHeight: Dimensions.get('window').height*0.039,
     fontWeight: 'bold',
     textAlign:'center',
     paddingLeft:32,

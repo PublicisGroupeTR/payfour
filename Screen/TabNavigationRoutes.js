@@ -220,6 +220,7 @@ const TabNavigatorRoutes = props => {
       
       screenOptions={{
         tabBarShowLabel:false,
+        tabBarHideOnKeyboard:true,
         showIcon: true,
         tabBarStyle:{
           backgroundColor:'#fff',
@@ -230,7 +231,8 @@ const TabNavigatorRoutes = props => {
           position:'absolute',
           ...styles.shadow,
           borderWidth:0,
-        }
+        },
+        gestureEnabled: false
       }}
       //tabBar={props => <CustomTabBar {...props} 
       ///>}
@@ -242,11 +244,13 @@ const TabNavigatorRoutes = props => {
         options={{
           headerShown: false,
           tabBarIcon:({focused}) =>{
+            if(focused){
             return (
             <View style={{
               alignItems:'center',
               justifyContent:'center',
             }}>
+              
               <Image 
               source={require('../assets/img/export/tab_home_active.png')}
               style={{
@@ -255,6 +259,7 @@ const TabNavigatorRoutes = props => {
                 resizeMode: 'contain',
               }}
               />
+              
               <Text
                 style={{
                   color: focused ? '#004F97' : '#909EAA',
@@ -264,6 +269,32 @@ const TabNavigatorRoutes = props => {
               </Text>
             </View>
             )
+          }else{
+            return (
+              <View style={{
+                alignItems:'center',
+                justifyContent:'center',
+              }}>
+                
+                <Image 
+                source={require('../assets/img/export/tab_home.png')}
+                style={{
+                  width: 24,
+                  height: 24,
+                  resizeMode: 'contain',
+                }}
+                />
+                
+                <Text
+                  style={{
+                    color: focused ? '#004F97' : '#909EAA',
+                    fontSize:10
+                    }}>
+                  Keşfet
+                </Text>
+              </View>
+              )
+          }
           }
         }}
       />
@@ -276,38 +307,99 @@ const TabNavigatorRoutes = props => {
             e.preventDefault();
               // Do something with the `navigation` object
             //navigation.navigate('discover');
-            navigation.navigate('campaign', { 
+            /*navigation.navigate('campaign', { 
               screen: 'CampaignList'
+            })*/
+            navigation.navigate('campaign', { 
+              screen: 'CampaignList',
+              params: {
+                params: {
+                  filters:{isAw:false, isSp:false}
+                }
+              }
             })
           },
         })}
+        
         options={{
           headerShown: false,
           tabBarIcon:({focused}) =>{
-            return (
-            <View style={{
-              alignItems:'center',
-              justifyContent:'center',
-            }}>
-              <Image 
-              source={require('../assets/img/export/tab_campaign.png')}
-              style={{
-                width: 24,
-                height: 24,
-                resizeMode: 'contain',
-                tintColor: focused ? '#004F97' : '#909EAA',
-              }}
-              />
-              <Text
+              if(focused){
+              return (
+              <View style={{
+                alignItems:'center',
+                justifyContent:'center',
+              }}>
+                
+                <Image 
+                source={require('../assets/img/export/tab_campaign_active.png')}
                 style={{
-                  color: focused ? '#004F97' : '#909EAA',
-                  fontSize:10
-                  }}>
-                Kampanyalar
-              </Text>
-            </View>
-            )
-          }
+                  width: 24,
+                  height: 24,
+                  resizeMode: 'contain',
+                }}
+                />
+                
+                <Text
+                  style={{
+                    color: focused ? '#004F97' : '#909EAA',
+                    fontSize:10
+                    }}>
+                  Kampanyalar
+                </Text>
+              </View>
+              )
+              }else{
+              return (
+                <View style={{
+                  alignItems:'center',
+                  justifyContent:'center',
+                }}>
+                  
+                  <Image 
+                  source={require('../assets/img/export/tab_campaign.png')}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    resizeMode: 'contain',
+                  }}
+                  />
+                  
+                  <Text
+                    style={{
+                      color: focused ? '#004F97' : '#909EAA',
+                      fontSize:10
+                      }}>
+                    Kampanyalar
+                  </Text>
+                </View>
+                )
+              }
+            }
+            // return (
+            // <View style={{
+            //   alignItems:'center',
+            //   justifyContent:'center',
+            // }}>
+            //   <Image 
+            //   source={require('../assets/img/export/tab_campaign.png')}
+            //   style={{
+            //     width: 24,
+            //     height: 24,
+            //     resizeMode: 'contain',
+            //     tintColor: focused ? '#004F97' : '#909EAA',
+            //   }}
+            //   />
+            //   <Text
+            //     style={{
+            //       color: focused ? '#004F97' : '#909EAA',
+            //       fontSize:10
+            //       }}>
+            //     Kampanyalar
+            //   </Text>
+            // </View>
+            // )
+          
         }}
       />
       <Tab.Screen
@@ -373,30 +465,82 @@ const TabNavigatorRoutes = props => {
         options={{
           headerShown: false,
           tabBarIcon:({focused}) =>{
-            return (
-            <View style={{
-              alignItems:'center',
-              justifyContent:'center',
-            }}>
-              <Image 
-              source={require('../assets/img/export/tab_wallet.png')}
-              style={{
-                width: 24,
-                height: 24,
-                resizeMode: 'contain',
-                tintColor: focused ? '#004F97' : '#909EAA',
-              }}
-              />
-              <Text
+            if(focused){
+              return (
+              <View style={{
+                alignItems:'center',
+                justifyContent:'center',
+              }}>
+                
+                <Image 
+                source={require('../assets/img/export/tab_wallet_active.png')}
                 style={{
-                  color: focused ? '#004F97' : '#909EAA',
-                  fontSize:10
-                  }}>
-                Cüzdanım
-              </Text>
-            </View>
-            )
-          }
+                  width: 24,
+                  height: 24,
+                  resizeMode: 'contain',
+                }}
+                />
+                
+                <Text
+                  style={{
+                    color: focused ? '#004F97' : '#909EAA',
+                    fontSize:10
+                    }}>
+                  İşlemler
+                </Text>
+              </View>
+              )
+              }else{
+              return (
+                <View style={{
+                  alignItems:'center',
+                  justifyContent:'center',
+                }}>
+                  
+                  <Image 
+                  source={require('../assets/img/export/tab_wallet.png')}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    resizeMode: 'contain',
+                  }}
+                  />
+                  
+                  <Text
+                    style={{
+                      color: focused ? '#004F97' : '#909EAA',
+                      fontSize:10
+                      }}>
+                    İşlemler
+                  </Text>
+                </View>
+                )
+              }
+            }
+            // return (
+            // <View style={{
+            //   alignItems:'center',
+            //   justifyContent:'center',
+            // }}>
+            //   <Image 
+            //   source={require('../assets/img/export/tab_wallet.png')}
+            //   style={{
+            //     width: 24,
+            //     height: 24,
+            //     resizeMode: 'contain',
+            //     tintColor: focused ? '#004F97' : '#909EAA',
+            //   }}
+            //   />
+            //   <Text
+            //     style={{
+            //       color: focused ? '#004F97' : '#909EAA',
+            //       fontSize:10
+            //       }}>
+            //     Cüzdanım
+            //   </Text>
+            // </View>
+            // )
+          
         }}
       />
       <Tab.Screen

@@ -123,7 +123,7 @@ style={{}}
                           textAlign:'center',
                           marginBottom:26,
                         }}>
-                          Mağazalarımızdan veya CarrefourSa'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
+                          Mağazalarımızdan veya CarrefourSA'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
                       </Text>
                       <View style={{
                         padding:16,
@@ -137,7 +137,7 @@ style={{}}
                           fontSize:16,
                           color:'#0B1929',
                         }}>
-                          Payfour ID:
+                          Payfour No:
                         </Text>
                         <Text style={{
                           fontSize:16,

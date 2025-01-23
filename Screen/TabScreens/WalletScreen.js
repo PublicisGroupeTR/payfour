@@ -14,7 +14,9 @@ import {
   Modal,
   StyleSheet,
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
+  TextInput,
+  Keyboard
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {SelectList} from 'react-native-dropdown-select-list';
@@ -28,14 +30,13 @@ import {ScrollView} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'react-native-axios';
 import Clipboard from '@react-native-clipboard/clipboard';
-// import Carousel from 'react-native-snap-carousel';
-// import {WebView} from 'react-native-webview';
-// import Pagination from "react-native-custom-pagination";
-import MasterpassScreen from './MasterpassScreen';
 import MasterpassScreen2 from './MasterpassScreen2';
 import CreditScreen from './CreditScreen';
-//import MasterpassScreen3 from './MasterpassScreen3';
-import MasterPassExample from './MasterPassExample.js';
+import CreditOtpScreen from './CreditScreens/CreditOtpScreen.js';
+import CreditChangePasswordScreen from './CreditScreens/CreditChangePasswordScreen.js';
+import CreditPasswordOtpScreen from './CreditScreens/CreditPasswordOtpScreen.js';
+import CreditInstallmentsScreen from './CreditScreens/CreditInstallmentsScreen.js';
+import { apiGet, apiPost } from '../utils/api.js';
 
 const Stack = createStackNavigator();
 const Balance = ({navigation, route}) => {
@@ -91,11 +92,11 @@ const Balance = ({navigation, route}) => {
     },    
     {
       key: 'thism',
-      value: 'Bu Ay',
+      value: 'Son 30 Gün',
     },
   ];
   //const [setPage, setSetPage] = useState(1);
-  const [activePage, setActivePage] = useState(1);
+  const [activePage, setActivePage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
 
@@ -114,12 +115,13 @@ const Balance = ({navigation, route}) => {
         setFilterName('Son 7 Gün');
         setPage();
         return unsubscribe;
-    }, []);
+    }, [navigation]);
   });
 
   const setPage = () => {
     console.log('setPage '+(activePage+1));
-    console.log('setPage '+selected);
+    console.log('setPage');
+    console.log(selected);
     console.log('newData '+newData);
     if(!newData){
     if((activePage+1)<=totalPages){
@@ -189,6 +191,9 @@ const Balance = ({navigation, route}) => {
     cancels = filterObj.transaction == "canceled" ? true : false;
     console.log(">>>>>>>>");
     console.log(transactionType);
+    if(filterObj.transaction == "waiting"){
+      getPendings();
+    }else{
     console.log(cancels);
 
     //setLoading(true);
@@ -250,14 +255,15 @@ const Balance = ({navigation, route}) => {
           calcDate.getDate();        
         break;
       case 'thism':
-        setFilterName('Bu Ay');
+        setFilterName('Son 30 Gün');
         startDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-01';        
         break;
     }
 
     
     console.log('path');
-    qpath = 'https://payfourapp.test.kodegon.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&size=12';
+    //qpath = 'https://api-app.payfour.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&size=100';
+    qpath = 'account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&size=100';
     console.log(qpath);
 
     AsyncStorage.getItem('token').then(value =>{
@@ -265,50 +271,43 @@ const Balance = ({navigation, route}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
 
-      axios.get(qpath, config).then(response => {
-        console.log(response.data);
-        console.log(response.data.data.items);
-        console.log("<<<<<<<<<<");
-        console.log(transactionType);
-        console.log(cancels);
-        cancels = filterObj.transaction == "canceled" ? true : false;
-        console.log("cancels? ")
-        console.log(cancels);
-        formatData(response.data.data.items, cancels);        
-        setLoading(false);
-        getIban();
-      })
-      .catch(error => {
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+      apiGet(qpath, onGetTransactions, cancels);
+
+      
 
     });
-    
+  }
   };
+  const onGetTransactions = (response, cancels) =>{
+    console.log(response.data);
+    console.log(response.data.data.items);
+    console.log("<<<<<<<<<<");
+    console.log(transactionType);
+    console.log(cancels);
+    cancels = filterObj.transaction == "canceled" ? true : false;
+    console.log("cancels? ")
+    console.log(cancels);
+    formatData(response.data.data.items, cancels);        
+    setLoading(false);
+    getIban();
+  }
   const getPendings = () =>{
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-
-      axios.get('https://payfourapp.test.kodegon.com/api/account/getpendingorders?page=0&pageSize=12', config).then(response => {
-        console.log(response.data);
-        console.log(response.data.data.items);
-        formatData(response.data.data.items);        
-        setLoading(false);
-        //getIban();
-      })
-      .catch(error => {
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+      apiGet('account/getpendingorders?page=0&pageSize=12', onGetPendingOrders);
+      
 
     });
   }
-  
+  const onGetPendingOrders = (response) =>{
+    console.log(response.data);
+    console.log(response.data.data.items);
+    formatData(response.data.data.items);        
+    setLoading(false);
+    //getIban();
+  }
   const formatData = (data, cancels) =>{
     console.log("format data");
     console.log(cancels);
@@ -343,7 +342,7 @@ const Balance = ({navigation, route}) => {
         let tmObj = {
           amount: fr+"TL",
           date: ds,
-          name: data[i].txnName ? data[i].txnName : "Provizyon",
+          name: data[i].txnName ? data[i].txnName : "Ön Provizyon",
           refno: data[i].firmRefNumber == 0 ? data[i].refNumber : data[i].firmRefNumber,
           category:  data[i].txnCategoryId ? data[i].txnCategoryId : data[i].actionTypeId
         }
@@ -432,35 +431,25 @@ const Balance = ({navigation, route}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log(value);
-    axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config)
-      .then(response => {
-        console.log(response);
-        console.log(response.data);
-        if(response.data.success){
-          //navigation.navigate('Success');
-          //setPayfourId(response.data.data.payfourId);
-          setIban(response.data.data.defaultBankAccountNumber);
-          setLoading(false);
-        }else{
-          setLoading(false);
-          console.log("NO SUCCESSS")
-          console.log(response);
-          Alert.alert(response.data.data.errors.message);
-        }
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.error("Error sending data: ", error.response);
-        console.error("Error sending data: ", error.response.data.errors.message);
-        //console.log(JSON.parse(error.response));
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+      apiGet('account/getuser', onGetIban);
 
-        
-        //Alert.alert("Error sending data: ", error);
-      });
+    
     });
+  }
+  const onGetIban = (response) =>{
+    console.log(response);
+    console.log(response.data);
+    if(response.data.success){
+      //navigation.navigate('Success');
+      //setPayfourId(response.data.data.payfourId);
+      setIban(response.data.data.defaultBankAccountNumber);
+      setLoading(false);
+    }else{
+      setLoading(false);
+      console.log("NO SUCCESSS")
+      console.log(response);
+      Alert.alert(response.data.data.errors.message);
+    }
   }
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {  
@@ -505,7 +494,7 @@ const Balance = ({navigation, route}) => {
             <Text style={{fontSize:12, color:'#0B1929'}}>
               {name}
             </Text>
-            <Text style={{fontSize:14, color: category == 1 || category == 6? '#F85064' : '#004F97'}}>
+            <Text style={{fontSize:14, color: category == 1 || category == 6? '#F85064' : '#00bf97'}}>
               {category == 1|| category == 6 ? "-":"+"}{amount}
             </Text>
           </View>
@@ -843,7 +832,7 @@ const Balance = ({navigation, route}) => {
                       <Text style={{
                         fontSize:16,fontWeight:'700', color:'#004F97', marginBottom:4
                       }}>
-                      Bu Ay
+                      Son 30 Gün
                       </Text>
                       
                   </TouchableOpacity>
@@ -878,7 +867,7 @@ const Balance = ({navigation, route}) => {
       </Modal> 
       
       <Loader loading={loading} />
-      <SubtabHeader routetarget="Discover" name="İşlemlerim" count="0" />
+      <SubtabHeader routetarget="Discover" name="İşlemler" count="0" />
       <LinearGradient colors={['#d4dde9', '#ecedf2']} 
       style={{
         position:'absolute',
@@ -1007,7 +996,8 @@ const Balance = ({navigation, route}) => {
             borderTopWidth:1,
             borderTopColor:'#E4E4E8',
             alignItems:'center',
-            justifyContent:'space-between'
+            justifyContent:'space-between',
+            display:filterData.transaction == 'waiting' || transactionType==='waiting'? 'none':'flex',
           }}>
             <Text style={{
               color:'#0B1929',
@@ -1025,7 +1015,8 @@ const Balance = ({navigation, route}) => {
               paddingLeft:16,
               flexDirection:'row',
               alignItems:'center',
-              justifyContent:'space-between'
+              justifyContent:'space-between',
+              
             }}
             onPress={()=> setFilterModalVisible(true)}
             >
@@ -1066,8 +1057,21 @@ const Waiting = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [cashModalVisible, setCashModalVisible] = useState(false);
+  const [creditModalVisible, setCreditModalVisible] = useState(false);
   const [iban, setIban] = useState('');
   const [payfourId, setPayfourId] = useState('');
+  const [userTCKN, setUserTCKN] = useState('');
+  const [userPassword, setUserPassword] = useState('');
+  const [secureText, setSecureText] = useState(true);
+  const [userTCKNError, setUserTCKNError] = useState(false);
+  const [userPasswordError, setUserPasswordError] = useState(false);
+
+  /*const [userLimitData, setUserLimitData] = useState();
+  const [userCreditData, setUserCreditData] = useState({});*/
+  const [payStatus, setPayStatus] = useState(3);
+  const [payText, setPayText] = useState('Hemen Başvur');
+  const [available, setAvailable] = useState('0,00');
+  const [payMode, setPayMode] = useState('wallet');
   const [amount, setAmount] = useState('0,00');
   const [balance, setBalance] = useState('0,00');
   const [ibanModalVisible, setIbanModalVisible] = useState(false);
@@ -1081,92 +1085,155 @@ const Waiting = ({route, navigation}) => {
       console.log(">>>>>>>>>>>>>>> check waiting");
       console.log(route);
       console.log(route.params);
-      console.log(navigation);
 
       setLoading(true);
-      let b = parseFloat(route.params.amount).toFixed(2);
-      //let fb = checkCurrency(b);
-      /*setBalance(fb);
-      let amo = checkCurrency(route.params.amount);*/
-      //console.log("formatted "+fb);
-      let f = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
-        b,
-      )
-    let fr= f.replace('TRY', '').trim();
+      //let b = parseFloat(route.params.amount).toFixed(2);
+      let b = 100;
+        //let fb = checkCurrency(b);
+        /*setBalance(fb);
+        let amo = checkCurrency(route.params.amount);*/
+        //console.log("formatted "+fb);
+        let f = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+          b,
+        )
+      let fr= f.replace('TRY', '').trim();
       setAmount(fr);
+
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log(value);
-    axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config)
-      .then(response => {
-        console.log(response);
-        console.log(response.data);
-        if(response.data.success){
-          //navigation.navigate('Success');
-          setPayfourId(response.data.data.payfourId);
-          setIban(response.data.data.defaultBankAccountNumber);
-          setLoading(false);
-          checkCurrentBalance();
-        }else{
-          setLoading(false);
-          console.log("NO SUCCESSS")
-          console.log(response);
-          Alert.alert(response.data.data.errors.message);
-        }
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.error("Error sending data: ", error.response);
-        console.error("Error sending data: ", error.response.data.errors.message);
-        //console.log(JSON.parse(error.response));
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+      apiGet('account/getuser', onGetUser);
 
-        
-        //Alert.alert("Error sending data: ", error);
-      });
+    
     });
 
     });
     return unsubscribe;
   }, [navigation]);
-  /*const checkCurrency = data =>{
-    if(parseInt(data) < 1000){
-      let arr= data.toString().split(".");
-      console.log(arr);
-      //let add = arr[1] ? ","+arr[1] : ",00";
-      let frc;
-      if(arr[1]){
-        frc = arr[1] < 10 ? arr[1]+"0":arr[1];
-      }
-      let add = arr[1] ? ","+frc : ",00";
-      return arr[0]+add+"TL"
+  const onGetUser = (response) => {
+    console.log(response);
+        console.log(response.data);
+        let rd = response.data.data;
+        console.log("channelType");
+        console.log(route.params.channelTypeId);
+        console.log("***************");
+        console.log(rd.loanApplication);
+        console.log(rd.potentialLimit);
+        /*setUserCreditData(rd.loanApplication);
+        setUserLimitData(rd.potentialLimit);*/
+
+        if(route.params.channelTypeId == 1 || route.params.channelTypeId == 2 ||route.params.channelTypeId == 3){
+          console.log("no credit payment");
+          setPayStatus(0);
+        }else if(response.data.success){
+          //navigation.navigate('Success');
+
+          
+          /*console.log("cases");
+          console.log(rd.potentialLimit);
+          console.log((rd.potentialLimit != null && rd.potentialLimit !=  'undefined' && rd.potentialLimit != undefined));
+          console.log(rd.loanApplication);
+          console.log((rd.loanApplication != null && rd.loanApplication !=  'undefined' && rd.loanApplication != undefined));
+          if((rd.potentialLimit != null && rd.potentialLimit !=  'undefined' && rd.potentialLimit != undefined) || (rd.loanApplication != null && rd.loanApplication !=  'undefined' && rd.loanApplication != undefined))
+            {
+            if((rd.potentialLimit != null && rd.potentialLimit !=  'undefined' && rd.potentialLimit != undefined)  && rd.loanApplication == null){
+              setPayStatus(1);
+            }else if(rd.potentialLimit == null){
+              setPayStatus(2);
+            }
+          }else{
+            console.log("limit öğren");
+            setPayStatus(2);
+          }*/
+          // else if(response.data.loanApplication.firstLimit == null){
+
+          // }else if(response.data.loanApplication.)
+          //setPayStatus(4);
+          setPayfourId(rd.payfourId);
+          setIban(rd.defaultBankAccountNumber);
+          setLoading(false);
+          //checkCurrentBalance();
+          checkCurrentLimit(rd.loanApplication, rd.potentialLimit);
+        }else{
+          setLoading(false);
+          console.log("NO SUCCESSS")
+          console.log(response);
+          Alert.alert(rd.errors.message);
+        }
+  }
+  const checkCurrentLimit = (userCreditData, userLimitData) => {
+    console.log("checkCurrentLimit");
+    console.log(userCreditData);
+    console.log(userLimitData);
+    console.log("-------");
+    AsyncStorage.getItem('token').then(value =>{
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+
+      axios.get('https://api-app.payfour.com/api/loans/getavailablecreditlimit', config).then(response => {
+        console.log("getavailablecreditlimit");
+        console.log(response.data);
+        console.log(response.data.data);
+        if(response.data.data.availableAllotmentAmount){
+          setAvailable(new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+            response.data.data.availableAllotmentAmount,
+          ).replace('TRY', '').trim())
+        }
+        checkUserCreditStatus(userCreditData, userLimitData, response.data.data);
+        checkCurrentBalance();
+      })
+      .catch(error => {
+        console.error("Error sending data: ", error);
+        let msg="";
+        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+        checkCurrentBalance();
+      });
+
+    });
+  }
+  const checkUserCreditStatus= (userCreditData, userLimitData, availableLimit) =>{
+    console.log("checkUserCreditStatus");
+    console.log(userCreditData);
+    console.log(userLimitData);
+    console.log("-------");
+    console.log(availableLimit);
+    console.log("-------");
+    /*userLimitData = 1000;
+    userCreditData = null;
+    availableLimit.availableAllotmentAmount = 5;*/
+    let hasCredit = (userCreditData != null && userCreditData != undefined && userCreditData != "undefined");
+    let hasActiveCredit = hasCredit && userCreditData.status == 2;
+    let hasLimit = (userLimitData != null && userLimitData != undefined && userLimitData != "undefined");
+    let hasAvailable = availableLimit.availableAllotmentAmount > 0 && availableLimit.availableAllotmentAmount >= route.params.amount;
+
+    console.log(hasLimit);
+    console.log(hasCredit);
+    console.log(hasActiveCredit);
+    console.log(hasAvailable);
+
+    if((!hasLimit && !hasCredit) || (hasCredit && !hasActiveCredit)){
+        setPayStatus(2);
+        setPayText("Limitini Öğren");      
+    }else if(hasLimit && !hasCredit){
+        setPayStatus(1);
+        setPayText("Hemen Başvur");
     }else{
-      let arr= data.toString().split(".");
-      console.log(arr)
-      let t = Math.floor(parseInt(data) / 1000);
-      let o = parseInt(data) - (t*1000);
-      let b;
-      if(o < 1){
-        b = "000";
-      }else if(o < 10){
-        b = "00"+o
-      }else if(o < 100){
-        b="0"+o;
-      }else b = o
-      let frc;
-      if(arr[1]){
-        frc = arr[1] < 10 ? arr[1]+"0":arr[1];
+      if(hasAvailable){
+        setPayStatus(3);
+        setPayText("Hemen Öde");
+      }else{
+        setPayStatus(4);
+        setPayText("Taksit Öde");
       }
-      let add = arr[1] ? ","+frc : ",00";
-      let f = t+"."+b+add+"TL"
-      console.log(f)
-      return f;
     }
-  }*/
+    console.log("PAYSTATUS");
+    console.log(payStatus);
+
+  }
+  
     const checkCurrency = data =>{
       if(parseInt(data) < 1000){
         let arr= data.toString().split(".");
@@ -1207,7 +1274,7 @@ const Waiting = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
 
-      axios.get('https://payfourapp.test.kodegon.com/api/account/getbalance', config).then(response => {
+      axios.get('https://api-app.payfour.com/api/account/getbalance', config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         if(response.data.data.balance != null){
@@ -1232,46 +1299,134 @@ const Waiting = ({route, navigation}) => {
 
     });
   }
-  const handleSubmitPress = () =>{
-    setLoading(true);
-
-    AsyncStorage.getItem('token').then(value =>{
-      const config = {
-        headers: { Authorization: `Bearer ${value}` }
-      };
-      console.log(value);
-      let dataToSend ={
-        paymentId:route.params.paymentId
-      }
-    console.log(dataToSend)
-    axios.post('https://payfourapp.test.kodegon.com/api/payments/approvewithbalance', dataToSend, config)
-      .then(response => {
-        console.log(response);
-        console.log(response.data);
-        if(response.data.success){
-          //navigation.navigate('Success');
-          setSuccessModalVisible(true);
-          setLoading(false);
-        }else{
-          setLoading(false);
-          console.log("NO SUCCESSS")
-          console.log(response);
-          Alert.alert(response.data.data.errors.message);
+  const setCreditLogin = () =>{
+    let err = false;
+    if(userTCKN.length < 4){
+      setUserTCKNError(true);
+      err = true;
+    }
+    if(userPassword.length < 4){
+      setUserPasswordError(true);
+      err = true;
+    }
+    if(!err){
+      setLoading(true);
+      setCreditModalVisible(false);
+      AsyncStorage.getItem('token').then(value =>{
+        const config = {
+          headers: { Authorization: `Bearer ${value}` }
+        };
+        console.log(value);
+        let dataToSend ={        
+          userName: userTCKN,
+          password: userPassword       
         }
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.error("Error sending data: ", error.response);
-        console.error("Error sending data: ", error.response.data.errors.message);
-        //console.log(JSON.parse(error.response));
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
+      console.log(dataToSend)
+      axios.post('https://api-app.payfour.com/api/loans/sendotpforlogin', dataToSend, config)
+        .then(response => {
+          setLoading(false);
+          console.log(response);
+          console.log(response.data);
+          /*{"data": {"passwordMustBeRenewed": false, "transactionId": "def0605a415f6b12830a487c4b64e13b74c774a89b6af939a0315ab3c8d5309cWi3YoPqM8KwziFTEpl0cWA==LNeccJqFAlZO9tgclQbiP6gHhI62FSL7Ss3ZQEu+Cayz0GCTziPq+0GX7qRYFqv2reN9tFL/wGIGmgVNZEwghQ=="}, "status": 200, "success": true}*/
+          if(response.data.data.passwordMustBeRenewed){
+            console.log("renew credit password");
+            navigation.navigate('CreditChangePasswordScreen', {
+              params:{
+                //transactionId:response.data.data.transactionId,
+                userName: userTCKN,
+                paymentId: route.params.paymentId,
+                amount:amount
+              }
+            })
+          }else{
+            navigation.navigate('CreditOtpScreen', {
+              params:{
+                transactionId:response.data.data.transactionId,
+                paymentId: route.params.paymentId,
+                amount:amount
+              }
+            })
+          }
+        })
+        .catch(error => {
+          setLoading(false);
+          console.error("Error sending data: ", error);
+          console.error("Error sending data: ", error.response);
+          console.error("Error sending data: ", error.response.data.errors.message);
+          //console.log(JSON.parse(error.response));
+          let msg="";
+          (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
 
-        
-        //Alert.alert("Error sending data: ", error);
+          
+          //Alert.alert("Error sending data: ", error);
+        });
       });
-    });
+    }
+  }
+  const handleSubmitPress = (type) =>{
+    console.log('credit handleSubmitPress');
+    console.log(payMode);
+    (type == 'credit')? setPayMode('credit'):setPayMode('wallet');
+    if(type != 'credit'){
+      
+      setLoading(true);
+
+      AsyncStorage.getItem('token').then(value =>{
+        const config = {
+          headers: { Authorization: `Bearer ${value}` }
+        };
+        console.log(value);
+        let dataToSend ={
+          paymentId:route.params.paymentId
+        }
+      console.log(dataToSend);
+      apiPost('payments/approvewithbalance', dataToSend, onApproveWithBalance, onApproveWithBalanceError);
+      
+      });
+    }else{
+      console.log('credit switch');
+      console.log(payStatus);
+      //setCreditModalVisible(true);
+      switch (payStatus){
+        case 1:
+          navigation.navigate('CreditScreen', { 
+            screen: 'IntroSonraOde',
+          })
+          break;
+        case 2:
+          navigation.navigate('CreditScreen', { 
+            screen: 'IntroHazirLimit',
+          })
+          //setCreditModalVisible(true);
+          break;      
+        case 3:
+          setCreditModalVisible(true);
+          break;
+        case 4:
+          console.log("Taksit Öde");
+          break;
+        default:
+          setCreditModalVisible(true);
+          break;
+      }
+    }
+  }
+  const onApproveWithBalance = (response) =>{
+    console.log(response);
+    console.log(response.data);
+    if(response.data.success){
+      //navigation.navigate('Success');
+      setSuccessModalVisible(true);
+      setLoading(false);
+    }else{
+      setLoading(false);
+      console.log("NO SUCCESSS");
+      console.log(response);
+      //Alert.alert(response.data.data.errors.message);
+    }
+  }
+  const onApproveWithBalanceError = (response) =>{
+    setLoading(false);
   }
 const handleSubmitCancel = () =>{
     setLoading(true);
@@ -1285,9 +1440,12 @@ const handleSubmitCancel = () =>{
         paymentId:route.params.paymentId
       }
     console.log(dataToSend)
-    axios.post('https://payfourapp.test.kodegon.com/api/payments/reject', dataToSend, config)
-      .then(response => {
-        console.log(response);
+    apiPost('payments/reject', dataToSend, onReject);
+    
+    });
+  }
+  const onReject = (response) =>{
+    console.log(response);
         console.log(response.data);
         if(response.data.success){
           //navigation.navigate('Success');
@@ -1299,22 +1457,8 @@ const handleSubmitCancel = () =>{
           setLoading(false);
           console.log("NO SUCCESSS")
           console.log(response);
-          Alert.alert(response.data.data.errors.message);
+          //Alert.alert(response.data.data.errors.message);
         }
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.error("Error sending data: ", error.response);
-        console.error("Error sending data: ", error.response.data.errors.message);
-        //console.log(JSON.parse(error.response));
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-
-        
-        //Alert.alert("Error sending data: ", error);
-      });
-    });
   }
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
@@ -1412,7 +1556,7 @@ const handleSubmitCancel = () =>{
                               fontSize:14,
                               color:'#004F97',
                             }}>
-                              Kredi Kartı ile Öde
+                              Banka / Kredi Kartı ile Yükle
                             </Text>
                           </View>
                           
@@ -1496,7 +1640,7 @@ const handleSubmitCancel = () =>{
                           borderTopColor:'#E4E4E8',
                           paddingTop:8,
                         }}>
-                          Belirtilen IBAN numarasına EFT\Havale yoluyla para göndererek para yükleyebilirsiniz.
+                          Belirtilen IBAN numarasına Havale / EFT yoluyla para göndererek para yükleyebilirsiniz.
                         </Text>
                       </View>
                       <View style={{
@@ -1650,7 +1794,7 @@ const handleSubmitCancel = () =>{
                           textAlign:'center',
                           marginBottom:26,
                         }}>
-                          Mağazalarımızdan veya CarrefourSa'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
+                          Mağazalarımızdan veya CarrefourSA'ya ait online platformlardan yapacağınız alışverişlerinizi Payfour ile ödemek için aşağıdaki Payfour numarasını veya telefon numaranızı kasiyere söylemeniz veya platformlardaki ilgili alana girmeniz yeterli olacaktır.
                       </Text>
                       <View style={{
                         padding:16,
@@ -1664,7 +1808,7 @@ const handleSubmitCancel = () =>{
                           fontSize:16,
                           color:'#0B1929',
                         }}>
-                          Payfour ID:
+                          Payfour No:
                         </Text>
                         <Text style={{
                           fontSize:16,
@@ -1689,6 +1833,7 @@ const handleSubmitCancel = () =>{
                       borderColor: '#004F97',
                       backgroundColor: '#004F97',
                       padding:0,
+                      marginLeft:0,
                     },
                   ]}
                   onPress={() => setCashModalVisible(false)}>
@@ -1815,11 +1960,12 @@ const handleSubmitCancel = () =>{
                           position:'absolute',
                           backgroundColor:'#004F97',
                           borderRadius:8,
-                          width:65,
+                          width:75,
                           alignItems:'center',
                           justifyContent:'center',
                           padding:4,
                           top:-24,
+                          right:0,
                           display: showTooltip1 ? 'flex':'none',
                         }}>
                           <Text style={{color:'#fff', fontSize:11}}>Kopyalandı</Text>
@@ -1875,11 +2021,12 @@ const handleSubmitCancel = () =>{
                           position:'absolute',
                           backgroundColor:'#004F97',
                           borderRadius:8,
-                          width:65,
+                          width:75,
                           alignItems:'center',
                           justifyContent:'center',
                           padding:4,
                           top:-24,
+                          right:0,
                           display: showTooltip2 ? 'flex':'none',
                         }}>
                           <Text style={{color:'#fff', fontSize:11}}>Kopyalandı</Text>
@@ -1935,11 +2082,12 @@ const handleSubmitCancel = () =>{
                           position:'absolute',
                           backgroundColor:'#004F97',
                           borderRadius:8,
-                          width:65,
+                          width:75,
                           alignItems:'center',
                           justifyContent:'center',
                           padding:4,
                           top:-24,
+                          right:0,
                           display: showTooltip3 ? 'flex':'none',
                         }}>
                           <Text style={{color:'#fff', fontSize:11}}>Kopyalandı</Text>
@@ -1990,6 +2138,7 @@ const handleSubmitCancel = () =>{
                       borderColor: '#004F97',
                       backgroundColor: '#004F97',
                       padding:0,
+                      marginLeft:0,
                     },
                   ]}
                   onPress={() => setIbanModalVisible(false)}>
@@ -2086,6 +2235,218 @@ const handleSubmitCancel = () =>{
       </View>
       </View>
       </Modal>
+      <Modal
+            animationType="slide"
+            transparent={true}
+            visible={creditModalVisible}
+            onRequestClose={() => {
+              setCreditModalVisible(!creditModalVisible);
+            }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 16,
+                  paddingBottom: 16,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width: '100%',
+                }}>
+                  <View style={{
+                    flexDirection:'row',
+                    justifyContent:'flex-end',
+                  }}>
+                    <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        setCreditModalVisible(false);
+                        //navigation.navigate('discover')
+                        }}>                  
+                        <Image 
+                        source={require('../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </TouchableOpacity>
+                </View>
+                  <View style={{
+                    paddingTop:24,
+                    paddingBottom:24,
+                    alignItems:'center',
+                    justifyContent:'center',
+                  }}>
+                    <Image 
+                        source={require('../../assets/img/export/information_large.png')}
+                        style={{
+                          width: 80,
+                          height: 80,
+                          resizeMode: 'contain',
+                          marginBottom:16,
+                        }}
+                        />
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          lineHeight:20,
+                          color:'#0B1929',
+                          marginBottom:8,
+                        }}>
+                          Bilgilerini Gir
+                        </Text>
+                        <Text style={{
+                          fontSize:14,
+                          lineHeight:20,
+                          color:'#909EAA',
+                          paddingLeft:24,
+                          paddingRight:24,
+                          textAlign:'center',
+                        }}>
+                          Alışveriş kredisi kullanabilmek için bilgilerini girmen gereklidir.
+                      </Text>
+                  </View>
+                  
+                  
+                  <View style={[regstyles.registerInputStyle, {borderColor: userTCKNError ? '#ff0000' :'#EBEBEB',}]}>            
+                    <TextInput
+                      style={{                      
+                        fontSize: 14,
+                        lineHeight:8, 
+                        padding:0,
+                        color: '#909EAA',
+                      }}
+                      onChangeText={UserTCKN => setUserTCKN(UserTCKN)}
+                      placeholder="TCKN" //12345
+                      placeholderTextColor="#909EAA"
+                      keyboardType="default"
+                      onSubmitEditing={Keyboard.dismiss}
+                      blurOnSubmit={false}
+                      underlineColorAndroid="#f000"
+                      returnKeyType="next"
+                    />
+                  </View>
+                  <View style={[regstyles.registerInputStyle, {marginBottom:12, borderColor: userPasswordError ? '#ff0000' : '#EBEBEB',}]}>                  
+                    
+                    <TouchableOpacity
+                      style={{
+                        position: 'absolute',
+                        top: 20,
+                        right: 20,
+                        zIndex: 10,
+                      }}
+                      onPress={() => setSecureText(!secureText)}>
+                        {secureText? <Image 
+                      source={require('../../assets/img/export/eye_off.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image> : 
+                      <Image 
+                      source={require('../../assets/img/export/eye.png')}
+                      style={{
+                        width:24,
+                        height:24
+                      }}>
+                      </Image>}
+                      {/* <Image
+                        source={require('../../../assets/img/export/eye.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                        }}
+                      /> */}
+                    </TouchableOpacity>
+                    <TextInput
+                      style={{                      
+                        fontSize: 14,
+                        lineHeight:8, 
+                        padding:0,
+                        color: '#909EAA',
+                      }}
+                      maxLength={6}
+                      onFocus={() => setUserPasswordError(false)}
+                      onChangeText={UserCurrentPassword => setUserPassword(UserCurrentPassword)}
+                      placeholder="Şifre" //12345
+                      placeholderTextColor="#909EAA"
+                      keyboardType="numeric"
+                      onSubmitEditing={Keyboard.dismiss}
+                      blurOnSubmit={false}
+                      secureTextEntry={secureText}
+                      underlineColorAndroid="#f000"
+                      returnKeyType="next"
+                    />
+                    
+                    </View>
+                  
+                <View style={{
+                  flexDirection:'row',
+                  alignItems:'flex-start',
+                  paddingTop:16,
+                  marginBottom:24,
+                  paddingRight:16,
+                }}>
+                  <Image 
+                    source={require('../../assets/img/export/information.png')}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      resizeMode: 'contain',
+                      marginRight:10,
+                    }}
+                    />
+                    <Text style={{
+                          fontSize:14,
+                          lineHeight:14,
+                          color:'#909EAA',
+                        }}>                          
+                          Hazır Limit başvuru anında oluşturduğun şifreni girmen gerekmektedir.
+                      </Text>
+
+                </View>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                    },
+                  ]}
+                  onPress={() => {
+
+                    setCreditLogin();
+                    }}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Alışveriş Kredisi ile Öde
+                  </Text>
+                </TouchableOpacity>
+               
+              </View>
+            </View>
+      </Modal>
       <Loader loading={loading} />
       <SubtabHeader routetarget="Balance" name="Ödeme İşlemi" count="0" />
       <LinearGradient colors={['#d4dde9', '#ecedf2']} 
@@ -2108,57 +2469,7 @@ const handleSubmitCancel = () =>{
         flex:1,
         width:'100%',
       }}>
-      <View style={{}}>
-        {/* <View style={{
-          borderRadius:16,
-          paddingLeft:16,
-          paddingRight:16,
-          paddingTop:24,
-          paddingBottom:24,
-          backgroundColor:'#fff',
-          alignItems:'center',
-          marginBottom:16,
-          }}>
-          <Image
-            source={require('../../assets/img/export/payment_top_blue.png')}
-            style={{
-              width: 311,
-              height: 56,
-              resizeMode: 'contain',
-              marginBottom:4,
-            }}
-          />
-          <Text style={{
-            fontSize:16,
-            color:'#0B1929',
-            marginBottom:12,
-            textAlign:'center',
-          }}>
-            Merhaba,
-          </Text>
-          <View style={{
-            borderRadius:4,
-            backgroundColor:'#F2F4F6',
-            padding:8,
-            flexDirection:'row',
-            alignItems:'center',
-            justifyContent:'center',
-          }}>
-            <Text style={{
-              fontSize:16,
-              color:'#0B1929'
-            }}>
-              Payfour ID:
-            </Text>
-            <Text style={{
-              fontSize:16,
-              color:'#004F97'
-            }}>
-              {payfourId}
-            </Text>
-          </View>
-        </View> */}
-
+      <View style={{}}>    
         <View style={{
           borderRadius:16,
           paddingLeft:16,
@@ -2180,7 +2491,9 @@ const handleSubmitCancel = () =>{
             </Text>
             <View style={{flexDirection:'row',alignItems:'flex-end',}}>
               <Text style={{fontSize:32, fontWeight:'700', color:'#004F97'}}>
-                {amount}
+                {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', currencyDisplay:'code',minimumFractionDigits:2 }).format(
+                  parseFloat(route.params.amount).toFixed(2),
+                ).replace('TRY', '').trim()}
                 <Text style={{fontSize:16, fontWeight:'700', verticalAlign:'sub', color:'#004F97'}}>
                   TL
                 </Text>
@@ -2210,8 +2523,9 @@ const handleSubmitCancel = () =>{
           }}>
             <TouchableOpacity style={{
               width:24, height:24, borderRadius:24, borderWidth:1, borderColor:'#004F97', marginRight:8,
-            }}>
-              <View style={{width:12, height:12, borderRadius:12, backgroundColor:'#004F97', position:'absolute', top:5, left:5}}></View>
+            }}
+            onPress={()=> setPayMode('wallet')}>
+              <View style={{width:12, height:12, borderRadius:12, backgroundColor:'#004F97', position:'absolute', top:5, left:5, display:payMode == 'wallet'? 'flex':'none'}}></View>
             </TouchableOpacity>
             <View style={{}}>
               <Text style={{
@@ -2238,6 +2552,7 @@ const handleSubmitCancel = () =>{
           }}
           onPress={() =>{
             console.log("ödeme add modal");
+            setPayMode('wallet')
             setAddModalVisible(true);
           }}>
             <Text style={{fontSize:12, color:'#004F97'}}>
@@ -2253,6 +2568,7 @@ const handleSubmitCancel = () =>{
           flexDirection:'row',
           justifyContent:'space-between',
           alignItems:'center',
+          display:payStatus != 0? 'flex':'none',
         }}>
           <View style={{
             flexDirection:'row',
@@ -2260,8 +2576,9 @@ const handleSubmitCancel = () =>{
           }}>
             <TouchableOpacity style={{
               width:24, height:24, borderRadius:24, borderWidth:1, borderColor:'#004F97', marginRight:8,
-            }}>
-              {/* <View style={{width:12, height:12, borderRadius:12, backgroundColor:'#004F97', position:'absolute', top:5, left:5}}></View> */}
+            }}
+            onPress={()=> setPayMode('credit')}>
+              <View style={{width:12, height:12, borderRadius:12, backgroundColor:'#004F97', position:'absolute', top:5, left:5, display:payMode == 'credit'? 'flex':'none'}}></View>
             </TouchableOpacity>
             <View style={{}}>
               <Text style={{
@@ -2269,12 +2586,21 @@ const handleSubmitCancel = () =>{
               }}>
               Alışveriş Kredisi ile
               </Text>
+              {payStatus == 3?
               <Text style={{
                 fontSize:12,
                 color:'#909EAA',
               }}>
-                5.000 TL ön onaylı kredi
+                {available} TL ön onaylı kredi
               </Text>
+              :
+              <Text style={{
+                fontSize:12,
+                color:'#909EAA',
+              }}>
+                Limitiniz yetersiz.
+              </Text>
+              }
             </View>
           </View>
           <TouchableOpacity style={{
@@ -2285,10 +2611,28 @@ const handleSubmitCancel = () =>{
             borderColor:'#004F97',
             height:40,
             width:115
-          }}>
-            <Text style={{fontSize:12, color:'#004F97'}}>
-              Limitini Öğren
+          }}
+          onPress={()=>{
+            /*if(payStatus == 3){
+              setCreditModalVisible(true);
+            }*/
+            //setPayMode('credit');
+            handleSubmitPress('credit');
+          }}
+          >
+          <Text style={{fontSize:12, color:'#004F97'}}>              
+              {payText}
             </Text>
+            {/* {(payStatus == 3)?
+            <Text style={{fontSize:12, color:'#004F97'}}>              
+              Hemen Öde
+            </Text>
+            :
+            <Text style={{fontSize:12, color:'#004F97'}}>              
+              Hemen Başvur
+            </Text>
+            } */}
+            {/* {renderButtonText} */}
           </TouchableOpacity>
         </View>       
       </View>
@@ -2302,7 +2646,7 @@ const handleSubmitCancel = () =>{
         <TouchableOpacity
             style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, backgroundColor: '#004F97', flex:1}]}              
             activeOpacity={0.5}
-            onPress={handleSubmitPress}>
+            onPress={()=> handleSubmitPress(payMode)}>
             <Text style={regstyles.buttonTextStyle}>Öde</Text>
           </TouchableOpacity>
       </View>
@@ -2315,8 +2659,10 @@ const Success = ({route, navigation}) => {
   
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#004F97'}}>
-      <SubtabHeader routetarget="discover" name="Keşfet" count="0" mode="dark"/>
-      <View style={{paddingTop:136, marginBottom:60, alignItems:'center'}}>
+      <View style={{flex: 1, backgroundColor: '#004F97'}}>
+          <SubtabHeader routetarget="discover" name="Keşfet" count="0" mode="dark"/>
+          
+      <View style={{marginBottom:60, alignItems:'center'}}>
           <Image
             source={require('../../assets/img/export/payment_top_white.png')}
             style={{
@@ -2343,6 +2689,50 @@ const Success = ({route, navigation}) => {
         <Text style={{fontSize:32, color:'#fff', textAlign:'center'}}>
           Teşekkürler!
         </Text>
+      </View>
+      <View style={{
+        borderTopLeftRadius:24,
+        borderTopRightRadius:24,
+        backgroundColor:'#fff',
+        paddingTop:32,
+        paddingBottom:92,
+        paddingLeft:16,
+        paddingRight:16,
+        position:'absolute',
+        bottom:0,
+        width:'100%'
+
+      }}>
+        <View style={{alignItems:'center', marginBottom:16}}>
+          <Image
+              source={require('../../assets/img/export/payment_success.png')}
+              style={{
+                width: 80,
+                height: 80,
+                resizeMode:'contain',
+              }}
+          />
+        </View>
+        <View>
+        <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:16}}>
+          Ödemeniz başarılı bir şekilde gerçekleşti
+        </Text>
+        <Text style={{fontSize:14, color:'#909EAA', textAlign:'center', marginBottom:24}}>
+          Dilerseniz bir sonraki alışverişiniz için önceden hazır limitinizi öğrenebilir ve kasa işlemlerini kısa sürede tamamlayabilirsiniz.
+        </Text>
+        
+        </View>
+        <TouchableOpacity
+          style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+          activeOpacity={0.5}
+          onPress={()=>{
+            console.log("close success");
+            //setSuccessModalVisible(false);
+            navigation.navigate('Balance');
+            }}>
+          <Text style={regstyles.buttonTextStyle}>Kapat</Text>
+        </TouchableOpacity>
+      </View>
       </View>
     </SafeAreaView>
   )
@@ -2385,8 +2775,9 @@ const regstyles = StyleSheet.create({
     backgroundColor: '#1D1D25',
     borderWidth: 0,
     color: '#FFFFFF',
-    height: 65,
+    height: 52,
     alignItems: 'center',
+    justifyContent:'center',
     borderRadius: 10,
     marginLeft: 35,
     marginRight: 35,
@@ -2394,10 +2785,8 @@ const regstyles = StyleSheet.create({
   },
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 20,
-    fontFamily: 'Helvetica-Bold',
-    fontWeight: 'bold',
     fontSize: 16,
+    lineHeight:24,
   },
   inputTitleStyle: {
     color: '#7E797F',
@@ -2469,6 +2858,26 @@ const WalletScreen = ({navigation}) => {
         component={CreditScreen}
         options={{headerShown: false}}
       />
+      <Stack.Screen
+        name="CreditChangePasswordScreen"
+        component={CreditChangePasswordScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="CreditPasswordOtpScreen"
+        component={CreditPasswordOtpScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="CreditOtpScreen"
+        component={CreditOtpScreen}
+        options={{headerShown: false}}
+      />   
+      <Stack.Screen
+        name="CreditInstallmentsScreen"
+        component={CreditInstallmentsScreen}
+        options={{headerShown: false}}
+      />   
     </Stack.Navigator>
   );
 };

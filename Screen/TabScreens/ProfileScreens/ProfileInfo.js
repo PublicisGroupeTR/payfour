@@ -18,6 +18,8 @@ import {
   Modal,
   Dimensions,
   StyleSheet,
+  Alert,
+  Platform
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -32,11 +34,12 @@ import MaskInput from 'react-native-mask-input';
 import LinearGradient from 'react-native-linear-gradient';
 import {Dropdown} from 'react-native-element-dropdown';
 
-
+import { apiGet, apiPost } from '../../utils/api.js';
 const ProfileInfo = ({navigation}) => {
   const [userName, setUserName] = useState('');
   const [userDate, setUserDate] = useState('');
   const [userData, setUserData] = useState({});
+  const [initials, setInitials] = useState('');
 
   const [cityData, setCityData] = useState([]);
   const [selectedCity, setSelectedCity] = useState([]);
@@ -49,7 +52,10 @@ const ProfileInfo = ({navigation}) => {
   const [userPhone, setUserPhone] = useState('');
   const [userBirth, setUserBirth] = useState('');
   const [userAddress, setUserAddress] = useState('');
-  const [gender, setGender] = useState('Female');
+  const [gender, setGender] = useState('');
+
+  const [userBirthError, setUserBirthError] = useState(false);
+  const [userEmailError, setUserEmailError] = useState(false);
 
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -77,7 +83,7 @@ const ProfileInfo = ({navigation}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       // do something
-      console.log('Hello World!');
+      console.log('ProfileInfo');
       var obj = {};
       setLoading(true);
       AsyncStorage.getItem('token').then(value =>{
@@ -85,12 +91,26 @@ const ProfileInfo = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
-          console.log(response);
+        apiGet('account/getuser', onGetUser);
+        
+
+      });
+    });
+    return unsubscribe;
+  }, [navigation]);
+  const onGetUser = (response) => {
+    console.log(response);
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
           setUserData(response.data.data);
+          let u = response.data.data;
+          if(u.firstName != null && u.firstName != "" && u.lastName != null && u.lastName != ""){
+            let ch = u.firstName.charAt(0)+u.lastName.charAt(0);
+            console.log("initials");
+            console.log(ch);
+            setInitials(ch);
+          }
           //setIban(response.data.data.defaultBankAccountNumber);
           /*{"birthDate": "1977-06-03T00:00:00", 
           "commercialElectronic": true, 
@@ -111,7 +131,7 @@ const ProfileInfo = ({navigation}) => {
             console.log(dt.getFullYear());
             let day = dt.getDate()<10?"0"+dt.getDate() : dt.getDate();
             let mo = (dt.getMonth()+1)<10?"0"+(dt.getMonth()+1) : (dt.getMonth()+1);
-            setUserBirth(mo+""+day+""+dt.getFullYear())
+            setUserBirth(day+""+mo+""+dt.getFullYear())
           }
           
 
@@ -126,26 +146,20 @@ const ProfileInfo = ({navigation}) => {
 
           setLoading(false);      
           getCities(d);
-        })
-        .catch(error => {
-          setLoading(false);
-          console.error("Error sending data: ", error);
-          let msg="";
-          (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-        });
-
-      });
-    });
-    return unsubscribe;
-  }, [navigation]);
+  };
   const getCities = (d) => {
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("getuser");
-      axios.get('https://payfourapp.test.kodegon.com/api/address/getcities', config).then(response => {
-        console.log(response.data);
+      apiGet('address/getcities',onGetCities, d);
+      
+
+    });
+  }
+  const onGetCities = (response, d) => {
+    console.log(response.data);
         console.log(response.data.data);
         setCityData(response.data.data)
         //setUserData(response.data.data);
@@ -153,19 +167,11 @@ const ProfileInfo = ({navigation}) => {
         
         if(d.cityCode) {
           setSelectedCity(d.cityCode);
+          console.log("selectedCity");
           getCounties(d.cityCode, d);
         }
         setLoading(false);      
         //getCities();
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
-
-    });
   }
   const getCounties = (cityId, d) => {
     console.log("getcounties "+cityId)
@@ -174,8 +180,13 @@ const ProfileInfo = ({navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("getuser");
-      axios.get('https://payfourapp.test.kodegon.com/api/address/getdistricts/'+cityId, config).then(response => {
-        console.log(response.data);
+      apiGet('address/getdistricts/'+cityId, onGetDistricts, d);
+      
+
+    });
+  }
+  const onGetDistricts = (response, d) => {
+    console.log(response.data);
         console.log(response.data.data);
         setCountyData(response.data.data)
         //setUserData(response.data.data);
@@ -193,15 +204,6 @@ const ProfileInfo = ({navigation}) => {
         }
         setLoading(false);      
         //getCities();
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
-
-    });
   }
   const handleUpdate = () => {
     var obj = {};
@@ -222,7 +224,10 @@ console.log("selectedCity");
   console.log(selectedCity);
   console.log("selectedCounty");
   console.log(selectedCounty);
+  let err = false;
 
+  let fd;
+  if(userBirth != ''){
   console.log(userBirth);
   let fb = userBirth.replace(/\//g, "");
       let a = fb;
@@ -234,81 +239,80 @@ console.log("selectedCity");
     console.log(y);
     console.log(m);
     console.log(day);
-
-      let dt = y+"-"+day+"-"+m;
+    let today = new Date();
+    
+    setUserBirthError(false);
+    if(parseInt(y) < 1900 || today.getFullYear()-parseInt(y) < 10){
+      console.log("y error");
+      setUserBirthError(true);
+      err = true;
+    }
+    if(parseInt(m) < 1 || parseInt(m) > 12){
+      console.log("m error");
+      setUserBirthError(true);
+      err = true;
+    }
+    if(parseInt(day) < 1 || parseInt(day) > 31){
+      console.log("day error");
+      setUserBirthError(true);
+      err = true;
+    }
+      let dt = y+"-"+m+"-"+day;
       console.log(dt);
       let d = new Date(dt);
-      let fd = d.toISOString()
+      fd = d.toISOString();
+  }else{
+    fd = "";
+  }
+  if(userEmail != ''){
+    console.log("userEmail");
+    console.log(userEmail);
+    console.log(validMail(userEmail));
+    if(!validMail(userEmail)){
+      err = true;
+      setUserEmailError(true);
+    }
+  }
 
 //setLoading(true);
 console.log("address");
 console.log(selectedCity);
 console.log(selectedCounty);
+    
     let dataToSend = {
       firstName: userName, 
       lastName: userSurname,
       email: userEmail,
       gender: gender,
       birthDate: fd,
-      districtCode: selectedCounty.id,
-      cityCode: selectedCity.id,
+      districtCode: selectedCounty,
+      cityCode: selectedCity.length<1 ? "":selectedCity,
     };    
 
+    console.log("err > "+err);
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/account/updateuser', dataToSend, config)
-      .then(response => {
-        console.log(response.data);
-        console.log(response.data.data);
-        setLoading(false);
-        if(response.data.success){
-          setSuccessModalVisible(true);
-        }
-        //AsyncStorage.setItem('accessToken', response.data.data.accessToken).then(() =>{
-          //navigation.navigate("LoginWithPasswordScreen");
-        //})
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error("Error sending data: ", error);
-        console.log(error.response);
-        let msg="";
-        (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-      });
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    if(!err){
+      apiPost('account/updateuser', dataToSend, onUpdateUser);
+    
+    }
     });
-  };
   
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      // do something
-      console.log('Hello World!');
-      var obj = {};
-      AsyncStorage.getItem('token').then(value =>{
-        const config = {
-          headers: { Authorization: `Bearer ${value}` }
-        };
-        console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
-          console.log(response.data);
-          console.log(response.data.data);
-          console.log(response.data.data.tckn);
-          setUserData(response.data.data);
-          //setIban(response.data.data.defaultBankAccountNumber);
-          
-          setLoading(false);      
-          
-        })
-        .catch(error => {
-          setLoading(false);
-          console.error("Error sending data: ", error);
-          let msg="";
-          (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-        });
-
-      });
-    });
-    return unsubscribe;
-  }, [navigation]);
+  };
+  const onUpdateUser = (response) =>{
+    console.log(response.data);
+    console.log(response.data.data);
+    setLoading(false);
+    if(response.data.success){
+      setSuccessModalVisible(true);
+    }
+  }
+  const validMail = (mail) =>
+  {
+      return  /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/ .test(mail);
+  }
+  
+  
 
   const renderItem = item => {
     return (
@@ -344,7 +348,8 @@ console.log(selectedCounty);
                 justifyContent: 'flex-end',
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(92, 92, 92, 0.56)',
-              }}>
+              }}
+              >
           
       
       
@@ -361,10 +366,33 @@ console.log(selectedCounty);
         width:'100%'
 
       }}>       
-        
+        <View style={{
+            flexDirection:'row',
+            justifyContent:'flex-end',
+          }}>
+            <TouchableOpacity 
+              style={{
+                width:24,
+                height:24,
+              }}
+              onPress={()=>{
+                console.log("close success");
+                setCallcenterModalVisible(false);
+                }}>                  
+                <Image 
+                source={require('../../../assets/img/export/close.png')}
+                style={{
+                  width: 24,
+                  height: 24,
+                  resizeMode: 'contain',
+                }}
+              />
+            </TouchableOpacity>
+        </View>
         <View>
         <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
-        Telefon numaranızı 444 1 000 numaralı çağrı merkezimizi arayarak güncelleyebilirsiniz.
+        {/* Telefon numaranızı 444 1 000 numaralı çağrı merkezimizi arayarak güncelleyebilirsiniz. */}
+        Telefon numaranızı güncellemek için lütfen çağrı merkezimiz ile iletişime geçin.
         </Text>        
         </View>
         <TouchableOpacity
@@ -373,8 +401,9 @@ console.log(selectedCounty);
           onPress={()=>{
             console.log("close success");
             setCallcenterModalVisible(false);
+            Linking.openURL(`tel:4441000`);
             }}>
-          <Text style={regstyles.buttonTextStyle}>Kapat</Text>
+          <Text style={regstyles.buttonTextStyle}>444 1 000</Text>
         </TouchableOpacity>
       </View>
       </View>
@@ -434,7 +463,7 @@ console.log(selectedCounty);
       <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        style={[styles.scrollView, {width: '100%', paddingBottom: 200, backgroundColor: '#EAEAEA'}]}>
+        style={[styles.scrollView, {width: '100%', paddingBottom: 100, backgroundColor: '#EAEAEA'}]}>
         <View
           style={{
             flex: 1,
@@ -445,7 +474,7 @@ console.log(selectedCounty);
             paddingLeft: 16,
             paddingRight: 16,
             width: '100%',
-            paddingBottom: 200
+            paddingBottom: Platform.OS == 'ios'? 220 : 190
           }}>
             <View style={{
               flexDirection: 'row',
@@ -465,13 +494,22 @@ console.log(selectedCounty);
                 justifyContent: 'center',
                 alignItems:'center',
               }}>
-              <Image
+                
+              {initials != '' ? <Text style={{color:'#fff', fontSize:38}}>{initials}</Text> :
+                <Image
+                    source={require('../../../assets/img/export/avatar2.png')}
+                    style={{
+                      width: 64,
+                      height: 64,
+                    }}
+                  />}
+              {/* <Image
                     source={require('../../../assets/img/export/user.png')}
                     style={{
                       width: 64,
                       height: 64,
                     }}
-                  />
+                  /> */}
                   </View>
             </View>
           <View
@@ -494,13 +532,19 @@ console.log(selectedCounty);
                         Ad
                       </Text>          
                     <TextInput                      
-                      onChangeText={UserName => setUserName(UserName)}
+                      onChangeText={UserName => {
+                        let isValid = /^[A-Za-z]+[A-Za-z ]*$/.test(UserName);
+                        console.log(UserName);
+                        console.log(isValid);
+                        if(UserName.length == 0 ||isValid)setUserName(UserName)}}
                       placeholder={userName}
+                      value={userName}
                       placeholderTextColor="#7E797F"
                       onSubmitEditing={Keyboard.dismiss}
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
+                      maxLength={255}
                     />
                   </View>
                   <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0,width: '48%'}]}>  
@@ -516,14 +560,21 @@ console.log(selectedCounty);
                       }}>
                         Soyad
                       </Text>          
-                    <TextInput                      
-                      onChangeText={UserSurname => setUserSurname(UserSurname)}
+                    <TextInput  
+                                        
+                      onChangeText={UserSurname => {
+                        let isValid = /^[A-Za-z]+[A-Za-z ]*$/.test(UserSurname);
+                        console.log(UserSurname);
+                        console.log(isValid);
+                        if(UserSurname.length == 0 || isValid)setUserSurname(UserSurname)}}
                       placeholder={userSurname}
+                      value={userSurname}
                       placeholderTextColor="#7E797F"
                       onSubmitEditing={Keyboard.dismiss}
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
+                      maxLength={255}
                     />
                   </View>
             
@@ -574,7 +625,7 @@ console.log(selectedCounty);
                       </Text>
                      </TouchableOpacity>
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, width:'100%'}]}>  
+                  <View style={[regstyles.registerInputStyle, {borderColor: userEmailError?'#ff0000':'#EBEBEB',paddingBottom:0, width:'100%'}]}>  
                     <Text style={{                                           
                           fontSize: 12,
                           lineHeight:12, 
@@ -597,9 +648,10 @@ console.log(selectedCounty);
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
+                      maxLength={255}
                     />
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0}]}>                      
+                  <View style={[regstyles.registerInputStyle, {borderColor: userBirthError?'#ff0000':'#EBEBEB',paddingBottom:0}]}>                      
                     
                     <Text style={{                                           
                         fontSize: 12,
@@ -617,10 +669,12 @@ console.log(selectedCounty);
                         keyboardType="numeric"
                         onChangeText={(masked, unmasked) => {
                           //setUserPhone(masked); // you can use the unmasked value as well
-                          setUserBirth(masked)
+                          setUserBirth(masked);
+                          console.log(masked.length);
+                          if(masked.length > 9) Keyboard.dismiss();
                           // assuming you typed "9" all the way:
-                          console.log(masked); // (99) 99999-9999
-                          console.log(unmasked); // 99999999999
+                          //console.log(masked); // (99) 99999-9999
+                          //console.log(unmasked); // 99999999999
                           //checkPhone();
                         }}
                         mask={[/\d/, /\d/,'/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
@@ -659,7 +713,10 @@ console.log(selectedCounty);
                   <Text style={{fontSize:12, color:'#909EAA'}}>Erkek</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style={{width:80, marginRight:8}}
+              
+            </View>
+            <View style={{flexDirection:'row', marginBottom:24}}>
+              <TouchableOpacity style={{ marginRight:8}}
               onPress={()=>{
                 setGender('Other');
               }}>
@@ -669,7 +726,7 @@ console.log(selectedCounty);
                   <View style={{width:24, height:24, borderRadius:24, borderWidth:1, backgroundColor:'#fff', borderColor:'#E4E4E8', alignItems:'center', justifyContent:'center', marginRight:4}}>
                     <View style={{width:12, height:12, borderRadius:12, backgroundColor:'#004F97', display: gender == 'Other' ? 'flex':'none'}}></View>
                   </View>
-                  <Text style={{fontSize:12, color:'#909EAA'}}>Diğer</Text>
+                  <Text style={{fontSize:12, color:'#909EAA'}}>Belirtmek İstemiyorum</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -713,7 +770,7 @@ console.log(selectedCounty);
                     onChange={item => {
                       console.log('selected');
                       console.log(item);
-                      setSelectedCity(item);
+                      setSelectedCity(item.id);
                       getCounties(item.id);
                     }}
                     renderItem={renderItem}
@@ -752,7 +809,7 @@ console.log(selectedCounty);
                     onChange={item => {
                       console.log('selected');
                       console.log(item);
-                      setSelectedCounty(item);
+                      setSelectedCounty(item.id);
                     }}
                     renderItem={renderItem}
                   />
@@ -775,11 +832,26 @@ console.log(selectedCounty);
               />
             </View> */}
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.buttonStyle, {backgroundColor:'#005BAA', justifyContent:'center'}]}
             activeOpacity={0.5}
             onPress={handleUpdate}>
-            <Text style={[styles.buttonTextStyle, {paddingVertical:0}]}>GÜNCELLE</Text>
+            <Text style={[styles.buttonTextStyle, {paddingVertical:0}]}>Güncelle</Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity style={{                    
+            backgroundColor:'#004F97',
+            alignItems:'center',
+            justifyContent:'center',
+            borderRadius:8,
+            width:'100%',
+            height:52, 
+          }}
+          //onPress={()=>{navigation.navigate('ProfileHome', { filter:'platinum' })}}
+          activeOpacity={0.5}
+          onPress={handleUpdate}>
+            <Text style={{color:'#fff', fontSize:14}}>
+            Güncelle
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -876,19 +948,19 @@ const regstyles = StyleSheet.create({
     backgroundColor: '#1D1D25',
     borderWidth: 0,
     color: '#FFFFFF',
-    height: 65,
+    height: 52,
     alignItems: 'center',
     borderRadius: 10,
     marginLeft: 35,
     marginRight: 35,
     marginBottom: 25,
   },
+  
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 20,
-    fontFamily: 'Helvetica-Bold',
-    fontWeight: 'bold',
-    fontSize: 16,
+    paddingVertical: 15,
+    fontWeight: '500',
+    fontSize: 14,
   },
   inputTitleStyle: {
     color: '#7E797F',

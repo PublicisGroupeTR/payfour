@@ -5,6 +5,7 @@
 // Import React and Component
 import React, {useState, createRef, useEffect, useRef} from 'react';
 import {
+  AppState,
   StyleSheet,
   TextInput,
   View,
@@ -27,9 +28,12 @@ import Loader from './Components/Loader';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import TabHeader from './Components/TabHeader';
 import { OtpInput } from "react-native-otp-entry";
+
 import axios from 'react-native-axios';
 
 import OTPTextView from 'react-native-otp-textinput';
+import { useError } from './Contexts/ErrorContext';
+import { basicPost, apiGet, apiPost } from './utils/api.js';
 
 const OtpScreen = ({navigation, route}) => {
   const [userEmail, setUserEmail] = useState('');
@@ -52,22 +56,73 @@ const OtpScreen = ({navigation, route}) => {
   const otpInputRef = useRef();
   const otpInputRef2 = useRef();
 
+  const passwordInputRef = useRef();
+
+  const [timerTime, setTimerTime] = useState(0);
+
   useEffect(() => {
     console.log("otp")
     console.log(route);
     console.log(route.params);
     resetOtpTimer();
-    //otpInputRef.current.clear();
+    //otpInputRef2.current.clear();
+
+    AppState.addEventListener('change', state => {
+      console.log("appstate");
+      console.log(state);
+      if (state === 'active') {
+        // do this
+        AsyncStorage.getItem('timer').then(value =>{
+          if(value){
+            console.log("!!!")
+            console.log(parseInt(value));
+            
+            let curr = new Date().getTime();
+            console.log(curr);
+            console.log("diff");
+            console.log(curr - parseInt(value));
+            let diff =Math.floor((curr - parseInt(value))/1000);
+            console.log(diff);
+            console.log(timerCount);
+            Keyboard.dismiss();
+
+            if(diff < timerCount){
+              setTimerCount(timerCount - diff);
+            }else{
+              setTimerCount(0);
+              //clearInterval(interval);
+              setTimerText("00:00");
+              setResetTimer(true);
+              setToggleSubmit(false);
+              passwordInputRef.current.clear();
+            }
+
+          }
+        });
+      } else if (state === 'background') {
+        
+        //Keyboard.dismiss();
+        console.log(timerTime);
+        // do that
+      } else if (state === 'inactive') {
+        // do that other thing
+      }
+    });
+
   }, []);
   const resetOtpTimer = ()=>{
     setResetTimer(false);
     setTimerCount(180);
+    AsyncStorage.setItem("timer",Date.now().toString());
     startOtpTimer();
     console.log("resetotp");
     
   }
   const startOtpTimer = ()=>{
     if(!stopOtpTimer){
+      console.log("startOtpTimer");
+      
+      
       let interval = setInterval(() => {
         setTimerCount(lastTimerCount => {
             //console.log(lastTimerCount);
@@ -79,12 +134,21 @@ const OtpScreen = ({navigation, route}) => {
             tt = mt+":"+s;
             //console.log(tt);
             setTimerText(tt);
+            let tmt = new Date().getTime().toString();
+            //console.log(tmt);
+            setTimerTime(tmt);
+            //console.log(timerTime);
+
             if (lastTimerCount == 0) {
                 //your redirection to Quit screen
+                
                 clearInterval(interval);
                 setTimerText("00:00");
                 setResetTimer(true);
+                setToggleSubmit(false);
+                passwordInputRef.current.clear();
             } else {
+              
                 return lastTimerCount - 1
             }
         })
@@ -126,20 +190,15 @@ const OtpScreen = ({navigation, route}) => {
       uniqueMPANumber: obj.uniqueMPANumber,
     };
     console.log(dataToSend);
-
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
-    .then(response => {
-      setLoading(false);
-        console.log(response.data);
-        //setLogin();
-        setStopOtpTimer(false);
-        resetOtpTimer();
-    })
-    .catch(error => {
-      console.error("Error sending data: ", error);
-      let msg="";
-      (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-    });
+    basicPost('auth/forgotpassword', dataToSend, onForgotPassword);
+    
+  }
+  const onForgotPassword = (response) => {
+    setLoading(false);
+    console.log(response.data);
+    //setLogin();
+    setStopOtpTimer(false);
+    resetOtpTimer();
   }
   const resendData = (obj) => {
     /*let dataToSend ={
@@ -156,24 +215,20 @@ const OtpScreen = ({navigation, route}) => {
     };
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
-    .then(response => {
-      setLoading(false);
-        console.log(response.data);
-        //setLogin();
-        setStopOtpTimer(false);
-        resetOtpTimer();
-    })
-    .catch(error => {
-      console.error("Error sending data: ", error);
-      let msg="";
-      (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
-    });
+    basicPost('auth/begin', dataToSend, onBegin);
+    
+  }
+  const onBegin = (response) => {
+    setLoading(false);
+    console.log(response.data);
+    //setLogin();
+    setStopOtpTimer(false);
+    resetOtpTimer();
   }
   const handleSubmitOtp = () => {
     console.log("otp submit");
-    setTimerCount(0);
-    
+    //setTimerCount(0);
+    setLoading(true);
     AsyncStorage.getItem('uniqueMPANumber').then(value =>{
       //otpInputRef.current.clear();
       let dataToSend = {"uniqueMPANumber":value};
@@ -193,20 +248,32 @@ const OtpScreen = ({navigation, route}) => {
     });
   }
   const sendData = (dataToSend) => {
+    passwordInputRef.current.clear();
    dataToSend.otpCode = otp;
     console.log("datatosend");
     console.log(dataToSend);
     let func = route.params.forgot ? 'verifycustomotp' : 'verifyotp';
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/'+func, dataToSend)
-    .then(response => {
-      setLoading(false);
+    basicPost('auth/'+func, dataToSend, onVerifyOtp, onError)
+         
+    
+  };
+  const onError = () =>{
+    setLoading(false);
+    setToggleSubmit(false);
+    passwordInputRef.current.clear();
+  }
+  const onVerifyOtp = (response) =>{
+    
+    setLoading(false);
         console.log(response.data); 
         //otpInputRef.current.clear();
         setOtp('');       
       if(response.data.error){
+        
+        setToggleSubmit(false);
         Alert.alert(response.data.error.message);
       }else{
-         
+         setTimerCount(0);
         if(route.params.forgot){
           AsyncStorage.setItem('tempToken', response.data.data.tempToken).then(() =>{
             navigation.navigate("ForgotScreen");
@@ -222,18 +289,13 @@ const OtpScreen = ({navigation, route}) => {
           }else{
             AsyncStorage.setItem('payfourId', response.data.data.payfourId.toString()).then(() =>{
               navigation.navigate("LoginWithPasswordScreen");
+              //navigation.navigate("RegisterScreen");
+
             });
           }
         }
       }
-    })
-    .catch(error => {
-      console.error("Error sending data: ", error);
-      Alert.alert('Girilen kod hatalı. Lütfen kontrol edin.');
-      console.log(otpInputRef)
-    });     
-    
-  };
+  }
   const [otpInput, setOtpInput] = useState('');
 
   const input = useRef<OTPTextView>(null);
@@ -366,7 +428,7 @@ const OtpScreen = ({navigation, route}) => {
             </View>
           </View>
         </Modal>
-        <TabHeader routetarget="LoginScreen" name="" count="0" />
+        <TabHeader routetarget={route.params.forgot? "LoginWithPasswordScreen":"LoginScreen"} name="OtpScreen" count="0" />
         <Loader loading={loading} />
         <ScrollView
             keyboardShouldPersistTaps="handled"
@@ -415,6 +477,7 @@ const OtpScreen = ({navigation, route}) => {
                   6 haneli kodu giriniz.
                   </Text>
                 </View>
+                
                 <View style={[styles.centerStyle, {paddingLeft:34, paddingRight:34}]}>
                   <View style={{paddingTop:12, paddingBottom:12}}>
                     {/* <OtpInput
@@ -447,11 +510,11 @@ const OtpScreen = ({navigation, route}) => {
                       },
                     }}
                   /> */}
-                  <OTPTextView
+                  {/* <OTPTextView
                     ref={otpInputRef2}
                     containerStyle={otpstyles.textInputContainer}
                     textInputStyle={otpstyles.roundedTextInput}
-                    tintColor="#015096"
+                    tintColor="#0B1929"
                     offTintColor={'#DADEE7'}
                     handleTextChange={(text) => {
                       setOtpInput(text);
@@ -465,9 +528,48 @@ const OtpScreen = ({navigation, route}) => {
                     handleCellTextChange={handleCellTextChange}
                     inputCount={6}
                     keyboardType="numeric"
+                  /> */}
+                  <OtpInput
+                    numberOfDigits={6}
+                    focusColor="#015096"
+                    focusStickBlinkingDuration={500}
+                    autoFocus={false}
+                    secureTextEntry={false}
+                    ref = {passwordInputRef}
+                    onFocus={()=> {console.log('focus'); }}
+                    onTextChange={(text) => {
+                      console.log(text);
+                      setOtpError(false);
+                      if(text.length <6) setToggleSubmit(false);
+                    }}
+                    onFilled={(text) => {
+                      console.log(`OTP is ${text}`); 
+                      setOtp(text); 
+                      setToggleSubmit(true);
+                      Keyboard.dismiss();
+                    }}
+                    textInputProps={{
+                      accessibilityLabel: "Otp",
+                      secureTextEntry:false,
+                    }}
+                    theme={{
+                      containerStyle: styles.container,
+                      pinCodeContainerStyle: {
+                        backgroundColor:'#fff',
+                        borderColor: otpError? '#E42932':'#DADEE7'
+                      },
+                      pinCodeTextStyle: {
+                        color:"#0B1929"
+                      },
+                      focusStickStyle: styles.focusStick,
+                      focusedPinCodeContainerStyle: {
+                        borderColor:"#015096"
+                      },
+                    }}
                   />
                   
                   <View style={{marginTop:12}}>
+                    {/* {console.log(timerTime)} */}
                   {resetTimer ? (
                     <TouchableOpacity 
                     style={{}}
@@ -478,7 +580,10 @@ const OtpScreen = ({navigation, route}) => {
                       </Text>
                     </TouchableOpacity>
                   ) : (
+                    <View>
                     <Text style={{color:'#015096',  fontSize:14, lineHeight:24, textAlign:'center'}}>{timerText}</Text>
+                    <Text style={{color:'#015096',  fontSize:14, lineHeight:24, textAlign:'center', display:'none'}}>{timerTime}</Text>
+                    </View>
                   )}
                   </View>
                   </View>
@@ -487,7 +592,7 @@ const OtpScreen = ({navigation, route}) => {
               <View>
                 <TouchableOpacity
                   style={[styles.buttonStyle, {marginBottom: 60, backgroundColor: toggleSubmit ? '#004F97' : '#dadee7',}]}
-                  
+                  disabled={!toggleSubmit}
                   activeOpacity={0.5}
                   onPress={handleSubmitOtp}>
                   <Text style={styles.buttonTextStyle}>Devam Et</Text>
@@ -531,19 +636,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#1D1D25',
     borderWidth: 0,
     color: '#FFFFFF',
-    height: 65,
+    height: 52,
     alignItems: 'center',
     borderRadius: 10,
     marginLeft: 35,
     marginRight: 35,
     marginBottom: 25,
   },
+  
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 20,
-    fontFamily: 'Helvetica-Bold',
-    fontWeight: 'bold',
-    fontSize: 16,
+    paddingVertical: 15,
+    fontWeight: '500',
+    fontSize: 14,
   },
   inputTitleStyle: {
     color: '#7E797F',
