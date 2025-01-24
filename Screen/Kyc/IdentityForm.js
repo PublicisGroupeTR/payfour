@@ -25,7 +25,7 @@ const IdentityForm = ({ route, navigation }) => {
   const [alreadyConfirmAgreement, setAlreadyConfirmAgreement] = useState([]);
 
   const [formData, setFormData] = useState({
-    userTCKN: { value: "64317832464", isValid: true },
+    userTCKN: { value: "", isValid: true },
     userName: { value: user.firstName, isValid: true },
     userLastName: { value: user.lastName, isValid: true },
     userEmail: { value: user.email, isValid: true },

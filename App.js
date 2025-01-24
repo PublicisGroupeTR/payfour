@@ -82,7 +82,7 @@ const Auth = () => {
 
 const Kyc = () => {
   return (
-    <Stack.Navigator initialRouteName="VerifyScreen"
+    <Stack.Navigator initialRouteName="KycOtp"
     screenOptions={{
       contentStyle:{
         backgroundColor:'#FFFFFF'
@@ -137,7 +137,7 @@ const App = () => {
   return (
     <ErrorProvider>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Kyc"
+      <Stack.Navigator initialRouteName="SplashScreen"
       screenOptions={{
         contentStyle:{
           backgroundColor:'#FFFFFF'
