@@ -111,8 +111,9 @@ style={{}}
                           marginBottom:16,
                           textAlign:'center',
                         }}>
-                          Payfour ile online ya da 
-                          kasada ödeme yapabilirsiniz!
+                          Payfour ile hem online 
+                          hem de kasada
+                          ödeme yapabilirsiniz!
                         </Text>
                         <Text style={{
                           fontSize:16,

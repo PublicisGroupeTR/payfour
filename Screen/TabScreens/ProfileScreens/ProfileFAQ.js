@@ -2551,7 +2551,7 @@ Mağazalardan yapılacak ödemelerde ise Payfour ile ödeme işlemine başlanmad
                     </View>                        
                   </View>
                   <TouchableOpacity
-                    style={[styles.buttonStyle, {height:50, marginBottom: 0, backgroundColor: '#fff', borderWidth:1, borderColor: '#004F97', flexDirection:'row', alignItems:'center', justifyContent:'center', marginBottom:80}]}
+                    style={[styles.buttonStyle, {height:50,marginBottom: 0, backgroundColor: '#fff', borderWidth:1, borderColor: '#004F97', flexDirection:'row', alignItems:'center', justifyContent:'center', marginBottom:80}]}
                     
                     activeOpacity={0.5}
                     onPress={()=>{navigation.navigate("ProfileSupport")}}>
@@ -2564,7 +2564,7 @@ Mağazalardan yapılacak ödemelerde ise Payfour ile ödeme işlemine başlanmad
                           resizeMode: 'contain',
                         }}
                       />
-                      <Text style={[styles.buttonTextStyle, {color: '#004F97'}]}>Yardım / Bize Ulaşın</Text>
+                      <Text style={[styles.buttonTextStyle, {color: '#004F97',paddingVertical: 0,}]}>Yardım / Bize Ulaşın</Text>
                     </TouchableOpacity>
 
 

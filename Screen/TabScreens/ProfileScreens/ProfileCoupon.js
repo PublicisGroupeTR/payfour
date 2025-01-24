@@ -59,28 +59,29 @@ const ProfileCoupon = ({navigation}) => {
   let dataToSend ={
     "code": code,
   }
-  apiPost('account/redeemcode',dataToSend,onRedeemCode, onRedeemError);
+  apiPost('account/redeemcode',dataToSend,onRedeemCode, onRedeemCodeError);
   
           
            });
   };
 
   const onRedeemCode = (response) => {
-    console.log(response);
-    console.log(response.data);
-    if(response.data.success){
-      setLoading(false);
-      console.log("coupon success")
-      //navigation.navigate('Success');
-      setSuccessModalVisible(true);
-    }else{
-      setLoading(false);
-      console.log("coupon error")
-    }
+              console.log(response);
+              console.log(response.data); 
+              setLoading(false);
+              if(response.data.success){
+                console.log("coupon success")
+                //navigation.navigate('Success');
+                setSuccessModalVisible(true);
+              }else{
+     
+                console.log("coupon error")
+              }
   }
-const onRedeemError= () => {
-  setLoading(false);
-}
+  const onRedeemCodeError = (response) => {
+    setLoading(false);
+  }
+
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>      
       <Modal
@@ -177,7 +178,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                   </View>
 
 
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, paddingTop:0}]}>                     
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB'}]}>                     
                     {/* <Text style={{                                           
                         fontSize: 12,
                         lineHeight:12, 
@@ -191,9 +192,6 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                       Kupon Kodu / Davet Kodu
                     </Text> */}
                     <TextInput
-                        style={{ 
-                          color: '#0B1929',
-                        }}
                         value={code}
                         onChangeText={Code => setCode(Code)}
                         placeholder="Kodu Giriniz" //12345
@@ -291,16 +289,16 @@ const profileStyles = StyleSheet.create({
 });
 const regstyles = StyleSheet.create({
   registerInputStyle:{
+    width:'100%',
     backgroundColor:'#fff',
     paddingTop:17,
     paddingBottom:17, 
-    paddingLeft:12, 
+    paddingLeft:16, 
     paddingRight:12,    
     borderWidth: 1,
     borderRadius: 10,
-    marginBottom:16,
-    width:'100%',
-  },
+    marginBottom:16
+    },
   mainBody: {
     flex: 1,
     justifyContent: 'center',

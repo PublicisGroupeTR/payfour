@@ -64,6 +64,7 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
 }*/
       let date = new Date(route.params.params.firstInstallmentDate);
       console.log("firstInstallmentDate");
+      console.log(date);
       console.log(date.getDate());
       console.log((date.getMonth()+1));
       console.log(date.getFullYear());
@@ -82,54 +83,54 @@ const CreditInstallmentsScreen = ({navigation, route}) => {
     });
   }
 const onCalculatePaybackPlan = (response) =>{
-  setLoading(false);
-    console.log(response.data.data); 
-    //console.log(response.data.data.paybackPlanList)
+        setLoading(false);
+          console.log(response.data.data); 
+          //console.log(response.data.data.paybackPlanList)
 
-    let proposal = {
-      loanProductId:response.data.data.loanProductId,
-      proposalId:response.data.data.proposalId
-    }
-    setLoanId(proposal)
-    let installmentsArr = [];
-    console.log("*********");
-    let data = response.data.data.paybackPlanList;
-    for(var i=0; i < data.length;i++){
-      console.log(data[i]);
-      if(i==0)setSelectedItem(data[i].paybackPlanId);
-      
-      let tmObj = {};
-      tmObj.paybackPlanId = data[i].paybackPlanId;
-      tmObj.loanCampaignId = data[i].loanCampaignId;
-      tmObj.totalPaymentAmount = data[i].totalPaymentAmount;
-      i==data.length-1 ? tmObj.itemLast = true : tmObj.itemLast = false;
-      console.log("--------");
-      for(var j=0; j < data[i].installments.length;j++){
-        console.log(data[i].installments[j]);
-        if(j == 0){
-          let instdate = new Date(data[i].installments[j].calculateInstallmentDate);
-          let instd = instdate.getDate() < 10 ? "0"+instdate.getDate() : instdate.getDate();
-          let instm = (instdate.getMonth()+1) < 10 ? "0"+(instdate.getMonth()+1) : (instdate.getMonth()+1);
-          let instdt = instd+"-"+instm+"-"+instdate.getFullYear(); 
-          tmObj.firstDate = instdt;
+          let proposal = {
+            loanProductId:response.data.data.loanProductId,
+            proposalId:response.data.data.proposalId
+          }
+          setLoanId(proposal)
+          let installmentsArr = [];
+          console.log("*********");
+          let data = response.data.data.paybackPlanList;
+          for(var i=0; i < data.length;i++){
+            console.log(data[i]);
+            if(i==0)setSelectedItem(data[i].paybackPlanId);
+            
+            let tmObj = {};
+            tmObj.paybackPlanId = data[i].paybackPlanId;
+            tmObj.loanCampaignId = data[i].loanCampaignId;
+            tmObj.totalPaymentAmount = data[i].totalPaymentAmount;
+            i==data.length-1 ? tmObj.itemLast = true : tmObj.itemLast = false;
+            console.log("--------");
+            for(var j=0; j < data[i].installments.length;j++){
+              console.log(data[i].installments[j]);
+              if(j == 0){
+                let instdate = new Date(data[i].installments[j].calculateInstallmentDate);
+                let instd = instdate.getDate() < 10 ? "0"+instdate.getDate() : instdate.getDate();
+                let instm = (instdate.getMonth()+1) < 10 ? "0"+(instdate.getMonth()+1) : (instdate.getMonth()+1);
+                let instdt = instd+"-"+instm+"-"+instdate.getFullYear(); 
+                tmObj.firstDate = instdt;
+              }
+              if(j == (data[i].installments.length-1)){
+                tmObj.totalInstallments = data[i].installments[j].installmentSequenceNo;
+                tmObj.installmentAmount = data[i].installments[j].installmentTotalAmount;
+                installmentsArr.push(tmObj);
+              }
+            }
+          }
+          console.log('!!!!!!!!!!!!!!!!!!!!');
+          console.log(installmentsArr);
+          setInstallmentArr(installmentsArr);
+        
+        if(response.data.error){
+          Alert.alert(response.data.error.message);
+        }else{
+          
+          
         }
-        if(j == (data[i].installments.length-1)){
-          tmObj.totalInstallments = data[i].installments[j].installmentSequenceNo;
-          tmObj.installmentAmount = data[i].installments[j].installmentTotalAmount;
-          installmentsArr.push(tmObj);
-        }
-      }
-    }
-    console.log('!!!!!!!!!!!!!!!!!!!!');
-    console.log(installmentsArr);
-    setInstallmentArr(installmentsArr);
-  
-  if(response.data.error){
-    Alert.alert(response.data.error.message);
-  }else{
-    
-    
-  }
 }
   const handleSubmitPress = () =>{
     /*{
@@ -160,17 +161,17 @@ const onCalculatePaybackPlan = (response) =>{
 
   }
   const onApproveWithLoan = (response) =>{
-    setLoading(false);
-    console.log("approvewithloan");
-    console.log(response);
-    console.log(response.data.data);           
-    if(response.data.success){
-        navigation.navigate('wallet',{ 
-          screen: 'Success'
-        });
-    } else if(response.data.error){
-      Alert.alert(response.data.error.message);
-    }
+        setLoading(false);
+        console.log("approvewithloan");
+        console.log(response);
+        console.log(response.data.data);           
+        if(response.data.success){
+            navigation.navigate('wallet',{ 
+              screen: 'Success'
+            });
+        } else if(response.data.error){
+          Alert.alert(response.data.error.message);
+        }
   }
   const handleSubmitCancel = () =>{
     navigation.navigate('discover')

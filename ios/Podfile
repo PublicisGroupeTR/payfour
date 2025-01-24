@@ -16,7 +16,12 @@ end
 
 target 'Payfour' do
   config = use_native_modules!
-
+#     use_frameworks! :linkage => :static
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  $RNFirebaseAsStaticFramework = true
+  # Flags change depending on the env values.
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
@@ -29,6 +34,9 @@ target 'Payfour' do
   end
 
   post_install do |installer|
+    installer.pods_project.build_configurations.each do |config|
+    config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+  
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
@@ -37,4 +45,5 @@ target 'Payfour' do
       # :ccache_enabled => true
     )
   end
+
 end

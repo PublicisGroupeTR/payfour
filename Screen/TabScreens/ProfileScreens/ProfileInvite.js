@@ -412,8 +412,7 @@ const ProfileInvite = ({navigation}) => {
                         <TouchableOpacity 
                       style={{
                         width:24,
-                        height:24,                      
-                        color: '#0B1929',
+                        height:24,
                       }}
                       onPress={() => {
                         console.log('close');

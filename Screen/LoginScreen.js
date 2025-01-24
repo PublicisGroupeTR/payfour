@@ -78,6 +78,7 @@ const LoginScreen = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {      
       console.log('Hello World!'); 
       setLoading(true); 
+      setUserPhone('');
             
       basicGet('campaigns/getcampaignsforanonymusers?pageSize=4', onLoginSlider)
       
@@ -476,7 +477,7 @@ const LoginScreen = ({navigation}) => {
             keyboardShouldPersistTaps="handled"
             style={{flexGrow:1}}>
               
-            <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
+            {/* <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}> */}
               <View style={{
                   alignItems: 'center',
                   height:52,
@@ -900,7 +901,7 @@ const LoginScreen = ({navigation}) => {
                 
               </View>
               
-            </KeyboardAvoidingView>
+            {/* </KeyboardAvoidingView> */}
             
           </ScrollView>
           

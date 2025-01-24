@@ -220,7 +220,6 @@ const TabNavigatorRoutes = props => {
       
       screenOptions={{
         tabBarShowLabel:false,
-        tabBarHideOnKeyboard:true,
         showIcon: true,
         tabBarStyle:{
           backgroundColor:'#fff',
@@ -231,8 +230,7 @@ const TabNavigatorRoutes = props => {
           position:'absolute',
           ...styles.shadow,
           borderWidth:0,
-        },
-        gestureEnabled: false
+        }
       }}
       //tabBar={props => <CustomTabBar {...props} 
       ///>}
@@ -313,9 +311,8 @@ const TabNavigatorRoutes = props => {
             navigation.navigate('campaign', { 
               screen: 'CampaignList',
               params: {
-                params: {
-                  filters:{isAw:false, isSp:false}
-                }
+                isAw:false, 
+                isSp:false
               }
             })
           },
@@ -422,6 +419,7 @@ const TabNavigatorRoutes = props => {
               payment: true
           },
           headerShown: false,
+          gestureEnabled:false,
           tabBarIcon:({focused}) =>{
             return (
             <View style={{top:-20,
@@ -550,7 +548,7 @@ const TabNavigatorRoutes = props => {
           tabPress: e => {
             // Prevent default action
             e.preventDefault();
-            Linking.openURL('https://www.carrefoursa.com/')
+            Linking.openURL('https://www.CarrefourSA.com/')
           },
         }}
         options={{

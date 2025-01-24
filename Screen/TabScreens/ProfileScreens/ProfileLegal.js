@@ -107,7 +107,7 @@ const ProfileLegal = ({navigation}) => {
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          CARREFOURSA PAYFOUR ÜYELİK VE KULLANICI SÖZLEŞMESİ
+                          CarrefourSA PAYFOUR ÜYELİK VE KULLANICI SÖZLEŞMESİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -210,7 +210,7 @@ const ProfileLegal = ({navigation}) => {
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          CARREFOURSA PAZARLAMA AYDINLATMA METNİ
+                          CarrefourSA PAZARLAMA AYDINLATMA METNİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -318,7 +318,7 @@ const ProfileLegal = ({navigation}) => {
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          CARREFOURSA İLETİŞİM İZNİ METNİ
+                          CarrefourSA İLETİŞİM İZNİ METNİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -341,14 +341,7 @@ const ProfileLegal = ({navigation}) => {
                        </View> 
                       
                       
-                       <View style={legalStyles.container}>
-      <View style={legalStyles.section}>
-      {/* <Text style={legalStyles.title}>CARREFOURSA İLETİŞİM İZNİ METNİ</Text> */}
-      </View>
-      <View style={legalStyles.section}>
-      <Text style={legalStyles.paragraph}>Kişisel verilerimin CarrefourSA Carrefour Sabancı Ticaret Merkezi Anonim Şirketi (“Şirket”) tarafından doğrudan veya dolaylı pazarlama faaliyetlerinin gerçekleştirilmesi amacıyla işlenmesi suretiyle iletişim bilgilerime; reklam, promosyon, kampanya ve benzeri nitelikte genel ve özel kampanyalar, avantajlar, ürün, hizmet tanıtımları, reklâm, pazar araştırması anketleri ve diğer müşteri memnuniyeti uygulamalarına ilişkin olarak kısa mesaj (SMS), mobil uygulama, anlık bildirim, e-posta, otomatik makinelerden arama, telefonla arama, bluetooth, beacon kablosuz ağlar, sosyal medya vb. her türlü elektronik iletişim aracı ile ticari elektronik ileti gönderilmesine ve kişisel verilerimin Şirket’in hizmet aldığı tedarikçilere aktarılmasına  onay veriyorum.</Text>
-      </View>
-    </View>
+                     <CarrefoursaIletisimIzni /> 
                   </View> 
                   
                   
@@ -413,7 +406,7 @@ const ProfileLegal = ({navigation}) => {
                   paddingLeft: 16,
                   paddingRight: 16,
                   width:'100%',
-                  height:'100%'
+                  
                 }}>
                   
                   <View style={{
@@ -428,7 +421,7 @@ const ProfileLegal = ({navigation}) => {
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          CARREFOURSA KART ÜYELİK SÖZLEŞMESİ
+                          CarrefourSA KART ÜYELİK SÖZLEŞMESİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -531,7 +524,7 @@ const ProfileLegal = ({navigation}) => {
                           textAlign:'left',
                           marginBottom:24,
                         }}>
-                          CARREFOURSA KART ÜYELİĞİ KİŞİSEL VERİLERİN KORUNMASI AYDINLATMA METNİ
+                          CarrefourSA KART ÜYELİĞİ KİŞİSEL VERİLERİN KORUNMASI AYDINLATMA METNİ
                         </Text>
                         <TouchableOpacity 
                       style={{
@@ -645,7 +638,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             lineHeight:20,
                             color:'#0B1929',
                             textAlign:'left',
-                            width:180
+                            width:200
                           }}>
                             Payfour Üyelik ve Kullanıcı Sözleşmesi
                           </Text>
@@ -683,7 +676,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             lineHeight:20,
                             color:'#0B1929',
                             textAlign:'left',
-                            width:180
+                            width:300
                           }}>
                             Payfour Üyelik Aydınlatma Metni
                           </Text>
@@ -721,7 +714,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             lineHeight:20,
                             color:'#0B1929',
                             textAlign:'left',
-                            width:180
+                            width:300
                           }}>
                             Pazarlama Aydınlatma Metni
                           </Text>
@@ -759,7 +752,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             lineHeight:20,
                             color:'#0B1929',
                             textAlign:'left',
-                            width:180
+                            width:300
                           }}>
                             İletişim İzni
                           </Text>
@@ -797,7 +790,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             lineHeight:20,
                             color:'#0B1929',
                             textAlign:'left',
-                            width:180
+                            width:300
                           }}>
                             CarrefourSA Kart Üyelik Sözleşmesi
                           </Text>
@@ -833,7 +826,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                             lineHeight:20,
                             color:'#0B1929',
                             textAlign:'left',
-                            width:180
+                            width:300
                           }}>
                             CarrefourSA Kart Üyelik Aydınlatma Metni
                           </Text>
@@ -995,37 +988,4 @@ const regstyles = StyleSheet.create({
     fontSize: 14,
   },
 });
-const legalStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor:'#fff'
-  },
-  subtitle: {
-    fontSize: 14,
-    fontWeight:'700',
-    color:'#0B1929',
-    marginBottom: 10,
-    textAlign: 'left',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color:'#0B1929',
-    marginVertical: 10,
-  },
-  paragraph: {
-    fontSize: 12,
-    lineHeight: 18,
-    marginBottom: 10,
-  },
-  bold: {
-    fontWeight: '700',
-  },
-  footer: {
-    fontSize: 12,
-    marginTop: 20,
-    textAlign: 'center',
-  },
-  });
 export default ProfileLegal;

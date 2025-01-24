@@ -248,7 +248,6 @@ const OtpScreen = ({navigation, route}) => {
     });
   }
   const sendData = (dataToSend) => {
-    passwordInputRef.current.clear();
    dataToSend.otpCode = otp;
     console.log("datatosend");
     console.log(dataToSend);
@@ -269,7 +268,7 @@ const OtpScreen = ({navigation, route}) => {
         //otpInputRef.current.clear();
         setOtp('');       
       if(response.data.error){
-        
+        passwordInputRef.current.clear();
         setToggleSubmit(false);
         Alert.alert(response.data.error.message);
       }else{
@@ -290,7 +289,6 @@ const OtpScreen = ({navigation, route}) => {
             AsyncStorage.setItem('payfourId', response.data.data.payfourId.toString()).then(() =>{
               navigation.navigate("LoginWithPasswordScreen");
               //navigation.navigate("RegisterScreen");
-
             });
           }
         }
@@ -428,17 +426,17 @@ const OtpScreen = ({navigation, route}) => {
             </View>
           </View>
         </Modal>
-        <TabHeader routetarget={route.params.forgot? "LoginWithPasswordScreen":"LoginScreen"} name="OtpScreen" count="0" />
+        <TabHeader routetarget="LoginScreen" name="" count="0" />
         <Loader loading={loading} />
         <ScrollView
             keyboardShouldPersistTaps="handled"
             style={{flexGrow:1}}>
-          <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
+          <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height-100 }}>
             <View
               style={{
                 flex: 1,
                 paddingTop: 68,
-                paddingBottom: 60,
+                paddingBottom: 30,
                 flexDirection:'column',
                 justifyContent:'space-between',
                 
@@ -477,44 +475,14 @@ const OtpScreen = ({navigation, route}) => {
                   6 haneli kodu giriniz.
                   </Text>
                 </View>
-                
-                <View style={[styles.centerStyle, {paddingLeft:34, paddingRight:34}]}>
+                <View style={[styles.centerStyle, {paddingLeft:18, paddingRight:18}]}>
                   <View style={{paddingTop:12, paddingBottom:12}}>
-                    {/* <OtpInput
-                    ref={otpInputRef}
-                    numberOfDigits={6}
-                    focusColor="#015096"
-                    focusStickBlinkingDuration={500}
-                    autoFocus={false}
-                    onFocus={()=> {console.log('focus'); }}
-                    onTextChange={(text) => {console.log(text);setOtpError(false);}}
-                    onFilled={(text) => {
-                      console.log(`OTP is ${text}`); 
-                      setOtp(text); 
-                      setToggleSubmit(true);
-                      Keyboard.dismiss();
-                    }}
-                    textInputProps={{
-                      accessibilityLabel: "One-Time Password",
-                    }}
-                    theme={{
-                      containerStyle: styles.container,
-                      pinCodeContainerStyle: {
-                        backgroundColor:'#fff',
-                        borderColor: otpError? '#E42932':'#DADEE7'
-                      },
-                      pinCodeTextStyle: styles.pinCodeText,
-                      focusStickStyle: styles.focusStick,
-                      focusedPinCodeContainerStyle: {
-                        borderColor:"#015096"
-                      },
-                    }}
-                  /> */}
-                  {/* <OTPTextView
-                    ref={otpInputRef2}
+                  
+                  <OTPTextView
+                    ref={passwordInputRef}
                     containerStyle={otpstyles.textInputContainer}
                     textInputStyle={otpstyles.roundedTextInput}
-                    tintColor="#0B1929"
+                    tintColor="#015096"
                     offTintColor={'#DADEE7'}
                     handleTextChange={(text) => {
                       setOtpInput(text);
@@ -527,49 +495,11 @@ const OtpScreen = ({navigation, route}) => {
                     }}
                     handleCellTextChange={handleCellTextChange}
                     inputCount={6}
-                    keyboardType="numeric"
-                  /> */}
-                  <OtpInput
-                    numberOfDigits={6}
-                    focusColor="#015096"
-                    focusStickBlinkingDuration={500}
-                    autoFocus={false}
-                    secureTextEntry={false}
-                    ref = {passwordInputRef}
-                    onFocus={()=> {console.log('focus'); }}
-                    onTextChange={(text) => {
-                      console.log(text);
-                      setOtpError(false);
-                      if(text.length <6) setToggleSubmit(false);
-                    }}
-                    onFilled={(text) => {
-                      console.log(`OTP is ${text}`); 
-                      setOtp(text); 
-                      setToggleSubmit(true);
-                      Keyboard.dismiss();
-                    }}
-                    textInputProps={{
-                      accessibilityLabel: "Otp",
-                      secureTextEntry:false,
-                    }}
-                    theme={{
-                      containerStyle: styles.container,
-                      pinCodeContainerStyle: {
-                        backgroundColor:'#fff',
-                        borderColor: otpError? '#E42932':'#DADEE7'
-                      },
-                      pinCodeTextStyle: {
-                        color:"#0B1929"
-                      },
-                      focusStickStyle: styles.focusStick,
-                      focusedPinCodeContainerStyle: {
-                        borderColor:"#015096"
-                      },
-                    }}
+                    keyboardType="number-pad"
+                    textcontentType="oneTimeCode"
                   />
                   
                   <View style={{marginTop:12}}>
-                    {/* {console.log(timerTime)} */}
                   {resetTimer ? (
                     <TouchableOpacity 
                     style={{}}
@@ -580,10 +510,7 @@ const OtpScreen = ({navigation, route}) => {
                       </Text>
                     </TouchableOpacity>
                   ) : (
-                    <View>
                     <Text style={{color:'#015096',  fontSize:14, lineHeight:24, textAlign:'center'}}>{timerText}</Text>
-                    <Text style={{color:'#015096',  fontSize:14, lineHeight:24, textAlign:'center', display:'none'}}>{timerTime}</Text>
-                    </View>
                   )}
                   </View>
                   </View>
@@ -592,7 +519,7 @@ const OtpScreen = ({navigation, route}) => {
               <View>
                 <TouchableOpacity
                   style={[styles.buttonStyle, {marginBottom: 60, backgroundColor: toggleSubmit ? '#004F97' : '#dadee7',}]}
-                  disabled={!toggleSubmit}
+                  
                   activeOpacity={0.5}
                   onPress={handleSubmitOtp}>
                   <Text style={styles.buttonTextStyle}>Devam Et</Text>
@@ -633,7 +560,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   buttonStyle: {
-    backgroundColor: '#1D1D25',
+    backgroundColor: '#004F97',
     borderWidth: 0,
     color: '#FFFFFF',
     height: 52,
@@ -643,7 +570,6 @@ const styles = StyleSheet.create({
     marginRight: 35,
     marginBottom: 25,
   },
-  
   buttonTextStyle: {
     color: '#FFFFFF',
     paddingVertical: 15,
@@ -720,8 +646,6 @@ const otpstyles = StyleSheet.create({
     paddingTop:5,
     paddingBottom:5,
     height:70,
-    width:Dimensions.get('window').width > 395? '16.5%' : '15%',
-    marginRight:Dimensions.get('window').width > 395? 5 : 4,
     backgroundColor:'#fff',
   },
   buttonWrapper: {

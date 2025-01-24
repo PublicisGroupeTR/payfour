@@ -34,7 +34,7 @@ import CheckWaitingScreen from './PayScreens/CheckWaitingScreen.js';
 import PayScreen from './PayScreens/PayScreen.js';
 import PayOptionsScreen from './PayScreens/PayOptionsScreen.js';
 import PayOptionsScreen2 from './PayScreens/PayOptionsScreen2.js';
-import MapScreen from './MapScreen.js';
+//import MapScreen from './MapScreen.js';
 import IbanScreen from './PayScreens/IbanScreen.js';
 import CashScreen from './PayScreens/CashScreen.js';
 //import {ScrollView} from 'react-native-gesture-handler';
@@ -696,7 +696,7 @@ const Discover = ({route, navigation}) => {
     console.log("getWaiting "+cs);
     setLoading(true);
     setCreditStatus(cs);
-    //setCreditStatus(1);
+    //setCreditStatus(3);
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
@@ -972,10 +972,7 @@ const Discover = ({route, navigation}) => {
             }}
             onPress={() => {setAddModalVisible(true);}}
             
-              // onPress={() => navigation.navigate('wallet', { 
-              //   screen: 'Waiting',
-              //   params: null
-              // })}
+              //onPress={() => navigation.navigate('wallet', { screen: 'Waiting',params: null})}
             >
               <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
                 <Image 
@@ -2306,7 +2303,36 @@ return(
           {carrefourCardData.length > 0?
             renderSwiper()
           :renderCurrentStatus()}
-          
+          {/* <View style={
+            [styles.sectionStyle,{marginTop:-10, marginBottom:24, flexDirection:'row', justifyContent:'center', display:creditStatus != 1 && creditStatus != 3? 'none' : 'flex'}]
+          }>
+            <TouchableOpacity 
+            style={{width:'49%', marginRight:'2%', display:creditStatus == 1? 'flex' : 'none'}}
+            onPress={() => navigation.navigate('wallet', { screen: 'CreditScreen',params: {
+              screen: 'IntroHazirLimit', }})}
+            >
+              <Image 
+              source={require('../../assets/img/export/button_limit.png')}
+              style={{
+                width:'100%',
+                resizeMode:'contain',
+                height:52
+              }}>
+              </Image>
+            </TouchableOpacity>
+            <TouchableOpacity style={{width:'49%', display:creditStatus == 1 || creditStatus == 3? 'flex' : 'none'}}
+            onPress={() => navigation.navigate('wallet', { screen: 'CreditScreen',params: {
+              screen: 'IntroSonraOde', }})}>
+              <Image 
+              source={require('../../assets/img/export/button_later.png')}
+              style={{
+                width:'100%',
+                resizeMode:'contain',
+                height:52
+              }}>
+              </Image>
+            </TouchableOpacity>
+          </View> */}
           <View style={
             [styles.sectionStyle,{marginTop:-10, marginBottom:24, flexDirection:'row', justifyContent:'center', display:creditStatus != 1 && creditStatus != 3? 'none' : 'flex'}]
           }>
@@ -2389,8 +2415,9 @@ return(
                             <Text style={{
                               fontSize:12,
                               color:'#ffffff',
-                              textAlign:'center',
-                              maxWidth:'50%',
+                              textAlign:creditStatus == 3?'left':'center',
+                              width:creditStatus == 3?'80%':'50%',
+                              maxWidth:creditStatus == 3?'80%':'50%',
                             }}>
                               Şimdi Al, 
                               Sonra Öde
@@ -3000,12 +3027,12 @@ const DiscoverScreen = ({navigation}) => {
         component={NotificationScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen
+      {/*<Stack.Screen
         name="Map"
         component={MapScreen}
         options={{headerShown: false}}
       />
-      {/* <Stack.Screen
+       <Stack.Screen
         name="IbanScreen"
         component={IbanScreen}
         //options={{headerShown: false}}

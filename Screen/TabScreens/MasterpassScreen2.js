@@ -4,13 +4,14 @@
 
 // Import React and Component
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, SafeAreaView, Pressable, ScrollView, KeyboardAvoidingView, Alert, Image, Modal, FlatList, StyleSheet, Dimensions, TextInput, Keyboard, TouchableOpacity, Linking} from 'react-native';
+import {View, Text, SafeAreaView, Pressable, ScrollView, KeyboardAvoidingView, Alert, 
+  Image, Modal, FlatList, StyleSheet, Dimensions, TextInput, Keyboard, TouchableOpacity,Linking} from 'react-native';
 import {styles} from '../Components/Styles.js';
 import TabHeader from '../Components/TabHeader.js';
 import Loader from '../Components/Loader';
 import SubtabHeader from '../Components/SubtabHeader';
 import { registerStyles } from '../Components/RegisterStyles';
-import { useError } from '../Contexts/ErrorContext';
+
 //import {TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'react-native-axios';
@@ -22,6 +23,7 @@ import MaskInput, { createNumberMask } from 'react-native-mask-input';
 //https://test-client.bubbleads.co/Scripts/masterpass-javascript-sdk-web.min.js
 import {createStackNavigator} from '@react-navigation/stack';
 import { Modalize } from 'react-native-modalize';
+import { useError } from '../Contexts/ErrorContext';
 
 const Stack = createStackNavigator();
 
@@ -71,6 +73,7 @@ const ListCards = ({navigation, route }) => {
 
       //MasterPassSDK.setAddress('https://mp-test-sdk.masterpassturkiye.com/');
       //MasterPassSDK.setClientId('347102188');
+      
       getCarrefourCards();
       
       });
@@ -1180,6 +1183,10 @@ const renderCards = () => {
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(92, 92, 92, 0.56)',
               }}>
+                <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={styles.modalContainer}
+            >
               <View
                 style={{
                   backgroundColor:'#fff',
@@ -1231,7 +1238,7 @@ const renderCards = () => {
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:8, 
+                        lineHeight:20, 
                         padding:0,
                         color: '#909EAA',
                       }}
@@ -1295,6 +1302,7 @@ const renderCards = () => {
                 </TouchableOpacity>
                </View>
               </View>
+              </KeyboardAvoidingView>
             </View>
       </Modal>
       <Modal
@@ -1326,6 +1334,7 @@ const renderCards = () => {
         bottom:0,
         width:'100%',
         alignItems:'center',
+
       }}>
         <Image 
           source={require('../../assets/img/export/masterpass_logo.png')}
@@ -1404,6 +1413,7 @@ const renderCards = () => {
         bottom:0,
         width:'100%',
         alignItems:'center',
+
       }}>
         <Image 
           source={require('../../assets/img/export/masterpass_logo.png')}
@@ -1659,7 +1669,7 @@ const renderCards = () => {
         </Text>        
         </View>
         <TouchableOpacity
-          style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, width:'100%', marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+          style={[regstyles.buttonStyle, {width:'100%',padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
           activeOpacity={0.5}
           onPress={()=>{
             console.log("close success");
@@ -1848,13 +1858,11 @@ const AddCards = ({navigation}) => {
   const [validCvc, setValidCvc] = useState(true);
   const [validDate, setValidDate] = useState(true);
   const [validNick, setValidNick] = useState(true);
-  
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cardDate, setCardDate] = useState('');
   const [cardCVC, setCardCVC] = useState('');
   const [cardNick, setCardNick] = useState('');
-  
   const addwebview = useRef();
   const [phone, setPhone] = useState('');
   const [mpToken, setMptoken] = useState('');
@@ -1875,7 +1883,6 @@ const AddCards = ({navigation}) => {
   
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => { 
-
       //webview.current.postMessage("Hello from RN");
 
       //MasterPassSDK.setAddress('https://mp-test-sdk.masterpassturkiye.com/');
@@ -1992,16 +1999,14 @@ const AddCards = ({navigation}) => {
   }
   const addCard = ()=>{
     let err = false;
-    if(cardName.length < 5){setValidName(false); err = true;}
-    if(!checkValidCard(cardNumber)) err = true;
-    if(cardDate.length <4){setValidDate(false); err = true;}
-    if(!checkValidCVC(cardCVC)) err = true;
-    if(!mpSave) err = true;
-    if(cardNick.length < 3){setValidNick(false); err = true;}
+if(cardName.length < 5){setValidName(false); err = true;}
+if(!checkValidCard(cardNumber)) err = true;
+if(cardDate.length <4){setValidDate(false); err = true;}
+if(!checkValidCVC(cardCVC)) err = true;
+if(!mpSave) err = true;
+if(cardNick.length < 3){setValidNick(false); err = true;}
 
-    if(err) return;
-
-    if(user)
+if(err) return;
     console.log("addCard");
     AsyncStorage.getItem('token').then(value =>{
         
@@ -2090,7 +2095,7 @@ const AddCards = ({navigation}) => {
     console.log("addcardMessage");
     console.log(addwebview);
     console.log(addwebview.current);
-    if(addwebview.current) addwebview.current.postMessage("addCard;check");
+    if(addwebview.current) addwebview.current.postMessage("addCardTest;check");
   }
   const onMessage = (message) => {
     console.log("onmessage");
@@ -2201,7 +2206,7 @@ const checkValidCVC = (cvc) =>{
     if(addwebview.current) addwebview.current.postMessage("otp;123456");
   }
   return(
-    <SafeAreaView style={{flex: 1, backgroundColor: '#efeff3'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <Modal
             animationType="slide"
             transparent={true}
@@ -2216,6 +2221,10 @@ const checkValidCVC = (cvc) =>{
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(92, 92, 92, 0.56)',
               }}>
+                <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={styles.modalContainer}
+            >
               <View
                 style={{
                   backgroundColor:'#fff',
@@ -2263,11 +2272,11 @@ const checkValidCVC = (cvc) =>{
                           Banka tarafından kart sahibine gönderilen tek seferlik doğrulama kodunu giriniz.
                       </Text>
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',height:54}]}>            
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:8, 
+                        lineHeight:20, 
                         padding:0,
                         color: '#909EAA',
                       }}
@@ -2282,7 +2291,7 @@ const checkValidCVC = (cvc) =>{
                     />
                     
                   </View>
-                  <Text style={{color:'#0B1929',  fontSize:14, lineHeight:28, textAlign:'center',marginBottom:24}}>Kalan Süre : {timerText}</Text>
+                  <Text style={{color:'#0B1929',  fontSize:14, lineHeight:24, textAlign:'center',marginBottom:24}}>Kalan Süre : {timerText}</Text>
                   
                   <View style={{flexDirection:'row'}}>
                   <TouchableOpacity
@@ -2329,6 +2338,7 @@ const checkValidCVC = (cvc) =>{
                 </TouchableOpacity>
                </View>
               </View>
+              </KeyboardAvoidingView>
             </View>
       </Modal>
       <Modal
@@ -2387,7 +2397,7 @@ const checkValidCVC = (cvc) =>{
         </Text>        
         </View>
         <TouchableOpacity
-          style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+          style={[regstyles.buttonStyle, {width:'100%',padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
           activeOpacity={0.5}
           onPress={()=>{
             console.log("close success");
@@ -2534,7 +2544,6 @@ const checkValidCVC = (cvc) =>{
             </View>
           </View>
     </Modal>
-
       <Modalize ref={rulesModalizeRef}
       snapPoint={0}
       modalStyle={{backgroundColor:(0,0,0,0)}}>
@@ -2685,15 +2694,13 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
             </View>
       </Modalize>
     <Loader loading={loading} />
-    <SubtabHeader routetarget="ListCards" name="Banka / Kredi Kartı ile Yükle" count="0" />
-    {/* <ScrollView 
-keyboardShouldPersistTaps="handled"
-style={[registerStyles.scrollView]}>
-<KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}> */}
-  <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, {paddingBottom:32}]}>
-        <KeyboardAvoidingView enabled>
-    <View style={{paddingTop: 16,
-      paddingBottom: 116,
+    <SubtabHeader routetarget="ListCards" name="Banka / Kredi Kartlarım" count="0" />
+    <ScrollView 
+      keyboardShouldPersistTaps="handled"
+      style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
+      {/* <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}> */}
+          <View style={{paddingTop: 16,
+      paddingBottom: 16,
       paddingLeft: 16, 
       paddingRight: 16,}}>
           <View
@@ -2726,37 +2733,29 @@ style={[registerStyles.scrollView]}>
                         </Text>
                         
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: validName ? '#EBEBEB': '#ff0000',paddingBottom:0}]}>                     
+                  <View style={[regstyles.registerInputStyle, {borderColor: validName ? '#EBEBEB': '#ff0000',paddingBottom:0, height:60, paddingTop:30}]}>  
                     <Text style={{                                           
-                        fontSize: 12,
-                        lineHeight:14, 
-                        padding:0,
-                        color: '#909EAA', 
-                        position:'absolute',
-                        top:12,                     
-                        left:16,
-                        pointerEvents:"none",
-                        //fontFamily:'UbuntuRegular'
-                    }}>
+                          fontSize: 12,
+                          lineHeight:14, 
+                          padding:0,
+                          color: '#909EAA', 
+                          position:'absolute',
+                          top:12,                     
+                          left:12,
+                          pointerEvents:"none",
+                      }}>
                       Kart Üzerindeki İsim
                     </Text>
                     <TextInput
-                    style={{                      
-                      fontSize: 14,
-                      lineHeight:18, 
-                      
-                      color: '#0B1929',
-                    }}
-                    //style={{fontFamily:'UbuntuRegular'}}
                         value={cardName}
                         //onChangeText={UserName => setCardName(UserName)}
                         onChangeText={UserName => {
-                          let isValid = /^[A-Za-zğüşöçİĞÜŞÖÇ ]*$/.test(UserName);
+                          let isValid = /^[A-Za-zğüışöçĞÜİŞÖÇ ]*$/.test(UserName);
                           console.log(UserName);
                           console.log(isValid);
                           if(isValid)setCardName(UserName);
-                          (UserName.length > 4)?setValidName(true) : setValidName(false);
-                        }}
+                          (UserName.length > 2)?setValidName(true):setValidName(false);
+                          }}
                         placeholder="Ad Soyad" //12345
                         placeholderTextColor="#909EAA"
                         keyboardType="default"
@@ -2764,9 +2763,12 @@ style={[registerStyles.scrollView]}>
                         blurOnSubmit={false}
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
+                        autoCapitalize='none'
+                        autoComplete='off'
+                        autoCorrect='false'
                       />
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: validNumber ? '#EBEBEB': '#ff0000',paddingBottom:0,}]}>  
+                  <View style={[regstyles.registerInputStyle, {borderColor: validNumber? '#EBEBEB': '#ff0000',paddingBottom:0, height:60, paddingTop:30}]}>  
                     <Text style={{                                           
                           fontSize: 12,
                           lineHeight:12, 
@@ -2774,65 +2776,53 @@ style={[registerStyles.scrollView]}>
                           color: '#909EAA', 
                           position:'absolute',
                           top:14,                     
-                          left:16,
+                          left:12,
                           pointerEvents:"none",
                       }}>
                         Kart Numarası
                       </Text>          
-                    <TextInput 
-                    style={{                      
-                      fontSize: 14,
-                      lineHeight:18, 
-                      
-                      color: '#0B1929',
-                    }}
-                      value={cardNumber}                     
+                    <TextInput  
+                      value={cardNumber}                    
                       onChangeText={CardNumber =>{
                         let cn = CardNumber.replace(/[^0-9]/g, '');
                         setCardNumber(cn);
                         //checkValidCard(cn);
-                      }}
-                      onBlur={()=>{
+                        }}
+                        onBlur={()=>{
                         checkValidCard(cardNumber);
-                      }}
+                        }}
                       maxLength={16}
                       placeholder="Kart No." //12345
                       placeholderTextColor="#909EAA"
-                      keyboardType="numeric"
-                      onSubmitEditing={Keyboard.dismiss}
-                      blurOnSubmit={false}
-                      underlineColorAndroid="#f000"
-                      returnKeyType="next"
+                        keyboardType="numeric"
+                        onSubmitEditing={Keyboard.dismiss}
+                        blurOnSubmit={false}
+                        underlineColorAndroid="#f000"
+                        returnKeyType="next"
+                        autoCapitalize='none'
+                        autoComplete='off'
+                        autoCorrect='false'
                     />
                   </View>
                   <View style={{
                     flexDirection:'row',
                     justifyContent:'space-between'
                   }}>
-                    <View style={[regstyles.registerInputStyle, {borderColor: validDate ? '#EBEBEB': '#ff0000',width:'48%'}]}> 
+                    <View style={[regstyles.registerInputStyle, {borderColor: validDate? '#EBEBEB': '#ff0000',width:'48%', height:54}]}> 
                     <MaskInput
                         style={{                      
                           fontSize: 14,
-                        lineHeight:14, 
+                        lineHeight:20, 
                           padding:0,
-                          color: '#0B1929',
+                          color: '#909EAA',
                         }}
                         value={cardDate}
                         keyboardType="numeric"
                         placeholder="AA/YY"
-                        placeholderTextColor="#909EAA"
-                        onChangeText={(masked, unmasked) => {
-                          //setUserPhone(masked); // you can use the unmasked value as well
-                          setCardDate(masked);
-                          (unmasked.length > 3)?setValidDate(true) : setValidDate(false);
-                          // assuming you typed "9" all the way:
-                          console.log(masked); // (99) 99999-9999
-                          console.log(unmasked); // 99999999999
-                          //checkPhone();
-                        }}
+                        onChangeText={(masked, unmasked) =>  setCardDate(masked)}
                         mask={[/\d/, /\d/,'/', /\d/, /\d/]}
                       />           
-                      {/* <TextInput
+                       {/* <TextInput
                         style={{                      
                           fontSize: 14,
                           lineHeight:8, 
@@ -2841,24 +2831,25 @@ style={[registerStyles.scrollView]}>
                         }}
                         onChangeText={CardDate => {
                           setCardDate(CardDate);
+                          (CardDate.length > 3)?setValidDate(true):setValidDate(false);
                         }}
-                        placeholder="AA/YY" //12345
+                        //placeholder="AA/YY" //12345
                         placeholderTextColor="#909EAA"
                         keyboardType="default"
                         onSubmitEditing={Keyboard.dismiss}
                         blurOnSubmit={false}
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
-                      /> */}
+                      />  */}
                     </View>
-                    
-                    <View style={[regstyles.registerInputStyle, {borderColor: validCvc ? '#EBEBEB': '#ff0000',width:'48%'}]}>            
+                  
+                    <View style={[regstyles.registerInputStyle, {borderColor: validCvc ? '#EBEBEB': '#ff0000',width:'48%', height:54}]}>            
                       <TextInput
                         style={{                      
                           fontSize: 14,
-                          lineHeight:18, 
+                          lineHeight:20, 
                           padding:0,
-                          color: '#0B1929',
+                          color: '#909EAA',
                         }}
                         value={cardCVC}
                         maxLength={3}
@@ -2875,11 +2866,11 @@ style={[registerStyles.scrollView]}>
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
                       />
-                    </View>
+                    </View> 
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 15 }}>
                   <View>
-                    {/* <Checkbox checked={mpSave} onChange={v => this.setMpSave(v)} /> */}
+                    
                     <Pressable
                     style={{
                     width:20,
@@ -2902,28 +2893,26 @@ style={[registerStyles.scrollView]}>
                   </Pressable>
                   </View>
                   <View style={{ flex: 1, flexDirection: "row", alignItems: "center", marginLeft: 8 }}>
-                    <Text style={{fontSize:12,color:'#0B1929',}}>
+                    <Text style={{fontSize:12}}>
                       <Text style={{ color:'#004F97', fontWeight:'700', textDecorationLine: "underline" }}
-                            //onPress={() => rulesModalizeRef.current?.open()}
-                            onPress={() => Linking.openURL('https://www.masterpassturkiye.com/terms-and-conditions')}
-                            >
+                            onPress={()=>Linking.openURL('https://www.masterpassturkiye.com/terms-and-conditions')}>
                         Kullanım Koşulları'nı
                       </Text> okudum, kartımı Masterpass’e kaydetmek istiyorum.
                     </Text>
                   </View>
 
-                </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: validNick ? '#EBEBEB': '#ff0000',}]}>            
+                  </View>
+                <View style={[regstyles.registerInputStyle, {borderColor: validNick ? '#EBEBEB': '#ff0000', height:54}]}>            
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:18, 
+                        lineHeight:16, 
                         padding:0,
-                        color: '#0B1929',
+                        color: '#909EAA',
                       }}
                       value={cardNick}
                       onChangeText={CardNick => {
-                        (CardNick.length > 2)?setValidNick(true) : setValidNick(false);
+                        (CardNick.length > 2)?setValidNick(true):setValidNick(false);
                         setCardNick(CardNick);
                       }}
                       placeholder="Karta İsim Verin ( kişisel, iş vb.)" //12345
@@ -2933,8 +2922,11 @@ style={[registerStyles.scrollView]}>
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
+                      autoCapitalize='none'
+                      autoComplete='off'
+                      autoCorrect='false'
                     />
-                  </View>
+                  </View> 
                   <View style={{
             alignItems:'center',
             marginBottom:36,
@@ -2971,10 +2963,7 @@ style={[registerStyles.scrollView]}>
                       padding:0,
                     },
                   ]}
-                  onPress={() => {
-                    if(validName&&validNumber&&validDate&&validCvc&&validNick)
-                    addCard();
-                    }}>
+                  onPress={() => {if(validName&&validNumber&&validDate&&validCvc&&validNick) addCard();}}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
                     Kart Ekle
@@ -2993,6 +2982,7 @@ style={[registerStyles.scrollView]}>
             // update component to be aware of loading status
             //const { nativeEvent } = syntheticEvent;
             //this.isLoading = nativeEvent.loading;
+            //Alert.alert('iframe loaded');
             addcardMessage();
           }}
           onMessage={(event)=>{
@@ -3012,7 +3002,7 @@ style={[registerStyles.scrollView]}>
         </View>
               </View>
               </View>
-              </KeyboardAvoidingView>
+              {/* </KeyboardAvoidingView> */}
               </ScrollView>
               </SafeAreaView>
   )
@@ -3032,7 +3022,6 @@ const Payment = ({route, navigation}) => {
   const [mpToken, setMptoken] = useState('');
   const [iframeUrl, setIframeUrl] = useState('');
   const [payfourId, setPayfourId] = useState('');
-  const [url3d, setUrl3d] = useState('');
   const [user, setUser] = useState({token:'', phone:'', payfourId:''});
   const scrollRef = useRef();
   const [cardData, setCardData] = React.useState([]);
@@ -3044,7 +3033,9 @@ const Payment = ({route, navigation}) => {
   const [timerCount, setTimerCount] = useState(180);
   const [timerText, setTimerText] = useState('03:00');
   const [resetTimer, setResetTimer] = useState(false);
-const { showError } = useError();
+  const [url3d, setUrl3d] = useState('');
+  const { showError } = useError();
+
   const { id, cardAlias, maskedCardNumber, issuer, logo } = route.params;
   useEffect(() => {   
     console.log(route.params);
@@ -3131,7 +3122,6 @@ const { showError } = useError();
    
     return unsubscribe;
   }, [navigation]);
-  
   const addCard = ()=>{
     console.log("addCard");
     AsyncStorage.getItem('token').then(value =>{
@@ -3213,7 +3203,6 @@ const { showError } = useError();
           "success": true
           }*/
   }
-
   const resetOtpTimer = ()=>{
     setResetTimer(false);
     setTimerCount(180);
@@ -3300,12 +3289,7 @@ const { showError } = useError();
     let refNo = Math.floor(Math.random() * (999999 - 111111 + 1) + 111111)
     let orderNo = Math.floor(Math.random() * (999999 - 111111 + 1) + 111111)
     
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>");
     let am = amount+"00";
-    console.log(amount);
-    console.log(am);
-    console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<");
-
     let dataToSend = {
       "MerchantId": "347102188",
       "RequestReferenceNo":refNo,
@@ -3459,6 +3443,27 @@ const { showError } = useError();
       });
     },3000)
     });
+  }
+  const on3dMessage = (message) => {
+    console.log("on3dmessage result");
+    console.log(message);    
+    console.log(message.nativeEvent.data);  
+    console.log(message.nativeEvent.data.isSuccess);  
+    let res = JSON.parse(message.nativeEvent.data);
+    console.log("res");
+    console.log(res);
+    console.log(res.isSuccess);
+    console.log(res.errorMessage);
+    if(res.isSuccess == true){
+      console.log("3d success");
+      setUrl3d("");
+      setSuccessModalVisible(true);
+    }else{
+      console.log("3d fail");
+      setUrl3d("");
+      Alert.alert(res.errorMessage);
+    }
+    
   }
   const postPaymentOtp = (otp, ptoken)=>{
     console.log("postpaymentotp");
@@ -3635,27 +3640,6 @@ const { showError } = useError();
       resetOtpTimer();
     }
   }
-  const on3dMessage = (message) => {
-    console.log("on3dmessage");
-    console.log(message);    
-    console.log(message.nativeEvent.data);  
-    console.log(message.nativeEvent.data.isSuccess);  
-    let res = JSON.parse(message.nativeEvent.data);
-    console.log("res");
-    console.log(res);
-    console.log(res.isSuccess);
-    console.log(res.errorMessage);
-    if(res.isSuccess == true){
-      console.log("3d success");
-      setUrl3d("");
-      setSuccessModalVisible(true);
-    }else{
-      console.log("3d fail");
-      setUrl3d("");
-      Alert.alert(res.errorMessage);
-    }
-    
-  }
   const potpMessage = (token) =>{
     console.log("potpMessage");
     console.log(token);
@@ -3675,7 +3659,7 @@ const { showError } = useError();
     precision: 0,
   })
   return(
-    <SafeAreaView style={{flex: 1, backgroundColor: '#efeff3'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <Modal
             animationType="slide"
             transparent={true}
@@ -3683,6 +3667,7 @@ const { showError } = useError();
             onRequestClose={() => {
               setModalVisible(!modalVisible);
             }}>
+              
             <View
               style={{
                 flex: 1,                
@@ -3690,13 +3675,14 @@ const { showError } = useError();
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(92, 92, 92, 0.56)',
               }}>
+                <KeyboardAvoidingView behavior='padding' style={{flex:1}}>
               <View
                 style={{
                   backgroundColor:'#fff',
                   borderTopLeftRadius: 24,
                   borderTopRightRadius: 24,
                   paddingTop: 16,
-                  paddingBottom: 16,
+                  paddingBottom: 36,
                   paddingLeft: 16,
                   paddingRight: 16,
                   width: '100%',
@@ -3741,7 +3727,7 @@ const { showError } = useError();
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:8, 
+                        lineHeight:20, 
                         padding:0,
                         color: '#909EAA',
                       }}
@@ -3805,7 +3791,9 @@ const { showError } = useError();
                 </TouchableOpacity>
                </View>
               </View>
+              </KeyboardAvoidingView>
             </View>
+            
       </Modal>
       <Modal
           animationType="slide"
@@ -3879,7 +3867,7 @@ const { showError } = useError();
     <SubtabHeader routetarget="ListCards" name="Banka / Kredi Kartı ile Yükle" count="0" />
     <ScrollView
 keyboardShouldPersistTaps="handled"
-style={registerStyles.scrollView}>
+style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
 <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
     <View style={{paddingTop: 16,
       paddingBottom: 16,
@@ -3966,7 +3954,7 @@ style={registerStyles.scrollView}>
       </TouchableOpacity>      
     </View>
     </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0}]}>                     
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0, height:60, paddingTop:30}]}>                     
                     <Text style={{                                           
                         fontSize: 12,
                         lineHeight:12, 
@@ -3974,7 +3962,7 @@ style={registerStyles.scrollView}>
                         color: '#909EAA', 
                         position:'absolute',
                         top:14,                     
-                        left:16,
+                        left:12,
                         pointerEvents:"none",
                     }}>
                       Yüklenecek Miktar
@@ -4075,7 +4063,7 @@ style={registerStyles.scrollView}>
                 (url3d != "") ? 
                 <View style={{
                   position:'absolute',
-                  top:0,
+                  top:80,
                   left:0,
                   width:Dimensions.get('window').width,
                   height:Dimensions.get('window').height,
@@ -4100,7 +4088,7 @@ style={registerStyles.scrollView}>
                             
                 }}
                 style={{ 
-                  flex:1,
+                  flex:1,marginTop:40,
                   //backgroundColor:'#0000ff',
                 }} 
                 />
@@ -4180,19 +4168,19 @@ const regstyles = StyleSheet.create({
     backgroundColor: '#1D1D25',
     borderWidth: 0,
     color: '#FFFFFF',
-    height: 52,
+    height: 65,
     alignItems: 'center',
     borderRadius: 10,
     marginLeft: 35,
     marginRight: 35,
     marginBottom: 25,
   },
-  
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 15,
-    fontWeight: '500',
-    fontSize: 14,
+    paddingVertical: 20,
+    fontFamily: 'Helvetica-Bold',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   inputTitleStyle: {
     color: '#7E797F',

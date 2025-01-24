@@ -145,7 +145,7 @@ const SplashScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <ImageBackground
-       style={[styles.bgimg, {flex:1, width:'100%', justifyContent:'flex-start'}]}
+       style={[styles.bgimg, {flex:1, width:'100%', justifyContent:'flex-end'}]}
        resizeMode="cover"
        source={require('../assets/img/export/intro.png')}>
       {/* <Image

@@ -61,7 +61,7 @@ const IbanScreen = ({navigation}) => {
       console.log(response.data);
       console.log(response.data.data);
       setIban(response.data.data.defaultBankAccountNumber);         
-      
+  
       setLoading(false);
     }
 

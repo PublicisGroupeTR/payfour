@@ -279,17 +279,17 @@ const Balance = ({navigation, route}) => {
   }
   };
   const onGetTransactions = (response, cancels) =>{
-    console.log(response.data);
-    console.log(response.data.data.items);
-    console.log("<<<<<<<<<<");
-    console.log(transactionType);
-    console.log(cancels);
-    cancels = filterObj.transaction == "canceled" ? true : false;
-    console.log("cancels? ")
-    console.log(cancels);
-    formatData(response.data.data.items, cancels);        
-    setLoading(false);
-    getIban();
+        console.log(response.data);
+        console.log(response.data.data.items);
+        console.log("<<<<<<<<<<");
+        console.log(transactionType);
+        console.log(cancels);
+        cancels = filterObj.transaction == "canceled" ? true : false;
+        console.log("cancels? ")
+        console.log(cancels);
+        formatData(response.data.data.items, cancels);        
+        setLoading(false);
+        getIban();
   }
   const getPendings = () =>{
     AsyncStorage.getItem('token').then(value =>{
@@ -297,16 +297,16 @@ const Balance = ({navigation, route}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       apiGet('account/getpendingorders?page=0&pageSize=12', onGetPendingOrders);
-      
+
 
     });
   }
   const onGetPendingOrders = (response) =>{
-    console.log(response.data);
-    console.log(response.data.data.items);
-    formatData(response.data.data.items);        
-    setLoading(false);
-    //getIban();
+        console.log(response.data);
+        console.log(response.data.data.items);
+        formatData(response.data.data.items);        
+        setLoading(false);
+        //getIban();
   }
   const formatData = (data, cancels) =>{
     console.log("format data");
@@ -437,19 +437,19 @@ const Balance = ({navigation, route}) => {
     });
   }
   const onGetIban = (response) =>{
-    console.log(response);
-    console.log(response.data);
-    if(response.data.success){
-      //navigation.navigate('Success');
-      //setPayfourId(response.data.data.payfourId);
-      setIban(response.data.data.defaultBankAccountNumber);
-      setLoading(false);
-    }else{
-      setLoading(false);
-      console.log("NO SUCCESSS")
-      console.log(response);
-      Alert.alert(response.data.data.errors.message);
-    }
+        console.log(response);
+        console.log(response.data);
+        if(response.data.success){
+          //navigation.navigate('Success');
+          //setPayfourId(response.data.data.payfourId);
+          setIban(response.data.data.defaultBankAccountNumber);
+          setLoading(false);
+        }else{
+          setLoading(false);
+          console.log("NO SUCCESSS")
+          console.log(response);
+          Alert.alert(response.data.data.errors.message);
+        }
   }
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {  
@@ -1086,9 +1086,8 @@ const Waiting = ({route, navigation}) => {
       console.log(route);
       console.log(route.params);
 
-      setLoading(true);
-      //let b = parseFloat(route.params.amount).toFixed(2);
-      let b = 100;
+      //setLoading(true);
+      let b = parseFloat(route.params.amount).toFixed(2);
         //let fb = checkCurrency(b);
         /*setBalance(fb);
         let amo = checkCurrency(route.params.amount);*/
@@ -1113,7 +1112,7 @@ const Waiting = ({route, navigation}) => {
     return unsubscribe;
   }, [navigation]);
   const onGetUser = (response) => {
-    console.log(response);
+        console.log(response);
         console.log(response.data);
         let rd = response.data.data;
         console.log("channelType");
@@ -1182,6 +1181,7 @@ const Waiting = ({route, navigation}) => {
             response.data.data.availableAllotmentAmount,
           ).replace('TRY', '').trim())
         }
+        setTimeout(function(){setLoading(false);},1500)
         checkUserCreditStatus(userCreditData, userLimitData, response.data.data);
         checkCurrentBalance();
       })
@@ -1213,7 +1213,7 @@ const Waiting = ({route, navigation}) => {
     console.log(hasCredit);
     console.log(hasActiveCredit);
     console.log(hasAvailable);
-
+    setLoading(false);
     if((!hasLimit && !hasCredit) || (hasCredit && !hasActiveCredit)){
         setPayStatus(2);
         setPayText("Limitini Öğren");      
@@ -1231,7 +1231,7 @@ const Waiting = ({route, navigation}) => {
     }
     console.log("PAYSTATUS");
     console.log(payStatus);
-
+    setTimeout(function(){setLoading(false);},1000)
   }
   
     const checkCurrency = data =>{
@@ -1269,6 +1269,8 @@ const Waiting = ({route, navigation}) => {
       }
     }
   const checkCurrentBalance = () => {
+    console.log("checkCurrentBalance!");
+    setLoading(false);
     AsyncStorage.getItem('token').then(value =>{
       const config = {
         headers: { Authorization: `Bearer ${value}` }
@@ -1287,11 +1289,14 @@ const Waiting = ({route, navigation}) => {
           setBalance(fr);
         }
         setLoading(false);
+        setTimeout(function(){setLoading(false);},1500)
         if(route.params){
           if(route.params.payment) setAddModalVisible(true);
         }
       })
       .catch(error => {
+        setLoading(false);
+        setTimeout(function(){setLoading(false);},1500)
         console.error("Error sending data: ", error);
         let msg="";
         (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
@@ -1339,17 +1344,22 @@ const Waiting = ({route, navigation}) => {
               }
             })
           }else{
-            navigation.navigate('CreditOtpScreen', {
-              params:{
-                transactionId:response.data.data.transactionId,
-                paymentId: route.params.paymentId,
-                amount:amount
-              }
+            AsyncStorage.getItem('phone').then((ph) =>{
+              navigation.navigate('CreditOtpScreen', {
+                params:{
+                  transactionId:response.data.data.transactionId,
+                  paymentId: route.params.paymentId,
+                  amount:amount,
+                  phone:ph
+                }
+              })
             })
           }
+          setTimeout(function(){setLoading(false);},1500)
         })
         .catch(error => {
           setLoading(false);
+          setTimeout(function(){setLoading(false);},1500)
           console.error("Error sending data: ", error);
           console.error("Error sending data: ", error.response);
           console.error("Error sending data: ", error.response.data.errors.message);
@@ -1380,6 +1390,7 @@ const Waiting = ({route, navigation}) => {
           paymentId:route.params.paymentId
         }
       console.log(dataToSend);
+      //apiPost('payments/approvewithbalance', dataToSend, onApproveWithBalance);
       apiPost('payments/approvewithbalance', dataToSend, onApproveWithBalance, onApproveWithBalanceError);
       
       });
@@ -1420,7 +1431,7 @@ const Waiting = ({route, navigation}) => {
       setLoading(false);
     }else{
       setLoading(false);
-      console.log("NO SUCCESSS");
+      console.log("NO SUCCESSS")
       console.log(response);
       //Alert.alert(response.data.data.errors.message);
     }
@@ -1445,7 +1456,7 @@ const handleSubmitCancel = () =>{
     });
   }
   const onReject = (response) =>{
-    console.log(response);
+        console.log(response);
         console.log(response.data);
         if(response.data.success){
           //navigation.navigate('Success');
@@ -2242,6 +2253,7 @@ const handleSubmitCancel = () =>{
             onRequestClose={() => {
               setCreditModalVisible(!creditModalVisible);
             }}>
+              
             <View
               style={{
                 flex: 1,                
@@ -2325,7 +2337,7 @@ const handleSubmitCancel = () =>{
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:8, 
+                        lineHeight:16, 
                         padding:0,
                         color: '#909EAA',
                       }}
@@ -2375,7 +2387,7 @@ const handleSubmitCancel = () =>{
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:8, 
+                        lineHeight:16, 
                         padding:0,
                         color: '#909EAA',
                       }}
@@ -2785,8 +2797,9 @@ const regstyles = StyleSheet.create({
   },
   buttonTextStyle: {
     color: '#FFFFFF',
-    fontSize: 16,
+    // paddingVertical: 20,
     lineHeight:24,
+    fontSize: 16,
   },
   inputTitleStyle: {
     color: '#7E797F',

@@ -6,7 +6,7 @@ const PazarlamaAydinlatmaMetni = () => {
   return (
     <ScrollView style={legalStyles.container}>
       <View style={legalStyles.section}>
-        {/* <Text style={legalStyles.title}>CARREFOURSA PAZARLAMA AYDINLATMA METNİ</Text> */}
+        {/* <Text style={legalStyles.title}>CarrefourSA PAZARLAMA AYDINLATMA METNİ</Text> */}
         </View>
         <Text style={legalStyles.paragraph}>İşbu Aydınlatma Metni’nde, kişisel verilerinizin, 6698 sayılı Kişisel Verilerin Korunması Kanunu (“Kanun”) ve ilgili mevzuata uygun olarak, veri sorumlusu “CarrefourSA Plaza Cevizli Mah. Tugay Yolu Cad. No:67/A Blok:B Maltepe/İstanbul” adresinde yer alan CarrefourSA Carrefour Sabancı Ticaret Merkezi Anonim Şirketi (“Şirket”) nezdinde işlenmesine ilişkin esaslar aşağıda belirtilmiştir.</Text>
         <View style={legalStyles.section}>
@@ -21,7 +21,7 @@ const PazarlamaAydinlatmaMetni = () => {
         <Text style={legalStyles.paragraph}>Kişisel verileriniz, iletişim izni verdiğinizi beyan ettiğiniz izin sayfası vasıtasıyla kısmen otomatik olan yöntemle Kanun’un m. 5/1 hükmü uyarınca açık rıza verilmesi, Kanun’un m. 5/2 (f) hükmü uyarınca ilgili kişinin temel hak ve özgürlüklerine zarar vermemek kaydıyla Şirketimizin meşru menfaati için veri işlemenin zorunlu olması hukuki sebebiyle toplanmaktadır. </Text>
         <Text style={legalStyles.subtitle}>4.	Veri Sorumlusuna Başvuru Yolları ve Haklarınız</Text>
         <Text style={legalStyles.paragraph}>Kanun’un 11. maddesi uyarınca, Şirketimize başvurarak, kişisel verilerinizin; a) işlenip işlenmediğini öğrenme, b) işlenmişse bilgi talep etme, c) işlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme, d) yurt içinde / yurt dışında transfer edildiği tarafları öğrenme, e) eksik / yanlış işlenmişse düzeltilmesini isteme, f) Kanun’un 7. maddesinde öngörülen şartlar çerçevesinde silinmesini / yok edilmesini isteme, g) aktarıldığı 3. kişilere yukarıda sayılan (e) ve (f) bentleri uyarınca yapılan işlemlerin bildirilmesini isteme, h) münhasıran otomatik sistemler ile analiz edilmesi nedeniyle aleyhinize bir sonucun ortaya çıkmasına itiraz etme, i) kanuna aykırı olarak işlenmesi sebebiyle zarara uğramanız hâlinde zararın giderilmesini talep etme hakkına sahipsiniz.
-        Yukarıda sıralanan haklarınıza yönelik başvurularınızı Şirket’in CarrefourSA Plaza Cevizli Mah. Tugay Yolu Cad. No:67/A Blok:B Maltepe/İstanbul adresine posta yoluyla veya carrefoursa@carrefoursa.hs03.kep.tr adresine e-posta göndererek iletebilirsiniz. </Text>
+        Yukarıda sıralanan haklarınıza yönelik başvurularınızı Şirket’in CarrefourSA Plaza Cevizli Mah. Tugay Yolu Cad. No:67/A Blok:B Maltepe/İstanbul adresine posta yoluyla veya CarrefourSA@CarrefourSA.hs03.kep.tr adresine e-posta göndererek iletebilirsiniz. </Text>
         <Text style={legalStyles.paragraph}>Verilerinizin Şirketimiz nezdinde hassasiyetle korunduğunu belirtir bize duyduğunuz güven için teşekkür ederiz.</Text>
       </View>
     </ScrollView>

@@ -31,27 +31,27 @@ const NotificationScreen = ({navigation, route}) => {
     return unsubscribe;
   }, [route]);
   const onGetNotifications = (response) =>{
-    console.log(response.data);
+          console.log(response.data);
 
-    let setRead=[];
-    let list = response.data.data.items;
-    for(var i=0; i < list.length;i++){
-      list[i].time = calculateTimeDiff(list[i].date);
-      console.log(list[i].time);
-      if(!list[i].isRead)setRead.push(list[i].id);
-    }
-    setNotificationData(response.data.data.items);
-    setLoading(false);
-    scrollRef.current?.scrollToOffset({ animated: true, offset: 0 });
-    if(setRead.length > 0){
-      console.log("setRead");
-      console.log(setRead);
+          let setRead=[];
+          let list = response.data.data.items;
+          for(var i=0; i < list.length;i++){
+            list[i].time = calculateTimeDiff(list[i].date);
+            console.log(list[i].time);
+            if(!list[i].isRead)setRead.push(list[i].id);
+          }
+          setNotificationData(response.data.data.items);
+          setLoading(false);
+          scrollRef.current?.scrollToOffset({ animated: true, offset: 0 });
+          if(setRead.length > 0){
+            console.log("setRead");
+            console.log(setRead);
       apiPut('notifications/read', setRead, onSetRead);
       
     }
   }
   const onSetRead = (response) =>{
-    console.log(response.data);
+              console.log(response.data);
   }
   const calculateTimeDiff = (date) =>{
     let timestampEntry = new Date().getTime();

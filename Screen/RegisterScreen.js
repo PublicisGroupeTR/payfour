@@ -946,7 +946,7 @@ const RegisterScreen = ({ navigation }) => {
                           {
                             fontSize: 12,
                             //marginBottom: 14,
-                            lineHeight:14,
+                            lineHeight:12,
                             marginBottom: 0,
                             color: "#909EAA",
                           },
@@ -993,6 +993,7 @@ const RegisterScreen = ({ navigation }) => {
                             : registerStyles.inputAndroid,
                             {
                               fontSize:14,
+                              lineHeight:14,
                             
                             }]
                         }
@@ -1108,6 +1109,7 @@ const RegisterScreen = ({ navigation }) => {
                             : registerStyles.inputAndroid,
                             {
                               fontSize:14,
+                              lineHeight:14,
                             
                             }]}
                         onFocus={() => setUserPasswordError(false)}
@@ -1151,7 +1153,7 @@ const RegisterScreen = ({ navigation }) => {
                             fontSize: 12,
                             //marginBottom: 14,
                             lineHeight:14,
-                            marginBottom: 4,
+                            marginBottom: 0,
                             color: "#909EAA",
                           },
                         ]}
@@ -1165,6 +1167,7 @@ const RegisterScreen = ({ navigation }) => {
                             : registerStyles.inputAndroid,
                             {
                               fontSize:14,
+                              lineHeight:14,
                               color:'#1D1E32'
                             
                             }]
@@ -1204,7 +1207,7 @@ const RegisterScreen = ({ navigation }) => {
                             fontSize: 12,
                             //marginBottom: 14,
                             lineHeight:14,
-                            marginBottom: 4,
+                            marginBottom: 0,
                             color: "#909EAA",
                           },
                         ]}
@@ -1218,6 +1221,7 @@ const RegisterScreen = ({ navigation }) => {
                             : registerStyles.inputAndroid,
                             {
                               fontSize:14,
+                              lineHeight:14,
                               color:'#1D1E32'
                             }]
                         }
@@ -1271,6 +1275,7 @@ const RegisterScreen = ({ navigation }) => {
                             : registerStyles.inputAndroid,
                             {
                               fontSize:14,
+                              lineHeight:14,
                               color:'#1D1E32'
                             }]
                         }
@@ -1316,6 +1321,7 @@ const RegisterScreen = ({ navigation }) => {
                             : registerStyles.inputAndroid,
                             {
                               fontSize:14,
+                              lineHeight:14,
                               color:'#1D1E32'
                             }]
                         }

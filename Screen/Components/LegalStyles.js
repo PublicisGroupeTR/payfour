@@ -21,17 +21,10 @@ const legalStyles = StyleSheet.create({
     color:'#0B1929',
     marginVertical: 10,
   },
-  sectionSubtitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color:'#0B1929',
-    marginVertical: 10,
-  },
   paragraph: {
     fontSize: 12,
     lineHeight: 18,
     marginBottom: 10,
-    color:'#909EAA',
   },
   bold: {
     fontWeight: '700',

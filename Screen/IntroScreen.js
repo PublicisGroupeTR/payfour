@@ -23,39 +23,38 @@ const IntroScreen = ({navigation}) => {
   }, [navigation]);
 
   const skipIntro = ()=>{
-    AsyncStorage.setItem('tutorial', "true").then(() =>{    
-    
-      AsyncStorage.getAllKeys((err, keys) => {
-        AsyncStorage.multiGet(keys, (err, stores) => {
-          let obj = {};
-          stores.map((result, i, store) => {
-            // get at each store's key/value so you can work with it
-            
-            let key = store[i][0];
-            let value = store[i][1];
-            obj[key] = value;          
-          });
+    AsyncStorage.setItem('tutorial', "true").then(() =>{
+    AsyncStorage.getAllKeys((err, keys) => {
+      AsyncStorage.multiGet(keys, (err, stores) => {
+        let obj = {};
+        stores.map((result, i, store) => {
+          // get at each store's key/value so you can work with it
+          
+          let key = store[i][0];
+          let value = store[i][1];
+          obj[key] = value;          
+        });
 
-          console.log("storage");
-          console.log(obj);
-          console.log(obj.uniqueMPANumber);
-          console.log(obj.phone);
-          if (obj.phone !== 'null' && obj.uniqueMPANumber !== 'null' && obj.phone !== undefined && obj.uniqueMPANumber !== undefined &&obj.phone !== 'undefined' && obj.uniqueMPANumber !== 'undefined'){
-            //navigation.replace('LoginWithPasswordScreen')
-            navigation.navigate('Auth', { screen: 'LoginWithPasswordScreen' })
-            //navigation.navigate('Auth', { screen: 'RegisterScreen' })
-            //navigation.navigate('Auth', { screen: 'BiometricsScreen' })
-          }else{
-            navigation.navigate('Auth', { screen: 'LoginScreen' });
-          }
-        })
-      })
+        console.log("storage");
+        console.log(obj);
+        console.log(obj.uniqueMPANumber);
+        console.log(obj.phone);
+        if (obj.phone !== 'null' && obj.uniqueMPANumber !== 'null' && obj.phone !== undefined && obj.uniqueMPANumber !== undefined &&obj.phone !== 'undefined' && obj.uniqueMPANumber !== 'undefined'){
+          //navigation.replace('LoginWithPasswordScreen')
+          navigation.navigate('Auth', { screen: 'LoginWithPasswordScreen' })
+          //navigation.navigate('Auth', { screen: 'RegisterScreen' })
+          //navigation.navigate('Auth', { screen: 'BiometricsScreen' })
+        }else{
+          navigation.navigate('Auth', { screen: 'LoginScreen' });
+        }
+      });
+    });
     });
   }
   return (
     <View style={styles.container}>
       <ImageBackground
-       style={[styles.bgimg, {flex:1, width:'100%'}]}
+       style={[styles.bgimg, {flex:1, width:'100%', paddingTop:30, paddingBottom:30}]}
        resizeMode="cover"
        source={require('../assets/img/export/tutorial_bg.png')}>
         <View style={{
@@ -290,7 +289,6 @@ const styles = StyleSheet.create({
   text: {
     color: '#004F97',
     fontSize: Dimensions.get('window').height*0.039,
-    lineHeight: Dimensions.get('window').height*0.039,
     fontWeight: 'bold',
     textAlign:'center',
     paddingLeft:32,

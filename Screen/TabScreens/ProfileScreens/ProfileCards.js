@@ -4,8 +4,8 @@
 
 // Import React and Component
 import React, {useEffect, useRef, useState} from 'react';
-import {Pressable, View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, Image, Modal, FlatList, StyleSheet, 
-  Dimensions, TextInput, Keyboard, TouchableOpacity, Linking, Alert} from 'react-native';
+import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, Image, Modal, 
+  FlatList, StyleSheet, Dimensions, TextInput, Keyboard, TouchableOpacity, Linking, Pressable} from 'react-native';
 import {styles} from '../../Components/Styles.js';
 import TabHeader from '../../Components/TabHeader.js';
 import Loader from '../../Components/Loader.js';
@@ -23,7 +23,6 @@ import MaskInput, { createNumberMask } from 'react-native-mask-input';
 //https://test-client.bubbleads.co/Scripts/masterpass-javascript-sdk-web.min.js
 import {createStackNavigator} from '@react-navigation/stack';
 import { Modalize } from 'react-native-modalize';
-
 const Stack = createStackNavigator();
 
 const ListCards = ({navigation, route }) => {
@@ -46,7 +45,6 @@ const ListCards = ({navigation, route }) => {
   const [cardDeleteModalVisible, setCardDeleteModalVisible] = useState(false);
   const [lastCardResetModalVisible, setLastCardResetModalVisible] = useState(false);
   const [lastCardDeleteModalVisible, setLastCardDeleteModalVisible] = useState(false);
-
   const [otpModalVisible, setOtpModalVisible] = useState(false);
   const [verifyAccountModalVisible, setVerifyAccountModalVisible] = useState(false);
   const [resetMasterPassModalVisible, setResetMasterPassModalVisible] = useState(false);
@@ -802,6 +800,9 @@ const postLinkingOtp = (otp, ptoken)=>{
 
   //'https://mp-test-sdk.masterpassturkiye.com/user-authorization/api/Payment/verify'
   let tk = user.token.replace('Bearer ', '');
+  const config = {
+    headers: { Authorization: `Bearer ${tk}` }
+  };
   let dataToSend = {
     "otpCode": "123456",
     "token": ptoken
@@ -823,9 +824,7 @@ const postLinkingOtp = (otp, ptoken)=>{
     "token": "9011c15a693a4de5b9e439d0355842a6",
     "otpCode": "123456"
 }'*/
-  const config = {
-    headers: { Authorization: `Bearer ${tk}` }
-  };
+  
    axios.post('https://mp-test-sdk.masterpassturkiye.com/user-authorization/api/LinkAccount/verify',dataToSend, config)
            .then(response => {
              console.log(response);
@@ -1168,374 +1167,379 @@ const renderCards = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={otpModalVisible}
-                  onRequestClose={() => {
-                    setOtpModalVisible(!otpModalVisible);
+            animationType="slide"
+            transparent={true}
+            visible={otpModalVisible}
+            onRequestClose={() => {
+              setOtpModalVisible(!otpModalVisible);
+            }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+                <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={styles.modalContainer}
+            >
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 16,
+                  paddingBottom: 16,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width: '100%',
+                }}>
+                  
+                  <View style={{
+                    paddingTop:24,
+                    paddingBottom:24,
+                    alignItems:'center',
+                    justifyContent:'center',
                   }}>
-                  <View
-                    style={{
-                      flex: 1,                
-                      justifyContent: 'flex-end',
-                      alignItems: 'flex-end',
-                      backgroundColor: 'rgba(92, 92, 92, 0.56)',
-                    }}>
-                    <View
-                      style={{
-                        backgroundColor:'#fff',
-                        borderTopLeftRadius: 24,
-                        borderTopRightRadius: 24,
-                        paddingTop: 16,
-                        paddingBottom: 16,
-                        paddingLeft: 16,
-                        paddingRight: 16,
-                        width: '100%',
-                      }}>
-                        
-                        <View style={{
-                          paddingTop:24,
-                          paddingBottom:24,
-                          alignItems:'center',
-                          justifyContent:'center',
+                    <Image 
+                        source={require('../../../assets/img/export/masterpass_logo.png')}
+                        style={{
+                          width: 209,
+                          height: 36,
+                          resizeMode: 'contain',
+                          marginBottom:24,
+                        }}
+                        />
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          lineHeight:20,
+                          color:'#0B1929',
+                          marginBottom:8,
                         }}>
-                          <Image 
-                              source={require('../../../assets/img/export/masterpass_logo.png')}
-                              style={{
-                                width: 209,
-                                height: 36,
-                                resizeMode: 'contain',
-                                marginBottom:24,
-                              }}
-                              />
-                              <Text style={{
-                                fontSize:14,
-                                fontWeight:'700',
-                                lineHeight:20,
-                                color:'#0B1929',
-                                marginBottom:8,
-                              }}>
-                                Masterpass'e kayıtlı kartlarınız var
-                              </Text>
-                              <Text style={{
-                                fontSize:14,
-                                lineHeight:20,
-                                color:'#909EAA',
-                                paddingLeft:24,
-                                paddingRight:24,
-                                textAlign:'center',
-                              }}>
-                                Kartlarınızı Payfour’da görüntüleyebilmek için bankanız tarafından gönderilen tek seferlik doğrulama kodunu giriniz.
-                            </Text>
-                        </View>
-                        <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
-                          <TextInput
-                            style={{                      
-                              fontSize: 14,
-                              lineHeight:8, 
-                              padding:0,
-                              color: '#909EAA',
-                            }}
-                            onChangeText={Otp => setOtp(Otp)}
-                            placeholder="Doğrulama Kodu" //12345
-                            placeholderTextColor="#909EAA"
-                            keyboardType="numeric"
-                            onSubmitEditing={Keyboard.dismiss}
-                            blurOnSubmit={false}
-                            underlineColorAndroid="#f000"
-                            returnKeyType="next"
-                          />
-                          
-                        </View>
-                        <Text style={{color:'#0B1929',  fontSize:14, lineHeight:24, textAlign:'center',marginBottom:24}}>Kalan Süre : {timerText}</Text>
-                        
-                        <View style={{flexDirection:'row'}}>
-                        <TouchableOpacity
-                        style={[
-                          styles.buttonStyle,
-                          {
-                            width: '50%',
-                            height: 52,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderWidth: 2,
-                            borderColor: '#fff',
-                            backgroundColor: '#fff',
-                            padding:0,
-                          },
-                        ]}
-                        //onPress={() => otpMessage()}
-                        onPress={() => postLinkingOtp(otp, otpToken)}>
-                        <Text
-                          style={{fontSize: 14, color: '#004F97'}}>
-                          Tekrar Gönder
+                          Masterpass'e kayıtlı kartlarınız var
                         </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          styles.buttonStyle,
-                          {
-                            width: '50%',
-                            height: 52,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderWidth: 2,
-                            borderColor: '#004F97',
-                            backgroundColor: '#004F97',
-                            padding:0,
-                          },
-                        ]}
-                        //onPress={() => otpMessage()}
-                        onPress={() => postLinkingOtp(otp, otpToken)}>
-                        <Text
-                          style={{fontSize: 14, color: '#ffffff'}}>
-                          Doğrula
-                        </Text>
-                      </TouchableOpacity>
-                     </View>
-                    </View>
+                        <Text style={{
+                          fontSize:14,
+                          lineHeight:20,
+                          color:'#909EAA',
+                          paddingLeft:24,
+                          paddingRight:24,
+                          textAlign:'center',
+                        }}>
+                          Kartlarınızı Payfour’da görüntüleyebilmek için bankanız tarafından gönderilen tek seferlik doğrulama kodunu giriniz.
+                      </Text>
                   </View>
-            </Modal>
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
+                    <TextInput
+                      style={{                      
+                        fontSize: 14,
+                        lineHeight:8, 
+                        padding:0,
+                        color: '#909EAA',
+                      }}
+                      onChangeText={Otp => setOtp(Otp)}
+                      placeholder="Doğrulama Kodu" //12345
+                      placeholderTextColor="#909EAA"
+                      keyboardType="numeric"
+                      onSubmitEditing={Keyboard.dismiss}
+                      blurOnSubmit={false}
+                      underlineColorAndroid="#f000"
+                      returnKeyType="next"
+                    />
+                    
+                  </View>
+                  <Text style={{color:'#0B1929',  fontSize:14, lineHeight:24, textAlign:'center',marginBottom:24}}>Kalan Süre : {timerText}</Text>
+                  
+                  <View style={{flexDirection:'row'}}>
+                  <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '50%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#fff',
+                      backgroundColor: '#fff',
+                      padding:0,
+                    },
+                  ]}
+                  //onPress={() => otpMessage()}
+                  onPress={() => postLinkingOtp(otp, otpToken)}>
+                  <Text
+                    style={{fontSize: 14, color: '#004F97'}}>
+                    Tekrar Gönder
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '50%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                    },
+                  ]}
+                  //onPress={() => otpMessage()}
+                  onPress={() => postLinkingOtp(otp, otpToken)}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Doğrula
+                  </Text>
+                </TouchableOpacity>
+               </View>
+              </View>
+              </KeyboardAvoidingView>
+            </View>
+      </Modal>
       <Modal
-                animationType="slide"
-                transparent={true}
-                visible={cardDeleteModalVisible}
-                onRequestClose={() => {
-                  setCardDeleteModalVisible(!cardDeleteModalVisible);
-                }}>
-                  <View
-                    style={{
-                      flex: 1,                
-                      justifyContent: 'flex-end',
-                      alignItems: 'flex-end',
-                      backgroundColor: 'rgba(92, 92, 92, 0.56)',
-                    }}>
-                
-            
-            
-            <View style={{
-              borderTopLeftRadius:24,
-              borderTopRightRadius:24,
-              backgroundColor:'#fff',
-              paddingTop:32,
-              paddingBottom:32,
-              paddingLeft:16,
-              paddingRight:16,
-              position:'absolute',
-              bottom:0,
-              width:'100%',
-              alignItems:'center',
+          animationType="slide"
+          transparent={true}
+          visible={cardDeleteModalVisible}
+          onRequestClose={() => {
+            setCardDeleteModalVisible(!cardDeleteModalVisible);
+          }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+          
       
-            }}>
-              <Image 
-                source={require('../../../assets/img/export/masterpass_logo.png')}
-                style={{
-                  width: 209,
-                  height: 36,
-                  resizeMode: 'contain',
-                  marginBottom:24,
-                }}
-                />
-              
-              <View>
-              <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
-              {deleteData.cardAlias} kartınızı Masterpass altyapısından silmek istediğinize emin misiniz?
-              </Text>        
-              </View>
-              <View style={{flexDirection:'row'}}>
-                <TouchableOpacity
-                // style={{                    
-                //   backgroundColor:'#004F97',
-                //   alignItems:'center',
-                //   justifyContent:'center',
-                //   borderRadius:8,
-                //   width:'100%',
-                //   height:52, 
-                // marginBottom: 24}}
-                  style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
-                  activeOpacity={0.5}
-                  onPress={()=>{
-                    setCardDeleteModalVisible(false);
-                    //navigation.navigate('ListCards');
-                    console.log("send delete");
-                    confirmDeleteCard();
-                    }}>
-                  <Text style={{color:'#fff', fontSize:14}}>Evet</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
-                  activeOpacity={0.5}
-                  onPress={()=>{
-                    console.log("close success");
-                    setCardDeleteModalVisible(false);
-                    }}>
-                  <Text style={{fontSize:14,color: '#004F97'}}>Hayır</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            </View>
-            </Modal>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={lastCardResetModalVisible}
-                onRequestClose={() => {
-                  setLastCardResetModalVisible(!lastCardResetModalVisible);
-                }}>
-                  <View
-                    style={{
-                      flex: 1,                
-                      justifyContent: 'flex-end',
-                      alignItems: 'flex-end',
-                      backgroundColor: 'rgba(92, 92, 92, 0.56)',
-                    }}>
-                
-            
-            
-            <View style={{
-              borderTopLeftRadius:24,
-              borderTopRightRadius:24,
-              backgroundColor:'#fff',
-              paddingTop:32,
-              paddingBottom:32,
-              paddingLeft:16,
-              paddingRight:16,
-              position:'absolute',
-              bottom:0,
-              width:'100%',
-              alignItems:'center',
       
-            }}>
-              <Image 
-                source={require('../../../assets/img/export/masterpass_logo.png')}
-                style={{
-                  width: 209,
-                  height: 36,
-                  resizeMode: 'contain',
-                  marginBottom:24,
-                }}
-                />
-              
-              <View>
-              <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
-              Son kartınızı sildiğinizde Masterpass'teki tüm bağlantılarınız sıfırlanacaktır. Bunun yerine Payfour ile olan bağlantınızı kaldırmak ister misiniz?
-              </Text>        
-              </View>
-              <View style={{flexDirection:'row'}}>
-                <TouchableOpacity
-                // style={{                    
-                //   backgroundColor:'#004F97',
-                //   alignItems:'center',
-                //   justifyContent:'center',
-                //   borderRadius:8,
-                //   width:'100%',
-                //   height:52, 
-                // marginBottom: 24}}
-                  style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
-                  activeOpacity={0.5}
-                  onPress={()=>{
-                    setLastCardResetModalVisible(false);
-                    //navigation.navigate('ListCards');
-                    console.log("send delete");
-                    confirmUnlinkAccount();
-                    }}>
-                  <Text style={{color:'#fff', fontSize:14}}>Evet</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
-                  activeOpacity={0.5}
-                  onPress={()=>{
-                    console.log("close success");
-                    setLastCardResetModalVisible(false);
-                    setLastCardDeleteModalVisible(true);
-                    }}>
-                  <Text style={{fontSize:14,color: '#004F97'}}>Hayır</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            </View>
-            </Modal>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={lastCardDeleteModalVisible}
-                onRequestClose={() => {
-                  setLastCardDeleteModalVisible(!lastCardDeleteModalVisible);
-                }}>
-                  <View
-                    style={{
-                      flex: 1,                
-                      justifyContent: 'flex-end',
-                      alignItems: 'flex-end',
-                      backgroundColor: 'rgba(92, 92, 92, 0.56)',
-                    }}>
-                
-            
-            
-            <View style={{
-              borderTopLeftRadius:24,
-              borderTopRightRadius:24,
-              backgroundColor:'#fff',
-              paddingTop:32,
-              paddingBottom:32,
-              paddingLeft:16,
-              paddingRight:16,
-              position:'absolute',
-              bottom:0,
-              width:'100%',
-              alignItems:'center',
+      <View style={{
+        borderTopLeftRadius:24,
+        borderTopRightRadius:24,
+        backgroundColor:'#fff',
+        paddingTop:32,
+        paddingBottom:32,
+        paddingLeft:16,
+        paddingRight:16,
+        position:'absolute',
+        bottom:0,
+        width:'100%',
+        alignItems:'center',
+
+      }}>
+        <Image 
+          source={require('../../../assets/img/export/masterpass_logo.png')}
+          style={{
+            width: 209,
+            height: 36,
+            resizeMode: 'contain',
+            marginBottom:24,
+          }}
+          />
+        
+        <View>
+        <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
+        {deleteData.cardAlias} kartınızı Masterpass altyapısından silmek istediğinize emin misiniz?
+        </Text>        
+        </View>
+        <View style={{flexDirection:'row'}}>
+          <TouchableOpacity
+          // style={{                    
+          //   backgroundColor:'#004F97',
+          //   alignItems:'center',
+          //   justifyContent:'center',
+          //   borderRadius:8,
+          //   width:'100%',
+          //   height:52, 
+          // marginBottom: 24}}
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              setCardDeleteModalVisible(false);
+              //navigation.navigate('ListCards');
+              console.log("send delete");
+              confirmDeleteCard();
+              }}>
+            <Text style={{color:'#fff', fontSize:14}}>Evet</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              console.log("close success");
+              setCardDeleteModalVisible(false);
+              }}>
+            <Text style={{fontSize:14,color: '#004F97'}}>Hayır</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      </View>
+      </Modal>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={lastCardResetModalVisible}
+          onRequestClose={() => {
+            setLastCardResetModalVisible(!lastCardResetModalVisible);
+          }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+          
       
-            }}>
-              <Image 
-                source={require('../../../assets/img/export/masterpass_logo.png')}
-                style={{
-                  width: 209,
-                  height: 36,
-                  resizeMode: 'contain',
-                  marginBottom:24,
-                }}
-                />
-              
-              <View>
-              <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
-              Son kartınızın silinmesi ile birlikte Masterpass hesabınız da silinecektir. Onaylıyor musunuz?
-              </Text>        
-              </View>
-              <View style={{flexDirection:'row'}}>
-                <TouchableOpacity
-                // style={{                    
-                //   backgroundColor:'#004F97',
-                //   alignItems:'center',
-                //   justifyContent:'center',
-                //   borderRadius:8,
-                //   width:'100%',
-                //   height:52, 
-                // marginBottom: 24}}
-                  style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
-                  activeOpacity={0.5}
-                  onPress={()=>{
-                    setLastCardDeleteModalVisible(false);
-                    //navigation.navigate('ListCards');
-                    console.log("send delete");
-                    confirmDeleteCard();
-                    }}>
-                  <Text style={{color:'#fff', fontSize:14}}>Evet</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
-                  activeOpacity={0.5}
-                  onPress={()=>{
-                    console.log("close success");
-                    setLastCardDeleteModalVisible(false);
-                    }}>
-                  <Text style={{fontSize:14,color: '#004F97'}}>Hayır</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            </View>
-            </Modal>
+      
+      <View style={{
+        borderTopLeftRadius:24,
+        borderTopRightRadius:24,
+        backgroundColor:'#fff',
+        paddingTop:32,
+        paddingBottom:32,
+        paddingLeft:16,
+        paddingRight:16,
+        position:'absolute',
+        bottom:0,
+        width:'100%',
+        alignItems:'center',
+
+      }}>
+        <Image 
+          source={require('../../../assets/img/export/masterpass_logo.png')}
+          style={{
+            width: 209,
+            height: 36,
+            resizeMode: 'contain',
+            marginBottom:24,
+          }}
+          />
+        
+        <View>
+        <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
+        Son kartınızı sildiğinizde Masterpass'teki tüm bağlantılarınız sıfırlanacaktır. Bunun yerine Payfour ile olan bağlantınızı kaldırmak ister misiniz?
+        </Text>        
+        </View>
+        <View style={{flexDirection:'row'}}>
+          <TouchableOpacity
+          // style={{                    
+          //   backgroundColor:'#004F97',
+          //   alignItems:'center',
+          //   justifyContent:'center',
+          //   borderRadius:8,
+          //   width:'100%',
+          //   height:52, 
+          // marginBottom: 24}}
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              setLastCardResetModalVisible(false);
+              //navigation.navigate('ListCards');
+              console.log("send delete");
+              confirmUnlinkAccount();
+              }}>
+            <Text style={{color:'#fff', fontSize:14}}>Evet</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              console.log("close success");
+              setLastCardResetModalVisible(false);
+              setLastCardDeleteModalVisible(true);
+              }}>
+            <Text style={{fontSize:14,color: '#004F97'}}>Hayır</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      </View>
+      </Modal>
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={lastCardDeleteModalVisible}
+          onRequestClose={() => {
+            setLastCardDeleteModalVisible(!lastCardDeleteModalVisible);
+          }}>
+            <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(92, 92, 92, 0.56)',
+              }}>
+          
+      
+      
+      <View style={{
+        borderTopLeftRadius:24,
+        borderTopRightRadius:24,
+        backgroundColor:'#fff',
+        paddingTop:32,
+        paddingBottom:32,
+        paddingLeft:16,
+        paddingRight:16,
+        position:'absolute',
+        bottom:0,
+        width:'100%',
+        alignItems:'center',
+
+      }}>
+        <Image 
+          source={require('../../../assets/img/export/masterpass_logo.png')}
+          style={{
+            width: 209,
+            height: 36,
+            resizeMode: 'contain',
+            marginBottom:24,
+          }}
+          />
+        
+        <View>
+        <Text style={{fontSize:16, color:'#004F97', textAlign:'center', fontWeight:'500', marginBottom:48}}>
+        Son kartınızın silinmesi ile birlikte Masterpass hesabınız da silinecektir. Onaylıyor musunuz?
+        </Text>        
+        </View>
+        <View style={{flexDirection:'row'}}>
+          <TouchableOpacity
+          // style={{                    
+          //   backgroundColor:'#004F97',
+          //   alignItems:'center',
+          //   justifyContent:'center',
+          //   borderRadius:8,
+          //   width:'100%',
+          //   height:52, 
+          // marginBottom: 24}}
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:10, marginBottom: 0, backgroundColor: '#004F97', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              setLastCardDeleteModalVisible(false);
+              //navigation.navigate('ListCards');
+              console.log("send delete");
+              confirmDeleteCard();
+              }}>
+            <Text style={{color:'#fff', fontSize:14}}>Evet</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[regstyles.buttonStyle, {padding:0, alignItems:'center', justifyContent:'center', height:52,marginLeft:0,marginRight:0, marginBottom: 0, borderWidth:1, borderColor:'#004F97',backgroundColor: '#fff', flex:1}]}              
+            activeOpacity={0.5}
+            onPress={()=>{
+              console.log("close success");
+              setLastCardDeleteModalVisible(false);
+              }}>
+            <Text style={{fontSize:14,color: '#004F97'}}>Hayır</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      </View>
+      </Modal>
       <Modal
           animationType="slide"
           transparent={true}
@@ -1662,7 +1666,7 @@ const renderCards = () => {
         </Text>        
         </View>
         <TouchableOpacity
-          style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, width:'100%', marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+          style={[regstyles.buttonStyle, {width:'100%',padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
           activeOpacity={0.5}
           onPress={()=>{
             console.log("close success");
@@ -1852,13 +1856,11 @@ const AddCards = ({navigation}) => {
   const [validCvc, setValidCvc] = useState(true);
   const [validDate, setValidDate] = useState(true);
   const [validNick, setValidNick] = useState(true);
-  
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cardDate, setCardDate] = useState('');
   const [cardCVC, setCardCVC] = useState('');
   const [cardNick, setCardNick] = useState('');
-  
   const addwebview = useRef();
   const [phone, setPhone] = useState('');
   const [mpToken, setMptoken] = useState('');
@@ -1879,7 +1881,6 @@ const AddCards = ({navigation}) => {
   
   useEffect(() => {   
     const unsubscribe = navigation.addListener('focus', () => { 
-
       //webview.current.postMessage("Hello from RN");
 
       //MasterPassSDK.setAddress('https://mp-test-sdk.masterpassturkiye.com/');
@@ -1996,16 +1997,14 @@ const AddCards = ({navigation}) => {
   }
   const addCard = ()=>{
     let err = false;
-    if(cardName.length < 5){setValidName(false); err = true;}
-    if(!checkValidCard(cardNumber)) err = true;
-    if(cardDate.length <4){setValidDate(false); err = true;}
-    if(!checkValidCVC(cardCVC)) err = true;
-    if(!mpSave) err = true;
-    if(cardNick.length < 3){setValidNick(false); err = true;}
+if(cardName.length < 5){setValidName(false); err = true;}
+if(!checkValidCard(cardNumber)) err = true;
+if(cardDate.length <4){setValidDate(false); err = true;}
+if(!checkValidCVC(cardCVC)) err = true;
+if(!mpSave) err = true;
+if(cardNick.length < 3){setValidNick(false); err = true;}
 
-    if(err) return;
-
-    if(user)
+if(err) return;
     console.log("addCard");
     AsyncStorage.getItem('token').then(value =>{
         
@@ -2094,7 +2093,7 @@ const AddCards = ({navigation}) => {
     console.log("addcardMessage");
     console.log(addwebview);
     console.log(addwebview.current);
-    if(addwebview.current) addwebview.current.postMessage("addCard;check");
+    if(addwebview.current) addwebview.current.postMessage("addCardTest;check");
   }
   const onMessage = (message) => {
     console.log("onmessage");
@@ -2205,7 +2204,7 @@ const checkValidCVC = (cvc) =>{
     if(addwebview.current) addwebview.current.postMessage("otp;123456");
   }
   return(
-    <SafeAreaView style={{flex: 1, backgroundColor: '#efeff3'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <Modal
             animationType="slide"
             transparent={true}
@@ -2220,6 +2219,10 @@ const checkValidCVC = (cvc) =>{
                 alignItems: 'flex-end',
                 backgroundColor: 'rgba(92, 92, 92, 0.56)',
               }}>
+                <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={styles.modalContainer}
+            >
               <View
                 style={{
                   backgroundColor:'#fff',
@@ -2267,11 +2270,11 @@ const checkValidCVC = (cvc) =>{
                           Banka tarafından kart sahibine gönderilen tek seferlik doğrulama kodunu giriniz.
                       </Text>
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',height:54}]}>            
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:8, 
+                        lineHeight:20, 
                         padding:0,
                         color: '#909EAA',
                       }}
@@ -2333,6 +2336,7 @@ const checkValidCVC = (cvc) =>{
                 </TouchableOpacity>
                </View>
               </View>
+              </KeyboardAvoidingView>
             </View>
       </Modal>
       <Modal
@@ -2391,7 +2395,7 @@ const checkValidCVC = (cvc) =>{
         </Text>        
         </View>
         <TouchableOpacity
-          style={[regstyles.buttonStyle, {padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
+          style={[regstyles.buttonStyle, {width:'100%',padding:0, marginLeft:0,marginRight:0, marginBottom: 10, backgroundColor: '#004F97', flex:1}]}              
           activeOpacity={0.5}
           onPress={()=>{
             console.log("close success");
@@ -2538,7 +2542,6 @@ const checkValidCVC = (cvc) =>{
             </View>
           </View>
     </Modal>
-
       <Modalize ref={rulesModalizeRef}
       snapPoint={0}
       modalStyle={{backgroundColor:(0,0,0,0)}}>
@@ -2689,15 +2692,13 @@ Purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Nisl suscipit
             </View>
       </Modalize>
     <Loader loading={loading} />
-    <SubtabHeader routetarget="ListCards" name="Banka / Kredi Kartı ile Yükle" count="0" />
-    {/* <ScrollView 
-keyboardShouldPersistTaps="handled"
-style={[registerStyles.scrollView]}>
-<KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}> */}
-  <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, {paddingBottom:70}]}>
-        <KeyboardAvoidingView enabled>
-    <View style={{paddingTop: 16,
-      paddingBottom: 70,
+    <SubtabHeader routetarget="ListCards" name="Banka / Kredi Kartlarım" count="0" />
+    <ScrollView 
+      keyboardShouldPersistTaps="handled"
+      style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
+      {/* <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}> */}
+          <View style={{paddingTop: 16,
+      paddingBottom: 16,
       paddingLeft: 16, 
       paddingRight: 16,}}>
           <View
@@ -2730,37 +2731,29 @@ style={[registerStyles.scrollView]}>
                         </Text>
                         
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: validName ? '#EBEBEB': '#ff0000',paddingBottom:0}]}>                     
+                  <View style={[regstyles.registerInputStyle, {borderColor: validName ? '#EBEBEB': '#ff0000',paddingBottom:0, height:60, paddingTop:30}]}>  
                     <Text style={{                                           
-                        fontSize: 12,
-                        lineHeight:14, 
-                        padding:0,
-                        color: '#909EAA', 
-                        position:'absolute',
-                        top:12,                     
-                        left:16,
-                        pointerEvents:"none",
-                        //fontFamily:'UbuntuRegular'
-                    }}>
+                          fontSize: 12,
+                          lineHeight:14, 
+                          padding:0,
+                          color: '#909EAA', 
+                          position:'absolute',
+                          top:12,                     
+                          left:12,
+                          pointerEvents:"none",
+                      }}>
                       Kart Üzerindeki İsim
                     </Text>
                     <TextInput
-                    //style={{fontFamily:'UbuntuRegular'}}
-                    style={{                      
-                      fontSize: 14,
-                      lineHeight:18, 
-                      
-                      color: '#0B1929',
-                    }}
                         value={cardName}
                         //onChangeText={UserName => setCardName(UserName)}
                         onChangeText={UserName => {
-                          let isValid = /^[A-Za-zğüşöçİĞÜŞÖÇ ]*$/.test(UserName);
+                          let isValid = /^[A-Za-zğüışöçĞÜİŞÖÇ ]*$/.test(UserName);
                           console.log(UserName);
                           console.log(isValid);
                           if(isValid)setCardName(UserName);
-                          (UserName.length > 4)?setValidName(true) : setValidName(false);
-                        }}
+                          (UserName.length > 2)?setValidName(true):setValidName(false);
+                          }}
                         placeholder="Ad Soyad" //12345
                         placeholderTextColor="#909EAA"
                         keyboardType="default"
@@ -2768,9 +2761,12 @@ style={[registerStyles.scrollView]}>
                         blurOnSubmit={false}
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
+                        autoCapitalize='none'
+                        autoComplete='off'
+                        autoCorrect='false'
                       />
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: validNumber ? '#EBEBEB': '#ff0000',paddingBottom:0,}]}>  
+                  <View style={[regstyles.registerInputStyle, {borderColor: validNumber? '#EBEBEB': '#ff0000',paddingBottom:0, height:60, paddingTop:30}]}>  
                     <Text style={{                                           
                           fontSize: 12,
                           lineHeight:12, 
@@ -2778,65 +2774,53 @@ style={[registerStyles.scrollView]}>
                           color: '#909EAA', 
                           position:'absolute',
                           top:14,                     
-                          left:16,
+                          left:12,
                           pointerEvents:"none",
                       }}>
                         Kart Numarası
                       </Text>          
-                    <TextInput 
-                    style={{                      
-                      fontSize: 14,
-                      lineHeight:18, 
-                      
-                      color: '#0B1929',
-                    }}
-                      value={cardNumber}                     
+                    <TextInput  
+                      value={cardNumber}                    
                       onChangeText={CardNumber =>{
                         let cn = CardNumber.replace(/[^0-9]/g, '');
                         setCardNumber(cn);
                         //checkValidCard(cn);
-                      }}
-                      onBlur={()=>{
+                        }}
+                        onBlur={()=>{
                         checkValidCard(cardNumber);
-                      }}
+                        }}
                       maxLength={16}
                       placeholder="Kart No." //12345
                       placeholderTextColor="#909EAA"
-                      keyboardType="numeric"
-                      onSubmitEditing={Keyboard.dismiss}
-                      blurOnSubmit={false}
-                      underlineColorAndroid="#f000"
-                      returnKeyType="next"
+                        keyboardType="numeric"
+                        onSubmitEditing={Keyboard.dismiss}
+                        blurOnSubmit={false}
+                        underlineColorAndroid="#f000"
+                        returnKeyType="next"
+                        autoCapitalize='none'
+                        autoComplete='off'
+                        autoCorrect='false'
                     />
                   </View>
                   <View style={{
                     flexDirection:'row',
                     justifyContent:'space-between'
                   }}>
-                    <View style={[regstyles.registerInputStyle, {borderColor: validDate ? '#EBEBEB': '#ff0000',width:'48%'}]}> 
+                    <View style={[regstyles.registerInputStyle, {borderColor: validDate? '#EBEBEB': '#ff0000',width:'48%', height:54}]}> 
                     <MaskInput
                         style={{                      
                           fontSize: 14,
-                        lineHeight:14, 
+                        lineHeight:20, 
                           padding:0,
-                          color: '#0B1929',
+                          color: '#909EAA',
                         }}
                         value={cardDate}
                         keyboardType="numeric"
                         placeholder="AA/YY"
-                        placeholderTextColor="#909EAA"
-                        onChangeText={(masked, unmasked) => {
-                          //setUserPhone(masked); // you can use the unmasked value as well
-                          setCardDate(masked);
-                          (unmasked.length > 3)?setValidDate(true) : setValidDate(false);
-                          // assuming you typed "9" all the way:
-                          console.log(masked); // (99) 99999-9999
-                          console.log(unmasked); // 99999999999
-                          //checkPhone();
-                        }}
+                        onChangeText={(masked, unmasked) =>  setCardDate(masked)}
                         mask={[/\d/, /\d/,'/', /\d/, /\d/]}
                       />           
-                      {/* <TextInput
+                       {/* <TextInput
                         style={{                      
                           fontSize: 14,
                           lineHeight:8, 
@@ -2845,24 +2829,25 @@ style={[registerStyles.scrollView]}>
                         }}
                         onChangeText={CardDate => {
                           setCardDate(CardDate);
+                          (CardDate.length > 3)?setValidDate(true):setValidDate(false);
                         }}
-                        placeholder="AA/YY" //12345
+                        //placeholder="AA/YY" //12345
                         placeholderTextColor="#909EAA"
                         keyboardType="default"
                         onSubmitEditing={Keyboard.dismiss}
                         blurOnSubmit={false}
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
-                      /> */}
+                      />  */}
                     </View>
-                    
-                    <View style={[regstyles.registerInputStyle, {borderColor: validCvc ? '#EBEBEB': '#ff0000',width:'48%'}]}>            
+                  
+                    <View style={[regstyles.registerInputStyle, {borderColor: validCvc ? '#EBEBEB': '#ff0000',width:'48%', height:54}]}>            
                       <TextInput
                         style={{                      
                           fontSize: 14,
-                          lineHeight:18, 
+                          lineHeight:20, 
                           padding:0,
-                          color: '#0B1929',
+                          color: '#909EAA',
                         }}
                         value={cardCVC}
                         maxLength={3}
@@ -2879,11 +2864,11 @@ style={[registerStyles.scrollView]}>
                         underlineColorAndroid="#f000"
                         returnKeyType="next"
                       />
-                    </View>
+                    </View> 
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 15 }}>
                   <View>
-                    {/* <Checkbox checked={mpSave} onChange={v => this.setMpSave(v)} /> */}
+                    
                     <Pressable
                     style={{
                     width:20,
@@ -2906,28 +2891,26 @@ style={[registerStyles.scrollView]}>
                   </Pressable>
                   </View>
                   <View style={{ flex: 1, flexDirection: "row", alignItems: "center", marginLeft: 8 }}>
-                    <Text style={{fontSize:12,color:'#0B1929',}}>
+                    <Text style={{fontSize:12}}>
                       <Text style={{ color:'#004F97', fontWeight:'700', textDecorationLine: "underline" }}
-                            //onPress={() => rulesModalizeRef.current?.open()}
-                            onPress={() => Linking.openURL('https://www.masterpassturkiye.com/terms-and-conditions')}
-                            >
+                            onPress={()=>Linking.openURL('https://www.masterpassturkiye.com/terms-and-conditions')}>
                         Kullanım Koşulları'nı
                       </Text> okudum, kartımı Masterpass’e kaydetmek istiyorum.
                     </Text>
                   </View>
 
-                </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: validNick ? '#EBEBEB': '#ff0000',}]}>            
+                  </View>
+                <View style={[regstyles.registerInputStyle, {borderColor: validNick ? '#EBEBEB': '#ff0000', height:54}]}>            
                     <TextInput
                       style={{                      
                         fontSize: 14,
-                        lineHeight:18, 
+                        lineHeight:16, 
                         padding:0,
-                        color: '#0B1929',
+                        color: '#909EAA',
                       }}
                       value={cardNick}
                       onChangeText={CardNick => {
-                        (CardNick.length > 2)?setValidNick(true) : setValidNick(false);
+                        (CardNick.length > 2)?setValidNick(true):setValidNick(false);
                         setCardNick(CardNick);
                       }}
                       placeholder="Karta İsim Verin ( kişisel, iş vb.)" //12345
@@ -2937,8 +2920,11 @@ style={[registerStyles.scrollView]}>
                       blurOnSubmit={false}
                       underlineColorAndroid="#f000"
                       returnKeyType="next"
+                      autoCapitalize='none'
+                      autoComplete='off'
+                      autoCorrect='false'
                     />
-                  </View>
+                  </View> 
                   <View style={{
             alignItems:'center',
             marginBottom:36,
@@ -2975,10 +2961,7 @@ style={[registerStyles.scrollView]}>
                       padding:0,
                     },
                   ]}
-                  onPress={() => {
-                    if(validName&&validNumber&&validDate&&validCvc&&validNick)
-                    addCard();
-                    }}>
+                  onPress={() => {if(validName&&validNumber&&validDate&&validCvc&&validNick) addCard();}}>
                   <Text
                     style={{fontSize: 14, color: '#ffffff'}}>
                     Kart Ekle
@@ -2997,6 +2980,7 @@ style={[registerStyles.scrollView]}>
             // update component to be aware of loading status
             //const { nativeEvent } = syntheticEvent;
             //this.isLoading = nativeEvent.loading;
+            //Alert.alert('iframe loaded');
             addcardMessage();
           }}
           onMessage={(event)=>{
@@ -3016,7 +3000,7 @@ style={[registerStyles.scrollView]}>
         </View>
               </View>
               </View>
-              </KeyboardAvoidingView>
+              {/* </KeyboardAvoidingView> */}
               </ScrollView>
               </SafeAreaView>
   )
@@ -3084,19 +3068,19 @@ const regstyles = StyleSheet.create({
     backgroundColor: '#1D1D25',
     borderWidth: 0,
     color: '#FFFFFF',
-    height: 52,
+    height: 65,
     alignItems: 'center',
     borderRadius: 10,
     marginLeft: 35,
     marginRight: 35,
     marginBottom: 25,
   },
-  
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 15,
-    fontWeight: '500',
-    fontSize: 14,
+    paddingVertical: 20,
+    fontFamily: 'Helvetica-Bold',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   inputTitleStyle: {
     color: '#7E797F',

@@ -140,11 +140,11 @@ const CreditOtpScreen = ({navigation, route}) => {
     
   }
   const onForgotPassword = (response) => {
-    setLoading(false);
-    console.log(response.data);
-    //setLogin();
-    setStopOtpTimer(false);
-    resetOtpTimer();
+      setLoading(false);
+        console.log(response.data);
+        //setLogin();
+        setStopOtpTimer(false);
+        resetOtpTimer();
   }
   const resendData = (obj) => {
     /*let dataToSend ={
@@ -165,11 +165,11 @@ const CreditOtpScreen = ({navigation, route}) => {
     
   }
   const onBegin = (response) => {
-    setLoading(false);
-    console.log(response.data);
-    //setLogin();
-    setStopOtpTimer(false);
-    resetOtpTimer();
+      setLoading(false);
+        console.log(response.data);
+        //setLogin();
+        setStopOtpTimer(false);
+        resetOtpTimer();
   }
   const handleSubmitOtp = () => {
     console.log("creditotp submit");
@@ -192,17 +192,17 @@ const CreditOtpScreen = ({navigation, route}) => {
     });
   };
   const onVerifyOtpForLoginReset = (response)=>{
-    setLoading(false);
-      console.log(response.data); 
-      //otpInputRef.current.clear();
-      setOtp('');       
-    if(response.data.error){
-      otpInputRef2.current.clear();
-      Alert.alert(response.data.error.message);
-    }else{
-      checkFirstInstallmentDate(response.data.data.tokenId);
-      
-    }
+        setLoading(false);
+          console.log(response.data); 
+          //otpInputRef.current.clear();
+          setOtp('');       
+        if(response.data.error){
+          otpInputRef2.current.clear();
+          Alert.alert(response.data.error.message);
+        }else{
+          checkFirstInstallmentDate(response.data.data.tokenId);
+          
+        }
   }
   const checkFirstInstallmentDate = (tokenId)=>{
     console.log("checkFirstInstallmentDate");
@@ -270,6 +270,8 @@ const CreditOtpScreen = ({navigation, route}) => {
   const setCreditDate = ()=>{
     console.log("tokenId: "+creditToken);
     console.log("firstInstallmentDate: "+selectedFirstDate);
+    console.log("firstInstallmentDate: "+selectedFirstDate.replace(/-/g, ""));
+    let inst = selectedFirstDate.replace(/-/g, "");
     setCreditDateModalVisible(false);
     navigation.navigate('CreditInstallmentsScreen', {
       params:{
@@ -595,8 +597,8 @@ const renderItem = item => {
         <Loader loading={loading} />
         <ScrollView
             keyboardShouldPersistTaps="handled"
-            style={{flexGrow:1}}>
-          <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
+            style={{flexGrow:1, height:Dimensions.get('window').height-100}}>
+          
             <View
               style={{
                 flex: 1,
@@ -720,7 +722,6 @@ const renderItem = item => {
                 </TouchableOpacity>
               </View>
             </View>
-          </KeyboardAvoidingView>
         </ScrollView>
       </SafeAreaView>
       </ImageBackground>

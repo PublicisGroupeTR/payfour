@@ -57,20 +57,20 @@ const CheckWaitingScreen = ({navigation}) => {
     });
   });
   const onGetWaitings = (response) =>{
-    console.log("getwaitings");
-    console.log(response.data);
-    console.log(response.data.data.length);
-    setLoading(false);
-    if(response.data.data.length > 0){
-      let pObj = response.data.data[0];
-      console.log(pObj);
-      navigation.navigate('wallet', { 
-        screen: 'Waiting',
-        params: pObj
-      })
-    }else{
-      navigation.navigate('PayOptionsScreen2');
-    }
+            console.log("getwaitings");
+            console.log(response.data);
+            console.log(response.data.data.length);
+            setTimeout(function(){setLoading(false);}, 2000);
+            if(response.data.data.length > 0){
+              let pObj = response.data.data[0];
+              console.log(pObj);
+              navigation.navigate('wallet', { 
+                screen: 'Waiting',
+                params: pObj
+              })
+            }else{
+              navigation.navigate('PayOptionsScreen2');
+            }
   }
   return(
     <SafeAreaView style={{flex: 1}}>      

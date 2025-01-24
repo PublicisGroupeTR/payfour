@@ -50,6 +50,7 @@ useEffect(() => {
     console.log("CreditChangePasswordScreen")
     console.log(route);
     console.log(route.params);
+    setLoading(false);
   }, []);
   const handleSubmitPress = () => {
     console.log("handleSubmitPress");
@@ -87,7 +88,7 @@ useEffect(() => {
     });
   }
   const onResetOtpSent = (response) =>{
-    console.log(response.data);
+        console.log(response.data);
         console.log(response.data.data);
         setLoading(false);
 
@@ -115,7 +116,7 @@ useEffect(() => {
           keyboardShouldPersistTaps="handled"
           style={styles.scrollView}>
           <KeyboardAvoidingView enabled style={{flex:1}}>
-            <View style={{padding:16, backgroundColor: '#efeff3', flex:1}}>
+            <View style={{padding:16, backgroundColor: '#efeff3', flex:1,  minHeight:Dimensions.get('window').height}}>
               <View>
                 <Text style={{color:'#004F97', fontSize:16, fontWeight:'700', marginBottom:16, paddingTop:12}}>
                 Kredi giriş şifreni güncellemelisin
@@ -138,7 +139,7 @@ useEffect(() => {
                 <View>
                   
                   <View style={styles.sectionStyle}>
-                  <View style={[styles.registerInputStyle, {marginBottom:12, borderColor: userPasswordError ? '#ff0000' : '#E4E4E8',}]}>                  
+                  <View style={[styles.registerInputStyle, {marginBottom:12, borderColor: userPasswordError ? '#ff0000' : '#E4E4E8'}]}>                  
                     <Text
                       style={[
                         styles.inputTitleStyle,
@@ -146,7 +147,7 @@ useEffect(() => {
                           fontSize: 12,
                           //marginBottom: 14,
                           marginBottom: 0,
-                          color: '#909EAA',
+                          color: '#909EAA'
                         },
                       ]}>
                       Mevcut Şifre
@@ -185,9 +186,10 @@ useEffect(() => {
                     <TextInput
                       style={{                      
                         fontSize: 16,
-                        lineHeight:8, 
+                        lineHeight:24, 
                         padding:0,
                         color: '#015096',
+                        marginBottom:10
                       }}
                       maxLength={6}
                       onFocus={() => setUserPasswordError(false)}
@@ -253,9 +255,10 @@ useEffect(() => {
                     <TextInput
                       style={{                      
                         fontSize: 16,
-                        lineHeight:8, 
+                        lineHeight:24, 
                         padding:0,
                         color: '#015096',
+                        marginBottom:10
                       }}
                       maxLength={6}
                       onFocus={() => setUserPasswordError(false)}
@@ -324,9 +327,10 @@ useEffect(() => {
                     <TextInput
                       style={{                      
                         fontSize: 16,
-                        lineHeight:8, 
+                        lineHeight:24, 
                         padding:0,
                         color: '#015096',
+                        marginBottom:10
                       }}
                       maxLength={6}
                       onFocus={() => setUserPasswordError(false)}

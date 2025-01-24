@@ -85,13 +85,12 @@ const ProfilePlatinumSuccess = ({navigation}) => {
           height:52
         }}
         //onPress={()=>{navigation.navigate('ProfileHome', { filter:'platinum' })}}
-        onPress={() => navigation.navigate('campaign', { 
+          onPress={() => navigation.navigate('campaign', { 
           screen: 'CampaignList',
           params: {
             filters:{isAw:true, isSp:false}
           }
-        })}
-        >
+        })}>
           <Text style={{color:'#fff', fontSize:14}}>
           Keşfetmeye Başla
           </Text>

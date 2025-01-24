@@ -132,11 +132,11 @@ const CreditPasswordOtpScreen = ({navigation, route}) => {
     
   }
   const onForgotPassword = (response) => {
-    setLoading(false);
-    console.log(response.data);
-    //setLogin();
-    setStopOtpTimer(false);
-    resetOtpTimer();
+      setLoading(false);
+        console.log(response.data);
+        //setLogin();
+        setStopOtpTimer(false);
+        resetOtpTimer();
   }
   const resendData = (obj) => {
     /*let dataToSend ={
@@ -157,11 +157,11 @@ const CreditPasswordOtpScreen = ({navigation, route}) => {
     
   }
   const onBegin = (response) => {
-    setLoading(false);
-    console.log(response.data);
-    //setLogin();
-    setStopOtpTimer(false);
-    resetOtpTimer();
+      setLoading(false);
+        console.log(response.data);
+        //setLogin();
+        setStopOtpTimer(false);
+        resetOtpTimer();
   }
   const handleSubmitOtp = () => {
     console.log("creditotp submit");
@@ -183,17 +183,17 @@ const CreditPasswordOtpScreen = ({navigation, route}) => {
     });
   };
   const onVerifyOtpforLoginReset = (response)=>{
-    setLoading(false);
-      console.log(response.data); 
-      //otpInputRef.current.clear();
-      setOtp('');       
-    if(response.data.error){
-      otpInputRef2.current.clear();
-      Alert.alert(response.data.error.message);
-    }else{
-      checkFirstInstallmentDate(response.data.data.tokenId);
-      
-    }
+        setLoading(false);
+          console.log(response.data); 
+          //otpInputRef.current.clear();
+          setOtp('');       
+        if(response.data.error){
+          otpInputRef2.current.clear();
+          Alert.alert(response.data.error.message);
+        }else{
+          checkFirstInstallmentDate(response.data.data.tokenId);
+          
+        }
   }
   const checkFirstInstallmentDate = (tokenId)=>{
     console.log("checkFirstInstallmentDate");
@@ -207,25 +207,25 @@ const CreditPasswordOtpScreen = ({navigation, route}) => {
     });
   }
   const onCalculateFirstInstallmentDate = (response) => {
-    setLoading(false);
-    console.log(response.data); 
+        setLoading(false);
+          console.log(response.data); 
 
+                
+        if(response.data.error){
+          otpInputRef2.current.clear();
+          Alert.alert(response.data.error.message);
+        }else{
+          navigation.navigate('CreditInstallmentsScreen', {
+            params:{
+              transactionId:route.params.params.transactionId,
+              paymentId: route.params.params.paymentId,
+              firstInstallmentDate:response.data.data.calculatedInstallmentDate,
+              amount:route.params.params.amount,
+              tokenId:tokenId
+            }
+          })
           
-  if(response.data.error){
-    otpInputRef2.current.clear();
-    Alert.alert(response.data.error.message);
-    }else{
-      navigation.navigate('CreditInstallmentsScreen', {
-        params:{
-          transactionId:route.params.params.transactionId,
-          paymentId: route.params.params.paymentId,
-          firstInstallmentDate:response.data.data.calculatedInstallmentDate,
-          amount:route.params.params.amount,
-          tokenId:tokenId
         }
-      })
-      
-    }
   }
   const [otpInput, setOtpInput] = useState('');
 
@@ -371,7 +371,7 @@ const CreditPasswordOtpScreen = ({navigation, route}) => {
                 paddingTop: 68,
                 paddingBottom: 120,
                 flexDirection:'column',
-                justifyContent:'space-between',
+                justifyContent:'space-between',             
                 
               }}>
               <View>

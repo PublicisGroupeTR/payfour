@@ -47,9 +47,7 @@ const ProfilePlatinumMemberScreen = ({navigation}) => {
   const [faqItem, setFaqItem] = useState(1);
   const [exitModalVisible, setExitModalVisible] = useState(false);
   const [exitSuccessModalVisible, setExitSuccessModalVisible] = useState(false);
-  const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-  const [segmentInfo, setSegmentInfo] = useState({subStartDate:"01 Ocak 2025", segmentStartDate:"01 Ocak 2025", segmentEndDate:"01 Ocak 2025", segmentPrice:"0"});
-
+  
   useEffect(() => {
     AsyncStorage.getItem('payfourId').then(value =>{
       setPayfourId(value);
@@ -65,35 +63,10 @@ const ProfilePlatinumMemberScreen = ({navigation}) => {
     });
   }, [navigation]);
   const onGetUser = (response) => {
-    //console.log(response.data);
+    console.log(response.data);
     console.log(response.data.data);
     
     setIban(response.data.data.defaultBankAccountNumber);
-    if(response.data.data.segmentInfo){
-      let d = response.data.data.segmentInfo;
-
-      let ssd = new Date(d.startDateUTC);
-      console.log(ssd.getDate()+"/"+ssd.getMonth()+"/"+ssd.getFullYear());
-      let subStartDate = ssd.getDate()+" "+months[ssd.getMonth()]+" "+ssd.getFullYear();
-      console.log(subStartDate);
-      let std = new Date(d.lastTransaction.startDateUTC);
-      console.log(std.getDate()+"/"+std.getMonth()+"/"+std.getFullYear());
-      let segmentStartDate = std.getDate()+" "+months[std.getMonth()]+" "+std.getFullYear();
-      console.log(segmentStartDate);
-      let exd = new Date(d.lastTransaction.expireDateUTC);
-      console.log(exd.getDate()+"/"+exd.getMonth()+"/"+exd.getFullYear());
-      let segmentEndDate = exd.getDate()+" "+months[exd.getMonth()]+" "+exd.getFullYear();
-      console.log(segmentEndDate);
-
-      console.log(d.lastTransaction.price);
-      let sInfo = {
-        subStartDate: subStartDate,
-        segmentStartDate: segmentStartDate,
-        segmentEndDate: segmentEndDate,
-        segmentPrice: d.lastTransaction.price
-      }
-      setSegmentInfo(sInfo);
-    }
   }
 const cancelPlatinum = () => {
   console.log("cancelPlatinum");
@@ -325,7 +298,7 @@ const cancelPlatinum = () => {
                   marginBottom:24,
                 }}>
                   <Text style={{fontSize:14, color:'#0B1929', lineHeight:27, marginBottom:10}}>
-                    <Text style={{fontWeight:'700'}}>{segmentInfo.subStartDate}</Text>’den beri <Text style={{fontWeight:'700'}}>Platin</Text> üyesiniz
+                    <Text style={{fontWeight:'700'}}>06 Haziran 2024</Text>’den beri <Text style={{fontWeight:'700'}}>Platin</Text> üyesiniz
                   </Text>
                   <View style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-start'}}>
                     <Image
@@ -338,7 +311,7 @@ const cancelPlatinum = () => {
                       }}
                     />
                     <Text style={{fontSize:14, color:'#0B1929', lineHeight:20, marginBottom:10, width:'80%'}}> 
-                      <Text style={{fontWeight:'700'}}>{segmentInfo.segmentStartDate} - {segmentInfo.segmentEndDate}</Text> dönemi için üyelik ücretiniz <Text style={{fontWeight:'700'}}>{segmentInfo.segmentPrice} TL</Text> olarak alınmıştır.
+                      <Text style={{fontWeight:'700'}}>25 Haziran 2024 - 24 Temmuz 2024</Text> dönemi için üyelik ücretiniz <Text style={{fontWeight:'700'}}>9 TL</Text> olarak alınmıştır.
                     </Text>
                   </View>
                   <View style={{width:20, height:30, alignItems:'center', justifyContent:'center'}}>
@@ -355,7 +328,7 @@ const cancelPlatinum = () => {
                       }}
                     />
                     <Text style={{fontSize:14, color:'#0B1929', lineHeight:20, marginBottom:10, width:'80%'}}> 
-                      Üyeliğiniz <Text style={{fontWeight:'700'}}>{segmentInfo.segmentEndDate}</Text>’te güncel üyelik ücretiniz alınarak yenilenecektir.
+                      Üyeliğiniz <Text style={{fontWeight:'700'}}>25 Temmuz 2024</Text>’te güncel üyelik ücretiniz alınarak yenilenecektir.
                     </Text>
                   </View>
                 </View>

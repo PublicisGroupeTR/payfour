@@ -40,7 +40,7 @@ const ProfileInfo = ({navigation}) => {
   const [userDate, setUserDate] = useState('');
   const [userData, setUserData] = useState({});
   const [initials, setInitials] = useState('');
-
+  
   const [cityData, setCityData] = useState([]);
   const [selectedCity, setSelectedCity] = useState([]);
 
@@ -99,7 +99,7 @@ const ProfileInfo = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
   const onGetUser = (response) => {
-    console.log(response);
+          console.log(response);
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
@@ -159,7 +159,7 @@ const ProfileInfo = ({navigation}) => {
     });
   }
   const onGetCities = (response, d) => {
-    console.log(response.data);
+        console.log(response.data);
         console.log(response.data.data);
         setCityData(response.data.data)
         //setUserData(response.data.data);
@@ -186,7 +186,7 @@ const ProfileInfo = ({navigation}) => {
     });
   }
   const onGetDistricts = (response, d) => {
-    console.log(response.data);
+        console.log(response.data);
         console.log(response.data.data);
         setCountyData(response.data.data)
         //setUserData(response.data.data);
@@ -300,12 +300,12 @@ console.log(selectedCounty);
   
   };
   const onUpdateUser = (response) =>{
-    console.log(response.data);
-    console.log(response.data.data);
-    setLoading(false);
-    if(response.data.success){
-      setSuccessModalVisible(true);
-    }
+        console.log(response.data);
+        console.log(response.data.data);
+        setLoading(false);
+        if(response.data.success){
+          setSuccessModalVisible(true);
+        }
   }
   const validMail = (mail) =>
   {
@@ -474,7 +474,7 @@ console.log(selectedCounty);
             paddingLeft: 16,
             paddingRight: 16,
             width: '100%',
-            paddingBottom: Platform.OS == 'ios'? 220 : 190
+            paddingBottom: Platform.OS == 'ios'? 220 : 150
           }}>
             <View style={{
               flexDirection: 'row',
@@ -494,7 +494,7 @@ console.log(selectedCounty);
                 justifyContent: 'center',
                 alignItems:'center',
               }}>
-                
+               
               {initials != '' ? <Text style={{color:'#fff', fontSize:38}}>{initials}</Text> :
                 <Image
                     source={require('../../../assets/img/export/avatar2.png')}
@@ -560,7 +560,7 @@ console.log(selectedCounty);
                       }}>
                         Soyad
                       </Text>          
-                    <TextInput  
+                    <TextInput                      
                                         
                       onChangeText={UserSurname => {
                         let isValid = /^[A-Za-z]+[A-Za-z ]*$/.test(UserSurname);
@@ -832,19 +832,13 @@ console.log(selectedCounty);
               />
             </View> */}
           </View>
-          {/* <TouchableOpacity
-            style={[styles.buttonStyle, {backgroundColor:'#005BAA', justifyContent:'center'}]}
-            activeOpacity={0.5}
-            onPress={handleUpdate}>
-            <Text style={[styles.buttonTextStyle, {paddingVertical:0}]}>Güncelle</Text>
-          </TouchableOpacity> */}
           <TouchableOpacity style={{                    
             backgroundColor:'#004F97',
             alignItems:'center',
             justifyContent:'center',
             borderRadius:8,
             width:'100%',
-            height:52, 
+            height:52,
           }}
           //onPress={()=>{navigation.navigate('ProfileHome', { filter:'platinum' })}}
           activeOpacity={0.5}
@@ -912,14 +906,15 @@ const profileStyles = StyleSheet.create({
 const regstyles = StyleSheet.create({
   registerInputStyle:{
     backgroundColor:'#fff',
-    paddingTop:17,
+    paddingTop:28,
     paddingBottom:17, 
-    paddingLeft:12, 
+    paddingLeft:16, 
     paddingRight:12,    
     borderWidth: 1,
     borderRadius: 10,
     marginBottom:16,
     width:'100%',
+    height:60,
   },
   mainBody: {
     flex: 1,

@@ -16,7 +16,7 @@ const SubtabHeader = props => {
   /*console.log(navigation);
   console.log(routetarget);*/
   return (
-    <View style={[styles.topStyle, {backgroundColor: props.mode === 'dark' ? 'transparent' : '#fff'}]}>
+    <View style={[styles.topStyle, {backgroundColor: props.mode === 'dark' ? 'transparent' : '#fff',zIndex:1}]}>
       <TouchableOpacity
         style={[
           styles.buttonClose,
@@ -31,7 +31,6 @@ const SubtabHeader = props => {
               tintColor: props.mode === 'dark' ? '#fff' : 'none',
             }}
           />
-      
       <View style={{
         alignItems: 'center',
         justifyContent:'center',
@@ -44,7 +43,9 @@ const SubtabHeader = props => {
           {name}
         </Text>
       </View>
+      
       </TouchableOpacity>
+      
     </View>
   );
 };
@@ -62,8 +63,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',    
     borderColor: '#EBEBEB',
     position: 'relative',
-    backgroundColor:'#fff',
-    zIndex:2,
+    backgroundColor:'#fff'
   },
   buttonClose: {
     

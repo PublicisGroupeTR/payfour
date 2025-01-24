@@ -6,7 +6,7 @@ const PayfourUyelikVeKullaniciSozlesmesi = () => {
   return (
     <View style={legalStyles.container}>
       <View style={legalStyles.section}>
-{/* <Text style={legalStyles.title}>CARREFOURSA PAYFOUR ÜYELİK VE KULLANICI SÖZLEŞMESİ</Text>*/}
+{/* <Text style={legalStyles.title}>CarrefourSA PAYFOUR ÜYELİK VE KULLANICI SÖZLEŞMESİ</Text>*/}
 </View> 
 
 <Text style={legalStyles.subtitle}>1. TARAFLAR</Text>
@@ -88,7 +88,7 @@ const PayfourUyelikVeKullaniciSozlesmesi = () => {
 <Text style={legalStyles.paragraph}>14.1. Üye’nin, Şirket’e bildirdiği elektronik posta adresi, bu Sözleşme ile ilgili olarak yapılacak her türlü bildirim için yasal adresin isteneceği elektronik posta olarak kabul edilir. Bu elektronik posta adresinin kullanılarak Üye’ye yapılan her türlü bildirimin, Üye’ye postanın gönderildiği gün ulaştığı kabul edilir.</Text>
 <Text style={legalStyles.paragraph}>14.2. Üye, Şirket ile aşağıdaki iletişim kanallarından her zaman irtibata geçebilir. Uygulama’da yer alan ilgili bölümden Şirket’e doğrudan e-posta gönderebilir.</Text>
 <Text style={legalStyles.paragraph}>Telefon Numarası	:	444 10 00</Text>
-<Text style={legalStyles.paragraph}>E-posta adresi	:	bilgi@carrefoursa.com</Text>
+<Text style={legalStyles.paragraph}>E-posta adresi	:	bilgi@CarrefourSA.com</Text>
 <Text style={legalStyles.subtitle}>15. YÜRÜRLÜK</Text>
 <Text style={legalStyles.paragraph}>İşbu Sözleşme, Şirket tarafından üyelik için belirlenen bilgilerin Üye tarafından tam ve hatasız şekilde Şirket ile paylaşılmasını ve Şirket tarafından belirlenen ve başta işbu Sözleşme olmak üzere Uygulama’da yer alan ilgili metinlerin Üye tarafından okunmasını ve elektronik ortamda onaylanmak suretiyle kabul edilmesini takiben Şirket’in ilgili üyeliği onaylaması ile yürürlüğe girer ve Üye’nin üyeliği iptal edilinceye kadar tüm hüküm ve sonuçlarını doğurmaya devam eder. Ayrıca, Üye, kendisiyle ilgili olarak verdiği bilgilerin doğruluğunu onayladığını, bu onaylamadan sonra kendisine gönderilen tüm ticari içerikli gönderilere muvafakati bulunduğunu beyan, kabul ve taahhüt eder.</Text>
 

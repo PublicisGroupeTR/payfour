@@ -4,7 +4,7 @@
 
 // Import React and Component
 import React, {useEffect, useState, useRef} from 'react';
-import {Alert, ActivityIndicator, View, Stylesheet, Modal, Image, Pressable, ImageBackground, TouchableOpacity, Text, TextInput, Dimensions, StyleSheet, SafeAreaView, Keyboard, KeyboardAvoidingView} from 'react-native';
+import {Alert, Platform, ActivityIndicator, View, Stylesheet, Modal, Image, Pressable, ImageBackground, TouchableOpacity, Text, TextInput, Dimensions, StyleSheet, SafeAreaView, Keyboard, KeyboardAvoidingView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {styles} from '../Components/Styles.js';
@@ -13,6 +13,8 @@ import TabHeader from '../Components/TabHeader.js';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {ScrollView} from 'react-native-gesture-handler';
 import Swiper from 'react-native-swiper';
+
+import LimitOtpScreen from './CreditScreens/LimitOtpScreen.js';
 
 import axios from 'react-native-axios';
 import SubtabHeader from '../Components/SubtabHeader.js';
@@ -23,8 +25,6 @@ import LimitSorgulaAydinlatmaMetni from '../Legals/LimitSorgulaAydinlatmaMetni.j
 import ProfillemeAcikRizaBeyani from '../Legals/ProfillemeAcikRizaBeyani.js';
 import ProfillemeAydinlatmaMetni from '../Legals/ProfillemeAydinlatmaMetni.js';
 import MaskInput, { createNumberMask } from 'react-native-mask-input';
-//import AggreementScreen from './CreditScreens/AggreementScreen.js';
-
 
 const Stack = createStackNavigator();
 
@@ -150,7 +150,7 @@ const Intro = ({navigation}) => {
             </View>
       </Modalize>
       <ImageBackground
-       style={[istyles.bgimg, {flex:1, width:'100%', backgroundColor:'#fff', paddingBottom:60}]}
+       style={[istyles.bgimg, {flex:1, width:'100%', backgroundColor:'#fff', paddingTop:30, paddingBottom:60}]}
        resizeMode="cover"
        source={require('../../assets/img/export/hazir_limit_bg.png')}>
         
@@ -281,7 +281,7 @@ const Intro = ({navigation}) => {
                 marginRight:10,
                 resizeMode: 'contain'}}
               /> 
-              <Text style={{fontSize:14, color:'#004F97'}}>Hazır Limit</Text>
+              <Text style={{fontSize:14, color:'#004F97'}}>Hazır Limitini Öğren</Text>
             </View>
             
             <Image
@@ -335,24 +335,23 @@ const Intro = ({navigation}) => {
                   fontSize:12,
                   
                   }}>                    
-                    <Text style={{fontSize:12, color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Aydınlatma Metni'ni</Text> okudum, anladım.
+                    <Text style={{fontSize:12, color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Aydınlatma Metni'ni</Text> onaylıyorum.
                   </Text>
                   </TouchableOpacity>
                   
           </View>
         
           <TouchableOpacity
-            style={[styles.buttonStyle, {width:Dimensions.get('window').width - 48, marginLeft:24, backgroundColor: '#004F97', marginBottom:0}]}
+            style={[styles.buttonStyle, {justifyContent:'center', height:52,width:Dimensions.get('window').width - 48, marginLeft:24, backgroundColor: '#004F97', marginBottom:0}]}
             //disabled={!toggleSubmit}
             activeOpacity={0.5}
             //disabled={!userKVKKAgreement}
             onPress={()=>{
               //navigation.navigate('CreditForm');
               navigation.navigate('CreditOtp');
-              //navigation.navigate('CreditSuccess');
             }
               }>
-            <Text style={styles.buttonTextStyle}>Hazır Limitini Öğren</Text>
+            <Text style={[styles.buttonTextStyle, {fontWeight:'400', paddingVertical:0}]}>Hazır Limitini Öğren</Text>
           </TouchableOpacity>
           <View style={{
           padding:16,
@@ -389,6 +388,7 @@ const Intro2 = ({navigation}) => {
   const [animating, setAnimating] = useState(true);
   const [slideEnd, setSlideEnd] = useState(false);
   const sliderRef = useRef();
+  const consentModalizeRef = useRef(null);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -400,8 +400,110 @@ const Intro2 = ({navigation}) => {
 
   return (
     <View style={istyles.container}>
+      <Modalize ref={consentModalizeRef}
+      snapPoint={0}
+      modalStyle={{backgroundColor:(0,0,0,0)}}>
+        <View
+              style={{
+                flex: 1,                
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                width:Dimensions.get('window').width
+              }}>
+              <View
+                style={{
+                  backgroundColor:'#fff',
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingTop: 33,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                  width:'100%',
+                  
+                }}>
+                  
+                  <View style={{
+                      flexDirection:'row',
+                      justifyContent:'space-between',
+                      }}>
+                        <Text style={{
+                          fontSize:14,
+                          fontWeight:'700',
+                          color:'#0B1929',
+                          lineHeight:20,
+                          textAlign:'left',
+                          marginBottom:24,
+                        }}>
+                          CARREFOURSA PAYFOUR LİMİT SORGULA AYDINLATMA METNİ
+                        </Text>
+                        <TouchableOpacity 
+                      style={{
+                        width:24,
+                        height:24,
+                      }}
+                      onPress={() => {
+                        console.log('close');
+                        consentModalizeRef.current?.close();}}>                  
+                        <Image 
+                        source={require('../../assets/img/export/close.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          tintColor:'#0B1929'
+                        }}
+                      />
+                    </TouchableOpacity>
+                       </View> 
+                      
+                      <LimitSorgulaAydinlatmaMetni /> 
+                  </View>
+                  
+              <View style={{
+                  backgroundColor:'#fff',
+                  paddingTop:24,
+                  paddingBottom:80,
+                  paddingLeft:16,
+                  paddingRight:16,
+                  width:'100%',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 30,                  
+                  elevation: 18,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {
+                      width: '100%',
+                      height: 52,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#004F97',
+                      backgroundColor: '#004F97',
+                      padding:0,
+                      elevation:1,
+                    },
+                  ]}
+                  onPress={() => consentModalizeRef.current?.close()}>
+                  <Text
+                    style={{fontSize: 14, color: '#ffffff'}}>
+                    Kapat
+                  </Text>
+                </TouchableOpacity>
+               </View>
+               
+            </View>
+      </Modalize>
       <ImageBackground
-       style={[istyles.bgimg, {flex:1, width:'100%', backgroundColor:'#fff', paddingBottom:60,}]}
+       style={[istyles.bgimg, {flex:1, width:'100%', backgroundColor:'#fff', paddingTop:30,paddingBottom:60,}]}
        resizeMode="cover"
        source={require('../../assets/img/export/hazir_limit_bg.png')}>
         
@@ -585,14 +687,14 @@ const Intro2 = ({navigation}) => {
                   fontSize:12,
                   
                   }}>                    
-                    <Text style={{fontSize:12, color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Aydınlatma Metni'ni</Text> okudum, anladım.
+                    <Text style={{fontSize:12, color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Aydınlatma Metni'ni</Text> onaylıyorum.
                   </Text>
                   </TouchableOpacity>
                   
           </View>
         
           <TouchableOpacity
-            style={[styles.buttonStyle, {width:Dimensions.get('window').width - 48, marginLeft:24, backgroundColor: '#004F97', marginBottom:0}]}
+            style={[styles.buttonStyle, {justifyContent:'center', height:52,width:Dimensions.get('window').width - 48, marginLeft:24, backgroundColor: '#004F97', marginBottom:0}]}
             //disabled={!toggleSubmit}
             activeOpacity={0.5}
             //disabled={!userKVKKAgreement}
@@ -601,7 +703,7 @@ const Intro2 = ({navigation}) => {
               navigation.navigate('CreditOtp');
             }
               }>
-            <Text style={styles.buttonTextStyle}>Hemen Başvur</Text>
+            <Text style={[styles.buttonTextStyle, {fontWeight:'400', paddingVertical:0}]}>Hemen Başvur</Text>
           </TouchableOpacity>
           <View style={{
           padding:16,
@@ -679,7 +781,7 @@ const CreditOtp = ({navigation, route}) => {
         console.log(response.data.data);
         setTransactionId(response.data.data.transactionId);
         //setModalVisible(true);
-        startOtpTimer();
+        //startOtpTimer();
         //setTitleData(response.data.data);
         //fillRoles();
       })
@@ -775,12 +877,12 @@ const CreditOtp = ({navigation, route}) => {
         });
         console.log("storage");
         console.log(obj);
-        //route.params.forgot ? resendForgot(obj) : resendData(obj);
-        resendData(obj);
+        route.params.forgot ? resendForgot(obj) : resendData(obj);
       });
     });
 
   }
+  
   const resendForgot = (obj) => {
     console.log("forgot resend");
     /*let dataToSend ={
@@ -903,151 +1005,148 @@ const CreditOtp = ({navigation, route}) => {
     });     
     
   };
-  const [otpInput, setOtpInput] = useState('');
+
 
   const input = useRef<OTPTextView>(null);
 
-  const clear = () => input.current?.clear();
-
-  const updateOtpText = () => input.current?.setValue(otpInput);
-
-  const showTextAlert = () => otpInput && Alert.alert(otpInput);
-
   const handleCellTextChange = async (text, i) => {
-    /*if (i === 0) {
+    console.log("handleCellTextChange")
+    console.log(text, i);
+    if (i === 0) {
       const clippedText = await Clipboard.getString();
+      console.log(clippedText);
       if (clippedText.slice(0, 1) === text) {
         input.current?.setValue(clippedText, true);
       }
-    }*/
+    }
   };
 
   return (
     <View style={styles.mainBody}>
-      <ImageBackground
-       style={styles.bgimg}
-       resizeMode="cover"
-       source={require('../../assets/img/export/login_bg.png')}>
-      <SafeAreaView syle={{flex: 1}}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setModalVisible(!modalVisible);
+    <ImageBackground
+     style={styles.bgimg}
+     resizeMode="cover"
+     source={require('../../assets/img/export/login_bg.png')}>
+    <SafeAreaView syle={{flex: 1}}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(92, 92, 92, 0.56)',
+            paddingLeft: 48,
+            paddingRight: 48,
           }}>
           <View
             style={{
-              flex: 1,
-              justifyContent: 'center',
+              backgroundColor: '#ffffff',
+              borderRadius: 10,
+              paddingTop: 41,
+              paddingBottom: 49,
+              paddingLeft: 36,
+              paddingRight: 36,
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              backgroundColor: 'rgba(92, 92, 92, 0.56)',
-              paddingLeft: 48,
-              paddingRight: 48,
             }}>
-            <View
+            <Image
+              source={require('../../assets/img/info.png')}
               style={{
-                backgroundColor: '#ffffff',
-                borderRadius: 10,
-                paddingTop: 41,
-                paddingBottom: 49,
-                paddingLeft: 36,
-                paddingRight: 36,
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
+                width: 27,
+                height: 27,
+                marginBottom: 24,
+              }}
+            />
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: '700',
+                color: '#1D1D25',
+                marginBottom: 18,
               }}>
-              <Image
-                source={require('../../assets/img/info.png')}
-                style={{
-                  width: 27,
-                  height: 27,
-                  marginBottom: 24,
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: '700',
-                  color: '#1D1D25',
-                  marginBottom: 18,
-                }}>
-                Uyarı
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '400',
-                  color: '#1D1D25',
-                  marginBottom: 33,
-                }}>
-                Lütfen bilgilerinizi kontrol edin.
-              </Text>
+              Uyarı
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: '400',
+                color: '#1D1D25',
+                marginBottom: 33,
+              }}>
+              Lütfen bilgilerinizi kontrol edin.
+            </Text>
 
-              <TouchableOpacity
-                style={[
-                  styles.buttonStyle,
-                  {
-                    width: '100%',
-                    height: 55,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderWidth: 2,
-                    borderColor: '#1D1D25',
-                    backgroundColor: '#1D1D25',
-                  },
-                ]}
-                onPress={() => setModalVisible(!modalVisible)}>
-                <Text
-                  style={{fontSize: 16, fontWeight: '700', color: '#ffffff'}}>
-                  TEKRAR DENE
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.buttonStyle,
-                  {
-                    width: '100%',
-                    height: 55,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderWidth: 2,
-                    borderColor: '#1D1D25',
-                    backgroundColor: '#ffffff',
-                  },
-                ]}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                  /*Linking.openURL(
-                    'https://panel.gelirortaklari.com/users/forgot_password',
-                  );*/
-                  openLink('https://panel.gelirortaklari.com/users/forgot_password')
-                }}>
-                <Text
-                  style={{fontSize: 16, fontWeight: '700', color: '#1D1D25'}}>
-                  ŞİFREMİ UNUTTUM
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={[
+                styles.buttonStyle,
+                {
+                  width: '100%',
+                  height: 55,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderWidth: 2,
+                  borderColor: '#1D1D25',
+                  backgroundColor: '#1D1D25',
+                },
+              ]}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text
+                style={{fontSize: 16, fontWeight: '700', color: '#ffffff'}}>
+                TEKRAR DENE
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.buttonStyle,
+                {
+                  width: '100%',
+                  height: 55,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderWidth: 2,
+                  borderColor: '#1D1D25',
+                  backgroundColor: '#ffffff',
+                },
+              ]}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+                /*Linking.openURL(
+                  'https://panel.gelirortaklari.com/users/forgot_password',
+                );*/
+                openLink('https://panel.gelirortaklari.com/users/forgot_password')
+              }}>
+              <Text
+                style={{fontSize: 16, fontWeight: '700', color: '#1D1D25'}}>
+                ŞİFREMİ UNUTTUM
+              </Text>
+            </TouchableOpacity>
           </View>
-        </Modal>
-        <TabHeader routetarget="IntroHazirLimit" name="" count="0" />
-        <Loader loading={loading} />
-        <ScrollView
+        </View>
+      </Modal>
+      <TabHeader routetarget="LoginScreen" name="" count="0" />
+      <Loader loading={loading} />
+      <ScrollView
             keyboardShouldPersistTaps="handled"
             style={{flexGrow:1}}>
-          <KeyboardAvoidingView enabled  behavior="padding" style={{ flex: 1, minHeight:Dimensions.get('window').height }}>
+        
             <View
               style={{
-                flex: 1,
-                paddingTop: 68,
-                paddingBottom: 40,
+                flexGrow: 1,
+                paddingTop: 0,
+                paddingBottom: 140,
                 flexDirection:'column',
-                justifyContent:'space-between',
+                justifyContent:'space-between'
                 
               }}>
               <View>
@@ -1084,8 +1183,9 @@ const CreditOtp = ({navigation, route}) => {
                   6 haneli kodu giriniz.
                   </Text>
                 </View>
-                <View style={[styles.centerStyle, {paddingLeft:34, paddingRight:34}]}>
-                  <View style={{paddingTop:12, paddingBottom:12}}>                    
+                <View style={[styles.centerStyle, {paddingLeft:18, paddingRight:18}]}>
+                  <View style={{paddingTop:12, paddingBottom:12}}>
+                  
                   <OTPTextView
                     ref={otpInputRef2}
                     containerStyle={otpstyles.textInputContainer}
@@ -1093,7 +1193,6 @@ const CreditOtp = ({navigation, route}) => {
                     tintColor="#015096"
                     offTintColor={'#DADEE7'}
                     handleTextChange={(text) => {
-                      setOtpInput(text);
                       console.log(`OTP is ${text}`); 
                       setOtp(text);
                       if(text.length >5){ 
@@ -1103,7 +1202,8 @@ const CreditOtp = ({navigation, route}) => {
                     }}
                     handleCellTextChange={handleCellTextChange}
                     inputCount={6}
-                    keyboardType="numeric"
+                    keyboardType="number-pad"
+                    textcontentType="oneTimeCode"
                   />
                   
                   <View style={{marginTop:12}}>
@@ -1133,8 +1233,7 @@ const CreditOtp = ({navigation, route}) => {
                 </TouchableOpacity>
               </View>
             </View>
-          </KeyboardAvoidingView>
-        </ScrollView>
+         </ScrollView>
       </SafeAreaView>
       </ImageBackground>
       </View>
@@ -1194,7 +1293,6 @@ const CreditForm = ({route, navigation}) => {
 
   const consentModalizeRef = useRef(null);
   const kvkkModalizeRef = useRef(null);
-
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -1459,23 +1557,8 @@ const CreditForm = ({route, navigation}) => {
           let dt = y+"-"+day+"-"+m;
           console.log(dt);
           let d = new Date(dt);
-          let fd = d.toISOString();
-          console.log(fd);
+          let fd = d.toISOString()
 
-          /*{
-    tckn:"",
-    birthDate:"",
-    email:"",
-    incomes: [
-      {
-        "incomeTypeId": 0,
-        "amount": ""
-      }
-    ],
-    occupationId:"",
-    educationLevelId:"",
-    occupationRoleId:"",
-  }*/
    let sendData={
     tempToken:tempToken,
     tckn:userTCKN,
@@ -1487,9 +1570,9 @@ const CreditForm = ({route, navigation}) => {
           "amount": income
         }
     ],
-    occupationId:selectedJob,
-    educationLevelId:selectedEducation,
-    occupationRoleId:selectedTitle,
+    occupationId:selectedJob.id,
+    educationLevelId:selectedEducation.id,
+    occupationRoleId:selectedTitle.id,
     consents:consentCheckList,
    }
    console.log("sendData");
@@ -1530,27 +1613,13 @@ const CreditForm = ({route, navigation}) => {
     setIncome(fr);
   }
   const checkForm = ()=>{
-    /*{
-    tckn:"",
-    birthDate:"",
-    email:"",
-    incomes: [
-      {
-        "incomeTypeId": 0,
-        "amount": ""
-      }
-    ],
-    occupationId:"",
-    educationLevelId:"",
-    occupationRoleId:"",
-  }*/
     console.log(userBirth);
     console.log(userTCKN);
     console.log(income);
-    console.log(selectedJob);
-    console.log(selectedEducation);
-    console.log(selectedTitle);
-    if(userBirth != "" && userTCKN != "" && income != "" && selectedJob != "" && selectedEducation != "" && selectedTitle != ""){
+    console.log(selectedJob.id);
+    console.log(selectedEducation.id);
+    console.log(selectedTitle.id);
+    if(userBirth != "" && userTCKN != "" && income != "" && selectedJob.id != undefined && selectedEducation.id != undefined && selectedTitle.id != undefined){
       setFormEnabled(true);
     }
  
@@ -1647,7 +1716,7 @@ const CreditForm = ({route, navigation}) => {
       precision: 0,
     })
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#efeff3'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <Modalize ref={consentModalizeRef}
       snapPoint={0}
       modalStyle={{backgroundColor:(0,0,0,0)}}>
@@ -1978,9 +2047,8 @@ const CreditForm = ({route, navigation}) => {
       <Loader loading={loading} />      
       <SubtabHeader routetarget="discover" name="Limitini Öğren" count="0" />
 
-      <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, {paddingBottom:32}]}>
+      <ScrollView keyboardShouldPersistTaps="handled" style={[styles.scrollView, {paddingBottom:32, backgroundColor: '#efeff3'}]}>
       <KeyboardAvoidingView enabled>
-        <View style={{display:refresh?'flex':'none'}}></View>
     <View style={{paddingTop: 16,
       paddingBottom: 120,
       paddingLeft: 16,
@@ -2055,7 +2123,7 @@ const CreditForm = ({route, navigation}) => {
                   <View style={[regstyles.registerInputStyle, {borderColor: userTCKNError? '#ff0000': '#EBEBEB',}]}>            
                     <TextInput
                       style={{                      
-                        fontSize: 12,
+                        fontSize: 14,
                         lineHeight:16, 
                         padding:0,
                         paddingLeft:4,
@@ -2067,7 +2135,7 @@ const CreditForm = ({route, navigation}) => {
                         let cn = UserTCKN.replace(/[^0-9]/g, '');
                         setUserTCKN(cn);
                         setUserTCKNError(!TCNOKontrol(cn));
-                        setRefresh(!refresh);
+                        setRefresh(!refresh); 
                         checkForm();}}
                       placeholder="TCKN" //12345
                       placeholderTextColor="#909EAA"
@@ -2078,7 +2146,7 @@ const CreditForm = ({route, navigation}) => {
                       returnKeyType="next"
                     />
                   </View>
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0}]}>                      
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',paddingBottom:0,height:60,paddingTop:30}]}>                      
                     
                     <Text style={{                                           
                         fontSize: 12,
@@ -2094,7 +2162,6 @@ const CreditForm = ({route, navigation}) => {
                     <MaskInput
                         value={userBirth}
                         keyboardType="numeric"
-                        style={{fontSize:12}}
                         onChangeText={(masked, unmasked) => {
                           //setUserPhone(masked); // you can use the unmasked value as well
                           setUserBirth(masked)
@@ -2140,7 +2207,7 @@ const CreditForm = ({route, navigation}) => {
                     onChange={item => {
                       console.log('selected');
                       console.log(item);
-                      setSelectedEducation(item.id);
+                      setSelectedEducation(item);
                       setRefresh(!refresh);
                       checkForm();
                     }}
@@ -2178,7 +2245,7 @@ const CreditForm = ({route, navigation}) => {
                     onChange={item => {
                       console.log('selected');
                       console.log(item);
-                      setSelectedJob(item.id);
+                      setSelectedJob(item);
                       setRefresh(!refresh);
                       checkForm();
                     }}
@@ -2216,16 +2283,37 @@ const CreditForm = ({route, navigation}) => {
                     onChange={item => {
                       console.log('selected');
                       console.log(item);
-                      setSelectedTitle(item.id);
+                      setSelectedTitle(item);
                       setRefresh(!refresh);
                       checkForm();
                     }}
                     renderItem={renderItem}
                   />                  
-                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>      
+                  <View style={[regstyles.registerInputStyle, {borderColor: '#EBEBEB',}]}>            
+                    {/* <TextInput
+                      style={{                      
+                        fontSize: 14,
+                        lineHeight:16, 
+                        padding:0,
+                        paddingLeft:4,
+                        color: '#0B1929',
+                      }}
+                      value={income}
+                      onChangeText={Income => { 
+                        let cn = Income.replace(/[^0-9]/g, '');
+                        setIncome(cn); checkForm();}}
+                      placeholder="Aylık Ortalama Net Gelir" //12345
+                      placeholderTextColor="#909EAA"
+                      keyboardType="numeric"
+                      onSubmitEditing={Keyboard.dismiss}
+                      blurOnSubmit={false}
+                      underlineColorAndroid="#f000"
+                      returnKeyType="next"
+                      maxLength={9}
+                    /> */}
                     <MaskInput
                         style={{                      
-                          fontSize: 12,
+                          fontSize: 14,
                           lineHeight:14, 
                           padding:0,
                           color: '#0B1929',
@@ -2237,7 +2325,7 @@ const CreditForm = ({route, navigation}) => {
                         maxLength={11}
                         onChangeText={(masked, unmasked) => {
                           //setUserPhone(masked); // you can use the unmasked value as well
-                          setIncome(unmasked)
+                          setIncome(unmasked);
                           setRefresh(!refresh);
                           // assuming you typed "9" all the way:
                           console.log(masked); // (99) 99999-9999
@@ -2248,22 +2336,170 @@ const CreditForm = ({route, navigation}) => {
                         mask={tlMask}
                         />
                   </View>
-                  <View style={{
+                  {/* <View style={{
                   marginBottom:22,
-                  alignItems:'flex-start',
+                  alignItems:'center',
                   flexDirection:'row',
                   paddingRight:16,
                   }}>
-                  
-                  <Image
-                    source={require('../../assets/img/export/information.png')}
+                  <Pressable
                     style={{
-                    width: 20,
-                    height: 20,
+                    width:20,
+                    height:20,
                     marginRight:8,
-                    resizeMode: 'contain',
+                    backgroundColor:userKVKKAgreement ? '#015096':'#dadee7',
+                    borderRadius:5,
+                    alignItems:'center',
+                    justifyContent:'center'
                     }}
-                    />
+                    onPress={()=>setUserKVKKAgreement(!userKVKKAgreement)}>
+                      <Image
+                      source={require('../../assets/img/export/check.png')}
+                      style={{
+                      width: userKVKKAgreement ? 14 : 0,
+                      height: userKVKKAgreement ? 10 : 0,
+                      resizeMode: 'contain',
+                      }}
+                      />
+                  </Pressable> 
+                  <TouchableOpacity onPress={()=>consentModalizeRef.current?.open()}>
+                  <Text style={{
+                  fontWeight:'300',
+                  color:'#1E242F',
+                  fontSize:12,
+                  }}>
+                  Kişisel verilerin korunması, işlenmesi ve aktarılmasına ilişkin <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Açık Rıza Formu’nu</Text> onaylıyorum.
+                  </Text>
+                  </TouchableOpacity>
+                  </View>
+                  <View style={{
+                  marginBottom:22,
+                  alignItems:'center',
+                  flexDirection:'row',
+                  paddingRight:16,
+                  }}>
+                  <Pressable
+                    style={{
+                    width:20,
+                    height:20,
+                    marginRight:8,
+                    backgroundColor:dgfinShareAgreement ? '#015096':'#dadee7',
+                    borderRadius:5,
+                    alignItems:'center',
+                    justifyContent:'center'
+                    }}
+                    onPress={()=>setDgfinShareAgreement(!dgfinShareAgreement)}>
+                      <Image
+                      source={require('../../assets/img/export/check.png')}
+                      style={{
+                      width: dgfinShareAgreement ? 14 : 0,
+                      height: dgfinShareAgreement ? 10 : 0,
+                      resizeMode: 'contain',
+                      }}
+                      />
+                  </Pressable>  
+                  <Text style={{
+                  fontWeight:'300',
+                  color:'#1E242F',
+                  fontSize:12,
+                  }}>
+                  Dgfin Kredi kullanımı için verilerimin Dgpara ve Dgfin ile paylaşmasına ve işlenmesini onaylıyorum.
+                  </Text>
+                  </View>
+                  <View style={{
+                  marginBottom:22,
+                  alignItems:'center',
+                  flexDirection:'row',
+                  paddingRight:16,
+                  }}>
+                  <Pressable
+                    style={{
+                    width:20,
+                    height:20,
+                    marginRight:8,
+                    backgroundColor:dgfinUserAgreement ? '#015096':'#dadee7',
+                    borderRadius:5,
+                    alignItems:'center',
+                    justifyContent:'center'
+                    }}
+                    onPress={()=>setDgfinUserAgreement(!dgfinUserAgreement)}>
+                      <Image
+                      source={require('../../assets/img/export/check.png')}
+                      style={{
+                      width: dgfinUserAgreement ? 14 : 0,
+                      height: dgfinUserAgreement ? 10 : 0,
+                      resizeMode: 'contain',
+                      }}
+                      />
+                  </Pressable>  
+                  <Text style={{
+                  fontWeight:'300',
+                  color:'#1E242F',
+                  fontSize:12,
+                  }}>
+                  Dgfin kullanıcı sözleşmesi
+                  </Text>
+                  </View>
+                  <View style={{
+                  marginBottom:22,
+                  alignItems:'center',
+                  flexDirection:'row',
+                  paddingRight:16,
+                  }}>
+                  <Pressable
+                    style={{
+                    width:20,
+                    height:20,
+                    marginRight:8,
+                    backgroundColor:dgfinCreditAgreement ? '#015096':'#dadee7',
+                    borderRadius:5,
+                    alignItems:'center',
+                    justifyContent:'center'
+                    }}
+                    onPress={()=>setDgfinCreditAgreement(!dgfinCreditAgreement)}>
+                      <Image
+                      source={require('../../assets/img/export/check.png')}
+                      style={{
+                      width: dgfinCreditAgreement ? 14 : 0,
+                      height: dgfinCreditAgreement ? 10 : 0,
+                      resizeMode: 'contain',
+                      }}
+                      />
+                  </Pressable>  
+                  <Text style={{
+                  fontWeight:'300',
+                  color:'#1E242F',
+                  fontSize:12,
+                  }}>
+                  Dgfin genel kredi sözleşmesi
+                  </Text>
+                  </View>
+                  <View style={{
+                  marginBottom:22,
+                  alignItems:'center',
+                  flexDirection:'row',
+                  paddingRight:16,
+                  }}>
+                  <Pressable
+                    style={{
+                    width:20,
+                    height:20,
+                    marginRight:8,
+                    backgroundColor:dgfinKVKKAgreement ? '#015096':'#dadee7',
+                    borderRadius:5,
+                    alignItems:'center',
+                    justifyContent:'center'
+                    }}
+                    onPress={()=>setDgfinKVKKAgreement(!dgfinKVKKAgreement)}>
+                      <Image
+                      source={require('../../assets/img/export/check.png')}
+                      style={{
+                      width: dgfinKVKKAgreement ? 14 : 0,
+                      height: dgfinKVKKAgreement ? 10 : 0,
+                      resizeMode: 'contain',
+                      }}
+                      />
+                  </Pressable>
                   <Pressable style={{
                   fontWeight:'300',
                   color:'#1E242F',
@@ -2271,16 +2507,16 @@ const CreditForm = ({route, navigation}) => {
                   lineHeight:12,
                   flexDirection:'column',
                   justifyContent:'flex-end'
-                  }} onPress={()=> consentModalizeRef.current?.open()}>  
+                  }} onPress={()=> kvkkModalizeRef.current?.open()}>  
                   <Text style={{
                   fontWeight:'300',
                   color:'#1E242F',
                   fontSize:12,
                   }}>
-                  <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Profilleme Aydınlatma Metni</Text>'ni okudum, anladım.
+                  Dgfin <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700', fontSize:12, lineHeight:12}}>Kişisel Verilerin Korunması Kanunu</Text> ve <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Açık Rıza Formu’nu</Text> onaylıyorum.
                   </Text>
                   </Pressable>
-                  </View>
+                  </View> */}
                   <View style={{
                   marginBottom:22,
                   alignItems:'flex-start',
@@ -2320,11 +2556,43 @@ const CreditForm = ({route, navigation}) => {
                   color:'#1E242F',
                   fontSize:12,
                   }}>
-                  Bana özel kampanyalardan yararlanabilmem için kişisel verilerimin işlenmesine <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Açık Rıza </Text> veriyorum.
+                  Bana özel oluşturulacak kampanyalardan haberdar olabilmek için Limit Öğrenme Formunda paylaştığım kişisel verilerimin profilimin oluşturulması için işlenmesine <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Açık Rıza </Text> veriyorum.
                   </Text>
                   </Pressable>
                   </View>
+                  <View style={{
+                  marginBottom:22,
+                  alignItems:'flex-start',
+                  flexDirection:'row',
+                  paddingRight:16,
+                  }}>
                   
+                  <Image
+                    source={require('../../assets/img/export/information.png')}
+                    style={{
+                    width: 20,
+                    height: 20,
+                    marginRight:8,
+                    resizeMode: 'contain',
+                    }}
+                    />
+                  <Pressable style={{
+                  fontWeight:'300',
+                  color:'#1E242F',
+                  fontSize:12,
+                  lineHeight:12,
+                  flexDirection:'column',
+                  justifyContent:'flex-end'
+                  }} onPress={()=> consentModalizeRef.current?.open()}>  
+                  <Text style={{
+                  fontWeight:'300',
+                  color:'#1E242F',
+                  fontSize:12,
+                  }}>
+                  <Text style={{color:'#015096', textDecorationLine:'underline', fontWeight:'700'}}>Profilleme Aydınlatma Metni</Text>'ni kabul ediyorum.
+                  </Text>
+                  </Pressable>
+                  </View>
                   {
                       consentList.map((data, i) => {
                         console.log("consentList "+consentList.length);
@@ -2467,7 +2735,6 @@ const CreditForm = ({route, navigation}) => {
                       borderColor: formEnabled? '#004F97' : '#909EAA',
                       backgroundColor: formEnabled? '#004F97' : '#909EAA',
                       padding:0,
-                      marginLeft:0,
                     },
                   ]}
                   disabled={!formEnabled}
@@ -2615,7 +2882,12 @@ const CreditScreen = ({navigation}) => {
         name="CreditOtp"
         component={CreditOtp}
         options={{headerShown: false}}
-      />      
+      />
+      <Stack.Screen
+        name="LimitOtpScreen"
+        component={LimitOtpScreen}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="CreditForm"
         component={CreditForm}
@@ -2625,13 +2897,7 @@ const CreditScreen = ({navigation}) => {
         name="CreditSuccess"
         component={CreditSuccess}
         options={{headerShown: false}}
-      />  
-      {/* <Stack.Screen
-        name="AggreementScreen"
-        component={AggreementScreen}
-        options={{headerShown: false}}
-      /> */}
-      
+      />     
     </Stack.Navigator>
   );
 };
@@ -2663,7 +2929,7 @@ const istyles = StyleSheet.create({
   header:{
     justifyContent: 'center',
     alignItems: 'center',
-    height:Dimensions.get('window').height*0.08,
+    height:Dimensions.get('window').height*0.098,
     width:'100%'
   },
   text: {

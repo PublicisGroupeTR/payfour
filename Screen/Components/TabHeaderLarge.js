@@ -34,7 +34,7 @@ const TabHeaderLarge = props => {
         </View>
       </TouchableOpacity>
       <View style={{alignItems: 'center'}}>
-        <Text style={[styles.headerTextStyle, {fontWeight:'700'}]}>{name}</Text>
+        <Text style={styles.headerTextStyle}>{name}</Text>
       </View>
       {/* <TouchableOpacity
         style={{

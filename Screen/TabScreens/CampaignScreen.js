@@ -135,26 +135,26 @@ const CampaignList = ({navigation, route}) => {
     });
   }
   const onCampaigns = (response)=>{
-    console.log(response.data);
-    console.log(response.data.data);
-    console.log(response.data.data.items);
-    let sl = response.data.data.items;
-    for(var i=0; i < sl.length;i++){
-      sl[i].key = sl[i].campaignCode;
-      let dt = new Date(sl[i].expireDate);
-      let tdt = new Date();
-      console.log(dt.getTime());
-      console.log(tdt.getTime());
-      console.log(dt.getTime() < tdt.getTime());
-      sl[i].expired = (dt.getTime() < tdt.getTime());
-      let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
-      sl[i].time = t;
-      
-    }
-    console.log(sl);
-    setCampaignData(sl);
-    setLoading(false);
-    scrollRef.current?.scrollToOffset({ animated: true, offset: 0 });
+        console.log(response.data);
+        console.log(response.data.data);
+        console.log(response.data.data.items);
+        let sl = response.data.data.items;
+        for(var i=0; i < sl.length;i++){
+          sl[i].key = sl[i].campaignCode;
+          let dt = new Date(sl[i].expireDate);
+          let tdt = new Date();
+          console.log(dt.getTime());
+          console.log(tdt.getTime());
+          console.log(dt.getTime() < tdt.getTime());
+          sl[i].expired = (dt.getTime() < tdt.getTime());
+          let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
+          sl[i].time = t;
+          
+        }
+        console.log(sl);
+        setCampaignData(sl);
+        setLoading(false);
+        scrollRef.current?.scrollToOffset({ animated: true, offset: 0 });
   }
 const Item = ({time, title, refno, img, key, refid, expired}) => (
   <View key={key} style={{...slstyles.slide}}> 
@@ -316,7 +316,6 @@ const renderSuggestionItems = () =>{
           <Text
             style={{
               fontSize: 16,
-              lineHeight:20,
               color: '#0B1929',
               fontWeight: '700',
               paddingLeft: 20,
@@ -339,12 +338,12 @@ const renderSuggestionItems = () =>{
   }
   const onPopularSearches = (response) => {
     console.log('onPopularSearches');
-    console.log(response.data);
-    console.log(response.data.data);
-    console.log(response.data.data.items);
-    let sl = response.data.data;
-    setPopularSearches(sl);
-    setShowSearch(true);
+          console.log(response.data);
+          console.log(response.data.data);
+          console.log(response.data.data.items);
+          let sl = response.data.data;
+          setPopularSearches(sl);
+          setShowSearch(true);
   }
   const onInput = (data) => {
     console.log("onInput", data);
@@ -361,14 +360,14 @@ const renderSuggestionItems = () =>{
   }
   const onSuggestions = (response) => {
     console.log("onSuggestions");
-    console.log(response.data);
-    console.log(response.data.data);
-    console.log(response.data.data.items);
-    let sl = response.data.data;
-    // setPopularSearches(sl);
-    // setShowSearch(true);
-    setSuggestions(response.data.data);
-    setLoading(false);
+          console.log(response.data);
+          console.log(response.data.data);
+          console.log(response.data.data.items);
+          let sl = response.data.data;
+          // setPopularSearches(sl);
+          // setShowSearch(true);
+          setSuggestions(response.data.data);
+          setLoading(false);
   }
   const onSearch = (data) => {
     console.log("onSearchSubmit", data);
@@ -484,6 +483,7 @@ const renderSuggestionItems = () =>{
                       Tümü
                     </Text>
                     </Pressable>
+                    
                   </View>
                   <Pressable style={{
                     marginBottom:24,
@@ -881,8 +881,8 @@ const renderSuggestionItems = () =>{
                       Markalara göre Z-A
                       </Text>
                       
-                  </TouchableOpacity> */}
-                  
+                  </TouchableOpacity>
+                   */}
                   <TouchableOpacity
                     style={[
                       styles.buttonStyle,
@@ -922,6 +922,7 @@ const renderSuggestionItems = () =>{
       userSrch={userSrch} 
       setUserSrch={setUserSrch}
       />
+      
       <LinearGradient colors={['#fcfcfd', '#fbfbfd']} 
       style={{
         position:'absolute',
@@ -936,11 +937,11 @@ const renderSuggestionItems = () =>{
       </LinearGradient>
       <View style={{
         position:'absolute',
-        top:60,
+        top:Platform.OS == 'ios'? 124 : 60,
         left:0,
         backgroundColor:'#fff',
         padding:16,
-        paddingTop:0,
+        paddingTop:Platform.OS==('ios') ? 12 : 0,
         display:showSearch? 'flex' : 'none',
         width:'100%',
         height:'100%',
@@ -948,7 +949,7 @@ const renderSuggestionItems = () =>{
       }}>
         <View style={{
           width:'100%',
-          height:16,
+          // height:16,
           // backgroundColor:'#ff0000',
           // shadowColor:'#000000',
           // shadowOffset:{
@@ -1187,7 +1188,7 @@ const CampaignDetail = ({navigation, route}) => {
         AsyncStorage.getItem('token').then(value =>{
           const config = {
             headers: { Authorization: `Bearer ${value}` }
-          }       
+          }          
           apiGet('campaigns/'+route.params.id, onCampaignDetails);  
                 
         });
@@ -1197,54 +1198,50 @@ const CampaignDetail = ({navigation, route}) => {
   }, [route.params?.id]);
 
   const onCampaignDetails = (response)=>{
-    console.log(response.data.data);
+            console.log(response.data.data);
             
-    setShowMore(false);
-    let sl = response.data.data;
-    let dt = new Date(sl.expireDate);
-    let tdt = new Date();
-    let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
-    sl.time = t;
-    const diffInMs   = new Date(sl.expireDate) - new Date();
-    const diffInDays = parseInt(diffInMs / (1000 * 60 * 60 * 24));            
-    console.log("diffindays");
-    console.log(diffInDays);
-    console.log("title :" +sl.title);
-    sl.diff = diffInDays;
-    sl.expired = (dt.getTime() < tdt.getTime());
-    const re = /<p>/gi;
-    const re2 = /<\/p>/gi;
-    sl.longDescription = sl.longDescription.replace(re, "<div>");
-    sl.longDescription = sl.longDescription.replace(re2, "</div>");
-    sl.howTo = sl.howTo.replace(re, "<div>");
-    sl.howTo = sl.howTo.replace(re2, "</div>");
-    if(sl.terms){
-      sl.terms = sl.terms.replace(re, "<div>");
-      sl.terms = sl.terms.replace(re2, "</div>");
-    }else{
-      sl.terms = "";
-    }
-    console.log(sl.longDescription);
-    console.log(sl.howTo);
-    console.log(sl.terms);
+            setShowMore(false);
+            let sl = response.data.data;
+            let dt = new Date(sl.expireDate);
+            let tdt = new Date();
+            let t = (((dt.getDate()<10)? "0"+dt.getDate() : dt.getDate())) +'.'+(((dt.getMonth()+1)<10)? "0"+(dt.getMonth()+1) :(dt.getMonth()+1))+'.'+dt.getFullYear();
+            sl.time = t;
+            const diffInMs   = new Date(sl.expireDate) - new Date();
+            const diffInDays = parseInt(diffInMs / (1000 * 60 * 60 * 24));            
+            console.log("diffindays");
+            console.log(diffInDays);
+            console.log("title :" +sl.title);
+            sl.diff = diffInDays;
+            sl.expired = (dt.getTime() < tdt.getTime());
+            const re = /<p>/gi;
+            const re2 = /<\/p>/gi;
+            sl.longDescription = sl.longDescription.replace(re, "<div>");
+            sl.longDescription = sl.longDescription.replace(re2, "</div>");
+            sl.howTo = sl.howTo.replace(re, "<div>");
+            sl.howTo = sl.howTo.replace(re2, "</div>");
+            sl.terms = sl.terms.replace(re, "<div>");
+            sl.terms = sl.terms.replace(re2, "</div>");
+            console.log(sl.longDescription);
+            console.log(sl.howTo);
+            console.log(sl.terms);
     console.log("sl.hasJoinedCampaign");
     console.log(sl.hasJoinedCampaign);
     setJoined(sl.hasJoinedCampaign);
-    console.log("targetCount");
-    console.log(sl.targetCount);
-    sl.barLines = [];
-    let lineArr = [];
+            console.log("targetCount");
+            console.log(sl.targetCount);
+            sl.barLines = [];
+            let lineArr = [];
 
-    for(var i=0; i < parseInt(sl.targetCount)+1; i++){
-      console.log(i);
-      sl.barLines.push({point: i, key:"barLine"+i});
-    }
-    console.log("sl.barLines");
-    console.log(sl.barLines);
-    setCampaignDetailData(sl);
-    setIsAllStores(sl.isAllStores);
+            for(var i=0; i < parseInt(sl.targetCount)+1; i++){
+              console.log(i);
+              sl.barLines.push({point: i, key:"barLine"+i});
+            }
+            console.log("sl.barLines");
+            console.log(sl.barLines);
+            setCampaignDetailData(sl);
+            setIsAllStores(sl.isAllStores);
 
-    setLoading(false);
+            setLoading(false);
   }
   // const renderBarlines  = campaignDetailData.barLines.map(line => 
   //   <View key={line.point}
@@ -1272,15 +1269,18 @@ const CampaignDetail = ({navigation, route}) => {
 
     console.log(dataToSend);
     //https://api-app.payfour.com/api/auth/addcustomerbasic
-    apiPost('campaigns/participate', dataToSend, onJoinCampaign);
+    apiPost('campaigns/participate', dataToSend, onJoinCampaign, onJoinCampaignError);
     
     });
   }
   const onJoinCampaign = (response)=>{
-    console.log(response.data);
-    console.log(response.data.data);
+        console.log(response.data);
+        console.log(response.data.data);
+        setLoading(false);
+        setJoined(true);
+  }
+  const onJoinCampaignError = (response)=>{
     setLoading(false);
-    setJoined(true);
   }
   const getCampaignCode = ()=>{
     console.log("getCampaignCode");
@@ -1302,14 +1302,14 @@ const CampaignDetail = ({navigation, route}) => {
     });
   }
   const onCampaignCode = (response)=>{
-    console.log(response.data);
-    console.log(response.data.data);
-    setLoading(false);
+        console.log(response.data);
+        console.log(response.data.data);
+        setLoading(false);
 
-    setCopyCampaignCode(response.data.data.voucherCode);
-    setCopyModalVisible(true);
+        setCopyCampaignCode(response.data.data.voucherCode);
+        setCopyModalVisible(true);
   }
-  const onCampaignCodeError = ()=>{
+  const onCampaignCodeError = (response)=>{
     setLoading(false);
   }
   const copyCode = ()=>{
@@ -1336,13 +1336,13 @@ const CampaignDetail = ({navigation, route}) => {
     console.log("send campaign code");
     console.log(dataToSend);
     //https://api-app.payfour.com/api/auth/addcustomerbasic
-    apiPost('campaigns/participate', dataToSend, onCampaignCodeSend, onCampaignCodeError);
+    apiPost('campaigns/participate', dataToSend, onCampaignCodeSend);
 
     
     });
   }
   const onCampaignCodeSend = (response)=>{
-    console.log(response.data);
+        console.log(response.data);
         console.log(response.data.data);
         setLoading(false);
         setJoined(true);
@@ -1916,36 +1916,36 @@ const CampaignDetail = ({navigation, route}) => {
                         }}
                       />
                     </TouchableOpacity>
-                  </View> 
-                  <View style={{marginBottom:24}}>
-                          <Text style={{
-                            fontSize:12,
-                            fontWeight:'700',
-                            color:'#004F97',
-                            marginBottom:8,
-                          }}>
-                            Nasıl Katılırım ?
-                          </Text>
-                          <HTMLView
-                          value={campaignDetailData.howTo}
+                       </View> 
+                <View style={{marginBottom:24}}>
+                        <Text style={{
+                          fontSize:12,
+                          fontWeight:'700',
+                          color:'#004F97',
+                          marginBottom:8,
+                        }}>
+                          Nasıl Katılırım ?
+                        </Text>
+                        <HTMLView
+                        value={campaignDetailData.howTo}
+                        stylesheet={htmlStyles}
+                      />     
+               
+                      </View>
+                      <View style={{paddingBottom:18}}>
+                        <Text style={{
+                          fontSize:12,
+                          fontWeight:'700',
+                          color:'#004F97',
+                          marginBottom:8
+                        }}>
+                          Ne Kazanırım ?
+                        </Text>
+                        <HTMLView
+                          value={campaignDetailData.terms}
                           stylesheet={htmlStyles}
-                        />     
-                
-                  </View>
-                  <View style={{paddingBottom:18}}>
-                          <Text style={{
-                            fontSize:12,
-                            fontWeight:'700',
-                            color:'#004F97',
-                            marginBottom:8
-                          }}>
-                            Ne Kazanırım ?
-                          </Text>
-                          <HTMLView
-                            value={campaignDetailData.terms}
-                            stylesheet={htmlStyles}
-                          />   
-                  </View>
+                        />   
+                      </View>
                   </View>
                   
                
@@ -2173,14 +2173,24 @@ const CampaignDetail = ({navigation, route}) => {
             <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
               <View style={{width:Dimensions.get('window').width - 120}}>
                 {/* <Text style={{
-                  fontSize:14,
+                  fontSize:12,
                   lineHeight:16,
                   color:'#0B1929',
                   textAlign:'center',
                   marginBottom:12,
                 }}>
-                  Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} 
-                </Text> */}
+                  Kampaya kapsamında {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} alışveriş daha yapın toplam 
+                  <Text style={{fontWeight:700, color:'#004F97'}}>{campaignDetailData.targetAward} TL CarrefourSA Puan</Text> kazanın.
+                </Text>*/}
+                <Text style={{
+                    fontSize:14,
+                    lineHeight:16,
+                    color:'#0B1929',
+                    textAlign:'center',
+                    marginBottom:12,
+                  }}>
+                    Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} alışveriş yapın, {campaignDetailData.targetAward} TL Puan kazanın
+                  </Text>
                 {/* <Text style={{
                   fontSize:12,
                   lineHeight:16,
@@ -2191,16 +2201,7 @@ const CampaignDetail = ({navigation, route}) => {
                   Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} alışveriş daha yapın toplam 
                   <Text style={{fontWeight:700, color:'#004F97'}}>{campaignDetailData.targetAward} TL CarrefourSA Puan</Text> kazanın.
                 </Text> */}
-                <Text style={{
-                  fontSize:14,
-                  lineHeight:16,
-                  color:'#0B1929',
-                  textAlign:'center',
-                  marginBottom:12,
-                }}>
-                  Farklı günlerde <Text style={{fontWeight:700, color:'#004F97'}}>Payfour</Text> ile {campaignDetailData.targetCount - campaignDetailData.memberCurrentCount} alışveriş yapın, {campaignDetailData.targetAward} TL Puan kazanın
-                </Text>
-                <View style={{paddingBottom:20}}>
+                <View style={{paddingBottom:20}}> 
                 
                   
                   <View style={{
@@ -2407,7 +2408,7 @@ const CampaignDetail = ({navigation, route}) => {
                   justifyContent:'center',
                   backgroundColor:'#FFF4CD',
                   display :campaignDetailData.diff > 20 ? 'none' : 'flex'}}>
-                    {parseInt(campaignDetailData.diff)> 0 ?
+                  {parseInt(campaignDetailData.diff)> 0 ?
                   <Text style={{
                     fontSize:12, 
                     fontWeight:500, 

@@ -90,7 +90,6 @@ const Profile = ({navigation}) => {
     navigation.navigate('ProfilePlatinum');    
   };
   const getPlatinumMember = ()=> {
-    //navigation.navigate('ProfilePlatinum');    
     navigation.navigate('ProfilePlatinumMember');    
   };
   const getPlatinumSuccess = ()=> {
@@ -558,11 +557,7 @@ const deleteAccount = () => {
               </TouchableOpacity>
           </View>
           <View style={profileStyles.profileHolder}>
-            <TouchableOpacity style={[profileStyles.profileBtn, {borderBottomWidth:0}]}
-            onPress={()=>{
-              console.log("map");
-              navigation.navigate('Map');
-              }}>
+            <TouchableOpacity style={[profileStyles.profileBtn, {borderBottomWidth:0}]}>
               <View style={profileStyles.profileLeft}>
                 <View style={profileStyles.profileIconHolder}>
                   <Image

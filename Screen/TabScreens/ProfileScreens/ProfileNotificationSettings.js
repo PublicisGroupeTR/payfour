@@ -108,16 +108,16 @@ const ProfileNotificationSettings = ({navigation}) => {
   };
 
   const onRedeemCode = (response) => {
-    console.log(response);
-    console.log(response.data);
-    if(response.data.success){
-      console.log("coupon success")
-      //navigation.navigate('Success');
-      setSuccessModalVisible(true);
-    }else{
-      setLoading(false);
-      console.log("coupon error")
-    }
+              console.log(response);
+              console.log(response.data);
+              if(response.data.success){
+                console.log("coupon success")
+                //navigation.navigate('Success');
+                setSuccessModalVisible(true);
+              }else{
+                setLoading(false);
+                console.log("coupon error")
+              }
   }
 
   return(
@@ -224,7 +224,7 @@ style={[registerStyles.scrollView, {backgroundColor: '#efeff3'}]}>
                           lineHeight:20,
                           color:'#0B1929',
                           textAlign:'left',
-                          width:100
+                          width:120
                         }}>
                           Ödemeler
                         </Text>

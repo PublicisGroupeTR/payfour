@@ -117,7 +117,7 @@ export const basicGet = (func, callback)=>{
                 console.log(error.response.data.errors.paymentError == "Your wallet balance is insufficient");
                 if(error.response.data.errors.message == "insufficient_balance" || error.response.data.errors.paymentError == "Your wallet balance is insufficient"){
                   console.log("change msg");
-                  msg = "Limitiniz yetersiz.";
+                  msg = "Hesabınızda yeterli bakiye bulunmamaktadır";
                 } 
                 console.log(msg);
                 errorHandler(msg);            

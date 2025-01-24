@@ -65,16 +65,16 @@ const PayScreen = ({navigation}) => {
           });
   };
   const onRedeemCode = (response) => {
-    console.log(response);
-    console.log(response.data);
-    if(response.data.success){
-      console.log("coupon success")
-      //navigation.navigate('Success');
-      setSuccessModalVisible(true);
-    }else{
-      setLoading(false);
-      console.log("coupon error")
-    }
+              console.log(response);
+              console.log(response.data);
+              if(response.data.success){
+                console.log("coupon success")
+                //navigation.navigate('Success');
+                setSuccessModalVisible(true);
+              }else{
+                setLoading(false);
+                console.log("coupon error")
+              }
   }
   
 

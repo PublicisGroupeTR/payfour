@@ -29,8 +29,13 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import TabHeader from './Components/TabHeader';
 import { OtpInput } from "react-native-otp-entry";
 import axios from 'react-native-axios';
+import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
+import { useError } from './Contexts/ErrorContext';
+import { basicPost, apiGet, apiPost } from './utils/api.js';
 
 const LoginWithPasswordScreen = ({navigation}) => {
+  const { showError } = useError();
+
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [userEmailError, setUserEmailError] = useState(false);
@@ -49,8 +54,276 @@ const LoginWithPasswordScreen = ({navigation}) => {
   const [timerText, setTimerText] = useState('03:00');
   const [resetTimer, setResetTimer] = useState(false);
 
+  const [biometricData, setBiometricData] = useState(false);
+  const [biometricType, setBiometricType] = useState('');
+  const [biometricInput, setBiometricInput] = useState(false);
+  const [biometricKey, setBiometricKey] = useState(false);
+
   const passwordInputRef = useRef();
+  useEffect(() => {   
+    const unsubscribe = navigation.addListener('focus', () => { 
+      //AsyncStorage.removeItem('biometricsKey');
+      //AsyncStorage.removeItem('biometricsKey');     
+      console.log('Login biometrics check'); 
+      
+      enableBiometricAuth();
+    });
+    return unsubscribe;
+  }, [navigation]);
+  const enableBiometricAuth = () => {
+    const rnBiometrics = new ReactNativeBiometrics();
+    /*rnBiometrics.deleteKeys()
+        .then((resultObject) => {
+           const { keysDeleted } = resultObject
+
+           if (keysDeleted) {
+             console.log('Successful deletion')
+           } else {
+             console.log('Unsuccessful deletion because there were no keys to delete')
+           }
+           AsyncStorage.removeItem('biometricsKey');
+         })*/
+    rnBiometrics.isSensorAvailable()
+      .then((resultObject) => {
+        const { available, biometryType } = resultObject;
   
+        if(Platform.OS == 'ios'){
+          if (available && biometryType === BiometryTypes.FaceID) {      
+            console.log('Has FaceID authentication');
+            //Alert.alert('Has FaceID authentication');
+                setBiometricData(true);
+                setBiometricType('FaceID');
+                checkRecordedBiometrics(true);
+          }else if (available && biometryType === BiometryTypes.Biometrics) {
+            console.log('Biometrics authentication is supported.');
+            //Alert.alert('Has ios Biometrics authentication');
+            setBiometricData(true);
+            setBiometricType('TouchID');
+            checkRecordedBiometrics(true); 
+          }else{
+            console.log('no biometrics supported');
+            //Alert.alert('no biometrics supported');
+          }
+        }else{
+        if (available && biometryType === BiometryTypes.TouchID) {
+          //console.log('TouchID', 'Would you like to enable TouchID authentication for the next time?');
+          console.log('Has TouchID authentication'); 
+          //Alert.alert('Has TouchID authentication'); 
+          setBiometricData(true);
+          setBiometricType('TouchID');
+          checkRecordedBiometrics(true);         
+        } else if (available && biometryType === BiometryTypes.Biometrics) {
+          console.log('Biometrics authentication is supported.');
+          //Alert.alert('Has android Biometrics authentication');
+          setBiometricData(true);
+          setBiometricType('TouchID'); 
+          checkRecordedBiometrics(true);
+          
+        } else{
+          console.log('no biometrics');
+          //Alert.alert('no biometrics supported');
+        }
+      }
+        
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        Alert.alert('Error', 'An error occurred while checking biometrics availability.');
+      });
+  };
+  const checkRecordedBiometrics = async (first) =>{
+    
+    AsyncStorage.getItem('biometricsKey').then(value =>{
+      console.log("recorded biometrics key");
+      console.log(value);
+
+      if(value === null){
+        if(!first) Alert.alert('Uyarı', 'Biometrik girişiniz şifreyle giriş yaptıktan sonra etkinleştirilecektir.');
+      } else {
+        //AsyncStorage.getItem('deviceId').then(value =>{
+          //setDeviceId(value); 
+          //sendPublicKeyToServer(value);
+          setBiometricInput(true);
+          //checkRecordedBiometrics();
+          handleBiometricAuth();
+        //});
+      }
+    });
+  }
+  const handleBiometricAuth = async () => {
+    
+    try {
+      const rnBiometrics = new ReactNativeBiometrics();
+      const { success, error } = await rnBiometrics.simplePrompt({ promptMessage: 'Authenticate to continue' });
+  
+      if (success) {
+        const resultObject = await rnBiometrics.biometricKeysExist()
+        const { keysExist } = resultObject
+        if (keysExist) {
+        console.log('Keys exist', resultObject)
+        console.log(resultObject);
+        /*Alert.alert('Success', 'Biometric authentication successful', [          
+          {text: 'OK', onPress: () => loginWithFingerprint()},
+        ]);*/
+        loginWithFingerprint();
+        /*const payload = "react@example.com"
+        rnBiometrics.createSignature({
+          promptMessage: 'Sign in',
+          payload
+        })
+        .then((resultObject) => {
+          const { success, signature } = resultObject
+          if (success) {
+            console.log("signature: ", signature)
+            verifySignatureWithServer(signature)
+          }
+        })*/
+    } 
+    
+    else {
+        console.log('Generating New Keys..')
+        rnBiometrics.createKeys()
+        .then((resultObject) => {
+          const { publicKey } = resultObject
+          console.log("Public Key:", publicKey)
+          //console.log("blabla")
+          // Alert.alert('Success', 'Biometric authentication successful', [          
+          //   {text: 'OK', onPress: () => sendPublicKeyToServer(publicKey)},
+          // ]);
+          sendPublicKeyToServer(publicKey)
+        })
+    }
+        //Alert.alert( 'Success', 'Biometric authentication successful');
+        /*rnBiometrics.createKeys()
+        .then((resultObject) => {
+          const { publicKey } = resultObject;
+          console.log("key for server");
+          //AsyncStorage.setItem('biometricsKey', publicKey).then(()=>{
+
+            console.log("get biometricsKey");
+            console.log(publicKey)
+            sendPublicKeyToServer(publicKey)          
+          //});
+        })*/
+        return true;
+      } else {
+        //Alert.alert('Authentication failed', 'Biometric authentication failed');
+        return false;
+      }
+    } catch (error) {
+      console.error('[handleBiometricAuth] Error:', error);
+      Alert.alert('Error', 'Biometric authentication failed from device');
+      return false;
+    }
+  
+  };
+  const sendPublicKeyToServer = (publicKey) => {
+    AsyncStorage.getItem('biometricsKey').then(value =>{
+      ///navigation.replace(value === null ? 'Auth' : 'TabNavigationRoutes'),
+      console.log("hasRecordedBiometrics");
+      console.log(value);
+      //setUniqueMPANumber(value);
+      //console.log("mpa get");
+      //console.log(uniqueMPANumber);
+      if(value === null){
+        setPublicKeyOnServer(publicKey);
+      } else {
+        loginWithFingerprint(publicKey);
+      }
+    });
+  }
+  const setPublicKeyOnServer = (publicKey) => {
+    console.log("setPublicKeyOnServer");
+    console.log(publicKey);
+    AsyncStorage.getItem('token').then(value =>{
+      
+      const config = {
+        headers: { Authorization: `Bearer ${value}` }
+      };
+      
+      let dataToSend ={
+        "key": publicKey
+      }
+      apiPost('account/setfingerprint', dataToSend, onPublicKey, publicKey);
+      
+    });
+
+  }
+  const onPublicKey = (response, publicKey) =>{
+    console.log("onPublicKey");
+        console.log(response);
+        console.log(response.data);
+        if(response.data.success){
+          //navigation.navigate('Success');
+          //setSuccessModalVisible(true);
+          setLoading(false);
+          AsyncStorage.setItem('biometricsKey', publicKey).then(()=>{
+              navigation.navigate('TabNavigationRoutes');
+          });
+        }else{
+          setLoading(false);
+      console.log("fingerprint error");
+          console.log(response);
+      //Alert.alert(response.data.data.errors.message);
+      useError(response.data.data.errors.message)
+    }
+  }
+  const loginWithFingerprint = () => {
+      console.log("loginWithFingerprint");
+      //console.log(publicKey);
+      setLoading(true);
+      AsyncStorage.getAllKeys((err, keys) => {
+        AsyncStorage.multiGet(keys, (err, stores) => {
+          let obj = {};
+          stores.map((result, i, store) => {
+            // get at each store's key/value so you can work with it
+            let key = store[i][0];
+            let value = store[i][1];
+            obj[key] = value;
+          });
+            console.log("storage");
+            console.log(obj);
+            //sendData(obj);
+            const config = {
+              headers: { Authorization: `Bearer ${obj.token}` }
+            };
+            
+            let dataToSend ={
+              "deviceId": obj.deviceId,
+              "uniqueMPANumber": obj.uniqueMPANumber,
+              "phone": obj.phone,
+              "fingerPrintKey": obj.biometricsKey
+            }
+            console.log("fingerprint login data");
+            console.log(dataToSend);
+            basicPost('auth/loginwithfingerprint', dataToSend, onLoginWithFingerprint, resetUser);
+    
+      });
+    });    
+  }
+  const onLoginWithFingerprint = (response) =>{
+            setLoading(false);
+              console.log(response.data);        
+            if(response.data.error){
+              Alert.alert(response.data.error.message);
+              if(response.data.error.message.search('valid') >-1){
+                console.log("invalid found");
+                resetUser();
+      }else{
+        Alert.alert(response.data.error.message);
+        
+              }
+            }else{
+              passwordInputRef.current.clear();
+              setOtp(''); 
+              setLoading(false);
+              AsyncStorage.setItem('token', response.data.data.token).then(() =>{
+                AsyncStorage.setItem('payfourId', response.data.data.payfourId.toString()).then(() =>{            
+                  navigation.navigate('TabNavigationRoutes');  
+                });
+              });      
+            }
+  }
   const forgotPassword = () =>{
 
     /*{
@@ -83,25 +356,22 @@ const LoginWithPasswordScreen = ({navigation}) => {
   }
   const sendForgot = (dataToSend) => {
     setLoading(true);
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
-    .then(response => {
+    basicPost('auth/forgotpassword', dataToSend, onForgotPassword, resetUser);
+    
+  }
+  const onForgotPassword = (response) => {
       setLoading(false);
         console.log(response.data);        
       if(response.data.error){
-        Alert.alert(response.data.error.message);
+        //Alert.alert(response.data.error.message);
+        if(response.data.error.message.search('valid') >-1){
+          console.log("invalid found");
+          resetUser();
+        }
       }else{
-        /*AsyncStorage.setItem('token', response.data.data.accessToken).then(() =>{
-          AsyncStorage.setItem('payfourId', response.data.data.payfourId.toString()).then(() =>{
-            navigation.navigate('TabNavigationRoutes');  
-          });
-        }); */
+        
         navigation.navigate("OtpScreen", {'forgot':true});     
       }
-    })
-    .catch(error => {
-      console.error("Error sending data: ", error);
-      Alert.alert('Girilen şifre hatalı. Lütfen kontrol edin.');
-    });
   }
   const handleSubmitPassword = () => {
     console.log("otp submit");
@@ -130,9 +400,23 @@ const LoginWithPasswordScreen = ({navigation}) => {
     AsyncStorage.removeItem('uniqueMPANumber').then(()=>{
       AsyncStorage.removeItem('phone').then(()=>{
           AsyncStorage.removeItem('deviceId').then(()=>{
+            AsyncStorage.removeItem('biometricsKey').then(()=>{
           passwordInputRef.current.clear();
           setLoading(false);
+            const rnBiometrics = new ReactNativeBiometrics();
+            rnBiometrics.deleteKeys()
+        .then((resultObject) => {
+           const { keysDeleted } = resultObject
+
+           if (keysDeleted) {
+             console.log('Successful deletion')
+           } else {
+             console.log('Unsuccessful deletion because there were no keys to delete')
+           }
           navigation.navigate('LoginScreen');
+         })
+          
+        })
         })
       })
     })
@@ -149,52 +433,53 @@ const LoginWithPasswordScreen = ({navigation}) => {
     console.log("datatosend");
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/loginwithpassword', dataToSend)
-    .then(response => {
-      
+    basicPost('auth/loginwithpassword', dataToSend, onLoginWithPassword, onApiError);
+       
+    
+  };
+  const onApiError = () => {
+    console.log("onApiError");
+    setLoading(false);
+  }
+  const onLoginWithPassword = (response) => {
+    console.log("onLoginWithPassword");
       setLoading(false);
         console.log(response.data);        
       if(response.data.error){
+        passwordInputRef.current.clear();
         Alert.alert(response.data.error.message);
-        if(response.data.error.message.search('valid') >-1){
+      /*if(response.data.error.message.search('valid') >-1){
           console.log("invalid found");
           resetUser();
-        }
+      }*/
       }else{
         passwordInputRef.current.clear();
         setOtp(''); 
         setLoading(false);
         AsyncStorage.setItem('token', response.data.data.accessToken).then(() =>{
           AsyncStorage.setItem('payfourId', response.data.data.payfourId.toString()).then(() =>{
-            navigation.navigate('TabNavigationRoutes');  
+            console.log("onlogin with password");
+            console.log(biometricInput);
+            if(biometricInput){
+              handleBiometricAuth();
+            }else{
+              console.log("homepage");
+              navigation.navigate('TabNavigationRoutes');  
+            }
           });
         });      
       }
-    })
-    .catch(error => {
-      setLoading(false);
-      console.error("Error sending data: ", error);
-      let msg="";
-      (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; 
-      //Alert.alert(msg);
-      let reset=false;
-      if(msg.search('valid') >-1){
-        console.log("invalid found error");
-        reset = true;
-      }
-      Alert.alert(
-        msg,
-        '', // <- this part is optional, you can pass an empty string
-        [
-          {text: 'OK', onPress: () => {if(reset) resetUser()}},
-        ],
-        {cancelable: false},
-      );
-      
-    });     
-    
-  };
-
+  }
+  const testCallback = () => {
+    Alert.alert(
+      "test",
+      '', // <- this part is optional, you can pass an empty string
+      [
+        {text: 'OK'},
+      ],
+      {cancelable: false},
+    );
+    }
 
   return (
     <View style={styles.mainBody}>
@@ -208,7 +493,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
+            //Alert.alert('Modal has been closed.');
             setModalVisible(!modalVisible);
           }}>
           <View
@@ -349,6 +634,8 @@ const LoginWithPasswordScreen = ({navigation}) => {
                     numberOfDigits={6}
                     focusColor="#015096"
                     focusStickBlinkingDuration={500}
+                    autoFocus={false}
+                    secureTextEntry={true}
                     ref = {passwordInputRef}
                     onFocus={()=> {console.log('focus'); }}
                     onTextChange={(text) => {console.log(text);setOtpError(false);}}
@@ -407,6 +694,53 @@ const LoginWithPasswordScreen = ({navigation}) => {
                 </View>
               </View>
               <View>
+                <View style={{
+                  display: biometricData ? 'flex' : 'none',
+                  flexDirection:'row',
+                  justifyContent:'space-between',
+                  alignItems:'center',
+                  paddingLeft: 35,
+                  paddingRight: 35,
+                  marginBottom:16,
+                }}>
+                <Text style={{color:'#242424',  fontSize:12, lineHeight:24, textAlign:'center'}}>
+                    {biometricType} ile giriş
+                </Text>
+                <TouchableOpacity 
+                    style={{
+                      width:48,
+                      height:28,
+                      borderRadius:24,
+                      borderWidth:1,
+                      borderColor:biometricInput? '#004F97' : '#dadee7',
+                      backgroundColor:biometricInput? '#004F97' : '#dadee7'
+                      //borderColor:biometricInput? '#ff0000' : '#aaa',
+                      //backgroundColor:biometricInput? '#ff0000' : '#aaa'
+                    }}
+                    onPress={()=>{
+                      console.log("biometricInput");
+                      console.log(biometricInput);
+                      if(!biometricInput){
+                        setBiometricInput(true);
+                        checkRecordedBiometrics();
+                      }else{
+                        setBiometricInput(false);
+                      }
+                    }}
+                    >
+                      <View style={{
+                        width:20,
+                        height:20,
+                        borderRadius:20,
+                        //backgroundColor:'#015096',
+                        backgroundColor:'#fff',
+                        position:'absolute',
+                        top:3,
+                        left: biometricInput ? 24 : 4
+                      }}>
+                      </View>
+                      </TouchableOpacity>
+                </View>
                 <TouchableOpacity
                   style={[styles.buttonStyle, {marginBottom: Platform.OS === 'ios' ? 140 : 120, backgroundColor: toggleSubmit ? '#004F97' : '#dadee7',}]}
                   
@@ -450,10 +784,10 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   buttonStyle: {
-    backgroundColor: '#1D1D25',
+    backgroundColor: '#004F97',
     borderWidth: 0,
     color: '#FFFFFF',
-    height: 65,
+    height: 52,
     alignItems: 'center',
     borderRadius: 10,
     marginLeft: 35,
@@ -462,10 +796,9 @@ const styles = StyleSheet.create({
   },
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 20,
-    fontFamily: 'Helvetica-Bold',
-    fontWeight: 'bold',
-    fontSize: 16,
+    paddingVertical: 15,
+    fontWeight: '500',
+    fontSize: 14,
   },
   inputTitleStyle: {
     color: '#7E797F',
