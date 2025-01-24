@@ -21,6 +21,7 @@ import com.carrefour.payfour.FragmentNFCClosed
 import com.carrefour.payfour.FragmentNFCRequired
 import com.carrefour.payfour.FragmentFaceError
 import com.carrefour.payfour.FragmentFaceSuccess
+import com.carrefour.payfour.CustomBottomSheet
 import com.carrefour.payfour.EnQualifyModuleAndroid
 
 import com.enqura.enverify.EnVerifyApi
@@ -303,7 +304,9 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
     }
 
     public fun showExitSdk() {
-        ExitAlert(this)
+        val bottomSheet = CustomBottomSheet()
+        bottomSheet.show(supportFragmentManager, "CustomBottomSheet")
+        // ExitAlert(this)
     }
 
     public fun exitSdk() {

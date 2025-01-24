@@ -154,6 +154,9 @@ dependencies {
 
     implementation 'org.jmrtd:jmrtd:0.7.19'
 
+    implementation 'com.google.android.material:material:1.9.0'
+
+
     implementation('io.socket:socket.io-client:1.0.1') {
         exclude group: 'org.json', module: 'json'
     }

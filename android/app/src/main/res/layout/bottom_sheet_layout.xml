@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_background"
+    android:padding="16dp">
+
+    <!-- Başlık -->
+    <TextView
+        android:id="@+id/bottom_sheet_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Uyarı"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="8dp" />
+
+    <!-- Açıklama -->
+    <TextView
+        android:id="@+id/bottom_sheet_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Çıkmak istediğinize emin misiniz?"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:paddingBottom="16dp" />
+
+    <!-- Evet butonu -->
+    <Button
+        android:id="@+id/bottom_sheet_yes_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Evet, Eminim"
+        android:backgroundTint="@color/design_default_color_primary"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Vazgeç butonu -->
+    <Button
+        android:id="@+id/bottom_sheet_cancel_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vazgeç"
+        android:backgroundTint="@android:color/darker_gray"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>
