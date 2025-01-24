@@ -12,6 +12,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		62450A142D43E2F300E5BF5A /* CustomBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62450A112D43E2F300E5BF5A /* CustomBottomSheetViewController.swift */; };
 		625876B12D2C059600FE5A20 /* OcrSuccessViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B02D2C059600FE5A20 /* OcrSuccessViewController.storyboard */; };
 		625876B32D2C333D00FE5A20 /* OcrErrorViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B22D2C333D00FE5A20 /* OcrErrorViewController.storyboard */; };
 		625876B52D2C335B00FE5A20 /* NfcSuccessViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625876B42D2C335B00FE5A20 /* NfcSuccessViewController.storyboard */; };
@@ -34,6 +35,7 @@
 		625E42D02D3935C20061EB71 /* OcrClosedViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 625E42CF2D3935C20061EB71 /* OcrClosedViewController.storyboard */; };
 		6268A6CD2D3001B800D18DBF /* dgfinansman.der in Resources */ = {isa = PBXBuildFile; fileRef = 6268A6CB2D3001B800D18DBF /* dgfinansman.der */; };
 		626916A02D3E8A6700049FE1 /* EvenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6269169F2D3E8A6700049FE1 /* EvenManager.swift */; };
+		629671E42D43E43A007DE7A0 /* CustomBottomSheetViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 629671E32D43E43A007DE7A0 /* CustomBottomSheetViewController.storyboard */; };
 		6298F35E2D37F09E00F31ED0 /* KycErrorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6298F35D2D37F09E00F31ED0 /* KycErrorViewController.swift */; };
 		6298F3622D38018000F31ED0 /* OcrInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6298F3612D38018000F31ED0 /* OcrInfoViewController.swift */; };
 		6298F3652D38063700F31ED0 /* OcrSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6298F3642D38063700F31ED0 /* OcrSuccessViewController.swift */; };
@@ -72,6 +74,7 @@
 		4EBC435620C6D0F47A982D10 /* Pods_Payfour.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Payfour.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5709B34CF0A7D63546082F79 /* Pods-Payfour.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour.release.xcconfig"; path = "Target Support Files/Pods-Payfour/Pods-Payfour.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Payfour-PayfourTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Payfour-PayfourTests.debug.xcconfig"; path = "Target Support Files/Pods-Payfour-PayfourTests/Pods-Payfour-PayfourTests.debug.xcconfig"; sourceTree = "<group>"; };
+		62450A112D43E2F300E5BF5A /* CustomBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBottomSheetViewController.swift; sourceTree = "<group>"; };
 		625876B02D2C059600FE5A20 /* OcrSuccessViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrSuccessViewController.storyboard; sourceTree = "<group>"; };
 		625876B22D2C333D00FE5A20 /* OcrErrorViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrErrorViewController.storyboard; sourceTree = "<group>"; };
 		625876B42D2C335B00FE5A20 /* NfcSuccessViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NfcSuccessViewController.storyboard; sourceTree = "<group>"; };
@@ -95,6 +98,7 @@
 		625E42CF2D3935C20061EB71 /* OcrClosedViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = OcrClosedViewController.storyboard; sourceTree = "<group>"; };
 		6268A6CB2D3001B800D18DBF /* dgfinansman.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = dgfinansman.der; sourceTree = "<group>"; };
 		6269169F2D3E8A6700049FE1 /* EvenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvenManager.swift; sourceTree = "<group>"; };
+		629671E32D43E43A007DE7A0 /* CustomBottomSheetViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CustomBottomSheetViewController.storyboard; sourceTree = "<group>"; };
 		6298F35D2D37F09E00F31ED0 /* KycErrorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KycErrorViewController.swift; sourceTree = "<group>"; };
 		6298F3612D38018000F31ED0 /* OcrInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcrInfoViewController.swift; sourceTree = "<group>"; };
 		6298F3642D38063700F31ED0 /* OcrSuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcrSuccessViewController.swift; sourceTree = "<group>"; };
@@ -178,6 +182,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		62450A102D43E2C000E5BF5A /* BottomSheet */ = {
+			isa = PBXGroup;
+			children = (
+				62450A112D43E2F300E5BF5A /* CustomBottomSheetViewController.swift */,
+				629671E32D43E43A007DE7A0 /* CustomBottomSheetViewController.storyboard */,
+			);
+			path = BottomSheet;
+			sourceTree = "<group>";
+		};
 		625DA9542D26D55E00547914 /* EnQualify */ = {
 			isa = PBXGroup;
 			children = (
@@ -189,6 +202,7 @@
 		625DA9552D26D57B00547914 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
+				62450A102D43E2C000E5BF5A /* BottomSheet */,
 				625E42C62D3933400061EB71 /* OcrClosed */,
 				625E42B92D38F8950061EB71 /* FaceError */,
 				625E42B82D38F8800061EB71 /* FaceSuccess */,
@@ -431,6 +445,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				629671E42D43E43A007DE7A0 /* CustomBottomSheetViewController.storyboard in Resources */,
 				625876B32D2C333D00FE5A20 /* OcrErrorViewController.storyboard in Resources */,
 				625876C12D2C33B800FE5A20 /* FaceSuccessViewController.storyboard in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
@@ -617,6 +632,7 @@
 				625E42C12D38F8FB0061EB71 /* NfcErrorViewController.swift in Sources */,
 				6298F3622D38018000F31ED0 /* OcrInfoViewController.swift in Sources */,
 				6298F3652D38063700F31ED0 /* OcrSuccessViewController.swift in Sources */,
+				62450A142D43E2F300E5BF5A /* CustomBottomSheetViewController.swift in Sources */,
 				625DA9512D26B48900547914 /* EnQualifyModule.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				625DA94D2D26B45C00547914 /* AppSettings.swift in Sources */,

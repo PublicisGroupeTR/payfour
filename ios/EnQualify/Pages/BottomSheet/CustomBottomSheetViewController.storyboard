@@ -1,25 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17150" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17122"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Custom Bottom Sheet View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController id="Y6W-OH-hqX" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CustomBottomSheetViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Y6W-OH-hqX" customClass="CustomBottomSheetViewController" customModule="Payfour" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <subviews>
+                            <!-- Bottom Sheet Container -->
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bottomSheetView">
+                                <rect key="frame" x="0.0" y="552.0" width="393" height="300"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <layer key="layer" cornerRadius="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="300" id="bottomSheetHeightConstraint"/>
+                                    <constraint firstAttribute="width" constant="393" id="bottomSheetWidthConstraint"/>
+                                </constraints>
+                                <subviews>
+                                    <!-- Title Label -->
+                                    <!-- <label id="titleLabel" translatesAutoresizingMaskIntoConstraints="NO">
+                                        <rect key="frame" x="16.0" y="16.0" width="361.0" height="21.0"/>
+                                        <text key="text">Çıkmak istediğinize emin misiniz?</text>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
+                                        <color key="textColor" red="0.0" green="0.31" blue="0.59" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <textAlignment key="textAlignment" naturalAlignment="center"/>
+                                    </label>
+                                     -->
+                                    <!-- Buttons -->
+                                    <button id="cancelButton" translatesAutoresizingMaskIntoConstraints="NO">
+                                        <rect key="frame" x="16.0" y="200.0" width="150.0" height="44.0"/>
+                                        <state key="normal" title="Vazgeç">
+                                            <color key="titleColor" red="0.0" green="0.31" blue="0.59" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                    </button>
+                                    <button id="exitButton" translatesAutoresizingMaskIntoConstraints="NO">
+                                        <rect key="frame" x="227.0" y="200.0" width="150.0" height="44.0"/>
+                                        <state key="normal" title="Çıkış Yap">
+                                            <color key="backgroundColor" red="0.0" green="0.31" blue="0.59" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="131" y="-27"/>
         </scene>
     </scenes>
     <resources>
