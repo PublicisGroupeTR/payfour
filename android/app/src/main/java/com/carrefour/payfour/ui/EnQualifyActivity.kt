@@ -680,9 +680,9 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
         if(p0 == CloseSessionStatus.CLOSED) {
             Log.i("Custom", "TEST-KYC callSessionCloseResult CLOSED")
             completeLoanaAplication()
+            enVerifyApi.exitSelfService()
         } else {
             Log.i("Custom", "TEST-KYC callSessionCloseResult else")
-            enVerifyApi.exitSelfService()
             enVerifyApi.replaceFragment(FragmentKYCError())
         }
     }
