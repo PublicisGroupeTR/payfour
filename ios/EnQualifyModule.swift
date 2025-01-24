@@ -279,7 +279,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
 
   func integrationAddCompleted() {
     print("integrationAddCompleted")
-    sdkSessionClose()
+    sdkSessionClose(finished: true)
   }
 
   func integrationAddFailure() {
@@ -689,7 +689,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   func sdkCancel() {
     print("sdkCancel")
     if isSelfServiceStart == true {
-      sdkSessionClose()
+      sdkSessionClose(finished: false)
     } else {
       returnToReactNative()
     }
@@ -719,10 +719,13 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
               print("Root ViewController bulunamadı.")
           }
       }
-  }
+  } 
 
-  func sdkSessionClose() {
-    EnVerify.callSessionClose(finished: true)
+  func sdkSessionClose(finished: Bool) {
+    EnVerify.callSessionClose(finished: finished)
+    if finished == false {
+      sdkExit()
+    }
   }
 
   func completeLoanApplication() {
