@@ -3,47 +3,66 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:gravity="center"
     android:background="@drawable/bottom_sheet_background"
     android:padding="16dp">
 
-    <!-- Başlık -->
-    <TextView
-        android:id="@+id/bottom_sheet_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Uyarı"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:paddingBottom="8dp" />
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="22dp"
+            android:text="Payfour'dan çıkmak istediğinize emin misiniz ?"
+            android:textAlignment="center"
+            android:textColor="#004F97"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-    <!-- Açıklama -->
-    <TextView
-        android:id="@+id/bottom_sheet_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Çıkmak istediğinize emin misiniz?"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:paddingBottom="16dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp">
 
-    <!-- Evet butonu -->
-    <Button
-        android:id="@+id/bottom_sheet_yes_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Evet, Eminim"
-        android:backgroundTint="@color/design_default_color_primary"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="8dp" />
+                <LinearLayout
+                    android:id="@+id/bottom_sheet_cancel_button"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:background="@drawable/button_outline_background"
+                    android:gravity="center"
+                    android:layout_marginEnd="6dp">
 
-    <!-- Vazgeç butonu -->
-    <Button
-        android:id="@+id/bottom_sheet_cancel_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Vazgeç"
-        android:backgroundTint="@android:color/darker_gray"
-        android:textColor="@android:color/white" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vazgeç"
+                        android:textColor="#004F97"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+               <Button
+                    android:id="@+id/bottom_sheet_yes_button"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:allowUndo="false"
+                    android:background="@drawable/button_background"
+                    android:backgroundTint="#004F97"
+                    android:text="Çıkış Yap"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
+
 
 </LinearLayout>
