@@ -25,8 +25,6 @@ const VerifyScreen = ({ navigation, route }) => {
       return
     }
 
-    // console.log("altData", allData)
-
     if (Platform.OS == 'ios') {
       NativeModules.ModuleIOS.viewDidLoadNative(JSON.stringify(allData))
     } else {
@@ -93,7 +91,6 @@ const VerifyScreen = ({ navigation, route }) => {
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(EventEmitter);
     const subscription = eventEmitter.addListener('EnQualifyResult', (data) => { 
-      console.log(data)
       switch(data.status) {
         case "succeeded":
           navigation.navigate('TabNavigationRoutes', { 
@@ -110,7 +107,7 @@ const VerifyScreen = ({ navigation, route }) => {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [allData]);
 
   useEffect(() => {
     if (isFocused) {

@@ -112,14 +112,17 @@ const IdentityForm = ({ route, navigation }) => {
       method: 'POST',
       data: data
     });
+
+    const params = {
+      user: {...user, tckn: formData.userTCKN.value, email:formData.userEmail.value, birthDate:formattedDate},
+      data: response.data,
+      selectedaAreements: selectedaAreements,
+      tempToken: tempToken
+    }
+
     if (response.success) {
       navigation.navigate('Kyc', {
-        screen: 'AddressInfo', params: {
-          user: {...user, tckn: formData.userTCKN.value, email:formData.userEmail.value, birthDate:formattedDate},
-          data: response.data,
-          selectedaAreements: selectedaAreements,
-          tempToken: tempToken
-        }
+        screen: 'AddressInfo', params: params
       })
     } else {
       customAlert({ title: "Hata", message: response.errors.message })
@@ -240,14 +243,12 @@ const IdentityForm = ({ route, navigation }) => {
     if (route.params?.agreementId) {
 
       setAgreementConfirm(route.params?.agreementId)
-      console.log("route")
      
     }
   },[route])
 
   useEffect(()=>{
     if (agreementConfirm) {
-      console.log("agreementConfirm", agreementConfirm)
       setAlreadyConfirmAgreement([...alreadyConfirmAgreement, agreementConfirm])
       setAgreements((prevAgreements) =>
         prevAgreements.map((agreement) =>

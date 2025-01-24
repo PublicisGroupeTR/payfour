@@ -47,7 +47,7 @@ const AgreementsView = ({ route, navigation }) => {
           console.log(error);
         }}
         onPageChanged={(currentPage, totalPage)=> {
-          if (currentPage == totalPage) {
+          if (currentPage >= totalPage - 1) {
             setButtonActive(true)
           }
         }}
