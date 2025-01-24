@@ -93,6 +93,7 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
     }
 
     private fun initEnQualifyApi() {
+        isSdkInitialized = false
         val customDataObject: JSONObject = JSONObject(customData)
 
         Log.i(tag, "${object {}.javaClass.enclosingMethod?.name}")
