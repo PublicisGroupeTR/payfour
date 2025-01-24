@@ -40,6 +40,7 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import android.content.Intent
 import org.json.JSONObject
 import org.json.JSONArray
+import android.app.AlertDialog
 
 import com.carrefour.payfour.data.models.IDRegistrationModel
 import com.carrefour.payfour.data.models.AddressRegistrationModel
@@ -301,14 +302,44 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
         return options
     }
 
+    public fun showExitSdk() {
+        ExitAlert(this)
+    }
+
     public fun exitSdk() {
         Log.i("Custom", "TEST-KYC exitSdk")
         enVerifyApi.closeSession(false)
-        enVerifyApi.exitSelfService()
+        if ( isSdkInitialized ) {
+            enVerifyApi.exitSelfService()
+        }
         enVerifyApi.destroy()
         finish()
         EnQualifyModuleAndroid.sendEvent("EnQualifyResult", "canceled")
     }
+
+     public fun ExitAlert(context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Uyarı")
+        builder.setMessage("Çıkmak istediğinize emin misiniz?")
+
+        // "Evet, Eminim" butonu
+        builder.setPositiveButton("Evet, Eminim") { dialog, _ ->
+            dialog.dismiss()
+            exitSdk()
+        }
+
+        // "Vazgeç" butonu
+        builder.setNegativeButton("Vazgeç") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        // Alert dialog'u göster
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+
+
 
     public fun sdkSucceeded() {
         replaceReactNativeFragment()

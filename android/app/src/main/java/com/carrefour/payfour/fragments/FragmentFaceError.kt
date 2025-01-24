@@ -61,6 +61,6 @@ class FragmentFaceError : Fragment() {
     }
 
     public fun backButtonClick() {
-        (activity as? EnQualifyActivity)?.exitSdk()
+        (activity as? EnQualifyActivity)?.showExitSdk()
     }
 }
