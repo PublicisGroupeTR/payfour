@@ -535,6 +535,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   //  ------------------------ Sdk Configurations --------------------------------
 
   @objc func viewDidLoadNative(_ kycData: String) {
+    
     sdkSucceeded = false
     isSelfServiceStart = false
 
@@ -558,10 +559,9 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
 
   func initSdk() {
+    
     getAppSettings {
       DispatchQueue.main.async {
-
-        print("viewDidLoadNative")
 
         EnVerify.callType = "NewCustomer"
 
@@ -700,25 +700,71 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
   }
   
   func showExitAlert() {
-      let alertController = UIAlertController(title: "Uyarı", message: "Çıkmak istediğinize emin misiniz ?", preferredStyle: .alert)
-      
-      let yesAction = UIAlertAction(title: "Evet, Eminim", style: .default) { _ in
-          self.dismiss(animated: true, completion: nil)
-          self.sdkCancel()
-      }
-      
-      let noAction = UIAlertAction(title: "Vazgeç", style: .cancel, handler: nil)
-      
-      alertController.addAction(yesAction)
-      alertController.addAction(noAction)
-      
-      DispatchQueue.main.async {
-          if let rootVC = UIApplication.shared.windows.first?.rootViewController {
-              rootVC.present(alertController, animated: true, completion: nil)
-          } else {
-              print("Root ViewController bulunamadı.")
-          }
-      }
+    
+    print("showExitAlert")
+    let storyBoard = UIStoryboard(name: CustomBottomSheetViewController.identifier, bundle: nil)
+       guard
+           let vc = storyBoard.instantiateViewController(
+               withIdentifier: "CustomBottomSheetViewController"
+           ) as? CustomBottomSheetViewController
+       else {
+           print("CustomBottomSheetViewController bulunamadı.")
+           return
+       }
+
+       // Bottom Sheet olarak açılması için modalPresentationStyle ayarı
+       vc.modalPresentationStyle = .pageSheet
+    
+       // iOS 15 ve sonrası için sheet özelliklerini ayarla
+        if #available(iOS 15.0, *) {
+            if let sheet = vc.sheetPresentationController {
+                sheet.detents = [.medium()] // Orta yükseklik (standart 300pt civarı)
+                sheet.prefersGrabberVisible = false // Çekme çubuğunu göster
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = false // Kaydırma ile genişleme devre dışı
+            }
+        }
+    
+        if #available(iOS 16.0, *) {
+            if let sheet = vc.sheetPresentationController {
+                sheet.detents = [
+                    .custom { _ in
+                        let safeAreaInsets = UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0
+                        return 180 - safeAreaInsets // 300pt + çentik yüksekliği
+                    }
+                ]
+                sheet.prefersGrabberVisible = false // Çekme çubuğunu göster
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = false // Kaydırma ile genişleme devre dışı
+            }
+        }
+  
+       // Root ViewController üzerinden Bottom Sheet'i açma
+       DispatchQueue.main.async {
+           if let rootVC = UIApplication.shared.windows.first?.rootViewController {
+               rootVC.present(vc, animated: true, completion: nil)
+           } else {
+               print("Root ViewController bulunamadı.")
+           }
+       }
+    
+//      let alertController = UIAlertController(title: "Uyarı", message: "Çıkmak istediğinize emin misiniz ?", preferredStyle: .alert)
+//      
+//      let yesAction = UIAlertAction(title: "Evet, Eminim", style: .default) { _ in
+//          self.dismiss(animated: true, completion: nil)
+//          self.sdkCancel()
+//      }
+//      
+//      let noAction = UIAlertAction(title: "Vazgeç", style: .cancel, handler: nil)
+//      
+//      alertController.addAction(yesAction)
+//      alertController.addAction(noAction)
+//      
+//      DispatchQueue.main.async {
+//          if let rootVC = UIApplication.shared.windows.first?.rootViewController {
+//              rootVC.present(alertController, animated: true, completion: nil)
+//          } else {
+//              print("Root ViewController bulunamadı.")
+//          }
+//      }
   } 
 
   func sdkSessionClose(finished: Bool) {
@@ -1116,21 +1162,34 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
     }
 
     // Incomes
-    if let incometypesSelected = kycData["incometypesSelected"] as? [String],
-      let transactionVolume = kycData["transactionVolume"] as? String,
-      let monthlyAverage = kycData["monthlyAverage"] as? String,
-      let transactionsNumbers = kycData["transactionsNumbers"] as? String
-    {
+    if let incometypesSelected = kycData["incometypesSelected"] as? [Any],
+       let transactionVolumeString = kycData["transactionVolume"] as? String,
+       let monthlyAverageString = kycData["monthlyAverage"] as? String,
+       let transactionsNumbersString = kycData["transactionsNumbers"] as? String,
+       let transactionVolume = Int(transactionVolumeString),
+       let monthlyAverage = Int(monthlyAverageString),
+       let transactionsNumbers = Int(transactionsNumbersString) {
+      
+      let sourceOfIncome = incometypesSelected.compactMap { item -> Int? in
+          if let stringItem = item as? String {
+              return Int(stringItem)
+          } else if let intItem = item as? Int {
+              return intItem
+          }
+          return nil
+      }
 
-      let incomeData: [String: Any] = [
-        "currencyNumber": "949",
-        "sourceOfIncome": incometypesSelected.compactMap { Int($0) },
-        "EstimatedTransactionVolume": Int(transactionVolume) ?? 0,
-        "monthlyAmount": Int(monthlyAverage) ?? 0,
-        "TransactionCount": Int(transactionsNumbers) ?? 0,
-      ]
+        let incomeData: [String: Any] = [
+            "currencyNumber": "949",
+            "sourceOfIncome": sourceOfIncome,
+            "EstimatedTransactionVolume": transactionVolume,
+            "monthlyAmount": monthlyAverage,
+            "TransactionCount": transactionsNumbers,
+        ]
 
-      jsonData["incomes"] = [incomeData]
+        jsonData["incomes"] = [incomeData]
+    } else {
+        print("Veriler uygun formatta değil veya eksik.")
     }
 
     // Consents

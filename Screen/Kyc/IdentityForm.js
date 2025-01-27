@@ -453,7 +453,8 @@ const istyles = StyleSheet.create({
   },
   agreementsInfo: {
     flexDirection: "row",
-    gap: 8
+    gap: 8,
+    alignItems:"center"
   },
   agreementsInfoText: {
     fontWeight: '300',
