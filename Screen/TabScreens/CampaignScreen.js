@@ -88,7 +88,7 @@ const CampaignList = ({navigation}) => {
       };
       let searchParams = '?page=1&pageSize=12';
       if(search) searchParams+='&keyword='+search;
-      let path = 'https://payfourapp.test.kodegon.com/api/campaigns'+searchParams;
+      let path = 'https://api-app.payfour.com/api/campaigns'+searchParams;
       if(isPayfour) path+="&isPayfourCampaign=true";
       if(filterList) path+=filterList;
       console.log("campaign params");
@@ -288,7 +288,7 @@ const renderSuggestionItems = () =>{
         const config = {
           headers: { Authorization: `Bearer ${value}` }
         };
-        axios.get('https://payfourapp.test.kodegon.com/api/campaigns/popularsearches', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/campaigns/popularsearches', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.items);
@@ -305,7 +305,7 @@ const renderSuggestionItems = () =>{
         const config = {
           headers: { Authorization: `Bearer ${value}` }
         };
-        axios.get('https://payfourapp.test.kodegon.com/api/campaigns/suggest?keyword='+data, config).then(response => {
+        axios.get('https://api-app.payfour.com/api/campaigns/suggest?keyword='+data, config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.items);
@@ -1101,13 +1101,13 @@ const CampaignDetail = ({navigation, route}) => {
       console.log(route.params);
       console.log(route.params.id);
       //console.log(Dimensions.get('window').width);
-      console.log('https://payfourapp.test.kodegon.com/api/campaigns/'+route.params.id)
+      console.log('https://api-app.payfour.com/api/campaigns/'+route.params.id)
       setLoading(true);
         AsyncStorage.getItem('token').then(value =>{
           const config = {
             headers: { Authorization: `Bearer ${value}` }
           }          
-          axios.get('https://payfourapp.test.kodegon.com/api/campaigns/'+route.params.id, config).then(response => {
+          axios.get('https://api-app.payfour.com/api/campaigns/'+route.params.id, config).then(response => {
             //console.log(response.data);
             console.log(response.data.data);
             
@@ -1194,8 +1194,8 @@ const CampaignDetail = ({navigation, route}) => {
       };    
 
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/campaigns/participate', dataToSend, config)
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    axios.post('https://api-app.payfour.com/api/campaigns/participate', dataToSend, config)
       .then(response => {
         console.log(response.data);
         console.log(response.data.data);
@@ -1227,8 +1227,8 @@ const CampaignDetail = ({navigation, route}) => {
       };    
 
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/campaigns/participate', dataToSend, config)
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    axios.post('https://api-app.payfour.com/api/campaigns/participate', dataToSend, config)
       .then(response => {
         console.log(response.data);
         console.log(response.data.data);
@@ -1272,8 +1272,8 @@ const CampaignDetail = ({navigation, route}) => {
 
     console.log("send campaign code");
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/campaigns/participate', dataToSend, config)
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    axios.post('https://api-app.payfour.com/api/campaigns/participate', dataToSend, config)
       .then(response => {
         console.log(response.data);
         console.log(response.data.data);

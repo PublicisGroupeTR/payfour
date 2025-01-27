@@ -14,10 +14,10 @@ export const apiRequest = async ({ url, method = 'GET', params = {}, data = {}, 
     'Content-Type': 'application/json',
     ...headers,
   };
-
+  // https://api-app.payfour.com//
   const config = {
     method: method.toUpperCase(),
-    url: `https://payfourapp.test.kodegon.com/api${url}`,
+    url: `https://api-app.payfour.com/api${url}`,
     headers: defaultHeaders,
     params,
     ...(method.toUpperCase() !== 'GET' && method.toUpperCase() !== 'HEAD' && { data }), // Body sadece GET/HEAD dışındakilerde
@@ -26,11 +26,11 @@ export const apiRequest = async ({ url, method = 'GET', params = {}, data = {}, 
   try {
     const response = await axios(config);
     if (response && response.data) {
-      // console.log('Response:', response.data);
+      console.log('Response:', response.data);
       return response.data;
     }
   } catch (error) {
-    // console.error(`Error in ${method} ${url}:`, error);
+    console.error(`Error in ${method} ${url}:`, error);
 
     if (error.response && error.response.data) {
       return error.response.data;

@@ -497,7 +497,7 @@ const CreditForm = ({route, navigation}) => {
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };    
-      axios.get('https://payfourapp.test.kodegon.com/api/loans/educationlevels', config).then(response => {
+      axios.get('https://api-app.payfour.com/api/loans/educationlevels', config).then(response => {
         setLoading(false);
         console.log("oneducation");
         console.log(response);
@@ -519,7 +519,7 @@ const CreditForm = ({route, navigation}) => {
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };    
-      axios.get('https://payfourapp.test.kodegon.com/api/loans/occupations', config).then(response => {
+      axios.get('https://api-app.payfour.com/api/loans/occupations', config).then(response => {
         setLoading(false);
         console.log("onoccupations");
         console.log(response);
@@ -541,7 +541,7 @@ const CreditForm = ({route, navigation}) => {
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };    
-      axios.get('https://payfourapp.test.kodegon.com/api/loans/occupationroles', config).then(response => {
+      axios.get('https://api-app.payfour.com/api/loans/occupationroles', config).then(response => {
         setLoading(false);
         console.log("onoccupationroles");
         console.log(response);
@@ -564,7 +564,7 @@ const CreditForm = ({route, navigation}) => {
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };    
-      axios.post('https://payfourapp.test.kodegon.com/api/loans/sendotpforpotentiallimit', {},config).then(response => {
+      axios.post('https://api-app.payfour.com/api/loans/sendotpforpotentiallimit', {},config).then(response => {
         setLoading(false);
         console.log("sendotpforpotentiallimit");
         console.log(response);
@@ -597,7 +597,7 @@ const CreditForm = ({route, navigation}) => {
       console.log("otp send data");
       console.log(sendData);
 
-      axios.post('https://payfourapp.test.kodegon.com/api/loans/verifyotpforpotentiallimit', sendData, config).then(response => {
+      axios.post('https://api-app.payfour.com/api/loans/verifyotpforpotentiallimit', sendData, config).then(response => {
         setLoading(false);
         console.log("sendotpforpotentiallimit");
         console.log(response);
@@ -674,7 +674,7 @@ const CreditForm = ({route, navigation}) => {
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };  
-      axios.post('https://payfourapp.test.kodegon.com/api/loans/createpotentiallimit', sendData, config).then(response => {
+      axios.post('https://api-app.payfour.com/api/loans/createpotentiallimit', sendData, config).then(response => {
         setLoading(false);
         console.log("createpotentiallimit");
         console.log(response);

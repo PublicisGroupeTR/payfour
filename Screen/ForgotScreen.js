@@ -113,8 +113,8 @@ setLoading(true);
 
     console.log("forgot data");
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/resetpassword', dataToSend)
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    axios.post('https://api-app.payfour.com/api/auth/resetpassword', dataToSend)
       .then(response => {
         console.log(response.data);
         console.log(response.data.data);

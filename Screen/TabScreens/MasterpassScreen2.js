@@ -102,7 +102,7 @@ const checkMasterpassToken = ()=>{
             headers: { Authorization: `Bearer ${obj.token}` }
           };
           
-          axios.get('https://payfourapp.test.kodegon.com/api/payments/generatemasterpasstoken', config)
+          axios.get('https://api-app.payfour.com/api/payments/generatemasterpasstoken', config)
           .then(response => {
             console.log(response);
             console.log(response.data);
@@ -265,7 +265,7 @@ const getCarrefourCards = () =>{
     const config = {
       headers: { Authorization: `Bearer ${value}` }
     };
-    axios.get('https://payfourapp.test.kodegon.com/api/account/getloyaltycards', config)
+    axios.get('https://api-app.payfour.com/api/account/getloyaltycards', config)
           .then(response => {
             console.log("getLoyaltyCards");
             console.log(response);
@@ -303,7 +303,7 @@ const addCard = ()=>{
       headers: { Authorization: `Bearer ${value}` }
     };
   console.log(mpToken);
-//'https://payfourapp.test.kodegon.com/api/payments/addcard'
+//'https://api-app.payfour.com/api/payments/addcard'
 //webview.current.postMessage("check;check");
 
 let tk = user.token.replace('Bearer ', '');
@@ -333,7 +333,7 @@ let dataToSend ={
   "cvv": "262",
   "accountAliasName": "bonusgold"
 }
-axios.post('https://payfourapp.test.kodegon.com/api/payments/addcard',dataToSend, config)
+axios.post('https://api-app.payfour.com/api/payments/addcard',dataToSend, config)
           .then(response => {
             console.log(response);
             console.log(response.data);
@@ -372,7 +372,7 @@ axios.post('https://payfourapp.test.kodegon.com/api/payments/addcard',dataToSend
 
         /*{"data": 
         {"url": 
-        "https://payfourapp.test.kodegon.com/masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
+        "https://api-app.payfour.com//masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
         "status": 200, 
         "success": true
         }*/
@@ -601,7 +601,7 @@ const confirmPayment = () =>{
             "statusCode": 202, 
             "version": null}*/
 
-    axios.post('https://payfourapp.test.kodegon.com/api/payments/addbudgetwithcreditcard',dataToSend, config)
+    axios.post('https://api-app.payfour.com/api/payments/addbudgetwithcreditcard',dataToSend, config)
               .then(response => {
                 console.log(response);
                 console.log(response.data);
@@ -1223,7 +1223,7 @@ const AddCards = ({navigation}) => {
             headers: { Authorization: `Bearer ${obj.token}` }
           };
           
-          axios.get('https://payfourapp.test.kodegon.com/api/payments/generatemasterpasstoken', config)
+          axios.get('https://api-app.payfour.com/api/payments/generatemasterpasstoken', config)
           .then(response => {
             console.log(response);
             console.log(response.data);
@@ -1318,7 +1318,7 @@ const AddCards = ({navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
     console.log(mpToken);
-  //'https://payfourapp.test.kodegon.com/api/payments/addcard'
+  //'https://api-app.payfour.com/api/payments/addcard'
   //webview.current.postMessage("check;check");
   
   let tk = user.token.replace('Bearer ', '');
@@ -1350,7 +1350,7 @@ const AddCards = ({navigation}) => {
     "accountAliasName": cardNick
   }
   console.log(dataToSend);
-  axios.post('https://payfourapp.test.kodegon.com/api/payments/addcard',dataToSend, config)
+  axios.post('https://api-app.payfour.com/api/payments/addcard',dataToSend, config)
             .then(response => {
               console.log(response);
               console.log(response.data);
@@ -1389,7 +1389,7 @@ const AddCards = ({navigation}) => {
   
           /*{"data": 
           {"url": 
-          "https://payfourapp.test.kodegon.com/masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
+          "https://api-app.payfour.com//masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
           "status": 200, 
           "success": true
           }*/
@@ -2046,7 +2046,7 @@ const Payment = ({route, navigation}) => {
             headers: { Authorization: `Bearer ${obj.token}` }
           };
           
-          axios.get('https://payfourapp.test.kodegon.com/api/payments/generatemasterpasstoken', config)
+          axios.get('https://api-app.payfour.com/api/payments/generatemasterpasstoken', config)
           .then(response => {
             console.log(response);
             console.log(response.data);
@@ -2108,7 +2108,7 @@ const Payment = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
     console.log(mpToken);
-  //'https://payfourapp.test.kodegon.com/api/payments/addcard'
+  //'https://api-app.payfour.com/api/payments/addcard'
   //webview.current.postMessage("check;check");
   
   let tk = user.token.replace('Bearer ', '');
@@ -2138,7 +2138,7 @@ const Payment = ({route, navigation}) => {
     "cvv": "262",
     "accountAliasName": "bonusgold"
   }
-  axios.post('https://payfourapp.test.kodegon.com/api/payments/addcard',dataToSend, config)
+  axios.post('https://api-app.payfour.com/api/payments/addcard',dataToSend, config)
             .then(response => {
               console.log(response);
               console.log(response.data);
@@ -2176,7 +2176,7 @@ const Payment = ({route, navigation}) => {
   
           /*{"data": 
           {"url": 
-          "https://payfourapp.test.kodegon.com/masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
+          "https://api-app.payfour.com//masterpass/addcard/2bf6a86d-93f2-4335-a182-4dac75d35f28"}, 
           "status": 200, 
           "success": true
           }*/
@@ -2432,7 +2432,7 @@ const Payment = ({route, navigation}) => {
               "statusCode": 202, 
               "version": null}*/
   
-      axios.post('https://payfourapp.test.kodegon.com/api/payments/addbudgetwithcreditcard',dataToSend, config)
+      axios.post('https://api-app.payfour.com/api/payments/addbudgetwithcreditcard',dataToSend, config)
                 .then(response => {
                   console.log(response);
                   console.log(response.data);

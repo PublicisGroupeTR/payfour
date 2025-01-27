@@ -217,8 +217,8 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
             val client = OkHttpClient()
     
             val request = Request.Builder()
-                .url("https://payfourapp.test.kodegon.com/api/loans/completeloanapplication/" + customDataObject.getString("referenceId"))
-                // .url("https://payfourapp.test.kodegon.com/api/account/getuser")
+                .url("https://api-app.payfour.com/api/loans/completeloanapplication/" + customDataObject.getString("referenceId"))
+                // .url("https://api-app.payfour.com/api/account/getuser")
                 .addHeader("Authorization", "Bearer $token")
                 .post(emptyRequestBody)  // POST isteği olduğunu belirtiyoruz ve body ekliyoruz
                 // .get()

@@ -99,7 +99,7 @@ const ProfileNotificationSettings = ({navigation}) => {
   let dataToSend ={
     "code": code,
   }
-  axios.post('https://payfourapp.test.kodegon.com/api/account/redeemcode',dataToSend, config)
+  axios.post('https://api-app.payfour.com/api/account/redeemcode',dataToSend, config)
             .then(response => {
               console.log(response);
               console.log(response.data);

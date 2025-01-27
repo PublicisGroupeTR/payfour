@@ -70,7 +70,7 @@ const LoginScreen = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {      
       console.log('Hello World!'); 
       setLoading(true);       
-      axios.get('https://payfourapp.test.kodegon.com/api/campaigns/getcampaignsforanonymusers?pageSize=4').then(response => {
+      axios.get('https://api-app.payfour.com/api/campaigns/getcampaignsforanonymusers?pageSize=4').then(response => {
         console.log(response.data);
         console.log(response.data.data);
         //console.log(response.data.data.items);
@@ -221,7 +221,7 @@ const LoginScreen = ({navigation}) => {
         console.log("dataToSend");
         console.log(dataToSend);
 
-            axios.post('https://payfourapp.test.kodegon.com/api/auth/init', dataToSend)
+            axios.post('https://api-app.payfour.com/api/auth/init', dataToSend)
             .then(response => {
               console.log(response.data);
               console.log(response.data.data);
@@ -236,7 +236,7 @@ const LoginScreen = ({navigation}) => {
               let msg="";
               (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
             });
-        /*fetch('https://payfourapp.test.kodegon.com/api/auth/init', {
+        /*fetch('https://api-app.payfour.com/api/auth/init', {
           method: 'POST',
           body: {
             "fingerPrint": "4e8a1a0d25086770445106345030fbdaf020d9ceac3fe4797df48c81161a55ff",
@@ -293,7 +293,7 @@ const LoginScreen = ({navigation}) => {
     }
     console.log("datatosend");
     console.log(dataToSend)
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/begin', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -318,7 +318,7 @@ const LoginScreen = ({navigation}) => {
       let msg="";
       (error.response.data.errors.message) ? msg += error.response.data.errors.message+"\n" : msg += "Ödeme hatası \n"; (error.response.data.errors.paymentError) ? msg += error.response.data.errors.paymentError+"\n" : msg += ""; Alert.alert(msg);
     });
-    /*fetch('https://payfourapp.test.kodegon.com/api/auth/begin', {
+    /*fetch('https://api-app.payfour.com/api/auth/begin', {
       method: 'POST',
       body: dataToSend,
       headers: {

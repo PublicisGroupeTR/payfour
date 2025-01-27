@@ -141,7 +141,7 @@ const Profile = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
@@ -640,7 +640,7 @@ const EditProfile = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);

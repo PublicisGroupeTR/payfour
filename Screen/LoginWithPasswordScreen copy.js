@@ -83,7 +83,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
   }
   const sendForgot = (dataToSend) => {
     setLoading(true);
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/forgotpassword', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);        
@@ -149,7 +149,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
     console.log("datatosend");
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/loginwithpassword', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/loginwithpassword', dataToSend)
     .then(response => {
       
       setLoading(false);

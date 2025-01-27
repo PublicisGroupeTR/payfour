@@ -56,7 +56,7 @@ const MasterpassScreen2 = ({navigation}) => {
             headers: { Authorization: `Bearer ${obj.token}` }
           };
           
-          axios.get('https://payfourapp.test.kodegon.com/api/payments/generatemasterpasstoken', config)
+          axios.get('https://api-app.payfour.com/api/payments/generatemasterpasstoken', config)
           .then(response => {
             console.log(response);
             console.log(response.data);
@@ -198,7 +198,7 @@ const addCard = ()=>{
     "merchantUserId": "9894",
     "sourceChannel": "Web"
 }'*/
-//'https://payfourapp.test.kodegon.com/api/payments/addcard'
+//'https://api-app.payfour.com/api/payments/addcard'
 webview.current.postMessage("check;check");
 var RSAKey = require('react-native-rsa');
       const bits = 2048;

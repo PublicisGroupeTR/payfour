@@ -127,7 +127,7 @@ const OtpScreen = ({navigation, route}) => {
     };
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/forgotpassword', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -156,7 +156,7 @@ const OtpScreen = ({navigation, route}) => {
     };
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/begin', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -197,7 +197,7 @@ const OtpScreen = ({navigation, route}) => {
     console.log("datatosend");
     console.log(dataToSend);
     let func = route.params.forgot ? 'verifycustomotp' : 'verifyotp';
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/'+func, dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/'+func, dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data); 

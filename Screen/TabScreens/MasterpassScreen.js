@@ -42,7 +42,7 @@ const MasterpassScreen = ({navigation}) => {
             headers: { Authorization: `Bearer ${obj.token}` }
           };
           
-          axios.get('https://payfourapp.test.kodegon.com/api/payments/generatemasterpasstoken', config)
+          axios.get('https://api-app.payfour.com/api/payments/generatemasterpasstoken', config)
           .then(response => {
             console.log(response);
             console.log(response.data);

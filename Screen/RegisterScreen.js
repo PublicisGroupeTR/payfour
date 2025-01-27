@@ -130,10 +130,10 @@ setLoading(true);*/
 
     console.log("register data");
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
     axios
       .post(
-        "https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic",
+        "https://api-app.payfour.com/api/auth/addcustomerbasic",
         dataToSend
       )
       .then((response) => {
