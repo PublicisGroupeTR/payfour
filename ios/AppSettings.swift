@@ -11,16 +11,16 @@ class AppSettings {
           key: "devtest",
           title: "Enqura",
           apiServerUser: "mobile",
-          domainName: "enverifyai-uat.dgfinansman.com",
+          domainName: "enverifyai.dgfinansman.com",
           certificateName: "dgfinansman",
           aiUserName: "demo",
           aiPassword: "idverify",
-          signalServer: "enverifyai-uat.dgfinansman:1794",
-          stunServer: "stun:enverifyai-uat.dgfinansman:3478",
-          turnServer: "turn:enverifyai-uat.dgfinansman:3478",
+          signalServer: "enverifyai.dgfinansman:1794",
+          stunServer: "stun:enverifyai.dgfinansman:3478",
+          turnServer: "turn:enverifyai.dgfinansman:3478",
           turnServerUser: "smartuser",
           turnServerKey: "Sv2017_1697turn",
-          apiServer: "https://enverifymapip-uat.dgfinansman.com",
+          apiServer: "https://enverifymapip.dgfinansman.com",
           enableMediaServer: false
         )
       completionHandler(true)

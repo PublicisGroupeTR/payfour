@@ -787,7 +787,7 @@ class ModuleIOS: BaseViewController, EnVerifyDelegate {
     }
 
     let urlString =
-      "https://payfourapp.test.kodegon.com/api/loans/completeloanapplication/\(referenceId)"
+      "https://api-app.payfour.com/api/loans/completeloanapplication/\(referenceId)"
     guard let url = URL(string: urlString) else {
       print("TEST-KYC Invalid URL")
       kycError()

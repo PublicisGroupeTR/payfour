@@ -128,8 +128,8 @@ const RegisterScreen = ({navigation}) => {
 
     console.log("register data");
     console.log(dataToSend);
-    //http://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('http://payfourapp.test.kodegon.com/api/auth/addcustomerbasic', dataToSend)
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    axios.post('https://api-app.payfour.com/api/auth/addcustomerbasic', dataToSend)
       .then(response => {
         console.log(response.data);
         console.log(response.data.data);

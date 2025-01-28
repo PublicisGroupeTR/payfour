@@ -18,48 +18,6 @@ const VerifyScreen = ({ navigation, route }) => {
 
   const isFocused = useIsFocused();
   const { EventEmitter } = NativeModules;
-  // const [allData, setAllData] = useState({
-  //   "birthDate": "2001-10-10T00:00:00.000Z",
-  //   "commercialElectronic": true,
-  //   "crmCustomerId": "15628932",
-  //   "defaultBankAccountNumber": "3594488206101",
-  //   "educationlevel": "5d18065a-742c-5c06-6e45-aa7d8ae95499",
-  //   "email": "Test@test.com",
-  //   "firstName": "Mahmut Bilal",
-  //   "gender": "Male",
-  //   "incometypesSelected": [
-  //     5,
-  //     6
-  //   ],
-  //   "isStudent": false,
-  //   "lastName": "TEKİROĞLU",
-  //   "monthlyAverage": "10000",
-  //   "occupation": "5d1912c0-3818-7d03-f337-9ad31752832a",
-  //   "occupationrole": "18f1e288-4786-404b-a879-83272a1b96b2",
-  //   "payfourId": 3583,
-  //   "phone": "+905533600910",
-  //   "referenceId": "01948d90-3314-738b-a983-88631b02c0d9",
-  //   "referralCode": "PYF2jzBnEzjQhS7",
-  //   "registrationCompleted": true,
-  //   "segment": 1,
-  //   "segmentInfo": {
-  //     "autoRenew": false,
-  //     "isAnnual": false,
-  //     "segment": 1,
-  //     "startDateUTC": "2024-11-19T06:54:35.5703137"
-  //   },
-  //   "selectedaAreements": [
-  //     "ETK",
-  //     "GKS",
-  //     "USAGR"
-  //   ],
-  //   "tckn": "64317832464",
-  //   "tempToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFwcGx5bG9hbnwwMTk0OGQ4Zi03NTFiLTcxM2UtYWNjYi1lMjg5ZjkwNTVmM2QiLCJtZW1iZXJpZCI6IjM1ODMiLCJleHAiOjE3Mzc1NDUzODQsImlzcyI6IlBheWZvdXJBcHBTZXJ2aWNlIiwiYXVkIjoiUGF5Zm91clRlbXBUb2tlbiJ9.-wFTiLKxxPoBGflTjuq7TxA_7b00SG-bFWrd7pLBNZE",
-  //   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVtcGFudW1iZXIiOiI3OTUxYTMyOGM5NmU5ZDI2YTg4ODUwMmYyYTE1M2EzODY5OWQ2ZDMzMTIzMTQ5MmFhMWYzYWZkMzQzYmU4ZWFlIiwiZGV2aWNlSWQiOiIxMjc4IiwidG9rZW5pZCI6IjVhYTNkNDRiLWQ2NjMtNGI4Zi1kYTA0LTA4ZGQzYWNkYTUyNyIsIm1lbWJlcmlkIjoiMzU4MyIsImV4cCI6MTczNzU0NDc2OSwiaXNzIjoiUGF5Zm91ckFwcFRva2VuIiwiYXVkIjoiUGF5Zm91ckFwcFNlcnZpY2UifQ.gF2qpvGS7fhxJBJWUfPfKTu8n9_2VI1Ry96TwAx9C3Y",
-  //   "transactionVolume": "1000",
-  //   "transactionsNumbers": "5",
-  //   "userBirthplace": "Adana"
-  // });
   const [allData, setAllData] = useState();
 
   const startKyc = async () => {

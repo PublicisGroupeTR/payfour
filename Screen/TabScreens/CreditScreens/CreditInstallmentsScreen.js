@@ -79,7 +79,7 @@ console.log(route.params.params.firstInstallmentDate);
         firstInstallmentDate:dt
       }
       console.log(sendData);
-      axios.post('https://payfourapp.test.kodegon.com/api/loans/calculatepaybackplan', sendData, config)
+      axios.post('https://api-app.payfour.com/api/loans/calculatepaybackplan', sendData, config)
       .then(response => {
         setLoading(false);
           console.log(response.data.data); 
@@ -164,7 +164,7 @@ console.log(route.params.params.firstInstallmentDate);
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-      axios.post('https://payfourapp.test.kodegon.com/api/payments/approvewithloan', sendData, config)
+      axios.post('https://api-app.payfour.com/api/payments/approvewithloan', sendData, config)
       .then(response => {
         setLoading(false);
         console.log("approvewithloan");

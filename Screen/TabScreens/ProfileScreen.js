@@ -116,7 +116,7 @@ const Profile = ({navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("getuser");
-      axios.post('http://payfourapp.test.kodegon.com/api/auth/logout', {}, config).then(response => {
+      axios.post('https://api-app.payfour.com/api/auth/logout', {}, config).then(response => {
         navigation.navigate('LoginScreen');
         // AsyncStorage.removeItem('uniqueMPANumber').then(()=>{
         //   AsyncStorage.removeItem('phone').then(()=>{
@@ -151,7 +151,7 @@ const deleteAccount = () => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);
@@ -898,7 +898,7 @@ const EditProfile = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);

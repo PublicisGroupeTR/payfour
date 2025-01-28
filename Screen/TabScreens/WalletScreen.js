@@ -261,7 +261,7 @@ const Balance = ({navigation, route}) => {
 
     
     console.log('path');
-    qpath = 'https://payfourapp.test.kodegon.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&size=100';
+    qpath = 'https://api-app.payfour.com/api/account/gettransactions?startDate='+startDate+'&endDate='+endDate+'&page=0&size=100';
     console.log(qpath);
 
     AsyncStorage.getItem('token').then(value =>{
@@ -297,7 +297,7 @@ const Balance = ({navigation, route}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
 
-      axios.get('https://payfourapp.test.kodegon.com/api/account/getpendingorders?page=0&pageSize=12', config).then(response => {
+      axios.get('https://api-app.payfour.com/api/account/getpendingorders?page=0&pageSize=12', config).then(response => {
         console.log(response.data);
         console.log(response.data.data.items);
         formatData(response.data.data.items);        
@@ -436,7 +436,7 @@ const Balance = ({navigation, route}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log(value);
-    axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config)
+    axios.get('https://api-app.payfour.com/api/account/getuser', config)
       .then(response => {
         console.log(response);
         console.log(response.data);
@@ -1116,7 +1116,7 @@ const Waiting = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log(value);
-    axios.get('https://payfourapp.test.kodegon.com/api/account/getuser', config)
+    axios.get('https://api-app.payfour.com/api/account/getuser', config)
       .then(response => {
         console.log(response);
         console.log(response.data);
@@ -1195,7 +1195,7 @@ const Waiting = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
 
-      axios.get('https://payfourapp.test.kodegon.com/api/loans/getavailablecreditlimit', config).then(response => {
+      axios.get('https://api-app.payfour.com/api/loans/getavailablecreditlimit', config).then(response => {
         console.log("getavailablecreditlimit");
         console.log(response.data);
         console.log(response.data.data);
@@ -1299,7 +1299,7 @@ const Waiting = ({route, navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
 
-      axios.get('https://payfourapp.test.kodegon.com/api/account/getbalance', config).then(response => {
+      axios.get('https://api-app.payfour.com/api/account/getbalance', config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         if(response.data.data.balance != null){
@@ -1350,7 +1350,7 @@ const Waiting = ({route, navigation}) => {
           password: userPassword       
         }
       console.log(dataToSend)
-      axios.post('https://payfourapp.test.kodegon.com/api/loans/sendotpforlogin', dataToSend, config)
+      axios.post('https://api-app.payfour.com/api/loans/sendotpforlogin', dataToSend, config)
         .then(response => {
           setLoading(false);
           console.log(response);
@@ -1413,7 +1413,7 @@ const Waiting = ({route, navigation}) => {
           paymentId:route.params.paymentId
         }
       console.log(dataToSend)
-      axios.post('https://payfourapp.test.kodegon.com/api/payments/approvewithbalance', dataToSend, config)
+      axios.post('https://api-app.payfour.com/api/payments/approvewithbalance', dataToSend, config)
         .then(response => {
           console.log(response);
           console.log(response.data);
@@ -1481,7 +1481,7 @@ const handleSubmitCancel = () =>{
         paymentId:route.params.paymentId
       }
     console.log(dataToSend)
-    axios.post('https://payfourapp.test.kodegon.com/api/payments/reject', dataToSend, config)
+    axios.post('https://api-app.payfour.com/api/payments/reject', dataToSend, config)
       .then(response => {
         console.log(response);
         console.log(response.data);

@@ -135,7 +135,7 @@ const CreditOtpScreen = ({navigation, route}) => {
     };
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/forgotpassword', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -164,7 +164,7 @@ const CreditOtpScreen = ({navigation, route}) => {
     };
     console.log(dataToSend);
 
-    axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/begin', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);
@@ -194,7 +194,7 @@ const CreditOtpScreen = ({navigation, route}) => {
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-      axios.post('https://payfourapp.test.kodegon.com/api/loans/verifyotpforloginreset', dataToSend, config)
+      axios.post('https://api-app.payfour.com/api/loans/verifyotpforloginreset', dataToSend, config)
       .then(response => {
         setLoading(false);
           console.log(response.data); 
@@ -224,7 +224,7 @@ const CreditOtpScreen = ({navigation, route}) => {
       const config = {
         headers: { Authorization: `Bearer ${value}` }
       };
-      axios.post('https://payfourapp.test.kodegon.com/api/loans/calculatefirstinstallmentdate', {tokenId:tokenId}, config)
+      axios.post('https://api-app.payfour.com/api/loans/calculatefirstinstallmentdate', {tokenId:tokenId}, config)
       .then(response => {
         setLoading(false);
           console.log(response.data); 

@@ -55,7 +55,7 @@ const ProfilePlatinumMemberScreen = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           
@@ -97,8 +97,8 @@ const cancelPlatinum = () => {
 
     console.log("forgot data");
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
-    axios.post('https://payfourapp.test.kodegon.com/api/account/purchasepremium', dataToSend, config)
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
+    axios.post('https://api-app.payfour.com/api/account/purchasepremium', dataToSend, config)
       .then(response => {
         console.log(response.data);
         console.log(response.data.data);

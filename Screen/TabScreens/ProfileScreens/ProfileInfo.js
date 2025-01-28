@@ -91,7 +91,7 @@ const ProfileInfo = ({navigation}) => {
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/account/getuser', config).then(response => {
           console.log(response);
           console.log(response.data);
           console.log(response.data.data);
@@ -157,7 +157,7 @@ const ProfileInfo = ({navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("getuser");
-      axios.get('https://payfourapp.test.kodegon.com/api/address/getcities', config).then(response => {
+      axios.get('https://api-app.payfour.com/api/address/getcities', config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         setCityData(response.data.data)
@@ -188,7 +188,7 @@ const ProfileInfo = ({navigation}) => {
         headers: { Authorization: `Bearer ${value}` }
       };
       console.log("getuser");
-      axios.get('https://payfourapp.test.kodegon.com/api/address/getdistricts/'+cityId, config).then(response => {
+      axios.get('https://api-app.payfour.com/api/address/getdistricts/'+cityId, config).then(response => {
         console.log(response.data);
         console.log(response.data.data);
         setCountyData(response.data.data)
@@ -303,9 +303,9 @@ console.log(selectedCounty);
 
     console.log("err > "+err);
     console.log(dataToSend);
-    //https://payfourapp.test.kodegon.com/api/auth/addcustomerbasic
+    //https://api-app.payfour.com/api/auth/addcustomerbasic
     if(!err){
-    axios.post('https://payfourapp.test.kodegon.com/api/account/updateuser', dataToSend, config)
+    axios.post('https://api-app.payfour.com/api/account/updateuser', dataToSend, config)
       .then(response => {
         console.log(response.data);
         console.log(response.data.data);
@@ -343,7 +343,7 @@ console.log(selectedCounty);
           headers: { Authorization: `Bearer ${value}` }
         };
         console.log("getuser");
-        axios.get('http://payfourapp.test.kodegon.com/api/account/getuser', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/account/getuser', config).then(response => {
           console.log(response.data);
           console.log(response.data.data);
           console.log(response.data.data.tckn);

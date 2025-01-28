@@ -21,7 +21,7 @@ export const apiRequest = async ({ url, method = 'GET', params = {}, data = {}, 
 
   const config = {
     method: method.toUpperCase(),
-    url: `https://payfourapp.test.kodegon.com/api${url}`,
+    url: `https://api-app.payfour.com/api${url}`,
     headers: defaultHeaders,
     params,
     ...(method.toUpperCase() !== 'GET' && method.toUpperCase() !== 'HEAD' && { data }), // Body sadece GET/HEAD dışındakilerde

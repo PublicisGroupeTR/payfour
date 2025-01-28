@@ -240,7 +240,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
       let dataToSend ={
         "key": publicKey
       }
-      axios.post('http://payfourapp.test.kodegon.com/api/account/setfingerprint', dataToSend, config)
+      axios.post('https://api-app.payfour.com/api/account/setfingerprint', dataToSend, config)
       .then(response => {
         console.log(response);
         console.log(response.data);
@@ -271,7 +271,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
         //Alert.alert("Error sending data: ", error);
       });
     });
-    //'http://payfourapp.test.kodegon.com/api/account/setfingerprint'
+    //'https://api-app.payfour.com/api/account/setfingerprint'
     /*{
       "key": "string"
     }*/
@@ -305,7 +305,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
             }
             console.log("fingerprint login data");
             console.log(dataToSend);
-            axios.post('http://payfourapp.test.kodegon.com/api/auth/loginwithfingerprint', dataToSend)
+            axios.post('https://api-app.payfour.com/api/auth/loginwithfingerprint', dataToSend)
           .then(response => {
             
             setLoading(false);
@@ -356,7 +356,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
     "phone": "string",
     "fingerPrintKey": "string"
 }*/
-    //'http://payfourapp.test.kodegon.com/api/account/setfingerprint'
+    //'https://api-app.payfour.com/api/account/setfingerprint'
     /*{
       "key": "string"
       }*/
@@ -394,7 +394,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
   }
   const sendForgot = (dataToSend) => {
     setLoading(true);
-    axios.post('http://payfourapp.test.kodegon.com/api/auth/forgotpassword', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/forgotpassword', dataToSend)
     .then(response => {
       setLoading(false);
         console.log(response.data);        
@@ -490,7 +490,7 @@ const LoginWithPasswordScreen = ({navigation}) => {
     console.log("datatosend");
     console.log(dataToSend);
 
-    axios.post('http://payfourapp.test.kodegon.com/api/auth/loginwithpassword', dataToSend)
+    axios.post('https://api-app.payfour.com/api/auth/loginwithpassword', dataToSend)
     .then(response => {
       
       setLoading(false);

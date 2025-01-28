@@ -22,7 +22,7 @@ const NotificationScreen = ({navigation, route}) => {
         const config = {
           headers: { Authorization: `Bearer ${value}` }
         };
-        axios.get('https://payfourapp.test.kodegon.com/api/notifications?page=1&pageSize=12', config).then(response => {
+        axios.get('https://api-app.payfour.com/api/notifications?page=1&pageSize=12', config).then(response => {
           console.log(response.data);
 
           let setRead=[];
@@ -38,7 +38,7 @@ const NotificationScreen = ({navigation, route}) => {
           if(setRead.length > 0){
             console.log("setRead");
             console.log(setRead);
-            axios.put('https://payfourapp.test.kodegon.com/api/notifications/read', setRead, config).then(response => {
+            axios.put('https://api-app.payfour.com/api/notifications/read', setRead, config).then(response => {
               console.log(response.data);
             })
             .catch(error => {

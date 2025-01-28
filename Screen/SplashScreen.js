@@ -78,7 +78,7 @@ const SplashScreen = ({navigation}) => {
       }
       console.log("datatosend");
       console.log(dataToSend)
-      axios.post('https://payfourapp.test.kodegon.com/api/auth/begin', dataToSend)
+      axios.post('https://api-app.payfour.com/api/auth/begin', dataToSend)
       .then(response => {
         setLoading(false);
           console.log(response.data);
