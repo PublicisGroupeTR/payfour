@@ -287,20 +287,16 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
     fun replaceReactNativeFragment() {
         Log.i("Custom", "TEST-KYC replaceReactNativeFragment")
 
-        // Tüm fragmentleri kaldır
         val fragmentManager = supportFragmentManager
 
-        // Tüm back stack fragment'lerini temizle
         for (i in 0 until fragmentManager.backStackEntryCount) {
             fragmentManager.popBackStack()
         }
 
-        // Tüm fragmentleri manuel olarak kaldır
         fragmentManager.fragments.forEach { fragment ->
             fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
         }
 
-        // Fragment işlemlerinin tamamlanmasını sağlamak için senkronize et
         fragmentManager.executePendingTransactions()
         finish()
         EnQualifyModuleAndroid.sendEvent("EnQualifyResult", "succeeded")
