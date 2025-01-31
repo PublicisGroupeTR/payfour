@@ -285,14 +285,24 @@ class EnQualifyActivity : AppCompatActivity(), EnVerifyCallback, DefaultHardware
     }
     
     fun replaceReactNativeFragment() {
-        val customDataObject: JSONObject = JSONObject(customData)
+        Log.i("Custom", "TEST-KYC replaceReactNativeFragment")
 
-        val reactNativeFragment = CustomReactFragment.Builder()
-            .setComponentName("Payfour")
-            .setLaunchOptions(getLaunchOptions(""))  // Buradan React Native'de açılan view'a props olarak data gönderilebiliyor.
-            .build()
-        
-        enVerifyApi.replaceFragment(reactNativeFragment)
+        // Tüm fragmentleri kaldır
+        val fragmentManager = supportFragmentManager
+
+        // Tüm back stack fragment'lerini temizle
+        for (i in 0 until fragmentManager.backStackEntryCount) {
+            fragmentManager.popBackStack()
+        }
+
+        // Tüm fragmentleri manuel olarak kaldır
+        fragmentManager.fragments.forEach { fragment ->
+            fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
+        }
+
+        // Fragment işlemlerinin tamamlanmasını sağlamak için senkronize et
+        fragmentManager.executePendingTransactions()
+        finish()
         EnQualifyModuleAndroid.sendEvent("EnQualifyResult", "succeeded")
     }
 
